@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo Phiếu Giảm Giá</title>
+
+    <!-- Libs -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+
+    <!-- Style -->
+    <style>
+        :root{ --primary:#153054; --secondary:#9FD5F7; --text:#263238; --line:#e9ecef; }
+        body{background:#f6f9fb;color:var(--text)}
+        .content{padding:2rem;margin-left:256px;margin-top:70px}
+        .sticky-header{position:sticky;top:70px;z-index:1000;background:#fff;padding:1rem 2rem;margin:-2rem -2rem 1rem -2rem;border-bottom:1px solid var(--line);display:flex;justify-content:center;align-items:center}
+        .sticky-header h2{font-weight:700;margin:0;color:var(--primary)}
+        .card-section{border:1px solid var(--line);border-radius:.75rem;background:#fff;overflow:hidden}
+        .card-section .card-header{background:rgba(159,213,247,.25);border-bottom:1px solid var(--line);font-weight:600;color:var(--primary);display:flex;align-items:center;gap:.5rem}
+        .card-section .card-body{padding:1rem 1.25rem}
+        .form-label{font-weight:600;color:#334155}
+        .form-control,.form-select{border-radius:.5rem;border:1px solid #dfe3e8;transition:border-color .2s,box-shadow .2s}
+        .form-control:focus,.form-select:focus{border-color:var(--secondary);box-shadow:0 0 0 .25rem rgba(159,213,247,.45)}
+        .input-group-text{background:#f8fbfe;border-color:#dfe3e8}
+        .btn-primary{--bs-btn-bg:var(--primary);--bs-btn-border-color:var(--primary);--bs-btn-hover-bg:#102845;--bs-btn-hover-border-color:#102845}
+        .btn-secondary{--bs-btn-bg:var(--secondary);--bs-btn-border-color:var(--secondary);--bs-btn-color:#0b2a45;--bs-btn-hover-bg:#8bcdf5;--bs-btn-hover-border-color:#8bcdf5}
+        .table-responsive{border-radius:.5rem;overflow:hidden}
+        .invalid-feedback{display:none;color:#dc3545;font-size:.875rem}
+        .is-invalid ~ .invalid-feedback{display:block}
+
+        /* Select2 – pills gọn, đẹp */
+        .select2-container--default .select2-selection--multiple{
+            border:1px solid #dfe3e8;border-radius:.75rem;min-height:34px;padding:6px 8px;display:flex;align-items:center;gap:6px
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered{
+            display:flex;flex-wrap:wrap;gap:6px
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice{
+            background:rgba(159,213,247,.9)!important;color:#0b2a45;border:0;border-radius:999px;padding:2px 10px;font-weight:600
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
+            margin-right:6px;color:#0b2a45;font-weight:700
+        }
+        .select2-selection--multiple .select2-selection__clear{display:none!important}
+
+        input[type="radio"],input[type="checkbox"]{accent-color:var(--primary)}
+
+        /* ======= Select2 invalid border (PTTT required) ======= */
+        .select2-container--default .select2-selection--multiple.is-invalid-s2{
+            border-color:#dc3545 !important;
+            box-shadow:0 0 0 .25rem rgba(220,53,69,.25);
+        }
+    </style>
+
+    <!-- JS libs -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script th:src="@{/js/sidebar.js}" defer></script>
+    <script th:src="@{/js/notification.js}"></script>
+</head>
+<body class="bg-light">
+<div class="d-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+    <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+        <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </nav>
+
+    <div class="content" id="content">
+        <!-- Header -->
+        <div class="sticky-header">
+            <h2><i class="fas fa-ticket-alt me-2"></i>Tạo Phiếu Giảm Giá</h2>
+        </div>
+
+        <!-- Form -->
+        <div class="bg-white p-4 rounded shadow-sm">
+            <form id="createVoucherForm" th:action="@{/acvstore/phieu-giam-gia/create}" th:object="${voucher}" method="post" novalidate>
+
+                <div class="row g-4">
+                    <!-- 1) THÔNG TIN CƠ BẢN -->
+                    <div class="col-12">
+                        <div class="card-section mb-2">
+                            <div class="card-header"><i class="fa-regular fa-rectangle-list"></i><span>Thông tin cơ bản</span></div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label"><i class="fas fa-barcode me-2"></i>Mã phiếu:</label>
+                                        <input type="text" th:field="*{ma}" id="ma" class="form-control" placeholder="VD: CMV123"/>
+                                        <div class="invalid-feedback" id="maError"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label"><i class="fas fa-tag me-2"></i>Tên phiếu:</label>
+                                        <input type="text" th:field="*{ten}" id="ten" class="form-control" placeholder="Tên phiếu giảm giá"/>
+                                        <div class="invalid-feedback" id="tenError"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label"><i class="fas fa-calendar-alt me-2"></i>Ngày bắt đầu:</label>
+                                        <input type="datetime-local" th:field="*{ngayBatDau}" class="form-control" id="ngayBatDau"
+                                               th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"/>
+                                        <div class="invalid-feedback" id="ngayBatDauError"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label"><i class="fas fa-calendar-alt me-2"></i>Ngày kết thúc:</label>
+                                        <input type="datetime-local" th:field="*{ngayKetThuc}" class="form-control" id="ngayKetThuc"
+                                               th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"/>
+                                        <div class="invalid-feedback" id="ngayKetThucError"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2) PHẠM VI & KIỂU GIẢM -->
+                    <div class="col-12">
+                        <div class="card-section">
+                            <div class="card-header"><i class="fa-solid fa-sliders"></i><span>Phạm vi áp dụng & Kiểu giảm</span></div>
+                            <div class="card-body">
+                                <!-- Phạm vi -->
+                                <div class="mb-3">
+                                    <label class="form-label"><i class="fas fa-truck me-2"></i>Phạm vi áp dụng:</label>
+                                    <div class="d-flex flex-wrap gap-4">
+                                        <label class="form-check-label">
+                                            <input type="radio" th:field="*{phamViApDung}" value="ORDER" onchange="toggleScopeFields()"> Giảm giá đơn hàng
+                                        </label>
+                                        <label class="form-check-label">
+                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING" onchange="toggleScopeFields()"> Giảm phí vận chuyển
+                                        </label>
+                                    </div>
+                                    <div class="text-danger small mt-1 d-none" id="phamViError"></div>
+                                </div>
+
+                                <!-- Kiểu freeship (SHIPPING) -->
+                                <div class="mb-3" id="shipTypeGroup" style="display:none;">
+                                    <label class="form-label"><i class="fas fa-truck-fast me-2"></i>Kiểu freeship:</label>
+                                    <div class="d-flex flex-wrap gap-4">
+                                        <label class="form-check-label">
+                                            <input type="radio" th:field="*{loai}" value="FREESHIP_FULL" onchange="toggleDiscountFields()"> Miễn phí ship toàn phần
+                                        </label>
+                                        <label class="form-check-label">
+                                            <input type="radio" th:field="*{loai}" value="FREESHIP_CAP" onchange="toggleDiscountFields()"> Miễn phí ship tối đa X VND
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Kiểu giảm (ORDER) -->
+                                <div class="mb-3" id="discountTypeGroup" style="display:none;">
+                                    <label class="form-label"><i class="fas fa-percentage me-2"></i>Kiểu giảm:</label>
+                                    <div class="d-flex flex-wrap gap-4">
+                                        <label class="form-check-label" id="percentOption">
+                                            <input type="radio" th:field="*{loai}" value="PERCENT" onchange="toggleDiscountFields()"> Giảm theo %
+                                        </label>
+                                        <label class="form-check-label" id="cashOption">
+                                            <input type="radio" th:field="*{loai}" value="CASH" onchange="toggleDiscountFields()"> Giảm theo tiền mặt
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <!-- Lỗi bắt buộc chọn kiểu/phương thức giảm -->
+                                <div class="text-danger small mt-1 d-none" id="loaiError"></div>
+
+                                <!-- Giá trị giảm -->
+                                <div class="row g-3">
+                                    <div class="col-md-6 d-none" id="discountValueGroup">
+                                        <label class="form-label">Giá trị giảm:</label>
+                                        <div class="input-group">
+                                            <input type="text" th:field="*{giaTriGiam}" class="form-control" id="giaTriGiam"
+                                                   inputmode="decimal" oninput="this.value=this.value.replace(/[^0-9,]/g,'')" placeholder="0">
+                                            <span class="input-group-text" id="discountUnit">%</span>
+                                        </div>
+                                        <div class="invalid-feedback" id="giaTriGiamError"></div>
+                                    </div>
+                                    <div class="col-md-6 d-none" id="maxDiscountGroup">
+                                        <label class="form-label">Giá trị giảm tối đa:</label>
+                                        <div class="input-group">
+                                            <input type="text" th:field="*{giaTriGiamToiDa}" class="form-control" id="giaTriGiamToiDa"
+                                                   inputmode="decimal" oninput="this.value=this.value.replace(/[^0-9,]/g,'')" placeholder="0">
+                                            <span class="input-group-text">VND</span>
+                                        </div>
+                                        <div class="invalid-feedback" id="giaTriGiamToiDaError"></div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Đơn tối thiểu áp dụng:</label>
+                                        <div class="input-group">
+                                            <input type="text" th:field="*{giaTriGiamToiThieu}" class="form-control" id="giaTriGiamToiThieu"
+                                                   inputmode="decimal" oninput="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="0">
+                                            <span class="input-group-text">VND</span>
+                                        </div>
+                                        <div class="invalid-feedback" id="giaTriGiamToiThieuError"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 3) LOẠI PHIẾU & LƯỢT SỬ DỤNG -->
+                    <div class="col-12">
+                        <div class="card-section">
+                            <div class="card-header"><i class="fa-solid fa-id-badge"></i><span>Loại phiếu & Lượt sử dụng</span></div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-lg-6">
+                                        <label class="form-label"><i class="fas fa-users me-2"></i>Loại phiếu:</label>
+                                        <div class="d-flex flex-wrap gap-4">
+                                            <label class="form-check-label">
+                                                <input type="radio" th:field="*{kieuPhieu}" value="cong_khai" onclick="toggleUsageCount()"> Công khai
+                                            </label>
+                                            <label class="form-check-label">
+                                                <input type="radio" th:field="*{kieuPhieu}" value="ca_nhan" onclick="toggleUsageCount()"> Cá nhân
+                                            </label>
+                                        </div>
+                                        <div class="text-danger small mt-1 d-none" id="kieuPhieuError"></div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <label class="form-label">Lượt sử dụng:</label>
+                                        <input type="text" th:field="*{gioiHanSuDung}" class="form-control" id="gioiHanSuDung"
+                                               inputmode="numeric" pattern="[0-9]*"
+                                               oninput="this.value=this.value.replace(/[^0-9]/g,'')" placeholder="Số lượt sử dụng">
+                                        <small class="text-muted" id="caNhanNote" style="display:none;">* Phiếu cá nhân chỉ áp dụng 1 lượt sử dụng</small>
+                                        <div class="invalid-feedback" id="gioiHanSuDungError"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 4) PHƯƠNG THỨC THANH TOÁN ÁP DỤNG -->
+                    <div class="col-12">
+                        <div class="card-section">
+                            <div class="card-header"><i class="fas fa-credit-card"></i><span>Phương thức thanh toán áp dụng</span></div>
+                            <div class="card-body">
+                                <select id="paymentMethodSelect" class="form-select" name="selectedPtttIds" multiple>
+                                    <option value="all">Tất cả</option>
+                                    <option th:each="pt : ${phuongThucList}" th:value="${pt.id}"
+                                            th:text="${pt.tenPhuongThuc}"
+                                            th:selected="${selectedPtttIds != null and selectedPtttIds.contains(pt.id)}"></option>
+                                </select>
+                                <!-- Lỗi PTTT bắt buộc -->
+                                <div id="ptttError" class="text-danger small mt-1 d-none">
+                                    vui lòng chọn ít nhất 1 pttt khi chưa chọn
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 5) KHÁCH HÀNG (chỉ hiện khi phiếu cá nhân) -->
+                    <div class="col-12">
+                        <div id="emailOptions" class="card-section" style="display:none">
+                            <div class="card-header"><i class="fa-solid fa-user-check"></i><span>Khách hàng áp dụng & Thông báo</span></div>
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <input type="text" class="form-control" id="searchCustomerInput" placeholder="Tìm kiếm theo tên, email, SĐT...">
+                                    </div>
+                                    <div class="col-md-6 d-flex align-items-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="selectAllCustomers">
+                                            <label class="form-check-label" for="selectAllCustomers">Chọn tất cả</label>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive mt-3">
+                                    <table class="table table-bordered table-hover align-middle bg-white table-sm">
+                                        <thead class="table-light">
+                                        <tr>
+                                            <th style="width:80px">Chọn</th>
+                                            <th>Họ tên</th>
+                                            <th>Email</th>
+                                            <th>SĐT</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="customerTableBody">
+                                        <tr th:each="customer : ${customers}">
+                                            <td><input type="checkbox" name="selectedCustomerIds" th:value="${customer.id}" class="customerCheckbox" th:checked="${selectedCustomerIds != null and selectedCustomerIds.contains(customer.id)}"/></td>
+                                            <td th:text="${customer.hoTen}"></td>
+                                            <td th:text="${customer.email}"></td>
+                                            <td th:text="${customer.soDienThoai}"></td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <div class="form-check mt-2">
+                                    <input class="form-check-input" type="checkbox" id="sendMail" name="sendMail">
+                                    <label class="form-check-label" for="sendMail">Gửi Email cho khách hàng</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex justify-content-end mt-4">
+                    <button type="button" class="btn btn-primary me-2" onclick="validateForm()"><i class="fas fa-save me-2"></i>Lưu</button>
+                    <a th:href="@{/acvstore/phieu-giam-gia}" class="btn btn-secondary"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Confirmation Modal -->
+<!--        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">-->
+<!--            <div class="modal-dialog modal-dialog-centered">-->
+<!--                <div class="modal-content">-->
+<!--                    <div class="modal-header">-->
+<!--                        <h5 class="modal-title" id="confirmModalLabel">Xác nhận lưu</h5>-->
+<!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
+<!--                    </div>-->
+<!--                    <div class="modal-body">Bạn có chắc chắn muốn lưu phiếu giảm giá này không?</div>-->
+<!--                    <div class="modal-footer">-->
+<!--                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>-->
+<!--                        <button type="button" class="btn btn-primary" id="confirmSubmit">Xác nhận</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+    </div>
+</div>
+
+<!-- Scripts -->
+<script>
+    /* ===== Helpers ===== */
+    const STORAGE_KEY = 'voucherCreateFormState';
+
+    function formatNumber(value, allowDecimal) {
+        if (!value) return '';
+        value = value.replace(/[^\d,]/g, '').replace(/\./g, '').replace(/,/g, '.');
+        const number = parseFloat(value);
+        if (isNaN(number)) return '';
+        return new Intl.NumberFormat('vi-VN', { minimumFractionDigits:0, maximumFractionDigits: allowDecimal ? 2 : 0 }).format(number);
+    }
+    function parseNumber(v){ return (v || '').replace(/[.,]/g,''); }
+
+    function toLocalInputValue(d){
+        const pad=n=>String(n).padStart(2,'0');
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+    function setMinNowForDatetimeInputs(){
+        const now = new Date();
+        const minStr = toLocalInputValue(now);
+        $('#ngayBatDau').attr('min', minStr);
+        $('#ngayKetThuc').attr('min', minStr);
+    }
+    function syncEndMinWithStart(){
+        const startVal = $('#ngayBatDau').val();
+        const now = new Date();
+        let base = now;
+        if (startVal){
+            const start = new Date(startVal);
+            if (start > base) base = start;
+        }
+        const minEnd = toLocalInputValue(base);
+        $('#ngayKetThuc').attr('min', minEnd);
+        const endVal = $('#ngayKetThuc').val();
+        if (endVal && new Date(endVal) < base) $('#ngayKetThuc').val(minEnd);
+    }
+    function doBeforeSubmit(){
+        try { sessionStorage.removeItem(STORAGE_KEY); } catch(e){}
+
+        // parse về số thô trước khi submit
+        ['#giaTriGiam','#giaTriGiamToiDa','#giaTriGiamToiThieu','#gioiHanSuDung']
+            .forEach(sel => $(sel).val(parseNumber($(sel).val())));
+
+        // nếu người dùng lỡ chọn "Tất cả" thì chuyển thành danh sách cụ thể
+        const selected = $('#paymentMethodSelect').val();
+        if (selected && selected.includes('all')){
+            const allOptions = $('#paymentMethodSelect option')
+                .map(function(){return $(this).val();}).get().filter(v=>'all'!==v);
+            $('#paymentMethodSelect').val(allOptions).trigger('change');
+        }
+
+        $('#createVoucherForm').submit();
+    }
+
+    /* ===== MA/TEN helpers ===== */
+    function normalizeCode(raw){
+        return (raw || '').trim().replace(/\s+/g,''); // bỏ hết khoảng trắng bên trong
+    }
+    function validateMaField(){
+        const $ma = $('#ma');
+        const raw = $ma.val() || '';
+        const ma = normalizeCode(raw);
+        let msg = '';
+        if (!ma) msg = 'Mã phiếu không được để trống.';
+        else if (ma.length < 6 || ma.length > 50) msg = 'Mã phiếu phải từ 6 đến 50 ký tự.';
+        else if (!/^[A-Za-z0-9]+$/.test(ma)) msg = 'Mã phiếu chỉ gồm chữ và số, viết liền, không ký tự đặc biệt.';
+        if (msg){
+            $ma.addClass('is-invalid'); $('#maError').text(msg).show();
+            return false;
+        }
+        // cập nhật lại giá trị đã chuẩn hoá
+        $ma.val(ma);
+        $ma.removeClass('is-invalid'); $('#maError').text('').hide();
+        return true;
+    }
+    function validateTenField(){
+        const $ten = $('#ten');
+        const raw = $ten.val() ?? '';
+        const trimmed = raw.trim();
+
+        let msg = '';
+
+        if (!trimmed) {
+            msg = 'Tên phiếu không được để trống.';
+        } else if (/\s{2,}/.test(trimmed)) { // cấm >= 2 khoảng trắng liên tiếp ở giữa
+            msg = 'Giữa các từ chỉ được 1 khoảng trắng.';
+        } else if (!/^[\p{L}\d\-\/]+(?: [\p{L}\d\-\/]+)*$/u.test(trimmed)) {
+            // Cho phép: chữ (có dấu), số, dấu "-" và "/" ; các nhóm cách nhau đúng 1 space
+            msg = 'Tên chỉ gồm chữ (có dấu), số, dấu “-” và “/”; giữa các nhóm cách đúng 1 khoảng trắng.';
+        } else {
+            const nonSpaceLen = trimmed.replace(/\s+/g,'').length;
+            if (nonSpaceLen < 6)       msg = 'Tên phải có ít nhất 6 ký tự (không tính khoảng trắng).';
+            else if (trimmed.length > 100) msg = 'Tên tối đa 100 ký tự.';
+        }
+
+        if (msg){
+            $ten.addClass('is-invalid');
+            $('#tenError').text(msg).show();
+            return false;
+        }
+        // giữ nguyên khoảng trắng đầu/cuối theo yêu cầu
+        $ten.removeClass('is-invalid');
+        $('#tenError').text('').hide();
+        return true;
+    }
+
+    /* ===== Toggles (không auto-check) ===== */
+    function toggleScopeFields() {
+        const scope = $('input[name="phamViApDung"]:checked').val();
+        const $shipGroup = $('#shipTypeGroup');
+        const $discountGroup = $('#discountTypeGroup');
+
+        if (!scope){
+            $shipGroup.hide();
+            $discountGroup.hide();
+            $('#discountValueGroup').addClass('d-none');
+            $('#maxDiscountGroup').addClass('d-none');
+            return;
+        }
+
+        const isShipping = scope === 'SHIPPING';
+        $shipGroup.toggle(isShipping);
+        $discountGroup.toggle(!isShipping);
+
+        toggleDiscountFields();
+    }
+
+    function toggleDiscountFields() {
+        const type = $('input[name="loai"]:checked').val();
+
+        if (!type){
+            $('#discountUnit').text('%');
+            $('#discountValueGroup').addClass('d-none');
+            $('#maxDiscountGroup').addClass('d-none');
+            return;
+        }
+
+        const isPercent      = type === 'PERCENT';
+        const isFreeshipFull = type === 'FREESHIP_FULL';
+        const isFreeshipCap  = type === 'FREESHIP_CAP';
+
+        $('#discountUnit').text(isPercent ? '%' : 'VND');
+
+        // đổi input filter theo kiểu giảm
+        const $giaTri = $('#giaTriGiam');
+        if (isPercent){
+            $giaTri.attr('oninput', "this.value=this.value.replace(/[^0-9]/g,'')"); // CHỈ số nguyên
+            $giaTri.attr('placeholder','0');
+        } else {
+            $giaTri.attr('oninput', "this.value=this.value.replace(/[^0-9,]/g,'')"); // tiền: cho phép ,
+            $giaTri.attr('placeholder','0');
+        }
+
+        if (isFreeshipFull){
+            $('#discountValueGroup').addClass('d-none');
+            $('#giaTriGiam').val('0').prop('readonly', true);
+            $('#maxDiscountGroup').addClass('d-none');
+            $('#giaTriGiamToiDa').val('').prop('readonly', true);
+        } else if (isFreeshipCap){
+            $('#discountValueGroup').addClass('d-none');
+            $('#giaTriGiam').val('0').prop('readonly', true);
+            $('#maxDiscountGroup').removeClass('d-none');
+            $('#giaTriGiamToiDa').prop('readonly', false);
+        } else if (isPercent){
+            $('#discountValueGroup').removeClass('d-none');
+            $('#giaTriGiam').prop('readonly', false);
+            $('#maxDiscountGroup').removeClass('d-none');
+            $('#giaTriGiamToiDa').prop('readonly', false);
+        } else { // CASH
+            $('#discountValueGroup').removeClass('d-none');
+            $('#giaTriGiam').prop('readonly', false);
+            $('#maxDiscountGroup').addClass('d-none');
+            $('#giaTriGiamToiDa').val('').prop('readonly', true);
+        }
+    }
+
+    function toggleUsageCount() {
+        const checked = $('input[name="kieuPhieu"]:checked').val();
+        const isCaNhan = checked === 'ca_nhan';
+        const $luot = $('#gioiHanSuDung');
+
+        if (!checked){
+            $('#emailOptions').hide();
+            $luot.prop('readonly', false).val('');
+            $('#caNhanNote').hide();
+            return;
+        }
+
+        $('#emailOptions').toggle(isCaNhan);
+        if (isCaNhan){
+            $luot.val('1').prop('readonly', true);
+            $('#caNhanNote').show();
+        } else {
+            $luot.prop('readonly', false).val('');
+            $('#caNhanNote').hide();
+        }
+    }
+
+    /* ===== Validation tổng ===== */
+    function validateForm() {
+        let isValid = true;
+
+        // reset lỗi
+        $('.invalid-feedback').text('').hide();
+        $('.form-control').removeClass('is-invalid');
+        $('#phamViError,#loaiError,#kieuPhieuError,#ptttError').addClass('d-none').text('');
+        $('#paymentMethodSelect').next('.select2').find('.select2-selection').removeClass('is-invalid-s2');
+
+        // MA/TEN
+        if (!validateMaField()) isValid = false;
+        if (!validateTenField()) isValid = false;
+
+        // Datetime
+        const startVal = $('#ngayBatDau').val();
+        const endVal   = $('#ngayKetThuc').val();
+        const start = startVal ? new Date(startVal) : null;
+        const end   = endVal   ? new Date(endVal)   : null;
+        const now   = new Date();
+
+        if (!start){
+            $('#ngayBatDau').addClass('is-invalid'); $('#ngayBatDauError').text('Ngày bắt đầu không được để trống.').show(); isValid=false;
+        } else if (start < now){
+            $('#ngayBatDau').addClass('is-invalid'); $('#ngayBatDauError').text('Ngày bắt đầu không được trước thời điểm hiện tại.').show(); isValid=false;
+        }
+        if (!end){
+            $('#ngayKetThuc').addClass('is-invalid'); $('#ngayKetThucError').text('Ngày kết thúc không được để trống.').show(); isValid=false;
+        } else if (end < now){
+            $('#ngayKetThuc').addClass('is-invalid'); $('#ngayKetThucError').text('Ngày kết thúc không được trong quá khứ.').show(); isValid=false;
+        }
+        if (start && end && start > end){
+            $('#ngayBatDau').addClass('is-invalid'); $('#ngayBatDauError').text('Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.').show(); isValid=false;
+        }
+
+        // Radio groups
+        const scope = $('input[name="phamViApDung"]:checked').val();
+        if (!scope){ $('#phamViError').text('Vui lòng chọn phạm vi áp dụng.').removeClass('d-none'); isValid=false; }
+
+        const type = $('input[name="loai"]:checked').val();
+        if (scope && !type){ $('#loaiError').text('Vui lòng chọn kiểu/phương thức giảm giá.').removeClass('d-none'); isValid=false; }
+
+        const kieuChosen = $('input[name="kieuPhieu"]:checked').length > 0;
+        if (!kieuChosen){ $('#kieuPhieuError').text('Vui lòng chọn loại phiếu.').removeClass('d-none'); isValid=false; }
+
+        // Số liệu
+        const rawGiam = $('#giaTriGiam').val() || '';
+        const giam = parseFloat(parseNumber(rawGiam)||'0')||0;
+        const max  = parseFloat(parseNumber($('#giaTriGiamToiDa').val()||'0'))||0;
+        const minOrder = parseFloat(parseNumber($('#giaTriGiamToiThieu').val()||'0'))||0;
+
+        if (scope === 'ORDER' && type){
+            if (minOrder <= 0){
+                $('#giaTriGiamToiThieu').addClass('is-invalid');
+                $('#giaTriGiamToiThieuError').text('Đơn tối thiểu phải > 0.').show();
+                isValid = false;
+            }
+            if (type === 'PERCENT'){
+                // bắt buộc nguyên
+                if (!/^\d+$/.test(rawGiam)){
+                    $('#giaTriGiam').addClass('is-invalid');
+                    $('#giaTriGiamError').text('Phần trăm giảm phải là số nguyên.').show();
+                    isValid = false;
+                }
+                if (giam <= 0 || giam > 100){
+                    $('#giaTriGiam').addClass('is-invalid');
+                    $('#giaTriGiamError').text('Giảm theo % phải trong khoảng 1..100.').show();
+                    isValid = false;
+                }
+                if (max <= 0){
+                    $('#giaTriGiamToiDa').addClass('is-invalid');
+                    $('#giaTriGiamToiDaError').text('Giá trị giảm tối đa phải > 0 khi giảm theo %.').show();
+                    isValid = false;
+                }
+                if (minOrder > 0 && max >= minOrder){
+                    $('#giaTriGiamToiDa').addClass('is-invalid');
+                    $('#giaTriGiamToiDaError').text('Giá trị giảm tối đa phải nhỏ hơn đơn tối thiểu áp dụng.').show();
+                    isValid = false;
+                }
+            } else if (type === 'CASH'){
+                if (giam <= 0){
+                    $('#giaTriGiam').addClass('is-invalid');
+                    $('#giaTriGiamError').text('Giá trị giảm (tiền mặt) phải > 0.').show();
+                    isValid = false;
+                }
+                if (minOrder > 0 && giam >= minOrder){
+                    $('#giaTriGiam').addClass('is-invalid');
+                    $('#giaTriGiamError').text('Giá trị giảm (tiền mặt) phải nhỏ hơn đơn tối thiểu áp dụng.').show();
+                    isValid = false;
+                }
+            }
+        } else if (scope === 'SHIPPING' && type){
+            if (type === 'FREESHIP_CAP'){
+                if (minOrder <= 0){
+                    $('#giaTriGiamToiThieu').addClass('is-invalid');
+                    $('#giaTriGiamToiThieuError').text('Đơn tối thiểu phải > 0 cho FREESHIP_CAP.').show();
+                    isValid = false;
+                }
+                if (max <= 0){
+                    $('#giaTriGiamToiDa').addClass('is-invalid');
+                    $('#giaTriGiamToiDaError').text('Giảm phí ship tối đa phải > 0.').show();
+                    isValid = false;
+                }
+                if (minOrder > 0 && max >= minOrder){
+                    $('#giaTriGiamToiDa').addClass('is-invalid');
+                    $('#giaTriGiamToiDaError').text('Giảm phí ship tối đa phải nhỏ hơn đơn tối thiểu áp dụng.').show();
+                    isValid = false;
+                }
+            }
+        }
+
+        // Công khai/cá nhân
+        const isCaNhan = $('input[name="kieuPhieu"]:checked').val() === 'ca_nhan';
+        const gioiHan = $('#gioiHanSuDung').val();
+        if (!isCaNhan && (!gioiHan || parseInt(gioiHan) <= 0)){
+            $('#gioiHanSuDung').addClass('is-invalid'); $('#gioiHanSuDungError').text('Lượt sử dụng phải > 0 cho phiếu công khai.').show(); isValid=false;
+        }
+        if (isCaNhan && $('.customerCheckbox').length>0 && $('.customerCheckbox:checked').length === 0){
+            $('#emailOptions .alert').remove();
+            $('#emailOptions').prepend('<div class="alert alert-danger mb-3">Vui lòng chọn ít nhất một khách hàng cho phiếu cá nhân.</div>');
+            isValid=false;
+        }
+
+        // PTTT (không tính 'all')
+        const ptttChosen = ($('#paymentMethodSelect').val() || []).filter(v => v !== 'all');
+        if (ptttChosen.length === 0){
+            $('#ptttError').text('vui lòng chọn ít nhất 1 pttt khi chưa chọn').removeClass('d-none');
+            $('#paymentMethodSelect').next('.select2').find('.select2-selection').addClass('is-invalid-s2');
+            isValid = false;
+        }
+
+        if (isValid){
+            Swal.fire({
+                title: 'Xác nhận lưu',
+                text: 'Bạn có chắc chắn muốn lưu phiếu giảm giá này không?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Xác nhận',
+                cancelButtonText: 'Hủy',
+                confirmButtonColor: '#153054', // primary
+                cancelButtonColor: '#9FD5F7'   // secondary
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    doBeforeSubmit();
+                }
+            });
+        }
+        return isValid;
+
+    }
+
+    /* ===== Draft Save/Restore (optional) ===== */
+    function collectFormState(){
+        return {
+            ma: $('#ma').val(), ten: $('#ten').val(),
+            ngayBatDau: $('#ngayBatDau').val(), ngayKetThuc: $('#ngayKetThuc').val(),
+            phamViApDung: $('input[name="phamViApDung"]:checked').val(),
+            loai: $('input[name="loai"]:checked').val(),
+            giaTriGiam: $('#giaTriGiam').val(), giaTriGiamToiDa: $('#giaTriGiamToiDa').val(), giaTriGiamToiThieu: $('#giaTriGiamToiThieu').val(),
+            kieuPhieu: $('input[name="kieuPhieu"]:checked').val(),
+            gioiHanSuDung: $('#gioiHanSuDung').val(),
+            selectedPtttIds: $('#paymentMethodSelect').val() || [],
+            sendMail: $('#sendMail').is(':checked'),
+            selectedCustomerIds: $('.customerCheckbox:checked').map(function(){return this.value;}).get()
+        };
+    }
+    function saveFormState(){ try{ sessionStorage.setItem('voucherCreateFormState', JSON.stringify(collectFormState())); }catch(e){} }
+    function restoreFormState(){
+        try{
+            const raw = sessionStorage.getItem('voucherCreateFormState'); if (!raw) return;
+            const s = JSON.parse(raw);
+            if (s.ma) $('#ma').val(s.ma);
+            if (s.ten) $('#ten').val(s.ten);
+            if (s.ngayBatDau) $('#ngayBatDau').val(s.ngayBatDau);
+            if (s.ngayKetThuc) $('#ngayKetThuc').val(s.ngayKetThuc);
+            if (s.phamViApDung) $('input[name="phamViApDung"][value="'+s.phamViApDung+'"]').prop('checked', true);
+            if (s.loai) $('input[name="loai"][value="'+s.loai+'"]').prop('checked', true);
+            if (s.giaTriGiam) $('#giaTriGiam').val(s.giaTriGiam);
+            if (s.giaTriGiamToiDa) $('#giaTriGiamToiDa').val(s.giaTriGiamToiDa);
+            if (s.giaTriGiamToiThieu) $('#giaTriGiamToiThieu').val(s.giaTriGiamToiThieu);
+            if (s.kieuPhieu) $('input[name="kieuPhieu"][value="'+s.kieuPhieu+'"]').prop('checked', true);
+            if (typeof s.sendMail === 'boolean') $('#sendMail').prop('checked', s.sendMail);
+            if (Array.isArray(s.selectedPtttIds)) $('#paymentMethodSelect').val(s.selectedPtttIds).trigger('change');
+            if (Array.isArray(s.selectedCustomerIds)) s.selectedCustomerIds.forEach(id => $('.customerCheckbox[value="'+id+'"]').prop('checked', true));
+        }catch(e){}
+    }
+
+    /* ===== READY ===== */
+    $(document).ready(function () {
+        restoreFormState();
+
+        // Date rules
+        setMinNowForDatetimeInputs();
+        syncEndMinWithStart();
+        $('#ngayBatDau').on('change', function(){ syncEndMinWithStart(); saveFormState(); });
+        setInterval(setMinNowForDatetimeInputs, 60000);
+
+        // Autosave
+        $(document).on('input change', '#createVoucherForm input, #createVoucherForm select', saveFormState);
+
+        // blur validate MA/TEN
+        $('#ma').on('blur', validateMaField);
+        $('#ten').on('blur', validateTenField);
+
+        // Select2 + xử lý "all"
+        $('#paymentMethodSelect').select2({
+            placeholder:'Chọn phương thức...',
+            allowClear:true, closeOnSelect:false, width:'100%'
+        }).on('change', function(){
+            const selected = $(this).val() || [];
+            const allOptions = $('#paymentMethodSelect option').map(function(){return $(this).val();}).get().filter(v=>'all'!==v);
+            if (selected.includes('all')) $(this).val(allOptions).trigger('change.select2');
+            else if (selected.length === allOptions.length) $(this).val(['all'].concat(allOptions)).trigger('change.select2');
+
+            const chosen = ($(this).val() || []).filter(v => v !== 'all');
+            if (chosen.length > 0){
+                $('#ptttError').addClass('d-none').text('');
+                $('#paymentMethodSelect').next('.select2').find('.select2-selection').removeClass('is-invalid-s2');
+            }
+            saveFormState();
+        });
+
+        // Định dạng số khi blur
+        [
+            { selector:'#giaTriGiam', allowDecimal:true },
+            { selector:'#giaTriGiamToiDa', allowDecimal:true },
+            { selector:'#giaTriGiamToiThieu', allowDecimal:true },
+            { selector:'#gioiHanSuDung', allowDecimal:false }
+        ].forEach(cfg=>{
+            const $el=$(cfg.selector);
+            if ($el.val()) $el.val(formatNumber($el.val(), cfg.allowDecimal));
+            $el.on('blur', function(){ $(this).val(formatNumber($(this).val(), cfg.allowDecimal)); saveFormState(); });
+        });
+
+        // Tìm kiếm KH + chọn tất cả
+        $('#searchCustomerInput').on('keyup', function(){
+            const kw=$(this).val().toLowerCase();
+            $('#customerTableBody tr').each(function(){
+                const vis=$(this).text().toLowerCase().indexOf(kw)>-1;
+                $(this).toggle(vis);
+            });
+            const all=$('.customerCheckbox:visible').length;
+            const checked=$('.customerCheckbox:visible:checked').length;
+            $('#selectAllCustomers').prop('checked', all>0 && all===checked);
+        });
+        $('#selectAllCustomers').on('change', function(){
+            const checked=$(this).is(':checked');
+            $('.customerCheckbox:visible').prop('checked', checked);
+            saveFormState();
+        });
+        $(document).on('change','.customerCheckbox', function(){
+            const all=$('.customerCheckbox:visible').length;
+            const checked=$('.customerCheckbox:visible:checked').length;
+            $('#selectAllCustomers').prop('checked', all>0 && all===checked);
+            saveFormState();
+        });
+
+        // Khởi tạo UI ban đầu (không auto-check)
+        toggleScopeFields();
+        toggleDiscountFields();
+        toggleUsageCount();
+
+        // Submit xác nhận
+        // $('#confirmSubmit').on('click', function(){
+        //     try { sessionStorage.removeItem(STORAGE_KEY); } catch(e){}
+        //     // parse về dạng thô trước khi submit
+        //     ['#giaTriGiam','#giaTriGiamToiDa','#giaTriGiamToiThieu','#gioiHanSuDung']
+        //         .forEach(sel => $(sel).val(parseNumber($(sel).val())));
+        //     const selected = $('#paymentMethodSelect').val();
+        //     if (selected && selected.includes('all')){
+        //         const allOptions = $('#paymentMethodSelect option')
+        //             .map(function(){return $(this).val();}).get().filter(v=>'all'!==v);
+        //         $('#paymentMethodSelect').val(allOptions).trigger('change');
+        //     }
+        //     $('#createVoucherForm').submit();
+        // });
+
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+</html>

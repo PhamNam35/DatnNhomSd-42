@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ACV Store - Đơn mua của tôi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/image/ACV.png" type="image/png" sizes="32x32"/>
+    <style>
+        /* Enhanced styles with better UX/UI */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            padding-top: 118px;
+            line-height: 1.6;
+        }
+
+        button[disabled] {
+            pointer-events: none;
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Enhanced navbar */
+        .navbar {
+            background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .navbar { position: fixed; top: 40px; left: 0; width: 100%; z-index: 1040; }
+
+        /* Enhanced ticker */
+        .ticker {
+            background: linear-gradient(90deg, #9FD5F7 0%, #b8e0f8 100%);
+            color: #153054;
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1050;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        /* Enhanced dropdown */
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            z-index: 1000;
+            padding: 8px;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dropdown-menu a {
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+
+        .dropdown-menu a:hover {
+            background: linear-gradient(135deg, #e0ebf5 0%, #f1f8ff 100%);
+            transform: translateX(4px);
+        }
+
+        /* Enhanced search bar */
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .search-suggestions.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .suggestion-item:hover {
+            background-color: #f1f5f9;
+        }
+        .suggestion-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .history-item:hover {
+            background-color: #e2e8f0;
+        }
+        .history-item .highlight {
+            background-color: #9FD5F7;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .history-item .delete-btn {
+            color: #ef4444;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        .history-item .delete-btn:hover {
+            color: #b91c1c;
+        }
+
+
+        /* Enhanced page title */
+        .page-title {
+            background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 2rem;
+        }
+
+        /* Enhanced tabs */
+        .nav-tabs {
+            border: none;
+            background: white;
+            border-radius: 16px;
+            padding: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        .nav-tabs .nav-item {
+            margin: 0 4px;
+        }
+
+        .nav-tabs .nav-link {
+            color: #64748b;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tabs .nav-link:hover {
+            color: #153054;
+            background: rgba(159, 213, 247, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(21, 48, 84, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .nav-tabs .nav-link.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Enhanced order cards */
+        .order-card {
+            background: white;
+            border: none;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            padding: 24px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .order-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #153054 0%, #9FD5F7 100%);
+        }
+
+        .order-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.12);
+        }
+
+        /* Enhanced order header */
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .order-info h6 {
+            color: #153054;
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .order-date {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Enhanced status badges */
+        .order-status {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            color: white;
+            box-shadow: 0 2px 10px rgba(21, 48, 84, 0.2);
+        }
+
+        /* Enhanced product items */
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            margin: 8px 0;
+            background: #f8fafc;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            background: #f1f5f9;
+            transform: translateX(4px);
+        }
+
+        .order-product-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-right: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .order-product-img:hover {
+            transform: scale(1.05);
+        }
+
+        .product-details h6 {
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 15px;
+        }
+
+        .product-meta {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Enhanced footer section */
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f1f5f9;
+        }
+
+        .total-amount {
+            font-size: 18px;
+            font-weight: 700;
+            color: #153054;
+        }
+
+        .total-label {
+            color: #64748b;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        /* Enhanced buttons */
+        .btn-outline-primary {
+            border: 2px solid #153054;
+            color: #153054;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-outline-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .btn-outline-primary:hover {
+            color: white;
+            border-color: #153054;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(21, 48, 84, 0.3);
+        }
+
+        .btn-outline-primary:hover::before {
+            left: 0;
+        }
+
+        /* Enhanced empty state */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #cbd5e1;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h3 {
+            color: #475569;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .empty-state a {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #153054;
+            font-weight: 600;
+            text-decoration: none;
+            padding: 12px 24px;
+            border: 2px solid #153054;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .empty-state a:hover {
+            background: #153054;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+
+        /* Enhanced footer */
+        footer {
+            background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+        }
+
+        /* Enhanced Pagination styles */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-top: 20px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .pagination .page-item {
+            margin: 0;
+        }
+
+        .pagination .page-item .page-link {
+            color: #153054;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 12px;
+            padding: 10px 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .pagination .page-item .page-link:hover {
+            background: #e0ebf5;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 10px rgba(21, 48, 84, 0.1);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #153054;
+            background: #e2e8f0;
+            cursor: not-allowed;
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            body { padding-top: 100px; }
+
+            .order-header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .order-footer {
+                flex-direction: column;
+                gap: 16px;
+                align-items: flex-start;
+            }
+
+            .nav-tabs {
+                padding: 4px;
+            }
+
+            .nav-tabs .nav-link {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
+
+            .product-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .order-product-img {
+                margin-right: 0;
+                margin-bottom: 12px;
+            }
+
+            .pagination {
+                flex-direction: column;
+                gap: 10px;
+                padding: 8px;
+            }
+
+            .pagination .page-item .page-link {
+                padding: 8px 12px;
+            }
+        }
+
+        /* Loading animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Focus styles for accessibility */
+        .nav-link:focus,
+        .btn:focus,
+        input:focus {
+            outline: 2px solid #9FD5F7;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ticker py-2 overflow-hidden fixed top-0 w-full z-50">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+        🎉 Khuyến mãi đặc biệt: Giảm giá lên đến 50% cho tất cả sản phẩm hôm nay! 🎉 - Miễn phí vận chuyển cho đơn từ 500k!
+    </marquee>
+</div>
+
+<div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
+
+<div class="container mx-auto py-8 px-4">
+    <h1 class="page-title text-4xl mb-8 text-center">
+        <i class="fas fa-shopping-bag mr-3"></i>Đơn mua của bạn
+    </h1>
+    <p class="text-center text-gray-600 mb-4">Danh sách được sắp xếp theo thời gian mới nhất</p>
+
+    <!-- Add this search bar right after the page-title in the container -->
+    <div class="relative mb-6">
+        <div class="flex items-center bg-white rounded-lg shadow-md p-2">
+            <i class="fas fa-search text-gray-400 mr-2"></i>
+            <input type="text" id="orderSearch" class="form-control flex-1 border-none focus:ring-0"
+                   placeholder="Tìm kiếm theo mã đơn hàng..." aria-label="Tìm kiếm đơn hàng">
+        </div>
+        <div id="searchSuggestions" class="search-suggestions"></div>
+    </div>
+
+    <ul class="nav nav-tabs mb-6" id="orderTabs">
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'tat-ca'} ? ' active'" th:href="@{/dsdon-mua(status='tat-ca')}">
+                <i class="fas fa-list mr-2"></i>Tất cả
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'cho-xac-nhan'} ? ' active'" th:href="@{/dsdon-mua(status='cho-xac-nhan')}">
+                <i class="fas fa-clock mr-2"></i>Chờ xác nhận
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'da-xac-nhan'} ? ' active'" th:href="@{/dsdon-mua(status='da-xac-nhan')}">
+                <i class="fas fa-check-circle mr-2"></i>Đã xác nhận
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'dang-xu-ly-online'} ? ' active'" th:href="@{/dsdon-mua(status='dang-xu-ly-online')}">
+                <i class="fas fa-cog mr-2"></i>Đang xử lý
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'dang-van-chuyen'} ? ' active'" th:href="@{/dsdon-mua(status='dang-van-chuyen')}">
+                <i class="fas fa-truck mr-2"></i>Đang vận chuyển
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'van-chuyen-thanh-cong'} ? ' active'" th:href="@{/dsdon-mua(status='van-chuyen-thanh-cong')}">
+                <i class="fas fa-shipping-fast mr-2"></i>Vận chuyển thành công
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'hoan-thanh'} ? ' active'" th:href="@{/dsdon-mua(status='hoan-thanh')}">
+                <i class="fas fa-check-double mr-2"></i>Hoàn thành
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'da-tra-hang'} ? ' active'" th:href="@{/dsdon-mua(status='da-tra-hang')}">
+                <i class="fas fa-undo mr-2"></i>Đã trả hàng
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'da-doi-hang'} ? ' active'" th:href="@{/dsdon-mua(status='da-doi-hang')}">
+                <i class="fas fa-undo mr-2"></i>Đã đổi hàng
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'cho-doi-hang'} ? ' active'" th:href="@{/dsdon-mua(status='cho-doi-hang')}">
+                <i class="fas fa-undo mr-2"></i>Chờ xử lý đổi hàng
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" th:classappend="${status == 'da-huy'} ? ' active'" th:href="@{/dsdon-mua(status='da-huy')}">
+                <i class="fas fa-times-circle mr-2"></i>Đã hủy
+            </a>
+        </li>
+    </ul>
+
+    <div th:if="${danhSachHoaDon != null and !#lists.isEmpty(danhSachHoaDon)}">
+        <div th:each="hoaDon : ${danhSachHoaDon}" class="order-card">
+            <div class="order-header">
+                <div class="order-info">
+                    <h6><i class="fas fa-receipt mr-2"></i>Mã đơn: <span th:text="${hoaDon.donHang.maDonHang}"></span></h6>
+                    <div class="order-date">
+                        <i class="fas fa-calendar-alt mr-1"></i>
+                        <span th:text="${hoaDon.ngayTao.toLocalDate()} + ' ' + ${hoaDon.ngayTao.toLocalTime()}"></span>
+                    </div>
+                </div>
+                <div class="order-status" th:text="${hoaDon.trangThai}"></div>
+            </div>
+
+            <div class="products-section">
+
+                <div th:each="chiTiet : ${hoaDon.donHang.chiTietDonHangs}" class="product-item">
+                    <img th:src="${chiTiet.chiTietSanPham.hinhAnhSanPhams != null and !#lists.isEmpty(chiTiet.chiTietSanPham.hinhAnhSanPhams) ? chiTiet.chiTietSanPham.hinhAnhSanPhams[0].urlHinhAnh : '/images/default-product.jpg'}"
+                         class="order-product-img" alt="Ảnh sản phẩm"/>
+                    <div class="product-details flex-1">
+                        <h6 th:text="${chiTiet.tenSanPham}"></h6>
+                        <div class="product-meta">
+                            <span><i class="fas fa-cubes mr-1"></i>Số lượng: <strong th:text="${chiTiet.soLuong}"></strong></span>
+                            <span class="ml-4"><i class="fas fa-tag mr-1"></i>Giá: <strong th:text="${chiTiet.formattedGia} + ' VNĐ'"></strong></span>
+                        </div>
+                    </div>
+                    <div th:if="${hoaDon.trangThai == 'Hoàn thành' and !chiTiet.daDanhGia}" class="ml-4">
+                        <a th:href="@{'/dsdon-mua/danh-gia/' + ${hoaDon.id} + '?chiTietSanPhamId=' + ${chiTiet.chiTietSanPham.id}}"
+                           class="btn btn-outline-primary">
+                            <i class="fas fa-star mr-2"></i>Đánh giá
+                        </a>
+                    </div>
+                    <span th:if="${hoaDon.trangThai == 'Hoàn thành' and chiTiet.daDanhGia}" class="text-success font-semibold ml-4">
+        <i class="fas fa-check mr-1"></i>Đã đánh giá
+    </span>
+                </div>
+            </div>
+
+            <div class="order-footer">
+                <div class="total-amount">
+                    <span class="total-label">Tổng tiền:</span>
+                    <span th:text="${hoaDon.formattedTongTien} + ' VNĐ'"></span>
+                </div>
+                <a th:href="@{'/dsdon-mua/chi-tiet/' + ${hoaDon.id}}" class="btn btn-outline-primary">
+                    <i class="fas fa-eye mr-2"></i>Xem chi tiết
+                </a>
+            </div>
+        </div>
+
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                <li class="page-item" th:class="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/dsdon-mua(status=${status}, page=${currentPage - 1})}" aria-label="Previous">
+                        <span aria-hidden="true">Trước</span>
+                    </a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:class="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/dsdon-mua(status=${status}, page=${i})}" th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:class="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/dsdon-mua(status=${status}, page=${currentPage + 1})}" aria-label="Next">
+                        <span aria-hidden="true">Sau</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div th:if="${danhSachHoaDon == null or #lists.isEmpty(danhSachHoaDon)}" class="empty-state">
+        <i class="fas fa-shopping-bag"></i>
+        <h3>Chưa có đơn hàng nào</h3>
+        <p>Bạn chưa có đơn hàng nào trong danh sách này. Hãy khám phá các sản phẩm tuyệt vời của chúng tôi!</p>
+        <a href="/">
+            <i class="fas fa-arrow-left mr-2"></i>Quay lại mua sắm
+        </a>
+    </div>
+</div>
+
+
+<footer style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
+  <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div>
+      <h3 class="text-lg font-bold mb-4">ACV Store</h3>
+      <p class="text-sm">Cửa hàng thời trang hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
+      <ul class="space-y-2">
+        <li><a href="/new" class="hover:text-blue-300">Sản phẩm mới</a></li>
+        <li><a href="/all" class="hover:text-blue-300">Tất cả sản phẩm</a></li>
+        <li><a href="/bestsellers" class="hover:text-blue-300">Sản phẩm bán chạy</a></li>
+        <li><a href="/chinh-sach" class="hover:text-blue-300">Chính sách</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold mb-4">Liên hệ</h3>
+      <p class="text-sm">Địa chỉ: 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội, Việt Nam</p>
+      <p class="text-sm">Email: datn.acv@gmail.com</p>
+      <p class="text-sm">Hotline: 0911 006 045</p>
+      <div class="flex space-x-4 mt-4">
+        <a href="https://www.facebook.com" class="text-white hover:text-blue-300" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com" class="text-white hover:text-blue-300" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://twitter.com" class="text-white hover:text-blue-300" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="container mx-auto mt-8">
+    <div class="map-container relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7142835949912!2d105.85287637508011!3d21.004087180639065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ad002fc50fd1%3A0x9a7962d208d20498!2sACV%20Store!5e0!3m2!1sen!2s!4v1755701406991!5m2!1sen!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <p class="text-center text-sm mt-2 text-gray-300">* Bản đồ hiển thị vị trí chi nhánh chính tại ACV Store tại 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội. Vui lòng liên hệ để xác nhận giờ mở cửa.</p>
+  </div>
+  <div class="text-center mt-8 text-sm">© 2025 ACV Store. All rights reserved.</div>
+
+  <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10"></div>
+</footer>
+
+<button id="back-to-top" class="fixed bottom-20 right-20 bg-[#153054] hover:bg-[#1e4066] text-white p-4 rounded-full shadow-lg hidden transition-all duration-300 hover:scale-110" aria-label="Quay lại đầu trang">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="/js/navbar.js"></script>
+<script>
+
+    // Add this script to the bottom of your <body> or in the existing <script> tag in don-mua.html
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to update order statuses
+        function updateOrderStatuses() {
+            const orderCards = document.querySelectorAll('.order-card');
+            orderCards.forEach(card => {
+                const orderId = card.querySelector('.order-info h6 span').textContent; // Assuming maDonHang is unique and used as ID
+                fetch(`/dsdon-mua/api/orders/status?maDonHang=${encodeURIComponent(orderId)}`, {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.trangThai) {
+                            const statusElement = card.querySelector('.order-status');
+                            if (statusElement.textContent !== data.trangThai) {
+                                statusElement.textContent = data.trangThai;
+                                // Optional: Add animation or highlight for change
+                                statusElement.classList.add('bg-yellow-500'); // Example: Highlight change
+                                setTimeout(() => statusElement.classList.remove('bg-yellow-500'), 2000);
+                            }
+                        }
+                    })
+                    .catch(error => console.error('Error updating status:', error));
+            });
+        }
+
+        // Initial update
+        updateOrderStatuses();
+
+        // Poll every 30 seconds (adjust as needed)
+        setInterval(updateOrderStatuses, 1000);
+
+
+    // Cập nhật số lượng giỏ hàng
+    async function updateCartCount() {
+        try {
+            const response = await fetch('/api/cart', { credentials: 'include' });
+            if (response.ok) {
+                const data = await response.json();
+                const cartCount = data.chiTietGioHang ? data.chiTietGioHang.length : 0;
+                document.getElementById('cart-count').textContent = cartCount;
+            } else if (response.status === 401) {
+                document.getElementById('cart-count').textContent = 0;
+            }
+        } catch (error) {
+            console.error('Lỗi khi cập nhật số lượng giỏ hàng:', error);
+        }
+    }
+
+    // Back to top button
+    window.addEventListener('scroll', function() {
+        const backToTop = document.getElementById('back-to-top');
+        if (window.pageYOffset > 300) {
+            backToTop.classList.remove('hidden');
+        } else {
+            backToTop.classList.add('hidden');
+        }
+    });
+
+    document.getElementById('back-to-top').addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Khởi tạo trang
+    document.addEventListener('DOMContentLoaded', () => {
+        updateCartCount();
+
+        // Add loading animation to order cards
+        const orderCards = document.querySelectorAll('.order-card');
+        orderCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'all 0.6s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+
+    // Add this to your existing script section
+    document.addEventListener('DOMContentLoaded', () => {
+        const searchInput = document.getElementById('orderSearch');
+        const searchSuggestions = document.getElementById('searchSuggestions');
+        let debounceTimer;
+
+        searchInput.addEventListener('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const query = this.value.trim();
+
+                if (query.length >= 3) {
+                    fetch(`/dsdon-mua/api/orders/search?maDonHang=${encodeURIComponent(query)}`, {
+                        credentials: 'include'
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            searchSuggestions.innerHTML = '';
+                            if (data.length > 0) {
+                                searchSuggestions.classList.add('active');
+                                data.forEach(order => {
+                                    const suggestion = document.createElement('div');
+                                    suggestion.className = 'p-3 hover:bg-gray-100 cursor-pointer border-b';
+                                    suggestion.innerHTML = `
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">${order.maDonHang}</span>
+                                    <span class="text-gray-600">${order.trangThai}</span>
+                                </div>
+                                <div class="text-sm text-gray-500">${order.ngayTao}</div>
+                            `;
+                                    suggestion.addEventListener('click', () => {
+                                        window.location.href = `/dsdon-mua/chi-tiet/${order.id}`;
+                                    });
+                                    searchSuggestions.appendChild(suggestion);
+                                });
+                            } else {
+                                searchSuggestions.classList.remove('active');
+                                searchSuggestions.innerHTML = '<div class="p-3 text-gray-500">Không tìm thấy đơn hàng</div>';
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error searching orders:', error);
+                            searchSuggestions.classList.add('active');
+                            searchSuggestions.innerHTML = '<div class="p-3 text-red-500">Lỗi khi tìm kiếm đơn hàng</div>';
+                        });
+                } else {
+                    searchSuggestions.classList.remove('active');
+                    searchSuggestions.innerHTML = '';
+                }
+            }, 300);
+        });
+
+        // Close suggestions when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchSuggestions.contains(e.target)) {
+                searchSuggestions.classList.remove('active');
+                searchSuggestions.innerHTML = '';
+            }
+        });
+    });
+
+    });
+</script>
+</body>
+</html>

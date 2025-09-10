@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACV Store - Hồ sơ cá nhân</title>
+  <meta name="_csrf" th:content="${_csrf?.token}"/>
+  <meta name="_csrf_header" th:content="${_csrf?.headerName}"/>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
+  <style>
+    .navbar {  background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .navbar { position: fixed; top: 40px; left: 0; width: 100%; z-index: 1040; }
+
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 300px;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .search-suggestions.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .suggestion-item:hover {
+      background-color: #f1f5f9;
+    }
+    .suggestion-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    .history-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+      background-color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .history-item:hover {
+      background-color: #e2e8f0;
+    }
+    .history-item .highlight {
+      background-color: #9FD5F7;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .history-item .delete-btn {
+      color: #ef4444;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 5px;
+      transition: color 0.2s;
+    }
+    .history-item .delete-btn:hover {
+      color: #b91c1c;
+    }
+
+    /* Enhanced dropdown */
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      min-width: 200px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      z-index: 1000;
+      padding: 8px;
+    }
+
+    .dropdown:hover .dropdown-menu {
+      display: block;
+      animation: fadeInUp 0.3s ease;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-menu a {
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .dropdown-menu a:hover {
+      background: linear-gradient(135deg, #e0ebf5 0%, #f1f8ff 100%);
+      transform: translateX(4px);
+    }
+
+    /* Enhanced search bar */
+    .search-container input {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .search-container input:focus {
+      border-color: #9FD5F7;
+      box-shadow: 0 0 0 4px rgba(159, 213, 247, 0.2);
+    }
+
+    /* Enhanced page title */
+    .page-title {
+      background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 2rem;
+    }
+
+    /* Enhanced tabs */
+    .nav-tabs {
+      border: none;
+      background: white;
+      border-radius: 16px;
+      padding: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      margin-bottom: 2rem;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .nav-tabs .nav-item {
+      margin: 0 4px;
+    }
+
+    .nav-tabs .nav-link {
+      color: #64748b;
+      border: none;
+      border-radius: 12px;
+      padding: 12px 20px;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .nav-tabs .nav-link:hover {
+      color: #153054;
+      background: rgba(159, 213, 247, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .nav-tabs .nav-link.active {
+      background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(21, 48, 84, 0.3);
+      transform: translateY(-2px);
+    }
+
+    .nav-tabs .nav-link.active::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%);
+      pointer-events: none;
+    }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      padding-top: 118px;
+      line-height: 1.6;
+    }
+    .page-title { font-size: 1.8rem; font-weight: 700; color: #153054; margin-bottom: 20px; }
+    .card { border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .form-label { font-weight: 600; }
+    .form-control, .form-select {
+      border: 2px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 0.95rem;
+    }
+    .ticker { background-color: #9FD5F7; color: #153054; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 1050; }
+    .form-control:focus, .form-select:focus {
+      border-color: #153054;
+      box-shadow: 0 0 0 3px rgba(21, 48, 84, 0.1);
+    }
+    .btn-primary { background-color: #153054; border: none; }
+    .btn-primary:hover { background-color: #1e4066; }
+    .btn-secondary { background-color: #e2e6ea; border: none; color: #153054; }
+    .btn-secondary:hover { background-color: #d6dade; }
+    .btn-success { background-color: #28a745; border: none; }
+    .btn-success:hover { background-color: #218838; }
+    .address-cell { max-width: 250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .avatar { width: 80px; height: 80px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 2rem; color: #888; }
+    .toast-container { position: fixed; top: 20px; right: 20px; z-index: 20000; }
+  </style>
+</head>
+<body>
+
+<div class="ticker py-1 overflow-hidden" style="height: 40px;">
+  <marquee behavior="scroll" direction="left" scrollamount="5">
+    🎉 Khuyến mãi đặc biệt: Giảm giá lên đến 50% cho tất cả sản phẩm hôm nay! 🎉 - Miễn phí vận chuyển cho đơn từ 500k!
+  </marquee>
+</div>
+
+<div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
+
+<!-- Toast Container -->
+<div class="toast-container"></div>
+
+<div class="container py-5">
+  <h1 class="page-title"><i class="fas fa-user-circle me-2"></i> Hồ sơ cá nhân</h1>
+
+  <!-- Alert từ backend -->
+  <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+  <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+
+  <!-- Thông tin cá nhân -->
+  <div class="card mb-4">
+    <div class="card-header fw-bold"><i class="fas fa-id-card me-1"></i> Thông tin cá nhân</div>
+    <div class="card-body">
+      <div class="d-flex align-items-center mb-4">
+        <div class="avatar me-3"><i class="fas fa-user"></i></div>
+        <div>
+          <div class="fw-bold" th:text="${user.hoTen}">Nguyễn Văn A</div>
+          <small class="text-muted" th:text="${user.email}">example@email.com</small>
+        </div>
+      </div>
+
+      <!-- Form cập nhật thông tin -->
+      <form id="profileForm" th:action="@{/profile}" method="post">
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Họ tên</label>
+            <input type="text" class="form-control" name="hoTen" th:value="${user.hoTen}" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Email</label>
+            <input type="text" class="form-control" name="email" th:value="${user.email}" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Số điện thoại</label>
+            <input type="text" class="form-control" name="soDienThoai" th:value="${user.soDienThoai}" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Mật khẩu mới</label>
+            <input type="password" class="form-control" name="matKhau" placeholder="Để trống nếu không đổi" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" id="updateProfileBtn"><i class="fas fa-save me-1"></i> Cập nhật</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Danh sách địa chỉ -->
+  <div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+      <span class="fw-bold"><i class="fas fa-map-marker-alt me-1"></i> Địa chỉ của tôi</span>
+      <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#addAddressModal">
+        <i class="fas fa-plus me-1"></i> Thêm địa chỉ
+      </button>
+    </div>
+    <div class="card-body">
+      <table class="table align-middle">
+        <thead>
+        <tr>
+          <th>Người nhận</th>
+          <th>Số điện thoại</th>
+          <th>Địa chỉ</th>
+          <th>Mặc định</th>
+          <th>Hành động</th>
+        </tr>
+        </thead>
+        <tbody id="addressTableBody">
+        <tr th:each="addr : ${addresses}" th:attr="data-id=${addr.id}">
+          <td th:text="${addr.nguoiNhan != null ? addr.nguoiNhan : addr.nguoiDung.hoTen}"></td>
+          <td th:text="${addr.soDienThoaiNguoiNhan != null ? addr.soDienThoaiNguoiNhan : addr.nguoiDung.soDienThoai}"></td>
+          <td class="address-cell"
+              th:title="${addr.tinhThanhPho + ', ' + addr.quanHuyen + ', ' + addr.phuongXa + ', ' + addr.chiTietDiaChi}"
+              th:text="${addr.tinhThanhPho + ', ' + addr.quanHuyen + ', ' + addr.phuongXa + ', ' + addr.chiTietDiaChi}">
+          </td>
+          <td>
+            <span th:if="${addr.macDinh}" class="badge bg-success">Mặc định</span>
+          </td>
+          <td>
+            <button class="btn btn-primary btn-sm edit-address-btn" th:data-id="${addr.id}" th:data-bs-target="'#editAddressModal' + ${addr.id}">
+              <i class="fas fa-edit"></i>
+            </button>
+<!--            <button class="btn btn-danger btn-sm delete-address-btn" th:data-id="${addr.id}">-->
+<!--              <i class="fas fa-trash"></i>-->
+<!--            </button>-->
+            <button th:if="${!addr.macDinh}" type="button" class="btn btn-secondary btn-sm set-default-btn"
+                    th:data-id="${addr.id}">
+              Đặt mặc định
+            </button>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Thêm Địa chỉ -->
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="addAddressModalLabel">Thêm địa chỉ mới</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addAddressForm">
+          <div class="mb-3">
+            <label for="addNguoiNhan" class="form-label">Tên người nhận <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="addNguoiNhan" name="nguoiNhan"
+                   required maxlength="50"
+                   pattern="(?! )(?!.* {2})[A-Za-zÀ-ỿ\u0110\u0111]+(?: [A-Za-zÀ-ỿ\u0110\u0111]+)*"
+                   title="Chỉ chữ và khoảng trắng, không dư khoảng trắng">
+          </div>
+          <div class="mb-3">
+            <label for="addSoDienThoaiNguoiNhan" class="form-label">Số điện thoại người nhận <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="addSoDienThoaiNguoiNhan" name="soDienThoaiNguoiNhan"
+                   required inputmode="tel"
+                   pattern="(0(3|5|7|8|9)\d{8}|02\d{9})"
+                   title="Di động: 03/05/07/08/09 + 8 số; Cố định: 02 + 9 số">
+          </div>
+          <div class="mb-3">
+            <label for="addTinhThanhPho" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+            <select class="form-select" id="addTinhThanhPho" name="tinhThanhPho" required>
+              <option value="">Chọn tỉnh/thành phố</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="addQuanHuyen" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+            <select class="form-select" id="addQuanHuyen" name="quanHuyen" required>
+              <option value="">Chọn quận/huyện</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="addPhuongXa" class="form-label">Phường/Xã <span class="text-danger">*</span></label>
+            <select class="form-select" id="addPhuongXa" name="phuongXa" required>
+              <option value="">Chọn phường/xã</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="addChiTietDiaChi" class="form-label">Địa chỉ chi tiết</label>
+            <input type="text" class="form-control" id="addChiTietDiaChi" name="chiTietDiaChi"
+                   required maxlength="200"
+                   pattern="^(?! )(?!.* {2})(?!.*[<>\'\\|?*%$!~^=&{}\[\];])[0-9A-Za-zÀ-ỿ.,:/#()\-\s]{3,200}$"
+            title="3–200 ký tự. Không chứa: < > &quot; ' \ | ? * % $ ! ~ ^ = & { } [ ] ; . Không có khoảng trắng đầu/cuối hay 2 khoảng trắng liên tiếp.">
+          </div>
+          <div class="mb-3 form-check">
+            <input type="checkbox" class="form-check-input" id="addMacDinh" name="macDinh">
+            <label class="form-check-label" for="addMacDinh">Đặt làm mặc định</label>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+            <button type="submit" class="btn btn-primary" id="addAddressBtn">Lưu</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Sửa Địa chỉ -->
+<th:block th:each="addr : ${addresses}">
+  <div class="modal fade" th:id="'editAddressModal' + ${addr.id}" tabindex="-1" th:aria-labelledby="'editAddressModalLabel' + ${addr.id}" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header bg-primary text-white">
+          <h5 class="modal-title" th:id="'editAddressModalLabel' + ${addr.id}">Sửa địa chỉ</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form th:id="'editAddressForm' + ${addr.id}">
+            <input type="hidden" th:value="${addr.id}" th:id="'editId' + ${addr.id}" name="id">
+
+            <div class="mb-3">
+              <label th:for="'editNguoiNhan' + ${addr.id}" class="form-label">Tên người nhận <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" th:id="'editNguoiNhan' + ${addr.id}" name="nguoiNhan"
+                     required maxlength="50"
+                     pattern="(?! )(?!.* {2})[A-Za-zÀ-ỿ\u0110\u0111]+(?: [A-Za-zÀ-ỿ\u0110\u0111]+)*"
+                     title="Chỉ chữ và khoảng trắng, không dư khoảng trắng">
+            </div>
+
+            <div class="mb-3">
+              <label th:for="'editSoDienThoaiNguoiNhan' + ${addr.id}" class="form-label">Số điện thoại người nhận <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" th:id="'editSoDienThoaiNguoiNhan' + ${addr.id}" name="soDienThoaiNguoiNhan"
+                     required inputmode="tel"
+                     pattern="(0(3|5|7|8|9)\d{8}|02\d{9})"
+                     title="Di động: 03/05/07/08/09 + 8 số; Cố định: 02 + 9 số">
+            </div>
+
+            <div class="mb-3">
+              <label th:for="'editTinhThanhPho' + ${addr.id}" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+              <select class="form-select" th:id="'editTinhThanhPho' + ${addr.id}" name="tinhThanhPho" required
+                      th:data-current-value="${addr.tinhThanhPho}">
+                <option value="">Chọn tỉnh/thành phố</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label th:for="'editQuanHuyen' + ${addr.id}" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+              <select class="form-select" th:id="'editQuanHuyen' + ${addr.id}" name="quanHuyen" required
+                      th:data-current-value="${addr.quanHuyen}">
+                <option value="">Chọn quận/huyện</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label th:for="'editPhuongXa' + ${addr.id}" class="form-label">Phường/Xã <span class="text-danger">*</span></label>
+              <select class="form-select" th:id="'editPhuongXa' + ${addr.id}" name="phuongXa" required
+                      th:data-current-value="${addr.phuongXa}">
+                <option value="">Chọn phường/xã</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label th:for="'editChiTietDiaChi' + ${addr.id}" class="form-label">Địa chỉ chi tiết</label>
+              <input type="text" class="form-control" th:id="'editChiTietDiaChi' + ${addr.id}" name="chiTietDiaChi"
+                     th:value="${addr.chiTietDiaChi}" required maxlength="200"
+                     pattern="^(?! )(?!.* {2})(?!.*[<>\'\\|?*%$!~^=&{}\[\];])[0-9A-Za-zÀ-ỿ.,:/#()\-\s]{3,200}$"
+              title="3–200 ký tự. Không chứa: < > &quot; ' \ | ? * % $ ! ~ ^ = & { } [ ] ; . Không có khoảng trắng đầu/cuối hay 2 khoảng trắng liên tiếp.">
+            </div>
+            <div class="mb-3 form-check">
+              <input type="checkbox" class="form-check-input" th:id="'editMacDinh' + ${addr.id}" name="macDinh"
+                     th:checked="${addr.macDinh}">
+              <label class="form-check-label" th:for="'editMacDinh' + ${addr.id}">Đặt làm mặc định</label>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+              <button type="submit" class="btn btn-primary update-address-btn" th:data-id="${addr.id}">Cập nhật</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/js/navbar.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  function cleanAddressDetail(s) {
+    return (s || '').trim().replace(/\s+/g, ' ');
+  }
+
+  const FORBIDDEN_ADDR_CHARS = /[<>\"'\\|?*%$!~^=&{}\[\];]/;
+
+  function isValidAddressDetail(s) {
+    if (!s) return false;
+    if (s.length < 3 || s.length > 200) return false;
+    if (s.startsWith(' ') || s.endsWith(' ') || /\s{2,}/.test(s)) return false;
+    if (FORBIDDEN_ADDR_CHARS.test(s)) return false;
+    // Allow-list an toàn cho địa chỉ (chữ có dấu, số, khoảng trắng và vài ký tự thường dùng)
+    return /^[0-9A-Za-zÀ-ỿ.,:/#()\-\s]+$/.test(s);
+  }
+
+  // (tuỳ chọn) Chặn ngay khi gõ các ký tự bị cấm
+  document.addEventListener('input', function(e) {
+    if (e.target.matches('#addChiTietDiaChi, [id^="editChiTietDiaChi"]')) {
+      e.target.value = e.target.value.replace(FORBIDDEN_ADDR_CHARS, '');
+    }
+  });
+
+  function normalizeName(str) {
+    return str.trim().replace(/\s+/g, ' ');
+  }
+  function cleanPersonName(str) {
+    // Trim 2 đầu + gom nhiều khoảng trắng thành 1
+    return str.trim().replace(/\s+/g, ' ');
+  }
+
+  // Chỉ chữ cái (kể cả tiếng Việt) và khoảng trắng, không cho space đầu/cuối hay 2 space liên tiếp
+  function isValidPersonName(name) {
+    const re = /^(?! )(?!.* {2})[A-Za-zÀ-ỿ\u0110\u0111]+(?: [A-Za-zÀ-ỿ\u0110\u0111]+)*$/;
+    return re.test(name) && name.length >= 2 && name.length <= 50;
+  }
+
+  // Chuẩn hoá số: bỏ ký tự phân cách, đổi +84 / 84 về 0
+  function normalizeVNPhone(raw) {
+    let s = (raw || '').replace(/[^\d+]/g, '');
+    if (s.startsWith('+84')) s = '0' + s.slice(3);
+    else if (s.startsWith('84')) s = '0' + s.slice(2);
+    return s;
+  }
+
+  // Di động: 03/05/07/08/09 + 8 số (10 số)
+  // Cố định: 02 + 9 số (tổng 11 số, ví dụ 024/028 + 8 số)
+  function isValidVNPhone(phone) {
+    return /^(0(3|5|7|8|9)\d{8}|02\d{9})$/.test(phone);
+  }
+
+  // Hàm hiển thị toast notification
+  function showToast(message, type = 'success') {
+    const toastContainer = document.querySelector('.toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast align-items-center text-bg-${type === 'success' ? 'success' : 'danger'} border-0`;
+    toast.innerHTML = `
+      <div class="d-flex">
+        <div class="toast-body">${message}</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+    `;
+    toastContainer.appendChild(toast);
+    const bsToast = new bootstrap.Toast(toast);
+    bsToast.show();
+    setTimeout(() => toast.remove(), 3000);
+  }
+
+  // Hàm thêm dòng mới vào bảng
+  function appendAddressToTable(address) {
+    const tableBody = document.getElementById('addressTableBody');
+    const row = document.createElement('tr');
+    row.setAttribute('data-id', address.id);
+    row.innerHTML = `
+      <td>${address.nguoiNhan || address.nguoiDung.hoTen}</td>
+      <td>${address.soDienThoaiNguoiNhan || address.nguoiDung.soDienThoai}</td>
+
+      <td class="address-cell" title="${address.tinhThanhPho}, ${address.quanHuyen}, ${address.phuongXa}, ${address.chiTietDiaChi}">
+        ${address.tinhThanhPho}, ${address.quanHuyen}, ${address.phuongXa}, ${address.chiTietDiaChi}
+      </td>
+      <td>${address.macDinh ? '<span class="badge bg-success">Mặc định</span>' : ''}</td>
+      <td>
+        <button class="btn btn-primary btn-sm edit-address-btn" data-id="${address.id}" data-bs-target="#editAddressModal${address.id}">
+          <i class="fas fa-edit"></i>
+        </button>
+        ${!address.macDinh ? `<button class="btn btn-secondary btn-sm set-default-btn" data-id="${address.id}">Đặt mặc định</button>` : ''}
+      </td>
+    `;
+    tableBody.appendChild(row);
+    bindAddressEventListeners();
+  }
+
+  // Hàm cập nhật dòng trong bảng
+  function updateAddressInTable(address) {
+    const row = document.querySelector(`tr[data-id="${address.id}"]`);
+    if (row) {
+      row.innerHTML = `
+        <td>${address.nguoiDung.hoTen}</td>
+        <td>${address.nguoiDung.soDienThoai}</td>
+        <td class="address-cell" title="${address.tinhThanhPho}, ${address.quanHuyen}, ${address.phuongXa}, ${address.chiTietDiaChi}">
+          ${address.tinhThanhPho}, ${address.quanHuyen}, ${address.phuongXa}, ${address.chiTietDiaChi}
+        </td>
+        <td>${address.macDinh ? '<span class="badge bg-success">Mặc định</span>' : ''}</td>
+        <td>
+          <button class="btn btn-primary btn-sm edit-address-btn" data-id="${address.id}" data-bs-target="#editAddressModal${address.id}">
+            <i class="fas fa-edit"></i>
+          </button>
+          ${!address.macDinh ? `<button class="btn btn-secondary btn-sm set-default-btn" data-id="${address.id}">Đặt mặc định</button>` : ''}
+        </td>
+      `;
+      bindAddressEventListeners();
+    }
+  }
+
+  // Hàm xóa dòng khỏi bảng
+  function removeAddressFromTable(addressId) {
+    const row = document.querySelector(`tr[data-id="${addressId}"]`);
+    if (row) row.remove();
+  }
+
+  // Lấy CSRF token
+  const csrfToken = document.querySelector('meta[name="_csrf"]')?.content;
+  const csrfHeader = document.querySelector('meta[name="_csrf_header"]')?.content;
+
+  // ===== GHN: Provinces/Districts/Wards (REPLACE) =====
+  async function fetchProvinces() {
+    try {
+      const res  = await fetch('/api/ghn/provinces');
+      const json = await res.json();
+      const list = JSON.parse(json.data)?.data || [];
+
+      const provinceSelects = document.querySelectorAll(
+              'select[id^="addTinhThanhPho"], select[id^="editTinhThanhPho"]'
+      );
+      provinceSelects.forEach(select => {
+        select.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+        list.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value       = p.ProvinceName; // giữ value là tên
+          opt.textContent = p.ProvinceName;
+          opt.dataset.id  = p.ProvinceID;   // GHN ProvinceID
+          select.appendChild(opt);
+        });
+      });
+      return list;
+    } catch (e) { console.error(e); showToast('Lỗi tải tỉnh/thành phố', 'danger'); return []; }
+  }
+
+  async function fetchDistricts(provinceId, districtSelect, wardSelect) {
+    try {
+      const res  = await fetch(`/api/ghn/districts?provinceId=${provinceId}`);
+      const json = await res.json();
+      const list = JSON.parse(json.data)?.data || [];
+
+      districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+      wardSelect.innerHTML     = '<option value="">Chọn phường/xã</option>';
+
+      list.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value       = d.DistrictName; // tên
+        opt.textContent = d.DistrictName;
+        opt.dataset.id  = d.DistrictID;   // GHN DistrictID
+        districtSelect.appendChild(opt);
+      });
+    } catch (e) { console.error(e); showToast('Lỗi tải quận/huyện', 'danger'); }
+  }
+
+  async function fetchWards(districtId, wardSelect) {
+    try {
+      const res  = await fetch(`/api/ghn/wards?districtId=${districtId}`);
+      const json = await res.json();
+      const list = JSON.parse(json.data)?.data || [];
+
+      wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+      list.forEach(w => {
+        const opt = document.createElement('option');
+        opt.value        = w.WardName; // tên
+        opt.textContent  = w.WardName;
+        opt.dataset.code = w.WardCode; // GHN WardCode
+        wardSelect.appendChild(opt);
+      });
+    } catch (e) { console.error(e); showToast('Lỗi tải phường/xã', 'danger'); }
+  }
+
+  // Hàm thiết lập giá trị hiện tại cho select
+  function setSelectValue(selectElement, value) {
+    if (value && selectElement) {
+      const options = selectElement.querySelectorAll('option');
+      for (let option of options) {
+        if (option.value === value) {
+          option.selected = true;
+          break;
+        }
+      }
+    }
+  }
+
+  // Hàm thiết lập địa chỉ cho form edit khi modal được mở
+  // ===== GHN: setup form Edit (REPLACE) =====
+  function setupEditForm(addressId, currentProvince, currentDistrict, currentWard) {
+    const provinceSelect = document.getElementById(`editTinhThanhPho${addressId}`);
+    const districtSelect = document.getElementById(`editQuanHuyen${addressId}`);
+    const wardSelect     = document.getElementById(`editPhuongXa${addressId}`);
+    if (!provinceSelect || !districtSelect || !wardSelect) return;
+
+    setSelectValue(provinceSelect, currentProvince);
+    const pId = Number(provinceSelect.selectedOptions[0]?.dataset.id);
+    if (!pId) return;
+
+    fetchDistricts(pId, districtSelect, wardSelect).then(() => {
+      setSelectValue(districtSelect, currentDistrict);
+      const dId = Number(districtSelect.selectedOptions[0]?.dataset.id);
+      if (!dId) return;
+
+      fetchWards(dId, wardSelect).then(() => {
+        setSelectValue(wardSelect, currentWard);
+      });
+    });
+  }
+
+  // Hàm xử lý khi nhấn nút chỉnh sửa địa chỉ
+  document.querySelectorAll('.edit-address-btn').forEach(button => {
+    button.addEventListener('click', function () {
+      const addressId = this.getAttribute('data-id'); // Lấy ID của địa chỉ
+      const modal = document.getElementById('editAddressModal' + addressId); // Tìm modal tương ứng với ID
+      const nguoiNhan = this.closest('tr').querySelector('td:nth-child(1)').innerText; // Lấy tên người nhận
+      const soDienThoai = this.closest('tr').querySelector('td:nth-child(2)').innerText; // Lấy số điện thoại
+
+      // Điền thông tin vào modal
+      modal.querySelector('input[name="nguoiNhan"]').value = nguoiNhan;
+      modal.querySelector('input[name="soDienThoaiNguoiNhan"]').value = soDienThoai;
+
+      // Hiển thị modal
+      const bsModal = new bootstrap.Modal(modal);
+      bsModal.show();
+    });
+  });
+
+
+  // Hàm bind sự kiện cho các nút
+  function bindAddressEventListeners() {
+    document.querySelectorAll('.edit-address-btn').forEach(btn => {
+      btn.removeEventListener('click', editAddressHandler);
+      btn.addEventListener('click', editAddressHandler);
+    });
+
+    document.querySelectorAll('.delete-address-btn').forEach(btn => {
+      btn.removeEventListener('click', deleteAddressHandler);
+      btn.addEventListener('click', deleteAddressHandler);
+    });
+
+    document.querySelectorAll('.set-default-btn').forEach(btn => {
+      btn.removeEventListener('click', setDefaultHandler);
+      btn.addEventListener('click', setDefaultHandler);
+    });
+
+    document.querySelectorAll('.update-address-btn').forEach(btn => {
+      btn.removeEventListener('click', updateAddressHandler);
+      btn.addEventListener('click', updateAddressHandler);
+    });
+  }
+
+  function editAddressHandler() {
+    const modalId = this.getAttribute('data-bs-target');
+    const modal = document.querySelector(modalId);
+    if (modal) {
+      bootstrap.Modal.getOrCreateInstance(modal).show();
+    } else {
+      console.error(`Modal ${modalId} not found`);
+      showToast('Không tìm thấy modal chỉnh sửa', 'danger');
+    }
+  }
+
+  function deleteAddressHandler() {
+    if (!confirm('Xóa địa chỉ này?')) return;
+    const addressId = this.dataset.id;
+    const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+    if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+    fetch(`/profile/address/${addressId}/delete-ajax`, {
+      method: 'POST',
+      headers
+    })
+            .then(res => {
+              if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+              return res.json();
+            })
+            .then(data => {
+              if (data.status === 'success') {
+                removeAddressFromTable(addressId);
+                showToast(data.message);
+              } else {
+                showToast(data.message, 'danger');
+              }
+            })
+            .catch(err => showToast('Có lỗi xảy ra: ' + err.message, 'danger'));
+  }
+
+  function setDefaultHandler() {
+    const addressId = this.dataset.id;
+    const button = this;
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang xử lý...';
+    const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+    if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+    fetch(`/profile/address/${addressId}/set-default-ajax`, {
+      method: 'POST',
+      headers
+    })
+            .then(res => {
+              if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+              return res.json();
+            })
+            .then(data => {
+              if (data.status === 'success') {
+                showToast(data.message);
+                if (data.logout) {
+                  // Backend đã xóa session, chuyển về trang đăng nhập
+                  setTimeout(() => {
+                    window.location.href = data.redirect || '/login'; // sửa URL nếu khác
+                  }, 600);
+                } else {
+                  setTimeout(() => location.reload(), 1000);
+                }
+              } else {
+                showToast(data.message, 'danger');
+              }
+            })
+            .catch(err => {
+              showToast('Có lỗi xảy ra: ' + err.message, 'danger');
+              button.disabled = false;
+              button.innerHTML = 'Đặt mặc định';
+            });
+  }
+
+  function phoneCharError(raw) {
+    if (/[^0-9\s().\-+]/.test(raw)) return 'invalid_char';
+    if (/\+/.test(raw) && !raw.trim().startsWith('+')) return 'plus_not_at_start';
+    return null; // ok
+  }
+
+  function runUpdateAddress(addressId) {
+    const nameInput  = document.getElementById(`editNguoiNhan${addressId}`);
+    const phoneInput = document.getElementById(`editSoDienThoaiNguoiNhan${addressId}`);
+
+    // validate tên
+    let nguoiNhan = cleanPersonName(nameInput.value);
+    if (!isValidPersonName(nguoiNhan)) {
+      showToast('Tên người nhận không hợp lệ. Chỉ chứa chữ và khoảng trắng, không dư khoảng trắng.', 'danger');
+      nameInput.focus();
+      return;
+    }
+
+    // validate SĐT
+    const rawPhone = phoneInput.value;
+    const charErr = phoneCharError(rawPhone);
+    if (charErr) {
+      showToast('Số điện thoại chỉ được chứa số, khoảng trắng, ., -, (, ) và có thể bắt đầu bằng +84.', 'danger');
+      phoneInput.focus();
+      return;
+    }
+    let soDienThoaiNguoiNhan = normalizeVNPhone(rawPhone);
+    if (!isValidVNPhone(soDienThoaiNguoiNhan)) {
+      showToast('Số điện thoại không hợp lệ. Ví dụ di động: 09xxxxxxxx; cố định: 024/028 + 8 số.', 'danger');
+      phoneInput.focus();
+      return;
+    }
+
+    // validate địa chỉ chi tiết
+    const chiTietEl = document.getElementById(`editChiTietDiaChi${addressId}`);
+    let chiTietDiaChi = cleanAddressDetail(chiTietEl.value);
+    if (!isValidAddressDetail(chiTietDiaChi)) {
+      showToast('Địa chỉ chi tiết không hợp lệ. Không chứa các ký tự: < > " \\ | ? * % $ ! ~ ^ = & { } [ ] ; và không có khoảng trắng dư thừa (3–200 ký tự).', 'danger');
+      chiTietEl.focus();
+      return;
+    }
+
+    const pSel = document.getElementById(`editTinhThanhPho${addressId}`);
+    const dSel = document.getElementById(`editQuanHuyen${addressId}`);
+    const wSel = document.getElementById(`editPhuongXa${addressId}`);
+
+    const provinceId = Number(pSel?.selectedOptions[0]?.dataset.id) || null;
+    const districtId = Number(dSel?.selectedOptions[0]?.dataset.id) || null;
+    const wardCode   =        wSel?.selectedOptions[0]?.dataset.code || null;
+
+    const data = {
+      id: document.getElementById(`editId${addressId}`).value,
+      nguoiNhan,
+      soDienThoaiNguoiNhan,
+      tinhThanhPho: document.getElementById(`editTinhThanhPho${addressId}`).value,
+      quanHuyen: document.getElementById(`editQuanHuyen${addressId}`).value,
+      phuongXa: document.getElementById(`editPhuongXa${addressId}`).value,
+      chiTietDiaChi: chiTietDiaChi,
+      macDinh: document.getElementById(`editMacDinh${addressId}`).checked,
+      provinceId,
+      districtId,
+      wardCode
+    };
+
+    if (!data.tinhThanhPho || !data.quanHuyen || !data.phuongXa || !data.chiTietDiaChi) {
+      showToast('Vui lòng điền đầy đủ các trường địa chỉ', 'danger');
+      return;
+    }
+
+    const headers = { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+    if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+
+    fetch(`/profile/address/${addressId}/update-ajax`, {
+      method: 'POST', headers, body: JSON.stringify(data)
+    })
+            .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`); return res.json(); })
+            .then(data => {
+              if (data.status === 'success') {
+                updateAddressInTable(data.address);
+                bootstrap.Modal.getInstance(document.getElementById(`editAddressModal${addressId}`)).hide();
+                showToast(data.message);
+              } else {
+                showToast(data.message, 'danger');
+              }
+            })
+            .catch(err => showToast('Có lỗi xảy ra: ' + err.message, 'danger'));
+  }
+
+  function updateAddressHandler(e) {
+    e.preventDefault();           // ⬅️ quan trọng
+    const addressId = this.dataset.id;
+    runUpdateAddress(addressId);
+  }
+
+  // Thêm địa chỉ
+  document.getElementById('addAddressForm')?.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    const nameInput  = document.getElementById('addNguoiNhan');
+    const phoneInput = document.getElementById('addSoDienThoaiNguoiNhan');
+
+    // --- Validate tên ---
+    let nguoiNhan = cleanPersonName(nameInput.value);
+    if (!isValidPersonName(nguoiNhan)) {
+      showToast('Tên người nhận không hợp lệ. Chỉ chứa chữ và khoảng trắng, không dư khoảng trắng.', 'danger');
+      nameInput.focus();
+      return;
+    }
+
+    // --- Validate SĐT ---
+    let soDienThoaiNguoiNhan = normalizeVNPhone(phoneInput.value);
+    if (!isValidVNPhone(soDienThoaiNguoiNhan)) {
+      showToast('Số điện thoại không hợp lệ. Ví dụ di động: 09xxxxxxxx; cố định: 024/028 + 8 số.', 'danger');
+      phoneInput.focus();
+      return;
+    }
+
+    let chiTietDiaChi = cleanAddressDetail(document.getElementById('addChiTietDiaChi').value);
+    if (!isValidAddressDetail(chiTietDiaChi)) {
+      showToast('Địa chỉ chi tiết không hợp lệ. Không chứa các ký tự: < > " \' \\ | ? * % $ ! ~ ^ = & { } [ ] ; và không có khoảng trắng dư thừa (3–200 ký tự).', 'danger');
+      document.getElementById('addChiTietDiaChi').focus();
+      return;
+    }
+
+    // GHN: lấy mã từ option được chọn
+    const pSel = document.getElementById('addTinhThanhPho');
+    const dSel = document.getElementById('addQuanHuyen');
+    const wSel = document.getElementById('addPhuongXa');
+
+    const provinceId = Number(pSel?.selectedOptions[0]?.dataset.id) || null;
+    const districtId = Number(dSel?.selectedOptions[0]?.dataset.id) || null;
+    const wardCode   =        wSel?.selectedOptions[0]?.dataset.code || null;
+
+    const data = {
+      nguoiNhan,
+      soDienThoaiNguoiNhan,
+      tinhThanhPho: document.getElementById('addTinhThanhPho').value,
+      quanHuyen: document.getElementById('addQuanHuyen').value,
+      phuongXa: document.getElementById('addPhuongXa').value,
+      chiTietDiaChi: chiTietDiaChi,
+      macDinh: document.getElementById('addMacDinh').checked,
+      provinceId,
+      districtId,
+      wardCode
+    };
+
+    if (!data.tinhThanhPho || !data.quanHuyen || !data.phuongXa || !data.chiTietDiaChi) {
+      showToast('Vui lòng điền đầy đủ các trường địa chỉ', 'danger');
+      return;
+    }
+
+    const headers = { 'Content-Type': 'application/json', 'X-Requested-With': 'XMLHttpRequest' };
+    if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+
+    fetch('/profile/address/add-ajax', {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(data)
+    })
+            .then(res => {
+              if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+              return res.json();
+            })
+            .then(data => {
+              if (data.status === 'success') {
+                const modalEl = document.getElementById('addAddressModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                showToast(data.message || 'Thêm địa chỉ thành công');
+                modalEl.addEventListener('hidden.bs.modal', () => {
+                  if (data.redirect) window.location.href = data.redirect;
+                  else window.location.reload();
+                }, { once: true });
+                modal?.hide();
+                document.getElementById('addAddressForm').reset();
+              } else {
+                showToast(data.message || 'Không thể thêm địa chỉ', 'danger');
+              }
+            })
+            .catch(err => showToast('Có lỗi xảy ra: ' + err.message, 'danger'));
+  });
+
+  // ===== SweetAlert2 toast giống trang thanh toán =====
+  function swToast(message, type = 'success') {
+    return Swal.fire({
+      toast: true,
+      position: 'top-end',
+      icon: type,
+      title: message,
+      showConfirmButton: false,
+      timer: 1800,
+      timerProgressBar: true,
+      zIndex: 20000
+    });
+  }
+
+  // ===== Xác nhận trước khi cập nhật hồ sơ (AJAX) =====
+  let initialProfile = {};
+  document.addEventListener('DOMContentLoaded', function () {
+    initialProfile = {
+      hoTen: document.querySelector('input[name="hoTen"]')?.value || '',
+      email: document.querySelector('input[name="email"]')?.value || '',
+      soDienThoai: document.querySelector('input[name="soDienThoai"]')?.value || ''
+    };
+  });
+
+  // Danh sách thay đổi (giữ nguyên hoặc nâng cấp format)
+  function buildChangesList(current) {
+    const changes = [];
+    if (current.hoTen !== initialProfile.hoTen)
+      changes.push(`Họ tên: "<b>${initialProfile.hoTen}</b>" → "<b>${current.hoTen}</b>"`);
+    if (current.email !== initialProfile.email)
+      changes.push(`Email: "<b>${initialProfile.email}</b>" → "<b>${current.email}</b>"`);
+    if (current.soDienThoai !== initialProfile.soDienThoai)
+      changes.push(`SĐT: "<b>${initialProfile.soDienThoai}</b>" → "<b>${current.soDienThoai}</b>"`);
+    if (current.matKhau)
+      changes.push('Mật khẩu: <i>(sẽ thay đổi)</i>');
+    return changes;
+  }
+
+  // Handler submit: confirm bằng SweetAlert2 (KHÔNG dùng modal Bootstrap)
+  document.getElementById('profileForm')?.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const form = this;
+    let hoTen = document.querySelector('input[name="hoTen"]').value.trim();
+
+    // Kiểm tra nếu họ tên có dấu cách dư thừa ở đầu và cuối chuỗi
+    if (hoTen !== document.querySelector('input[name="hoTen"]').value) {
+      // Nếu có dấu cách thừa ở đầu hoặc cuối, hiển thị thông báo lỗi
+      showToast('Họ tên không được có khoảng trắng dư thừa ở đầu và cuối.', 'danger');
+      return;
+    }
+
+    // Loại bỏ tất cả khoảng trắng dư thừa giữa các từ (nếu có)
+    hoTen = hoTen.replace(/\s+/g, ' '); // Thay thế tất cả dấu cách dư thừa bằng một dấu cách duy nhất
+
+    // Kiểm tra xem họ tên có phải là chuỗi rỗng sau khi loại bỏ dấu cách không hợp lệ
+    if (hoTen === "") {
+      showToast('Họ tên không hợp lệ. Vui lòng nhập họ tên hợp lệ.', 'danger');
+      return;
+    }
+
+    // Biểu thức chính quy kiểm tra họ tên (chỉ chứa chữ cái và dấu cách hợp lệ)
+    const regex = /^[A-Za-zÀ-ỹà-ỹ\s]+$/;
+
+    // Kiểm tra nếu họ tên có ký tự không hợp lệ hoặc có dấu cách dư thừa
+    if (!regex.test(hoTen)) {
+      // Hiển thị thông báo lỗi nếu họ tên không hợp lệ
+      showToast('Họ tên không hợp lệ. Vui lòng chỉ nhập chữ cái và một khoảng cách giữa các phần của tên.', 'danger');
+      return;
+    }
+
+    let soDienThoai = document.querySelector('input[name="soDienThoai"]').value.trim();
+
+    // Cập nhật lại biểu thức chính quy để kiểm tra số điện thoại Việt Nam (10 và 11 số)
+    const regexSDT = /^(0(3|5|7|8|9)[0-9]{8}|02[0-9]{8})$/;
+
+    // Kiểm tra nếu số điện thoại không hợp lệ
+    if (!regexSDT.test(soDienThoai)) {
+      showToast('Số điện thoại không hợp lệ. Vui lòng nhập số điện thoại Việt Nam hợp lệ.', 'danger');
+      return;
+    }
+
+    let email = document.querySelector('input[name="email"]').value.trim();
+
+    if (email !== document.querySelector('input[name="email"]').value) {
+      showToast('Email không được có khoảng trắng dư thừa ở đầu và cuối.', 'danger');
+      return;
+    }
+
+    const regexEmail = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+
+    if (!regexEmail.test(email)) {
+      showToast('Email không hợp lệ. Vui lòng nhập email hợp lệ.', 'danger');
+      return;
+    }
+
+    let matKhau = document.querySelector('input[name="matKhau"]').value.trim();
+
+    if (matKhau !== document.querySelector('input[name="matKhau"]').value) {
+      showToast('Mật khẩu không được có khoảng trắng dư thừa ở đầu và cuối.', 'danger');
+      return;
+    }
+
+    const regexMatKhau = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+
+    if (!regexMatKhau.test(matKhau)) {
+      showToast('Mật khẩu phải có ít nhất 6 ký tự, bao gồm cả chữ và số.', 'danger');
+      return;
+    }
+
+    const current = {
+      hoTen: form.querySelector('input[name="hoTen"]').value.trim(),
+      email: form.querySelector('input[name="email"]').value.trim(),
+      soDienThoai: form.querySelector('input[name="soDienThoai"]').value.trim(),
+      matKhau: form.querySelector('input[name="matKhau"]').value
+    };
+
+    const changes = buildChangesList(current);
+
+    if (!changes.length) {
+      return swToast('Bạn chưa thay đổi thông tin nào', 'info');
+    }
+
+    const htmlList = `
+    <div class="text-start">
+      <p>Bạn sắp thay đổi các thông tin sau:</p>
+      <ul style="margin-left:1rem">${changes.map(c => `<li>${c}</li>`).join('')}</ul>
+      <div class="alert alert-info mt-3 mb-0">
+        Sau khi cập nhật, hệ thống sẽ đăng xuất bạn để bảo mật.
+      </div>
+    </div>`;
+
+    const { isConfirmed } = await Swal.fire({
+      icon: 'question',
+      title: 'Xác nhận cập nhật',
+      html: htmlList,
+      showCancelButton: true,
+      confirmButtonText: 'Xác nhận',
+      cancelButtonText: 'Hủy',
+      confirmButtonColor: '#153054',  // đồng bộ màu với checkout
+      cancelButtonColor: '#d33',
+      reverseButtons: true
+    });
+
+    if (isConfirmed) performUpdateProfile(form);
+  });
+
+  function performUpdateProfile(formEl) {
+    const formData = new FormData(formEl);
+    const button = document.getElementById('updateProfileBtn');
+
+    button.disabled = true;
+    button.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Đang cập nhật...';
+
+    const headers = { 'X-Requested-With': 'XMLHttpRequest' };
+    if (csrfToken && csrfHeader) headers[csrfHeader] = csrfToken;
+
+    fetch('/profile', { method: 'POST', headers, body: formData })
+            .then(res => {
+              if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+              return res.json();
+            })
+            .then(async data => {
+              if (data.status === 'success') {
+                await swToast(data.message || 'Cập nhật thành công', 'success');
+                // Đăng xuất / chuyển hướng sau khi cập nhật
+                window.location.href = data.redirect || '/logout';
+              } else {
+                swToast(data.message || 'Không thể cập nhật', 'error');
+              }
+            })
+            .catch(err => swToast('Vui lòng nhập đúng thông tin', 'error'))
+            .finally(() => {
+              button.disabled = false;
+              button.innerHTML = '<i class="fas fa-save me-1"></i> Cập nhật';
+            });
+  }
+
+  // Khởi tạo tải dữ liệu tỉnh/thành phố
+  document.addEventListener('DOMContentLoaded', function () {
+    bindAddressEventListeners();
+
+    document.querySelectorAll('form[id^="editAddressForm"]').forEach(form => {
+      form.addEventListener('submit', function(e){
+        e.preventDefault();
+        const addressId = this.id.replace('editAddressForm','');
+        runUpdateAddress(addressId);
+      });
+    });
+
+    // Thiết lập dữ liệu cho form thêm
+    const addProvinceSelect = document.getElementById('addTinhThanhPho');
+    const addDistrictSelect = document.getElementById('addQuanHuyen');
+    const addWardSelect = document.getElementById('addPhuongXa');
+
+    if (addProvinceSelect && addDistrictSelect && addWardSelect) {
+      addProvinceSelect.addEventListener('change', function () {
+        const provinceId = Number(this.selectedOptions[0]?.dataset.id);
+        if (provinceId) fetchDistricts(provinceId, addDistrictSelect, addWardSelect);
+        else {
+          addDistrictSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+          addWardSelect.innerHTML     = '<option value="">Chọn phường/xã</option>';
+        }
+      });
+
+      addDistrictSelect.addEventListener('change', function () {
+        const districtId = Number(this.selectedOptions[0]?.dataset.id);
+        if (districtId) fetchWards(districtId, addWardSelect);
+        else addWardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+      });
+    }
+
+    // Thiết lập dữ liệu cho các form edit khi modal được mở
+    const editModals = document.querySelectorAll('[id^="editAddressModal"]');
+    editModals.forEach(modal => {
+      modal.addEventListener('show.bs.modal', function (event) {
+        const addressId = modal.id.replace('editAddressModal', '');
+        const provinceSelect = document.getElementById(`editTinhThanhPho${addressId}`);
+        const districtSelect = document.getElementById(`editQuanHuyen${addressId}`);
+        const wardSelect = document.getElementById(`editPhuongXa${addressId}`);
+
+        if (provinceSelect && districtSelect && wardSelect) {
+          const currentProvince = provinceSelect.getAttribute('data-current-value');
+          const currentDistrict = districtSelect.getAttribute('data-current-value');
+          const currentWard = wardSelect.getAttribute('data-current-value');
+
+          setupEditForm(addressId, currentProvince, currentDistrict, currentWard);
+        }
+      });
+    });
+
+    // Tải danh sách tỉnh/thành phố
+    fetchProvinces();
+  });
+
+  // Xử lý sự kiện thay đổi tỉnh/thành phố và quận/huyện cho các form edit
+  document.addEventListener('change', function(e) {
+    // ===== GHN: handler EDIT (REPLACE these two branches) =====
+    if (e.target.matches('select[id^="editTinhThanhPho"]')) {
+      const addressId      = e.target.id.replace('editTinhThanhPho','');
+      const districtSelect = document.getElementById(`editQuanHuyen${addressId}`);
+      const wardSelect     = document.getElementById(`editPhuongXa${addressId}`);
+      const provinceId     = Number(e.target.selectedOptions[0]?.dataset.id);
+
+      if (provinceId) fetchDistricts(provinceId, districtSelect, wardSelect);
+      else {
+        districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+        wardSelect.innerHTML     = '<option value="">Chọn phường/xã</option>';
+      }
+    }
+
+    if (e.target.matches('select[id^="editQuanHuyen"]')) {
+      const addressId  = e.target.id.replace('editQuanHuyen','');
+      const wardSelect = document.getElementById(`editPhuongXa${addressId}`);
+      const districtId = Number(e.target.selectedOptions[0]?.dataset.id);
+
+      if (districtId) fetchWards(districtId, wardSelect);
+      else wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+    }
+  });
+</script>
+</body>
+</html>

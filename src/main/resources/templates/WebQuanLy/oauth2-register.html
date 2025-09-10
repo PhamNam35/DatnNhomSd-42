@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng ký - ACV Store</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" href="/image/ACV.png" type="image/png" sizes="32x32"/>
+    <style>
+        :root {
+            --primary-color: #153054;
+            --secondary-color: #9FD5F7;
+            --accent-color: #666666;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #495057;
+            --white: #ffffff;
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+            position: relative; overflow-x: hidden;
+        }
+        body::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image:
+                    linear-gradient(45deg, transparent 40%, rgba(0,0,0,0.02) 50%, transparent 60%),
+                    linear-gradient(-45deg, transparent 40%, rgba(0,0,0,0.02) 50%, transparent 60%);
+            background-size: 60px 60px;
+            animation: patternMove 20s linear infinite;
+        }
+        @keyframes patternMove { 0%{background-position:0 0,0 0;}100%{background-position:60px 60px,-60px 60px;} }
+        body::after {
+            content: ''; position: absolute; top:10%; left:10%;
+            width:100px; height:100px; border:2px solid rgba(0,0,0,0.05); border-radius:50%;
+            animation: float1 15s ease-in-out infinite;
+        }
+        @keyframes float1 { 0%,100%{transform:translate(0,0) rotate(0)} 33%{transform:translate(30px,-30px) rotate(120deg)} 66%{transform:translate(-20px,20px) rotate(240deg)} }
+        .container-fluid { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:10px; position:relative; z-index:1; }
+        .register-container { max-width:1100px; width:100%; position:relative; }
+        .register-container::before{
+            content:''; position:absolute; top:-50px; right:-50px; width:80px; height:80px; border:1px solid rgba(0,0,0,0.1);
+            transform:rotate(45deg); animation: float2 12s ease-in-out infinite;
+        }
+        .register-container::after{
+            content:''; position:absolute; bottom:-30px; left:-30px; width:60px; height:60px;
+            background:rgba(0,0,0,0.03); border-radius:50%; animation: float3 18s ease-in-out infinite;
+        }
+        @keyframes float2 { 0%,100%{transform:rotate(45deg) translate(0,0)} 50%{transform:rotate(225deg) translate(20px,-20px)} }
+        @keyframes float3 { 0%,100%{transform:scale(1) translate(0,0)} 50%{transform:scale(1.2) translate(-10px,10px)} }
+        .register-card {
+            background:var(--white); border:1px solid var(--medium-gray); border-radius:16px;
+            padding:30px 25px; box-shadow:var(--shadow-medium);
+            transition: all .4s cubic-bezier(.4,0,.2,1);
+            position:relative; overflow:hidden;
+        }
+        .register-card::before{
+            content:''; position:absolute; top:0; left:0; right:0; height:4px;
+            background:linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius:16px 16px 0 0;
+        }
+        .register-card:hover{ transform:translateY(-8px); box-shadow:var(--shadow-heavy); }
+        .brand-section{ text-align:center; margin-bottom:20px; }
+        .brand-logo{ width:60px; height:60px; margin:0 auto 10px; display:block; border-radius:12px; box-shadow:var(--shadow-light); transition:transform .3s ease; }
+        .brand-logo:hover{ transform:scale(1.05); }
+        .welcome-title{ font-size:24px; font-weight:800; color:var(--primary-color); margin-bottom:4px; letter-spacing:-.5px; }
+        .welcome-subtitle{ color:var(--dark-gray); font-size:14px; font-weight:500; }
+        .form-floating{ margin-bottom:16px; position:relative; }
+        .form-floating .form-control{
+            height:50px; border:2px solid var(--medium-gray); border-radius:10px;
+            font-size:14px; font-weight:500; padding-left:45px; transition:all .3s ease; background:var(--white); color:var(--primary-color);
+        }
+        .form-floating .form-control:focus{ border-color:var(--primary-color); box-shadow:0 0 0 4px rgba(0,0,0,0.1); background:var(--white); }
+        .form-floating .form-control.is-invalid{ border-color:#dc3545; box-shadow:0 0 0 4px rgba(220,53,69,.1); }
+        .form-floating .form-control[readonly] {
+            background-color: #e9ecef;
+            cursor: not-allowed;
+        }
+        .form-floating label{
+            padding-left:45px; color:var(--dark-gray); font-weight:500; font-size:14px; transform:translateY(0); transition:all .3s ease;
+        }
+        .form-floating .form-control:focus + label,
+        .form-floating .form-control:not(:placeholder-shown) + label{
+            transform: translateY(-20px) scale(.8); color:var(--primary-color);
+        }
+        .input-icon{ position:absolute; left:15px; top:50%; transform:translateY(-50%); color:var(--accent-color); font-size:16px; z-index:5; transition:color .3s ease; }
+        .form-floating .form-control:focus + label + .input-icon{ color:var(--primary-color); }
+        .password-toggle{
+            position:absolute; right:15px; top:50%; transform:translateY(-50%);
+            background:none; border:none; color:var(--accent-color); font-size:16px; cursor:pointer; z-index:5; transition:color .3s ease;
+        }
+        .password-toggle:hover{ color:var(--primary-color); }
+        .form-floating .form-select{
+            height:50px; border:2px solid var(--medium-gray); border-radius:10px;
+            font-size:14px; font-weight:500; padding-left:45px; appearance:none;
+            background: var(--white) url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23333' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") no-repeat right 15px center/12px 12px;
+            color:var(--primary-color);
+        }
+        .form-floating .form-select:focus{ border-color:var(--primary-color); box-shadow:0 0 0 4px rgba(0,0,0,0.1); }
+        .form-floating .form-select.is-invalid{ border-color:#dc3545; box-shadow:0 0 0 4px rgba(220,53,69,.1); }
+        .btn-submit{
+            width:100%; height:48px; background:var(--primary-color); border:none; border-radius:10px; color:var(--white);
+            font-size:16px; font-weight:600; letter-spacing:.5px; transition:all .3s ease; position:relative; overflow:hidden; margin-bottom:16px;
+        }
+        .btn-submit::before{
+            content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent); transition:left .5s;
+        }
+        .btn-submit:hover::before{ left:100%; }
+        .btn-submit:hover{ background:var(--secondary-color); transform:translateY(-2px); box-shadow:var(--shadow-medium); }
+        .btn-submit:active{ transform:translateY(0); }
+        .alert{ border:none; border-radius:10px; padding:12px 15px; font-weight:500; margin-bottom:16px; position:relative; overflow:hidden; }
+        .alert-danger{ background:#f8f9fa; color:#dc3545; border:1px solid #f5c6cb; border-left:4px solid #dc3545; }
+        .footer-links{ text-align:center; margin-top:20px; padding-top:16px; border-top:1px solid var(--medium-gray); }
+        .footer-links a{ color:var(--primary-color); text-decoration:none; font-weight:600; font-size:13px; transition:all .3s ease; position:relative; }
+        .footer-links a::after{ content:''; position:absolute; width:0; height:2px; bottom:-2px; left:50%; background:var(--primary-color); transition:all .3s ease; transform:translateX(-50%); }
+        .footer-links a:hover::after{ width:100%; }
+        .footer-links a:hover{ color:var(--secondary-color); }
+        @media (max-width: 768px){
+            .register-card{ padding:25px 20px; margin:5px; }
+            .welcome-title{ font-size:20px; }
+            .brand-logo{ width:50px; height:50px; }
+            .form-floating .form-control, .form-floating .form-select{ font-size:13px; }
+        }
+        .was-validated .form-control:invalid, .was-validated .form-select:invalid{
+            border-color:#dc3545; animation:shake .5s ease-in-out;
+        }
+        @keyframes shake{ 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="register-container">
+        <div class="register-card">
+            <div class="brand-section">
+                <img src="/image/acv-logo2.png" alt="Company Logo" class="brand-logo">
+                <h1 class="welcome-title">Hoàn tất đăng ký</h1>
+                <p class="welcome-subtitle">Vui lòng cung cấp thêm thông tin để hoàn tất tài khoản!</p>
+            </div>
+
+            <div th:if="${error}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/customers/oauth2/register}" method="post" th:object="${nguoiDung}" class="needs-validation" novalidate id="registerForm">
+                <div class="row">
+                    <!-- Basic Information Section -->
+                    <div class="col-md-6 form-section">
+                        <h4 class="mb-4">Thông tin cơ bản</h4>
+
+                        <!-- Full name: readonly -->
+                        <div class="form-floating">
+                            <input type="text" class="form-control" th:field="*{hoTen}" id="fullNameField" placeholder="Họ và tên" readonly>
+                            <label>Họ và tên</label>
+                            <i class="fas fa-user-tie input-icon"></i>
+                        </div>
+
+                        <!-- Email: readonly -->
+                        <div class="form-floating">
+                            <input type="email" class="form-control" th:field="*{email}" id="emailField" placeholder="Email" readonly>
+                            <label>Email</label>
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
+
+                        <!-- Username: ≥6, không khoảng trắng, chỉ [a-zA-Z0-9-/@] -->
+                        <div class="form-floating">
+                            <input type="text" class="form-control"
+                                   th:field="*{tenDangNhap}" id="usernameField"
+                                   placeholder="Tên đăng nhập" required maxlength="50"
+                                   pattern="[A-Za-z0-9/@\-]{6,}"
+                                   title="Ít nhất 6 ký tự; chỉ chữ cái, số, '-', '/', '@'; không khoảng trắng.">
+                            <label>Tên đăng nhập</label>
+                            <i class="fas fa-user input-icon"></i>
+                            <div class="invalid-feedback">Tên đăng nhập: ≥ 6 ký tự, chỉ chữ/số hoặc '-', '/', '@', không khoảng trắng.</div>
+                        </div>
+
+                        <!-- Password: ≥6, không khoảng trắng, chỉ [a-zA-Z0-9-/@] -->
+                        <div class="form-floating position-relative">
+                            <input type="password" class="form-control"
+                                   th:field="*{matKhau}" id="passwordField"
+                                   placeholder="Mật khẩu" required autocomplete="new-password" maxlength="100"
+                                   pattern="[A-Za-z0-9/@\-]{6,}"
+                                   title="Ít nhất 6 ký tự; chỉ chữ cái, số, '-', '/', '@'; không khoảng trắng.">
+                            <label>Mật khẩu</label>
+                            <i class="fas fa-lock input-icon"></i>
+                            <button type="button" class="password-toggle" id="togglePassword">
+                                <i class="fas fa-eye" id="togglePasswordIcon"></i>
+                            </button>
+                            <div class="invalid-feedback">Mật khẩu: ≥ 6 ký tự, chỉ chữ/số hoặc '-', '/', '@', không khoảng trắng.</div>
+                        </div>
+
+                        <!-- Phone -->
+                        <div class="form-floating">
+                            <input type="text" class="form-control"
+                                   th:field="*{soDienThoai}" id="phoneField"
+                                   placeholder="Số điện thoại" required
+                                   pattern="0[35789][0-9]{8}"
+                                   inputmode="numeric" maxlength="10"
+                                   title="SĐT di động VN 10 số: bắt đầu 03/05/07/08/09.">
+                            <label>Số điện thoại</label>
+                            <i class="fas fa-phone input-icon"></i>
+                            <div class="invalid-feedback">SĐT VN 10 số (03/05/07/08/09...).</div>
+                        </div>
+                    </div>
+
+                    <!-- Address Information Section -->
+                    <div class="col-md-6 form-section">
+                        <h4 class="mb-4">Thông tin địa chỉ</h4>
+                        <div class="form-floating">
+                            <select class="form-select" th:field="*{tinhThanhPho}" id="province" placeholder="Tỉnh/Thành phố" required>
+                                <option value="">Chọn Tỉnh/Thành phố</option>
+                                <option th:each="province : ${provinces.data}"
+                                        th:value="${province.ProvinceName}"
+                                        th:text="${province.ProvinceName}"
+                                        th:data-id="${province.ProvinceID}">
+                                </option>
+                            </select>
+                            <label>Tỉnh/Thành phố</label>
+                            <i class="fas fa-map-marker-alt input-icon"></i>
+                            <div class="invalid-feedback">Tỉnh/Thành phố là bắt buộc.</div>
+                        </div>
+                        <div class="form-floating">
+                            <select class="form-select" th:field="*{quanHuyen}" id="district" placeholder="Quận/Huyện" required>
+                                <option value="">Chọn Quận/Huyện</option>
+                            </select>
+                            <label>Quận/Huyện</label>
+                            <i class="fas fa-map-marked-alt input-icon"></i>
+                            <div class="invalid-feedback">Quận/Huyện là bắt buộc.</div>
+                        </div>
+                        <div class="form-floating">
+                            <select class="form-select" th:field="*{phuongXa}" id="ward" placeholder="Phường/Xã" required>
+                                <option value="">Chọn Phường/Xã</option>
+                            </select>
+                            <label>Phường/Xã</label>
+                            <i class="fas fa-map input-icon"></i>
+                            <div class="invalid-feedback">Phường/Xã là bắt buộc.</div>
+                        </div>
+
+                        <!-- Address detail: “thực tế” -->
+                        <div class="form-floating">
+                            <input type="text" class="form-control"
+                                   th:field="*{chiTietDiaChi}" id="addressDetailField"
+                                   placeholder="Chi tiết địa chỉ" required minlength="6" maxlength="255"
+                                   title="Nhập địa chỉ chi tiết (VD: 123 Lý Thường Kiệt, P.7).">
+                            <label>Chi tiết địa chỉ</label>
+                            <i class="fas fa-home input-icon"></i>
+                            <div class="invalid-feedback">Chi tiết địa chỉ chưa “thực tế” (quá ngắn / chỉ số / chỉ ký hiệu / toàn ký hiệu).</div>
+                        </div>
+
+                        <!-- Giữ lại giá trị cũ khi báo lỗi -->
+                        <input type="hidden" id="currentDistrictName" th:value="*{quanHuyen}">
+                        <input type="hidden" id="currentWardName" th:value="*{phuongXa}">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-submit mt-4">
+                    <i class="fa-solid fa-user-check me-2"></i> Hoàn tất đăng ký
+                </button>
+
+                <div class="footer-links">
+                    <p>Đã có tài khoản? <a href="/customers/login">Đăng nhập ngay</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    /* ====== Validate helpers ====== */
+    function setInvalid(el, msg){
+        el.classList.add('is-invalid');
+        const fb = el.closest('.form-floating')?.querySelector('.invalid-feedback');
+        if (fb && msg) fb.textContent = msg;
+    }
+    function clearInvalid(el){
+        el.classList.remove('is-invalid');
+        el.setCustomValidity('');
+    }
+    function hasNoSpaces(str){ return !/\s/.test(str); }
+    function isUserPassOK(str){
+        // ≥6, chỉ chữ/số và - / @, không khoảng trắng
+        return /^[A-Za-z0-9/@\-]{6,}$/.test(str) && hasNoSpaces(str);
+    }
+    // Tên: chỉ chữ (Unicode), có thể có khoảng trắng, '-' hoặc '
+    function isNameOK(str){
+        const s = str.trim();
+        if (s.length < 2 || s.length > 100) return false;
+        const re = /^(?:[\p{L}]+(?:[\s'\-][\p{L}]+)*)$/u;
+        return re.test(s);
+    }
+    // Email cơ bản
+    function isEmailOK(str){
+        return /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/i.test(str);
+    }
+    // SĐT VN 10 số: 03/05/07/08/09
+    function isPhoneOK(str){
+        return /^0[35789][0-9]{8}$/.test(str);
+    }
+    // Địa chỉ “thực tế”: >=6, không chỉ số, không chỉ ký hiệu, không chuỗi lặp, có chữ cái
+    function isRealisticAddress(str){
+        const s = str.trim();
+        if (s.length < 6) return false;
+        if (/^\d+$/.test(s)) return false;                    // chỉ số
+        if (/^[^\wÀ-ỹà-ỹ]+$/u.test(s)) return false;          // chỉ ký hiệu
+        if (/(.)\1{4,}/.test(s)) return false;                // lặp 5+ ký tự
+        if (!/[\p{L}]/u.test(s)) return false;                // phải có ít nhất 1 chữ
+        return true;
+    }
+
+    /* ====== Client-side validate ====== */
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            const form = document.getElementById('registerForm');
+            const username = document.getElementById('usernameField');
+            const password = document.getElementById('passwordField');
+            const phone = document.getElementById('phoneField');
+            const addr = document.getElementById('addressDetailField');
+
+            // Clear invalid on input
+            [username, password, phone, addr].forEach(el => {
+                el?.addEventListener('input', () => clearInvalid(el));
+            });
+
+            form.addEventListener('submit', function(event) {
+                let ok = true;
+
+                // Required check
+                const inputs = form.querySelectorAll('[required]');
+                inputs.forEach(function(input) {
+                    if (!input.value.trim()) {
+                        setInvalid(input, 'Trường này là bắt buộc.');
+                        ok = false;
+                    }
+                });
+
+                // Specific rules
+                if (username && !isUserPassOK(username.value)) {
+                    setInvalid(username, 'Tên đăng nhập ≥6 ký tự, chỉ chữ/số hoặc "-", "/", "@", không khoảng trắng.');
+                    ok = false;
+                }
+                if (password && !isUserPassOK(password.value)) {
+                    setInvalid(password, 'Mật khẩu ≥6 ký tự, chỉ chữ/số hoặc "-", "/", "@", không khoảng trắng.');
+                    ok = false;
+                }
+                if (phone && !isPhoneOK(phone.value)) {
+                    setInvalid(phone, 'SĐT VN 10 số (bắt đầu 03/05/07/08/09).');
+                    ok = false;
+                }
+                if (addr && !isRealisticAddress(addr.value)) {
+                    setInvalid(addr, 'Vui lòng nhập địa chỉ chi tiết thực tế (vd: 123 Lý Thường Kiệt, P.7).');
+                    ok = false;
+                }
+
+                if (!ok) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        }, false);
+    })();
+
+    /* ====== UI logic + toggle password ====== */
+    document.addEventListener('DOMContentLoaded', function () {
+        const passwordField = document.getElementById('passwordField');
+        const togglePassword = document.getElementById('togglePassword');
+        const togglePasswordIcon = document.getElementById('togglePasswordIcon');
+
+        if (togglePassword) {
+            togglePassword.addEventListener('click', function () {
+                const isPassword = passwordField.type === 'password';
+                passwordField.type = isPassword ? 'text' : 'password';
+                togglePasswordIcon.classList.toggle('fa-eye');
+                togglePasswordIcon.classList.toggle('fa-eye-slash');
+            });
+        }
+
+        const $province = $('#province');
+        const $district = $('#district');
+        const $ward = $('#ward');
+
+        const currentDistrictName = $('#currentDistrictName').val();
+        const currentWardName = $('#currentWardName').val();
+
+        function loadDistricts(provinceId, preselectName) {
+            return $.get('/customers/register/districts', { provinceId: provinceId })
+                .then(function (response) {
+                    const districts = (response && response.data) || [];
+                    $district.empty().append('<option value="">Chọn Quận/Huyện</option>');
+                    districts.forEach(function (d) {
+                        $district.append('<option value="' + d.DistrictName + '" data-id="' + d.DistrictID + '">' + d.DistrictName + '</option>');
+                    });
+                    if (preselectName) {
+                        $district.val(preselectName);
+                    }
+                    const selectedDid = $district.find('option:selected').data('id');
+                    return selectedDid || null;
+                });
+        }
+
+        function loadWards(districtId, preselectName) {
+            return $.get('/customers/register/wards', { districtId: districtId })
+                .then(function (response) {
+                    const wards = (response && response.data) || [];
+                    $ward.empty().append('<option value="">Chọn Phường/Xã</option>');
+                    wards.forEach(function (w) {
+                        $ward.append('<option value="' + w.WardName + '">' + w.WardName + '</option>');
+                    });
+                    if (preselectName) {
+                        $ward.val(preselectName);
+                    }
+                });
+        }
+
+        const hasProvince = !!$province.val();
+        if (hasProvince) {
+            const provinceId = $province.find('option:selected').data('id');
+            if (provinceId) {
+                loadDistricts(provinceId, currentDistrictName).then(function (did) {
+                    if (did) {
+                        return loadWards(did, currentWardName);
+                    } else {
+                        $ward.empty().append('<option value="">Chọn Phường/Xã</option>');
+                    }
+                });
+            }
+        }
+
+        $province.off('change').on('change', function () {
+            const pid = $(this).find('option:selected').data('id');
+            if (pid) {
+                loadDistricts(pid, null).then(function () {
+                    $ward.empty().append('<option value="">Chọn Phường/Xã</option>');
+                });
+            } else {
+                $district.empty().append('<option value="">Chọn Quận/Huyện</option>');
+                $ward.empty().append('<option value="">Chọn Phường/Xã</option>');
+            }
+        });
+
+        $district.off('change').on('change', function () {
+            const did = $(this).find('option:selected').data('id');
+            if (did) {
+                loadWards(did, null);
+            } else {
+                $ward.empty().append('<option value="">Chọn Phường/Xã</option>');
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Nạp tiền thành công</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        window.onload = async function () {
+            const pending = sessionStorage.getItem("pendingTopup");
+            if (!pending) {
+                document.getElementById("topupStatus").textContent = "Không tìm thấy thông tin nạp tiền.";
+                return;
+            }
+
+            const { amount, idNguoiDung } = JSON.parse(pending);
+            console.log("✅ pendingTopup:", { amount, idNguoiDung });
+
+            try {
+                const res = await fetch("/wallet-topup/confirm", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ soTien: amount, idNguoiDung })
+                });
+
+                const result = await res.json(); // 🚨 bắt buộc phải có dòng này
+
+                if (!res.ok) {
+                    document.getElementById("topupStatus").textContent = "Lỗi khi cập nhật ví!";
+                    console.error("❌ Chi tiết lỗi:", result.error);
+                    return;
+                }
+
+                document.getElementById("topupStatus").textContent =
+                    `Bạn đã nạp thành công ${amount.toLocaleString('vi-VN')} VNĐ. Số dư mới: ${parseInt(result.soDuMoi).toLocaleString('vi-VN')} VNĐ`;
+
+                sessionStorage.removeItem("pendingTopup");
+                setTimeout(() => window.location.href = "/vi", 3000);
+
+            } catch (err) {
+                console.error("❌ Lỗi xác nhận nạp tiền:", err);
+                document.getElementById("topupStatus").textContent = "Có lỗi xảy ra khi cập nhật ví.";
+            }
+        };
+    </script>
+
+    <style>
+        body {
+            text-align: center;
+            margin-top: 100px;
+            font-family: sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .success-box {
+            background: white;
+            display: inline-block;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-title {
+            color: green;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #4f46e5;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        .btn:hover {
+            background-color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+<div class="success-box">
+    <h2 class="success-title">✅ Nạp tiền thành công!</h2>
+    <p id="topupStatus">Đang xử lý...</p>
+    <p>Đang quay lại trang ví...</p>
+    <a href="/vi" class="btn">Quay lại ví ngay</a>
+</div>
+</body>
+</html>

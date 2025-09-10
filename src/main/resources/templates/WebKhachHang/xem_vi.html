@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ACV Store - Ví Thanh Toán</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" href="/image/ACV.png" type="image/png" sizes="32x32"/>
+  <style>
+    .navbar { background: linear-gradient(to right, #153054, #1e4066); }
+    .ticker { background-color: #9FD5F7; color: #153054; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 1050; }
+    .navbar { position: fixed; top: 40px; left: 0; width: 100%; z-index: 1040; }
+    .dropdown-menu { display: none; position: absolute; background-color: white; min-width: 160px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); z-index: 1000; }
+    .dropdown:hover .dropdown-menu { display: block; }
+    body { padding-top: 118px; }
+    .user-info { display: none; color: white; }
+    .user-info.active { display: inline; }
+    #confirmAddToCart.loading::after {
+      content: '';
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid white;
+      border-top-color: transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-left: 8px;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    #back-to-top {
+      transition: opacity 0.3s;
+    }
+    #back-to-top.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .search-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      z-index: 1000;
+      max-height: 300px;
+      overflow-y: auto;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .search-suggestions.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .suggestion-item:hover {
+      background-color: #f1f5f9;
+    }
+    .suggestion-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    .history-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+      background-color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .history-item:hover {
+      background-color: #e2e8f0;
+    }
+    .history-item .highlight {
+      background-color: #9FD5F7;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .history-item .delete-btn {
+      color: #ef4444;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 5px;
+      transition: color 0.2s;
+    }
+    .history-item .delete-btn:hover {
+      color: #b91c1c;
+    }.search-suggestions {
+       position: absolute;
+       top: 100%;
+       left: 0;
+       right: 0;
+       background: white;
+       border: 1px solid #ccc;
+       border-radius: 8px;
+       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+       z-index: 1000;
+       max-height: 300px;
+       overflow-y: auto;
+       opacity: 0;
+       visibility: hidden;
+       transition: opacity 0.3s ease, visibility 0.3s ease;
+     }
+    .search-suggestions.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .suggestion-item:hover {
+      background-color: #f1f5f9;
+    }
+    .suggestion-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    .history-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+      background-color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .history-item:hover {
+      background-color: #e2e8f0;
+    }
+    .history-item .highlight {
+      background-color: #9FD5F7;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .history-item .delete-btn {
+      color: #ef4444;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 5px;
+      transition: color 0.2s;
+    }
+    .history-item .delete-btn:hover {
+      color: #b91c1c;
+    }
+    .suggestion-item {
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .suggestion-item:hover {
+      background-color: #f1f5f9;
+    }
+    .suggestion-item img {
+      width: 50px;
+      height: 50px;
+      object-fit: cover;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    .history-item {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      cursor: pointer;
+      transition: background 0.2s;
+      background-color: #f8fafc;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .history-item:hover {
+      background-color: #e2e8f0;
+    }
+    .history-item .highlight {
+      background-color: #9FD5F7;
+      padding: 2px 4px;
+      border-radius: 4px;
+    }
+    .history-item .delete-btn {
+      color: #ef4444;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 5px;
+      transition: color 0.2s;
+    }
+    .history-item .delete-btn:hover {
+      color: #b91c1c;
+    }
+    @media (max-width: 640px) {
+      .dropdown-menu { width: 100%; left: 0; }
+      body { padding-top: 120px; }
+
+      /* Style cho footer và bản đồ */
+      .map-container {
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .map-container:hover {
+        transform: translateY(-5px);
+      }
+
+      @keyframes patternMove {
+        0% { background-position: 0 0, 0 0; }
+        100% { background-position: 60px 60px, -60px 60px; }
+      }
+
+      @media (max-width: 768px) {
+        .map-container iframe {
+          height: 200px;
+        }
+        .container.mx-auto {
+          padding: 0 10px;
+        }
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-100">
+<!-- Ticker -->
+<div class="ticker py-1 overflow-hidden" style="height: 40px;">
+  <marquee behavior="scroll" direction="left" scrollamount="5">
+    🎉 Khuyến mãi đặc biệt: Giảm giá lên đến 50% cho tất cả sản phẩm hôm nay! 🎉 - Miễn phí vận chuyển cho đơn từ 500k!
+  </marquee>
+</div>
+
+<div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
+
+<!-- Main Content -->
+<section class="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+  <div class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 max-w-3xl mx-auto transition-all duration-300 hover:shadow-2xl">
+    <h2 class="text-3xl font-extrabold text-[#153054] mb-6 tracking-tight flex items-center">
+      <i class="fas fa-wallet mr-2 text-[#9FD5F7]"></i> Thông tin ví của bạn
+    </h2>
+
+    <!-- Thông báo nếu có -->
+    <div th:if="${msg}" class="alert alert-success bg-[#9FD5F7] border-l-4 border-[#153054] text-[#153054] p-4 rounded-lg mb-6" th:text="${msg}"></div>
+
+    <!-- Nếu có ví thì hiển thị số dư -->
+    <div th:if="${vi != null}" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      <div class="bg-[#9FD5F7] p-6 rounded-xl shadow-md">
+        <p class="text-xl font-semibold text-[#153054] flex items-center">
+          <i class="fas fa-coins mr-2"></i> Số dư khả dụng:
+        </p>
+        <b class="text-2xl text-[#153054] font-bold block mt-2" th:text="${#numbers.formatDecimal(soDuKhaDung, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</b>
+        <p class="text-sm text-[#153054] opacity-80 mt-2">(* Đang chờ rút:
+          <span th:text="${#numbers.formatDecimal(tongDangCho, 0, 'COMMA', 0, 'POINT')} + ' VND'">0 VND</span>)
+        </p>
+      </div>
+      <div class="flex flex-col justify-center space-y-4">
+        <a href="/rut-tien" class="inline-flex items-center px-6 py-3 bg-[#153054] text-white font-semibold rounded-lg hover:bg-[#1e4066] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+          <i class="fas fa-money-bill-wave mr-2"></i> Rút tiền
+        </a>
+        <a th:href="@{/vi/lich-su}" class="inline-flex items-center px-6 py-3 bg-[#9FD5F7] text-[#153054] font-semibold rounded-lg hover:bg-[#b3e0ff] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+          <i class="fas fa-history mr-2"></i> Xem lịch sử giao dịch
+        </a>
+      </div>
+    </div>
+
+    <!-- Nếu chưa có ví -->
+    <div th:if="${vi == null}" class="text-center py-8">
+      <p class="text-lg text-[#153054] mb-4 flex items-center justify-center">
+        <i class="fas fa-exclamation-circle mr-2 text-[#9FD5F7]"></i> Bạn chưa có ví nào.
+      </p>
+      <form th:action="@{/vi/tao-vi}" method="post">
+        <button type="submit" class="inline-flex items-center px-6 py-3 bg-[#153054] text-white font-semibold rounded-lg hover:bg-[#1e4066] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg">
+          <i class="fas fa-plus mr-2"></i> Tạo ví mới
+        </button>
+      </form>
+    </div>
+
+    <!-- Form nạp tiền (chỉ hiển thị khi đã có ví) -->
+    <div th:if="${vi != null}" class="mt-8 flex justify-center">
+      <div class="w-full sm:w-[44rem]">
+        <h4 class="text-xl font-semibold text-[#153054] mb-4 flex items-center">
+          <i class="fas fa-arrow-up mr-2 text-[#9FD5F7]"></i> Nạp tiền vào ví
+        </h4>
+        <form id="formNapTien" th:action="@{/vi/nap-tien}" method="post" class="flex flex-col gap-6 p-6 bg-gradient-to-br from-[#f0f8ff] to-white rounded-xl shadow-lg border border-[#9FD5F7]/20">
+          <input type="hidden" id="idNguoiDung" th:value="${user.id}" />
+          <div class="relative">
+            <input type="text" id="soTienInput" name="soTien" required placeholder="Nhập số tiền muốn nạp"
+                   class="w-full p-4 border-2 border-[#153054] rounded-lg focus:ring-2 focus:ring-[#9FD5F7] focus:border-[#153054] transition-all duration-300 bg-white shadow-inner placeholder-[#153054]/50 pl-12" />
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[#153054] text-base font-medium">VNĐ</span>
+          </div>
+          <small class="text-[#153054] text-base opacity-80 flex items-center">
+            <i class="fas fa-info-circle mr-2"></i> Số tiền tối thiểu: 1.000 VND
+          </small>
+
+          <!-- Gợi ý số tiền -->
+          <div class="flex flex-wrap gap-3 mt-4 justify-center sm:justify-start">
+            <button type="button" class="suggest-btn px-5 py-3 bg-[#9FD5F7] text-[#153054] font-semibold rounded-lg hover:bg-[#b3e0ff] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg" data-value="100000">100.000</button>
+            <button type="button" class="suggest-btn px-5 py-3 bg-[#9FD5F7] text-[#153054] font-semibold rounded-lg hover:bg-[#b3e0ff] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg" data-value="200000">200.000</button>
+            <button type="button" class="suggest-btn px-5 py-3 bg-[#9FD5F7] text-[#153054] font-semibold rounded-lg hover:bg-[#b3e0ff] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg" data-value="500000">500.000</button>
+            <button type="button" class="suggest-btn px-5 py-3 bg-[#9FD5F7] text-[#153054] font-semibold rounded-lg hover:bg-[#b3e0ff] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg" data-value="1000000">1.000.000</button>
+          </div>
+
+          <button type="submit" class="inline-flex items-center justify-center px-6 py-3 bg-gradient-to-r from-[#153054] to-[#1e4066] text-white font-bold rounded-lg hover:from-[#1e4066] hover:to-[#153054] transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg mt-6">
+            <i class="fas fa-check mr-2"></i> Nạp tiền
+          </button>
+        </form>
+        <p class="text-base text-[#153054] opacity-80 mt-4 flex items-center justify-center">
+          <i class="fas fa-lock mr-2"></i> Giao dịch của bạn được bảo mật với mã hóa tiên tiến.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Footer -->
+<footer style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
+  <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+    <div>
+      <h3 class="text-lg font-bold mb-4">ACV Store</h3>
+      <p class="text-sm">Cửa hàng thời trang hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
+      <ul class="space-y-2">
+        <li><a href="/new" class="hover:text-blue-300">Sản phẩm mới</a></li>
+        <li><a href="/all" class="hover:text-blue-300">Tất cả sản phẩm</a></li>
+        <li><a href="/bestsellers" class="hover:text-blue-300">Sản phẩm bán chạy</a></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="text-lg font-bold mb-4">Liên hệ</h3>
+      <p class="text-sm">Địa chỉ: 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội, Việt Nam</p>
+      <p class="text-sm">Email: datn.acv@gmail.com</p>
+      <p class="text-sm">Hotline: 0911 006 045</p>
+      <div class="flex space-x-4 mt-4">
+        <a href="https://www.facebook.com" class="text-white hover:text-blue-300" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com" class="text-white hover:text-blue-300" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://twitter.com" class="text-white hover:text-blue-300" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+      </div>
+    </div>
+  </div>
+  <div class="container mx-auto mt-8">
+    <div class="map-container relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7142835949912!2d105.85287637508011!3d21.004087180639065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ad002fc50fd1%3A0x9a7962d208d20498!2sACV%20Store!5e0!3m2!1sen!2s!4v1755701406991!5m2!1sen!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+    <p class="text-center text-sm mt-2 text-gray-300">* Bản đồ hiển thị vị trí chi nhánh chính tại ACV Store tại 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội. Vui lòng liên hệ để xác nhận giờ mở cửa.</p>
+  </div>
+  <div class="text-center mt-8 text-sm">© 2025 ACV Store. All rights reserved.</div>
+  <!-- Hiệu ứng nền -->
+  <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10"></div>
+</footer>
+
+<!-- Back to Top Button -->
+<button id="back-to-top" class="fixed bottom-20 right-20 bg-blue-600 text-white p-3 rounded-full shadow-lg hidden" aria-label="Quay lại đầu trang">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script src="/js/navbar.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("soTienInput");
+    const suggestBtns = document.querySelectorAll(".suggest-btn");
+    const form = document.getElementById("formNapTien");
+
+    // Format nhập số tiền thành ###.###
+    input.addEventListener("input", function () {
+      let value = input.value.replace(/\D/g, ""); // chỉ lấy số
+      if (!value) {
+        input.value = "";
+        return;
+      }
+      input.value = Number(value).toLocaleString("vi-VN");
+    });
+
+    // Click gợi ý số tiền
+    suggestBtns.forEach(btn => {
+      btn.addEventListener("click", () => {
+        let value = btn.getAttribute("data-value");
+        input.value = Number(value).toLocaleString("vi-VN");
+      });
+    });
+
+    // Validate khi submit
+    form.addEventListener("submit", function (e) {
+      let rawValue = input.value.replace(/\D/g, "");
+      let soTien = parseInt(rawValue);
+      if (isNaN(soTien) || soTien < 1000) {
+        e.preventDefault();
+        alert("Vui lòng nạp ít nhất 1.000 VNĐ.");
+        return false;
+      }
+
+      // Gán lại value dạng số (để backend nhận đúng)
+      input.value = soTien;
+    });
+  });
+
+
+  // Wallet form submission
+  document.addEventListener("DOMContentLoaded", function () {
+    const form = document.getElementById('formNapTien');
+    if (form) {
+      form.onsubmit = function(e) {
+        e.preventDefault();
+        const soTien = parseInt(form.soTien.value);
+        const idNguoiDung = document.getElementById("idNguoiDung")?.value; // ✅ thêm dòng này
+
+        if (soTien < 1000) {
+          alert("Vui lòng nạp ít nhất 1000 VNĐ.");
+          return;
+        }
+
+        // 👉 Lưu lại session để xác nhận ở trang success
+        sessionStorage.setItem("pendingTopup", JSON.stringify({ amount: soTien, idNguoiDung }));
+
+        // 👉 Submit form nạp
+        const tempForm = document.createElement("form");
+        tempForm.method = "POST";
+        tempForm.action = "/wallet-topup/create";
+        tempForm.style.display = "none";
+
+        const input = document.createElement("input");
+        input.name = "soTien";
+        input.value = soTien;
+        input.type = "hidden";
+
+        tempForm.appendChild(input);
+        document.body.appendChild(tempForm);
+        tempForm.submit();
+      };
+    }
+
+    // Update cart count
+    async function updateCartCount() {
+      try {
+        const response = await fetch('/api/cart', { credentials: 'include' });
+        if (response.ok) {
+          const data = await response.json();
+          const cartCount = data.chiTietGioHang ? data.chiTietGioHang.length : 0;
+          document.getElementById('cart-count').textContent = cartCount;
+        } else if (response.status === 401) {
+          document.getElementById('cart-count').textContent = 0;
+        }
+      } catch (error) {
+        console.error('Error updating cart count:', error);
+      }
+    }
+
+    // Back to top functionality
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+      backToTop.classList.toggle('hidden', window.scrollY < 200);
+    });
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+    updateCartCount();
+  });
+</script>
+</body>
+</html>

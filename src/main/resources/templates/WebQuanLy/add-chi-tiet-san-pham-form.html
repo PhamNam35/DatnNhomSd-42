@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Chi Tiết Sản Phẩm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap&subset=latin-ext" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/sidebar.js}" defer></script>
+    <style>
+        :root {
+            /* Màu chính - giống như trang sản phẩm */
+            --primary-color: #153054;
+            --primary-hover: #102C47;
+            --secondary-color: #9FD5F7;
+            --secondary-hover: #84C7EA;
+            --accent-color: #479BD3;
+            --accent-hover: #CAEAFB;
+            --border-active: #62B2E7;
+
+            /* Màu nền */
+            --main-background: #F4F9FC;
+            --content-background: #ffffff;
+            --header-background: #153054;
+
+            /* Màu văn bản */
+            --text-primary: #153054;
+            --text-content: #333333;
+            --text-secondary: #6B7280;
+            --text-link: #479BD3;
+            --text-white: #ffffff;
+
+            /* Màu nút */
+            --btn-danger: #F44336;
+            --btn-danger-hover: #D32F2F;
+
+            /* Màu trạng thái */
+            --success-bg: #D1FADF;
+            --success-text: #027A48;
+            --warning-bg: #FEF3C7;
+            --warning-text: #B45309;
+            --error-bg: #FECACA;
+            --error-text: #991B1B;
+
+            /* Màu khác */
+            --border-color: #dee2e6;
+            --light-gray: #f8f9fa;
+            --shadow-light: 0 8px 32px rgba(21, 48, 84, 0.1);
+            --shadow-medium: 0 12px 40px rgba(21, 48, 84, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(21, 48, 84, 0.2);
+        }
+
+        /* Updated CSS to match exact width of product management page */
+        .content {
+            margin-left: 250px;
+            padding-top: 50px;
+            width: calc(100% - 250px);
+            min-height: 100vh;
+            transition: all 0.3s;
+            position: relative;
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            background-color: var(--main-background);
+            color: var(--text-content);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Container with NO width constraints - full width like product management */
+        .container {
+            max-width: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+        }
+
+        /* Add padding only to the direct content, not the container */
+        .content-wrapper {
+            padding: 1rem 2rem;
+        }
+
+        .page-title {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 2rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+            overflow: hidden;
+            background: var(--content-background);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--header-background), var(--primary-hover));
+            color: var(--text-white);
+            border-bottom: none;
+            padding: 1.5rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(159, 213, 247, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .card-header:hover::before {
+            left: 100%;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .variation-block {
+            background-color: var(--light-gray);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .table-responsive {
+            margin-bottom: 1rem;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table {
+            background-color: var(--content-background);
+            margin-bottom: 0;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table th, .table td {
+            vertical-align: middle;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table th {
+            background: var(--light-gray);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .custom-file-input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            background-color: var(--content-background);
+            transition: all 0.3s ease;
+            height: calc(1.5em + 0.6rem + 4px);
+            overflow: hidden;
+        }
+
+        .custom-file-input-wrapper:focus-within {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 0.25rem rgba(98, 178, 231, 0.1);
+        }
+
+        .custom-file-input-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .custom-file-input-button {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+            padding: 0.5rem 1rem;
+            border-right: 1px solid var(--border-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .custom-file-input-button:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--primary-color));
+        }
+
+        .custom-file-input-label {
+            flex-grow: 1;
+            padding: 0.5rem 1rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background-color: var(--light-gray);
+        }
+
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .image-preview {
+            position: relative;
+            width: 80px;
+            height: 80px;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+        }
+
+        .image-preview .remove-image {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--btn-danger);
+            color: var(--text-white);
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            line-height: 20px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+            border-bottom: none;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+        }
+
+        .modal-content {
+            border-radius: 20px;
+            border: none;
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .modal-footer {
+            border-top: 1px solid var(--border-color);
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--content-background);
+            color: var(--text-content);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 0.25rem rgba(98, 178, 231, 0.1);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--text-white) !important;
+            box-shadow: 0 4px 15px rgba(21, 48, 84, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.3);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(71, 155, 211, 0.3);
+        }
+
+        .btn-success:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(71, 155, 211, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--text-secondary);
+            border-color: var(--text-secondary);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            border-color: #4b5563;
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+        }
+
+        .btn-danger {
+            background: var(--btn-danger);
+            border-color: var(--btn-danger);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: var(--btn-danger-hover);
+            border-color: var(--btn-danger-hover);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            margin-left: 12px;
+        }
+
+        .btn i {
+            margin-right: 0.5rem;
+        }
+
+        .form-check-input {
+            cursor: pointer;
+            width: 3em;
+            height: 1.5em;
+            border-radius: 2em;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+        }
+
+        .form-check-input:checked {
+            background-color: var(--success-text);
+            border-color: var(--success-text);
+            box-shadow: 0 0 0 4px rgba(2, 122, 72, 0.2);
+        }
+
+        .form-check-input:not(:checked) {
+            background-color: var(--btn-danger);
+            border-color: var(--btn-danger);
+            box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.2);
+        }
+
+        .form-check-label {
+            font-size: 1rem;
+            color: var(--text-content);
+            margin-left: 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .form-check-input:checked + .form-check-label {
+            color: var(--success-text);
+        }
+
+        .form-check-input:not(:checked) + .form-check-label {
+            color: var(--btn-danger);
+        }
+
+        .ts-wrapper.single .ts-control, .ts-wrapper.multi .ts-control {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            background-color: var(--content-background);
+        }
+
+        .ts-wrapper.single .ts-control:focus, .ts-wrapper.multi .ts-control:focus {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 0.25rem rgba(98, 178, 231, 0.1);
+        }
+
+        .ts-dropdown {
+            font-size: 14px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+        }
+
+        .ts-control input {
+            padding: 4px;
+        }
+
+        .bulk-edit-row {
+            background-color: var(--light-gray);
+            padding: 1rem;
+            border-radius: 12px;
+            display: none;
+            gap: 15px;
+            margin-bottom: 1rem;
+        }
+
+        .bulk-edit-row.active {
+            display: flex;
+        }
+
+        .bulk-edit-row .input-group {
+            width: 100%;
+        }
+
+        .bulk-edit-row .form-control {
+            padding: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .bulk-edit-section {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #quickAddImagePreviewContainer {
+            display: block;
+            margin-top: 0.5rem;
+            margin-left: 0;
+        }
+
+        #quickAddImagePreview {
+            max-width: 200px;
+            max-height: 200px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 2px solid var(--border-color);
+            display: none;
+        }
+
+        .table td:nth-child(4), .table td:nth-child(5) {
+            padding: 1rem;
+            font-size: 1rem;
+        }
+
+        .table td:nth-child(6) {
+            padding: 0.5rem;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(21, 48, 84, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .loading-content {
+            text-align: center;
+            color: var(--text-white);
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--primary-color);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.5rem;
+            font-weight: 500;
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 3s steps(30, end) infinite;
+        }
+
+        @keyframes typing {
+            0% { width: 0; }
+            50% { width: 100%; }
+            100% { width: 0; }
+        }
+
+        /* Success Notification */
+        .success-notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--success-text);
+            color: var(--text-white);
+            padding: 15px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            display: none;
+            z-index: 10000;
+            font-size: 1rem;
+            font-weight: 500;
+            animation: slideIn 0.5s ease-out, slideOut 0.5s ease-in 2.5s forwards;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        @keyframes slideOut {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+
+        /* Breadcrumb styling */
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+
+        .breadcrumb-item a {
+            color: var(--text-link);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--text-secondary);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding-left: 0;
+                padding-right: 0;
+            }
+
+            .card {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+
+            .breadcrumb {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+                padding: 0 1rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .bulk-edit-row {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .table th,
+            .table td {
+                font-size: 0.875rem;
+                padding: 0.75rem 0.5rem;
+            }
+
+            .image-preview {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        .full-width-content {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        #loadingOverlayQuickAttr {
+            display: none !important;
+        }
+        .ts-readonly .ts-control { opacity: .7; pointer-events: none; }
+    </style>
+</head>
+<body>
+
+<div class="d-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+
+    <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+        <!-- Các phần tử khác bên trái (nếu có) -->
+
+        <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </nav>
+    <!-- Nội dung chính bên phải -->
+    <div class="content" id="content">
+        <div class="container">
+            <div class="text-center mb-2 mt-5">
+                <h2 class="page-title">THÊM CHI TIẾT SẢN PHẨM</h2>
+            </div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb justify-content-center">
+                    <li class="breadcrumb-item"><a th:href="@{/acvstore/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-plus-circle me-1"></i>Thêm chi tiết</li>
+                </ol>
+            </nav>
+
+            <div class="card">
+                <div class="card-header">
+                    <span><i class="fas fa-box-open me-2"></i>Thông Tin Chi Tiết Sản Phẩm</span>
+                </div>
+                <div class="card-body">
+                    <form th:action="@{/acvstore/chi-tiet-san-pham/save-batch}" method="post" enctype="multipart/form-data" id="batchForm">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="productSelect" class="form-label">Sản phẩm</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="productSelect" name="productId" required>
+                                        <option value="">-- Chọn sản phẩm --</option>
+                                        <option th:each="p : ${sanPhams}" th:value="${p.id}" th:text="${p.tenSanPham}" th:selected="${selectedProductId != null and p.id == selectedProductId}"></option>
+                                    </select>
+                                    <button type="button" class="btn btn-success btn-sm quick-add-btn ms-2" data-bs-toggle="modal" data-bs-target="#quickAddProductModal" data-entity="product" title="Thêm nhanh sản phẩm">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="originSelect" class="form-label">Xuất xứ</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="originSelect" name="originId" required>
+                                        <option value="">Chọn xuất xứ...</option>
+                                        <option th:each="o : ${xuatXus}" th:value="${o.id}" th:text="${o.tenXuatXu}"></option>
+                                    </select>
+                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="origin" title="Thêm nhanh xuất xứ">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="materialSelect" class="form-label">Chất liệu</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="materialSelect" name="materialId" required>
+                                        <option value="">Chọn chất liệu...</option>
+                                        <option th:each="m : ${chatLieus}" th:value="${m.id}" th:text="${m.tenChatLieu}"></option>
+                                    </select>
+                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="material" title="Thêm nhanh chất liệu">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="styleSelect" class="form-label">Kiểu dáng</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="styleSelect" name="styleId" required>
+                                        <option value="">Chọn kiểu dáng...</option>
+                                        <option th:each="st : ${kieuDangs}" th:value="${st.id}" th:text="${st.tenKieuDang}"></option>
+                                    </select>
+                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="style" title="Thêm nhanh kiểu dáng">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sleeveSelect" class="form-label">Tay áo</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="sleeveSelect" name="sleeveId" required>
+                                        <option value="">Chọn tay áo...</option>
+                                        <option th:each="sa : ${tayAos}" th:value="${sa.id}" th:text="${sa.tenTayAo}"></option>
+                                    </select>
+                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="sleeve" title="Thêm nhanh tay áo">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="collarSelect" class="form-label">Cổ áo</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="collarSelect" name="collarId" required>
+                                        <option value="">Chọn cổ áo...</option>
+                                        <option th:each="ca : ${coAos}" th:value="${ca.id}" th:text="${ca.tenCoAo}"></option>
+                                    </select>
+                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="collar" title="Thêm nhanh cổ áo">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="brandSelect" class="form-label">Thương hiệu</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="brandSelect" name="brandId" required>
+                                        <option value="">Chọn thương hiệu...</option>
+                                        <option th:each="th : ${thuongHieus}" th:value="${th.id}" th:text="${th.tenThuongHieu}"></option>
+                                    </select>
+                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="brand" title="Thêm nhanh thương hiệu">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="genderSelect" class="form-label">Giới tính</label>
+                                <select class="form-select" id="genderSelect" name="gender" required>
+                                    <option value="">Chọn giới tính...</option>
+                                    <option value="Nam">Nam</option>
+                                    <option value="Nữ">Nữ</option>
+                                    <option value="Unisex">Unisex</option>
+                                </select>
+                            </div>
+                            <!-- Biến thể sản phẩm -->
+                            <div class="col-md-12">
+                                <label class="form-label">Biến thể sản phẩm</label>
+                                <div class="variation-block">
+                                    <div class="row g-3 mt-3">
+                                        <div class="col-md-6">
+                                            <label for="colorSelect" class="form-label">Màu sắc</label>
+                                            <select class="form-select" id="colorSelect" name="colorIds" multiple>
+                                                <option value="">Chọn màu...</option>
+                                                <option th:each="c : ${mauSacs}" th:value="${c.id}" th:text="${c.tenMau}"></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="sizeSelect" class="form-label">Kích cỡ</label>
+                                            <select class="form-select" id="sizeSelect" name="sizeIds" multiple>
+                                                <option value="">Chọn kích cỡ...</option>
+                                                <option th:each="s : ${kichCos}" th:value="${s.id}" th:text="${s.ten}"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-primary mt-3" onclick="generateVariations()">Tạo biến thể</button>
+                                    <!-- Bulk Edit Section Moved Above Table -->
+                                    <!-- Bulk Edit Section -->
+                                    <div class="bulk-edit-section">
+                                        <div class="bulk-edit-row" id="bulkEditRow">
+                                            <div class="col-md-4">
+                                                <label class="form-label">Giá bán chung</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text">VNĐ</span>
+                                                    <input type="text" class="form-control format-number" id="bulkPrice" step="1000" min="0" style="width: 100px;">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <label class="form-label">Số lượng tồn chung</label>
+                                                <div class="input-group">
+                                                    <span class="input-group-text"><i class="fas fa-boxes"></i></span>
+                                                    <input type="text" class="form-control format-number" id="bulkStock" min="0" style="width: 100px;">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 d-flex align-items-end">
+                                                <button type="button" class="btn btn-primary" onclick="applyBulkEdit()">Áp dụng</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-bordered" id="variationsTable" style="display: none;">
+                                            <thead>
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllVariations" onchange="toggleSelectAll()"></th>
+                                                <th>STT</th>
+                                                <th>Màu sắc + Size</th>
+                                                <th>Giá</th>
+                                                <th>Số lượng</th>
+                                                <th>Thao tác</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="variationsContainer">
+                                            <!-- Các biến thể sẽ được thêm động vào đây -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 mt-4 text-center">
+                            <button type="submit" class="btn btn-success"><i class="fas fa-save me-2"></i>Lưu Chi Tiết Sản Phẩm</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Modal Thêm Nhanh Thuộc Tính -->
+            <div class="modal fade" id="quickAddModal" tabindex="-1" aria-labelledby="quickAddModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="quickAddModalLabel">Thêm Nhanh Thuộc Tính</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <input type="hidden" id="quickAddEntity">
+                            <div class="mb-3">
+                                <label for="quickAddName" class="form-label">Tên thuộc tính</label>
+                                <input type="text" class="form-control" id="quickAddName" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times"></i> Đóng
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="saveQuickAdd()">
+                                <i class="fas fa-save"></i> Lưu
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Thêm Nhanh Sản Phẩm -->
+            <!-- Modal Thêm Nhanh Sản Phẩm -->
+            <div class="modal fade" id="quickAddProductModal" tabindex="-1" aria-labelledby="quickAddProductModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="quickAddProductModalLabel"><i class="fas fa-plus me-2"></i> Thêm Nhanh Sản Phẩm</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <form id="quickAddProductForm" enctype="multipart/form-data">
+                            <div class="modal-body">
+                                <input type="hidden" name="id" value="">
+                                <div class="mb-3">
+                                    <label for="quickAddMaSanPham" class="form-label">Mã sản phẩm</label>
+                                    <input type="text" class="form-control" id="quickAddMaSanPham" name="maSanPham" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="quickAddTenSanPham" class="form-label">Tên sản phẩm</label>
+                                    <input type="text" class="form-control" id="quickAddTenSanPham" name="tenSanPham" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="quickAddMoTa" class="form-label">Mô tả</label>
+                                    <textarea class="form-control" id="quickAddMoTa" name="moTa" rows="3"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="quickAddDanhMuc" class="form-label">Danh mục</label>
+                                    <select class="form-select" id="quickAddDanhMuc" name="danhMuc.id" required>
+                                        <option value="">-- Chọn danh mục --</option>
+                                        <option th:each="dm : ${danhMucList}" th:value="${dm.id}" th:text="${dm.tenDanhMuc}"></option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ảnh sản phẩm</label>
+                                    <div class="d-flex align-items-center">
+                                        <input type="file" class="form-control" id="quickAddImageFile" name="imageFile" accept="image/*">
+                                        <span id="quickAddImageNameDisplay" class="ms-2 text-muted" style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Chưa chọn ảnh</span>
+                                    </div>
+                                    <div id="quickAddImagePreviewContainer" class="mt-2">
+                                        <img id="quickAddImagePreview" class="product-image" alt="Preview Image" style="max-width: 200px; max-height: 200px; display: none;">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <input type="hidden" name="trangThai" value="true">
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    <i class="fas fa-times"></i> Đóng
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save"></i> Lưu
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Loading & Success: Lưu chi tiết sản phẩm -->
+            <div class="loading-overlay" id="loadingOverlayDetail">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Đang thêm chi tiết sản phẩm...</div>
+                </div>
+            </div>
+            <div class="success-notification" id="successNotificationDetail">
+                <i class="fas fa-check-circle me-2"></i>Thêm chi tiết sản phẩm thành công!
+            </div>
+
+            <!-- Loading & Success: Thêm nhanh sản phẩm -->
+            <div class="loading-overlay" id="loadingOverlayQuickProduct">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Đang thêm sản phẩm...</div>
+                </div>
+            </div>
+            <div class="success-notification" id="successNotificationQuickProduct">
+                <i class="fas fa-check-circle me-2"></i>Thêm sản phẩm thành công!
+            </div>
+
+            <!-- Loading & Success: Thêm nhanh thuộc tính -->
+            <div class="loading-overlay" id="loadingOverlayQuickAttr">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <div class="loading-text">Đang thêm thuộc tính...</div>
+                </div>
+            </div>
+            <div class="success-notification" id="successNotificationQuickAttr">
+                <i class="fas fa-check-circle me-2"></i>Thêm thuộc tính thành công!
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.modal').on('hidden.bs.modal', function () {
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('body').css('overflow', 'auto');
+        });
+
+        // Khởi tạo TomSelect
+        const productTomSelect = new TomSelect('#productSelect', {
+            create: false,
+            placeholder: '-- Chọn sản phẩm --',
+            maxOptions: 200,
+            allowClear: true,
+            onChange: function(value) {
+                if (value) {
+                    fetchProductDetails(value);
+                    generateVariations();
+                } else {
+                    enableAllAttributes();
+                    resetAttributeValues();
+                }
+            }
+        });
+
+        const colorTomSelect = new TomSelect('#colorSelect', {
+            create: false,
+            placeholder: 'Chọn màu...',
+            maxOptions: 200,
+            allowClear: true,
+            onChange: function() { generateVariations(); }
+        });
+
+        const sizeTomSelect = new TomSelect('#sizeSelect', {
+            create: false,
+            placeholder: 'Chọn kích cỡ...',
+            maxOptions: 200,
+            allowClear: true,
+            onChange: function() { generateVariations(); }
+        });
+
+        const originTomSelect = new TomSelect('#originSelect', {
+            create: false,
+            placeholder: 'Chọn xuất xứ...',
+            maxOptions: 200,
+            allowClear: true,
+        });
+
+        const materialTomSelect = new TomSelect('#materialSelect', {
+            create: false,
+            placeholder: 'Chọn chất liệu...',
+            maxOptions: 200,
+            allowClear: true,
+        });
+
+        const styleTomSelect = new TomSelect('#styleSelect', {
+            create: false,
+            placeholder: 'Chọn kiểu dáng...',
+            maxOptions: 200,
+            allowClear: true,
+        });
+
+        const sleeveTomSelect = new TomSelect('#sleeveSelect', {
+            create: false,
+            placeholder: 'Chọn tay áo...',
+            maxOptions: 200,
+            allowClear: true,
+        });
+
+        const collarTomSelect = new TomSelect('#collarSelect', {
+            create: false,
+            placeholder: 'Chọn cổ áo...',
+            maxOptions: 200,
+            allowClear: true,
+        });
+
+        const brandTomSelect = new TomSelect('#brandSelect', {
+            create: false,
+            placeholder: 'Chọn thương hiệu...',
+            maxOptions: 200,
+            allowClear: true,
+        });
+
+        const genderTomSelect = new TomSelect('#genderSelect', {
+            create: false,
+            placeholder: 'Chọn giới tính...',
+            maxOptions: 200,
+            allowClear: true,
+        });
+
+        const quickAddDanhMucTomSelect = new TomSelect('#quickAddDanhMuc', {
+            create: false,
+            placeholder: '-- Chọn danh mục --',
+            maxOptions: 200,
+            allowClear: true,
+        });
+
+        $('.quick-add-btn').on('click', function() {
+            const entity = $(this).data('entity');
+            if (entity !== 'product') {
+                $('#quickAddEntity').val(entity);
+                $('#quickAddName').val('');
+                $('#quickAddModalLabel').text('Thêm Nhanh ' + capitalize(entity));
+            }
+        });
+
+        $('#quickAddImageFile').on('change', function() {
+            const file = this.files[0];
+            const imageNameDisplay = $('#quickAddImageNameDisplay');
+            const imagePreview = $('#quickAddImagePreview');
+            if (file) {
+                imageNameDisplay.text(file.name);
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.attr('src', e.target.result).show();
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imageNameDisplay.text('Chưa chọn ảnh');
+                imagePreview.hide();
+            }
+        });
+
+        var selectedProductId = /*[[${selectedProductId ?: null}]]*/ null;
+        if (selectedProductId) {
+            productTomSelect.setValue(selectedProductId);
+            fetchProductDetails(selectedProductId);
+        }
+
+        function fetchProductDetails(productId) {
+            $.ajax({
+                url: `/acvstore/chi-tiet-san-pham/api/product-details/${productId}`,
+                type: 'GET',
+                success: function(response) {
+                    if (response.hasDetails) {
+                        setAttributeValues(response);
+                        disableAttributes();
+                    } else {
+                        enableAllAttributes();
+                        resetAttributeValues();
+                    }
+                },
+                error: function(xhr) {
+                    alert('Lỗi khi lấy thông tin sản phẩm: ' + (xhr.responseJSON ? xhr.responseJSON.error : xhr.statusText));
+                    enableAllAttributes();
+                }
+            });
+        }
+
+        function setAttributeValues(data) {
+            originTomSelect.setValue(data.originId || '');
+            materialTomSelect.setValue(data.materialId || '');
+            styleTomSelect.setValue(data.styleId || '');
+            sleeveTomSelect.setValue(data.sleeveId || '');
+            collarTomSelect.setValue(data.collarId || '');
+            brandTomSelect.setValue(data.brandId || '');
+            genderTomSelect.setValue(data.gender || '');
+        }
+
+        function disableAttributes() {
+            [originTomSelect, materialTomSelect, styleTomSelect, sleeveTomSelect, collarTomSelect, brandTomSelect, genderTomSelect]
+                .forEach(ts => {
+                    ts.lock();
+                    ts.wrapper.classList.add('ts-readonly');
+                });
+
+            $('.quick-add-btn[data-entity="origin"], .quick-add-btn[data-entity="material"], .quick-add-btn[data-entity="style"], ' +
+                '.quick-add-btn[data-entity="sleeve"], .quick-add-btn[data-entity="collar"], .quick-add-btn[data-entity="brand"]').prop('disabled', true);
+        }
+
+        function enableAllAttributes() {
+            [originTomSelect, materialTomSelect, styleTomSelect, sleeveTomSelect, collarTomSelect, brandTomSelect, genderTomSelect]
+                .forEach(ts => {
+                    ts.unlock();
+                    ts.wrapper.classList.remove('ts-readonly');
+                });
+
+            $('.quick-add-btn:not([data-entity="product"])').prop('disabled', false);
+        }
+
+        function resetAttributeValues() {
+            originTomSelect.clear();
+            materialTomSelect.clear();
+            styleTomSelect.clear();
+            sleeveTomSelect.clear();
+            collarTomSelect.clear();
+            brandTomSelect.clear();
+            genderTomSelect.clear();
+        }
+
+        // Hàm validate form
+        function validateForm() {
+            let isValid = true;
+            $('.invalid-feedback').remove();
+            $('.is-invalid').removeClass('is-invalid');
+
+            // Validate productId
+            if (!$('#productSelect').val()) {
+                showError('productSelect', 'Vui lòng chọn sản phẩm.');
+                isValid = false;
+            }
+
+            // Validate originId
+            if (!$('#originSelect').val()) {
+                showError('originSelect', 'Vui lòng chọn xuất xứ.');
+                isValid = false;
+            }
+
+            // Validate materialId
+            if (!$('#materialSelect').val()) {
+                showError('materialSelect', 'Vui lòng chọn chất liệu.');
+                isValid = false;
+            }
+
+            // Validate styleId
+            if (!$('#styleSelect').val()) {
+                showError('styleSelect', 'Vui lòng chọn kiểu dáng.');
+                isValid = false;
+            }
+
+            // Validate sleeveId
+            if (!$('#sleeveSelect').val()) {
+                showError('sleeveSelect', 'Vui lòng chọn tay áo.');
+                isValid = false;
+            }
+
+            // Validate collarId
+            if (!$('#collarSelect').val()) {
+                showError('collarSelect', 'Vui lòng chọn cổ áo.');
+                isValid = false;
+            }
+
+            // Validate brandId
+            if (!$('#brandSelect').val()) {
+                showError('brandSelect', 'Vui lòng chọn thương hiệu.');
+                isValid = false;
+            }
+
+            // Validate gender
+            if (!$('#genderSelect').val()) {
+                showError('genderSelect', 'Vui lòng chọn giới tính.');
+                isValid = false;
+            }
+
+            // Validate colors
+            const colors = $('#colorSelect').val() || [];
+            if (colors.length === 0) {
+                showError('colorSelect', 'Vui lòng chọn ít nhất một màu sắc.');
+                isValid = false;
+            }
+
+            // Validate sizes
+            const sizes = $('#sizeSelect').val() || [];
+            if (sizes.length === 0) {
+                showError('sizeSelect', 'Vui lòng chọn ít nhất một kích cỡ.');
+                isValid = false;
+            }
+
+            // Validate images for each color
+            colors.forEach(colorId => {
+                const inputElement = $(`#image-input-${colorId}`);
+                const filesLength = inputElement[0]?.files?.length || 0;
+                const colorText = $('#colorSelect option[value="' + colorId + '"]').text();
+
+                if (filesLength === 0) {
+                    showError(`image-input-${colorId}`, `Vui lòng tải lên ít nhất một ảnh cho màu ${colorText}.`);
+                    isValid = false;
+                } else if (filesLength > 3) {
+                    showError(`image-input-${colorId}`, `Tối đa chỉ được chọn 3 ảnh cho màu ${colorText}. Vui lòng chọn lại.`);
+                    isValid = false;
+                }
+            });
+
+            // Validate variations (price and stock)
+            $('.variation-item').each(function() {
+                const priceInput = $(this).find('.variation-price');
+                const stockInput = $(this).find('.variation-stock');
+                const index = $(this).data('index');
+
+                if (!priceInput.val() || parseFloat(priceInput.val()) <= 0) {
+                    showError(`variations[${index}].price`, 'Giá phải là số dương.');
+                    isValid = false;
+                }
+
+                if (!stockInput.val() || parseInt(stockInput.val()) < 0) {
+                    showError(`variations[${index}].stockQuantity`, 'Số lượng tồn kho không được âm.');
+                    isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+        function showError(inputId, message) {
+            const $input = $('#' + inputId);
+            $input.addClass('is-invalid');
+            $input.after(`<div class="invalid-feedback">${message}</div>`);
+            $input.focus();
+            $input.one('input change', function() {
+                $(this).removeClass('is-invalid');
+                $(this).next('.invalid-feedback').remove();
+            });
+        }
+
+        $('#batchForm').on('submit', function(event) {
+            event.preventDefault();
+            Swal.fire({
+                title: 'Xác nhận lưu',
+                text: 'Bạn có chắc muốn lưu chi tiết sản phẩm?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (!validateForm()) {
+                        return;
+                    }
+
+                    const formData = new FormData(this);
+                    $.ajax({
+                        url: $(this).attr('action'),
+                        type: 'POST',
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function() {
+                            $('#loadingOverlayDetail').css('display', 'flex');
+                        },
+                        success: function(response) {
+                            $('#loadingOverlayDetail').hide();
+                            $('#successNotificationDetail').css('display', 'block');
+                            setTimeout(() => {
+                                $('#successNotificationDetail').css('display', 'none');
+                                window.location.href = '/acvstore/chi-tiet-san-pham?productId=' + $('#productSelect').val() + '&success=Thêm thành công';
+                            }, 2000);
+                        },
+                        error: function(xhr) {
+                            $('#loadingOverlayDetail').hide();
+                            let errorMessage = xhr.statusText;
+                            try {
+                                const errorResponse = JSON.parse(xhr.responseText);
+                                errorMessage = errorResponse.message || xhr.responseText;
+                            } catch (e) {}
+                            alert('Lỗi khi thêm chi tiết sản phẩm: ' + errorMessage);
+                        }
+                    });
+                }
+            });
+        });
+
+        $('#quickAddProductForm').on('submit', function(event) {
+            event.preventDefault();
+            $('.invalid-feedback').remove();
+            $('.is-invalid').removeClass('is-invalid');
+
+            let isValid = true;
+            const maSanPham = $('#quickAddMaSanPham').val().trim();
+            if (!maSanPham) {
+                showError('quickAddMaSanPham', 'Mã sản phẩm không được để trống.');
+                isValid = false;
+            } else if (!/^[a-zA-Z0-9_-]+$/.test(maSanPham)) {
+                showError('quickAddMaSanPham', 'Mã sản phẩm chỉ cho phép chữ cái, số, _, -.');
+                isValid = false;
+            }
+
+            const tenSanPham = $('#quickAddTenSanPham').val().trim();
+            if (!tenSanPham) {
+                showError('quickAddTenSanPham', 'Tên sản phẩm không được để trống.');
+                isValid = false;
+            } else if (!/^[^\s][\p{L}0-9\s_-]*[^\s]$/u.test(tenSanPham)) {
+                showError('quickAddTenSanPham', 'Tên sản phẩm không được bắt đầu hoặc kết thúc bằng khoảng trắng.');
+                isValid = false;
+            }
+
+            const imageFile = $('#quickAddImageFile')[0].files[0];
+            if (!imageFile) {
+                showError('quickAddImageFile', 'Ảnh sản phẩm không được để trống.');
+                isValid = false;
+            }
+
+            const danhMuc = $('#quickAddDanhMuc').val();
+            if (!danhMuc) {
+                showError('quickAddDanhMuc', 'Vui lòng chọn danh mục.');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            const formData = new FormData(this);
+            formData.set('maSanPham', maSanPham);
+            formData.set('tenSanPham', tenSanPham);
+
+            $.ajax({
+                url: '/acvstore/chi-tiet-san-pham/save-auto-product',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                beforeSend: function() {
+                    $('#loadingOverlayQuickProduct').fadeIn(100);
+                },
+                success: function(response) {
+                    $('#loadingOverlayQuickProduct').fadeOut(200);
+                    $('#quickAddProductModal').modal('hide');
+                    $('#successNotificationQuickProduct').css('display', 'block');
+                    setTimeout(() => {
+                        $('#successNotificationQuickProduct').css('display', 'none');
+                    }, 3000);
+                    refreshProductSelect(response.id, response.tenSanPham);
+                },
+                error: function(xhr) {
+                    $('#loadingOverlayQuickProduct').fadeOut(200);
+                    let errorMessage = xhr.statusText;
+                    try {
+                        const errorResponse = JSON.parse(xhr.responseText);
+                        if (errorResponse.errors) {
+                            Object.keys(errorResponse.errors).forEach(field => {
+                                showError(field, errorResponse.errors[field]);
+                            });
+                        } else {
+                            $('#quickAddProductModal .modal-body').prepend(
+                                `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    ${errorResponse.message || errorMessage}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>`
+                            );
+                            setTimeout(() => {
+                                $('.alert').alert('close');
+                            }, 8000);
+                        }
+                    } catch (e) {
+                        $('#quickAddProductModal .modal-body').prepend(
+                            `<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ${errorMessage}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>`
+                        );
+                        setTimeout(() => {
+                            $('.alert').alert('close');
+                        }, 8000);
+                    }
+                }
+            });
+        });
+
+        $('#variationsContainer').on('change', '.variation-checkbox', function() {
+            const anyChecked = $('.variation-checkbox:checked').length > 0;
+            $('#bulkEditRow').toggleClass('active', anyChecked);
+        });
+
+        $('#selectAllVariations').on('change', function() {
+            const anyChecked = $(this).is(':checked');
+            $('#bulkEditRow').toggleClass('active', anyChecked);
+        });
+
+        // Thêm validation cho input file ảnh màu
+        document.addEventListener('change', function(event) {
+            if (event.target.classList.contains('color-file-input')) {
+                const input = event.target;
+                const colorId = input.id.split('-')[2];
+                if (input.files.length > 3) {
+                    alert('Bạn chỉ được chọn tối đa 3 ảnh cho mỗi màu sắc. Vui lòng chọn lại.');
+                    input.value = '';
+                    updateFileInputLabel(input, colorId);
+                    return;
+                }
+                updateFileInputLabel(input, colorId);
+            }
+        });
+    });
+
+    function generateVariations() {
+        const colors = $('#colorSelect').val() || [];
+        const sizes = $('#sizeSelect').val() || [];
+        const container = $('#variationsContainer');
+        container.empty();
+        $('#variationsTable').show();
+
+        if (colors.length === 0 || sizes.length === 0) {
+            $('#variationsTable').hide();
+            return;
+        }
+
+        let variationIndex = 0;
+        colors.forEach((colorId, colorIndex) => {
+            const colorText = $('#colorSelect option[value="' + colorId + '"]').text();
+            let groupHtml = `
+            <tr class="color-group" data-color="${colorId}">
+                <td colspan="6" style="background-color: #f8f9fa; font-weight: bold;">Màu: ${colorText}</td>
+            </tr>
+            <tr class="color-group-image" data-color="${colorId}">
+                <td colspan="6">
+                    <div class="custom-file-input-wrapper">
+                        <span class="custom-file-input-button"><i class="fas fa-upload"></i> Chọn ảnh</span>
+                        <span class="custom-file-input-label" data-placeholder="Chưa có ảnh nào được chọn">Chưa có ảnh nào được chọn</span>
+                        <input type="file" class="color-file-input" id="image-input-${colorId}" name="colorImages[${colorId}]" multiple accept="image/*" onchange="updateFileInputLabel(this, '${colorId}')">
+                    </div>
+                    <div class="image-preview-container mt-2" id="preview-${colorId}"></div>
+                </td>
+            </tr>
+        `;
+            container.append(groupHtml);
+
+            sizes.forEach((sizeId, sizeIndex) => {
+                const sizeText = $('#sizeSelect option[value="' + sizeId + '"]').text();
+                const variationHtml = `
+    <tr class="variation-item" data-index="${variationIndex}" data-color="${colorId}">
+        <td><input type="checkbox" class="variation-checkbox" name="selectedVariations" value="${variationIndex}"></td>
+        <td>${variationIndex + 1}</td>
+        <td>${colorText} - ${sizeText}</td>
+        <td>
+            <div class="input-group">
+                <span class="input-group-text">₫</span>
+                <input type="text" class="form-control variation-price format-number" name="variations[${variationIndex}].price" required>
+            </div>
+        </td>
+        <td>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fas fa-boxes"></i></span>
+                <input type="text" class="form-control variation-stock format-number" name="variations[${variationIndex}].stockQuantity" required>
+            </div>
+        </td>
+        <td>
+            <button type="button" class="btn btn-danger btn-sm remove-variation" onclick="removeVariation(this)">Xóa</button>
+        </td>
+        <input type="hidden" name="variations[${variationIndex}].colorId" value="${colorId}">
+        <input type="hidden" name="variations[${variationIndex}].sizeId" value="${sizeId}">
+    </tr>
+`;
+                container.append(variationHtml);
+                variationIndex++;
+            });
+        });
+
+        // Fetch existing images for the selected product
+        const productId = $('#productSelect').val();
+        if (productId) {
+            fetchExistingImages(productId);
+        }
+    }
+
+    function toggleSelectAll() {
+        const isChecked = $('#selectAllVariations').is(':checked');
+        $('.variation-checkbox').prop('checked', isChecked);
+        $('#bulkEditRow').toggleClass('active', isChecked);
+    }
+
+    function applyBulkEdit() {
+        const bulkPrice = $('#bulkPrice').val();
+        const bulkStock = $('#bulkStock').val();
+
+        if (!bulkPrice && !bulkStock) {
+            alert('Vui lòng nhập ít nhất một giá trị để áp dụng.');
+            return;
+        }
+
+        $('.variation-checkbox:checked').each(function() {
+            const variationItem = $(this).closest('.variation-item');
+            if (bulkPrice) {
+                variationItem.find('.variation-price').val(bulkPrice);
+            }
+            if (bulkStock) {
+                variationItem.find('.variation-stock').val(bulkStock);
+            }
+        });
+    }
+
+    function removeVariation(button) {
+        const row = $(button).closest('tr');
+        if (!row.hasClass('color-group') && !row.hasClass('color-group-image')) {
+            const colorId = row.data('color');
+            row.remove();
+            updateSTT();
+
+            const remainingVariants = $(`.variation-item[data-color="${colorId}"]`).length;
+            if (remainingVariants === 0) {
+                $(`.color-group[data-color="${colorId}"]`).remove();
+                $(`.color-group-image[data-color="${colorId}"]`).remove();
+            }
+        }
+    }
+
+    function updateFileInputLabel(inputElement, colorId) {
+        const wrapper = inputElement.closest('.custom-file-input-wrapper');
+        if (!wrapper) return;
+        const label = wrapper.querySelector('.custom-file-input-label');
+        const placeholder = label.getAttribute('data-placeholder') || 'Chưa có ảnh nào được chọn';
+
+        // Validate max 3 images
+        if (inputElement.files && inputElement.files.length > 3) {
+            alert('Bạn chỉ được chọn tối đa 3 ảnh cho mỗi màu sắc. Vui lòng chọn lại.');
+            inputElement.value = '';
+            label.textContent = placeholder;
+            const previewContainer = document.getElementById(`preview-${colorId}`);
+            if (previewContainer) previewContainer.innerHTML = '';
+            return;
+        }
+
+        if (inputElement.files && inputElement.files.length > 0) {
+            if (inputElement.files.length === 1) {
+                label.textContent = inputElement.files[0].name;
+            } else {
+                label.textContent = `${inputElement.files.length} ảnh đã được chọn`;
+            }
+        } else {
+            label.textContent = placeholder;
+        }
+
+        const previewContainer = document.getElementById(`preview-${colorId}`);
+        if (previewContainer) {
+            previewContainer.innerHTML = '';
+            Array.from(inputElement.files).slice(0, 3).forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewDiv = document.createElement('div');
+                    previewDiv.classList.add('image-preview');
+                    previewDiv.innerHTML = `
+                    <img src="${e.target.result}" alt="Preview ${index + 1}">
+                    <button type="button" class="remove-image" onclick="removeImagePreview(this, '${colorId}', ${index})">×</button>
+                `;
+                    previewContainer.appendChild(previewDiv);
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+    }
+
+    function fetchExistingImages(productId) {
+        $.ajax({
+            url: `/acvstore/chi-tiet-san-pham/api/product-images/${productId}`,
+            type: 'GET',
+            success: function(response) {
+                if (response && response.images) {
+                    response.images.forEach(image => {
+                        const colorId = image.colorId;
+                        const previewContainer = document.getElementById(`preview-${colorId}`);
+                        if (previewContainer) {
+                            const previewDiv = document.createElement('div');
+                            previewDiv.classList.add('image-preview');
+                            previewDiv.innerHTML = `
+                            <img src="${image.url}" alt="Existing Image">
+                            <button type="button" class="remove-image" onclick="removeExistingImage('${image.id}', '${colorId}')">×</button>
+                        `;
+                            previewContainer.appendChild(previewDiv);
+
+                            const inputElement = document.getElementById(`image-input-${colorId}`);
+                            const label = inputElement.closest('.custom-file-input-wrapper').querySelector('.custom-file-input-label');
+                            label.textContent = 'Đã có ảnh được tải lên';
+                        }
+                    });
+                }
+            },
+            error: function(xhr) {
+                console.error('Lỗi khi lấy ảnh hiện có:', xhr.statusText);
+            }
+        });
+    }
+
+    function removeExistingImage(imageId, colorId) {
+        $.ajax({
+            url: `/acvstore/chi-tiet-san-pham/api/delete-image/${imageId}`,
+            type: 'DELETE',
+            success: function() {
+                const previewContainer = document.getElementById(`preview-${colorId}`);
+                if (previewContainer) {
+                    const imagePreviews = previewContainer.querySelectorAll('.image-preview');
+                    imagePreviews.forEach(preview => {
+                        if (preview.querySelector('img').src.includes(imageId)) {
+                            preview.remove();
+                        }
+                    });
+
+                    const inputElement = document.getElementById(`image-input-${colorId}`);
+                    const label = inputElement.closest('.custom-file-input-wrapper').querySelector('.custom-file-input-label');
+                    const remainingImages = previewContainer.querySelectorAll('.image-preview').length;
+                    label.textContent = remainingImages > 0 ? `${remainingImages} ảnh đã được chọn` : 'Chưa có ảnh nào được chọn';
+                }
+            },
+            error: function(xhr) {
+                alert('Lỗi khi xóa ảnh: ' + (xhr.responseJSON ? xhr.responseJSON.error : xhr.statusText));
+            }
+        });
+    }
+
+    function removeImagePreview(button, colorId, index) {
+        const inputElement = document.getElementById(`image-input-${colorId}`);
+        if (!inputElement || !inputElement.files) return;
+
+        const files = Array.from(inputElement.files);
+        if (index >= files.length) return;
+
+        const newFiles = files.filter((_, i) => i !== index);
+        const dataTransfer = new DataTransfer();
+        newFiles.forEach(file => dataTransfer.items.add(file));
+        inputElement.files = dataTransfer.files;
+
+        updateFileInputLabel(inputElement, colorId);
+    }
+
+    function updateSTT() {
+        $('#variationsContainer .variation-item').each(function(index) {
+            $(this).find('td:nth-child(2)').text(index + 1);
+        });
+    }
+
+    function capitalize(str) {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    function saveQuickAdd() {
+        const entity = $('#quickAddEntity').val();
+        const name = $('#quickAddName').val().trim();
+        if (!name) {
+            alert('Vui lòng nhập tên thuộc tính.');
+            $('#quickAddName').focus();
+            return;
+        }
+
+        const data = { name: name };
+        $.ajax({
+            url: '/acvstore/chi-tiet-san-pham/save-auto-' + entity,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            beforeSend: function() {
+                $('#loadingOverlayQuickAttr').fadeIn(100);
+            },
+            success: function(response) {
+                $('#loadingOverlayQuickAttr').fadeOut(200, function() {
+                    $(this).css('display', 'none');
+                });
+                $('#quickAddModal').modal('hide');
+                $('#successNotificationQuickAttr').css('display', 'block');
+                setTimeout(() => {
+                    $('#successNotificationQuickAttr').css('display', 'none');
+                }, 3000);
+                refreshSelectOptions(entity, response.id, name);
+            },
+            error: function(xhr) {
+                $('#loadingOverlayQuickAttr').hide();
+                let errorMessage = xhr.statusText;
+                try {
+                    const errorResponse = JSON.parse(xhr.responseText);
+                    errorMessage = errorResponse.message || xhr.responseText;
+                } catch (e) {}
+                alert('Lỗi khi thêm ' + capitalize(entity) + ': ' + errorMessage);
+            }
+        });
+    }
+
+    function refreshSelectOptions(entity, newId, newName) {
+        const selectId = '#' + entity + 'Select';
+        const $select = $(selectId);
+        const newOption = new Option(newName, newId, false, false);
+        $select.append(newOption);
+        const tomSelect = $select[0].tomselect;
+        tomSelect.addOption({ value: newId, text: newName });
+        tomSelect.refreshOptions(false);
+    }
+
+    function refreshProductSelect(newId, newName) {
+        const $select = $('#productSelect');
+        $select.append(new Option(newName, newId, true, true));
+        const tomSelect = $select[0].tomselect;
+        tomSelect.addOption({ value: newId, text: newName });
+        tomSelect.setValue(newId);
+        tomSelect.refreshOptions(false);
+    }
+
+    function formatNumber(value) {
+        if (!value) return '';
+        return parseInt(value).toLocaleString('vi-VN').replace(/,/g, '.');  // Sử dụng locale VN, thay dấu phẩy bằng chấm
+    }
+
+    // Hàm unformat (xóa dấu chấm để lấy số thuần)
+    function unformatNumber(value) {
+        return value.replace(/\./g, '');
+    }
+
+    // Áp dụng format cho tất cả input có class="format-number"
+    $(document).on('focus', '.format-number', function() {
+        let value = $(this).val();
+        $(this).val(unformatNumber(value));  // Xóa format khi focus
+    });
+
+    $(document).on('blur', '.format-number', function() {
+        let value = $(this).val().trim();
+        if (value === '' || isNaN(value) || parseFloat(value) < 0) {
+            // Validate: Không âm, không chữ
+            $(this).val('');
+            alert('Vui lòng nhập số dương hợp lệ.');
+            return;
+        }
+        $(this).val(formatNumber(value));  // Format khi blur
+    });
+
+    // Khi submit form, unformat tất cả để gửi số thuần
+    $('#batchForm').on('submit', function() {
+        $('.format-number').each(function() {
+            let value = $(this).val();
+            $(this).val(unformatNumber(value));
+        });
+        // Sau đó tiếp tục submit (code submit hiện có của bạn sẽ chạy)
+    });
+
+    // Sửa applyBulkEdit để hỗ trợ format
+    function applyBulkEdit() {
+        let bulkPrice = $('#bulkPrice').val();
+        let bulkStock = $('#bulkStock').val();
+
+        if (!bulkPrice && !bulkStock) {
+            alert('Vui lòng nhập ít nhất một giá trị để áp dụng.');
+            return;
+        }
+
+        // Unformat trước khi áp dụng
+        bulkPrice = unformatNumber(bulkPrice);
+        bulkStock = unformatNumber(bulkStock);
+
+        $('.variation-checkbox:checked').each(function() {
+            const variationItem = $(this).closest('.variation-item');
+            if (bulkPrice) {
+                variationItem.find('.variation-price').val(formatNumber(bulkPrice));  // Áp dụng và format ngay
+            }
+            if (bulkStock) {
+                variationItem.find('.variation-stock').val(formatNumber(bulkStock));  // Áp dụng và format ngay
+            }
+        });
+    }
+</script>
+<script th:src="@{/js/sidebar.js}" defer></script>
+</body>
+</html>

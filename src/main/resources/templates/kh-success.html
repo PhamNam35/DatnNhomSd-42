@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thanh toán thành công</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        window.onload = async function () {
+            const pending = sessionStorage.getItem("pendingOrder");
+            if (!pending) {
+                document.getElementById("statusText").textContent = "Đơn hàng của bạn đã được tạo";
+                return;
+            }
+
+            const { orderData, tabId } = JSON.parse(pending);
+
+            try {
+                const res = await fetch("/api/checkout/submit", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(orderData)
+                });
+
+                const result = await res.json();
+                if (!res.ok) {
+                    document.getElementById("statusText").textContent = "Lỗi khi tạo đơn hàng!";
+                    console.error("❌ Lỗi khi tạo đơn hàng:", result.error);
+                    return;
+                }
+
+                // Xoá pendingOrder trong sessionStorage sau khi thành công
+                sessionStorage.removeItem("pendingOrder");
+
+                // Reset tab nếu có
+                let tabs = JSON.parse(localStorage.getItem('orderTabs') || '[]');
+                tabs = tabs.filter(t => String(t.id) !== String(tabId));
+                if (tabs.length === 0) {
+                    localStorage.setItem('orderTabs', JSON.stringify([]));
+                    localStorage.setItem('currentTabId', 1);
+                } else {
+                    localStorage.setItem('orderTabs', JSON.stringify(tabs));
+                }
+
+                // Cập nhật nội dung thành công
+                document.getElementById("statusText").textContent = "Đơn hàng đã được tạo thành công!";
+            } catch (err) {
+                document.getElementById("statusText").textContent = "Gặp lỗi khi xử lý đơn hàng!";
+                console.error("❌ Gọi API thất bại:", err);
+            }
+        };
+    </script>
+    <style>
+        body {
+            text-align: center;
+            margin-top: 100px;
+            font-family: sans-serif;
+            background-color: #f9fafb;
+        }
+
+        .success-box {
+            background: white;
+            display: inline-block;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .success-title {
+            color: green;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            background-color: #4f46e5;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            margin: 10px 6px 0 6px;
+        }
+
+        .btn:hover {
+            background-color: #4338ca;
+        }
+    </style>
+</head>
+<body>
+<div class="success-box">
+    <h2 class="success-title">✅ Thanh toán thành công!</h2>
+    <p id="statusText">Đang xử lý đơn hàng...</p>
+
+    <div>
+        <a href="/" class="btn">Trang chủ</a>
+        <a href="/dsdon-mua?status=tat-ca" class="btn">Xem đơn hàng</a>
+    </div>
+</div>
+</body>
+</html>

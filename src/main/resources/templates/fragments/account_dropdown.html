@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root{ --acv-primary:#153054; }
+
+        .btn-light{background:#f2f4f7;border:none;color:#333;width:40px;height:40px;display:flex;justify-content:center;align-items:center;border-radius:10px;padding:0}
+        .btn-light:hover{background:#e0e0e0}
+        .btn-danger{background:#ffe5e5;color:#dc3545;border:none;width:40px;height:40px;display:flex;justify-content:center;align-items:center;border-radius:10px;padding:0}
+        .btn-danger:hover{background:#ffcccc}
+
+        .dropdown-menu{border:1px solid #dee2e6;box-shadow:0 .5rem 1rem rgba(0,0,0,.15)}
+
+        .notification-item{border-bottom:1px solid #f0f0f0;transition:background-color .2s;word-break:break-word;white-space:normal}
+        .notification-item:hover{background:#f8f9fa}
+        .notification-empty{text-align:center;color:#6c757d;font-style:italic}
+        .notification-badge{animation:pulse 2s infinite;font-size:.7rem;padding:.3em .5em}
+        @keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.1)}100%{transform:scale(1)}}
+
+        /* ===== Dropdown bell (GIỮ NGUYÊN) ===== */
+        #notificationContainer .notification-header,
+        #notificationContainer .notification-footer{position:sticky;background:#f8f9fa;z-index:1}
+        #notificationContainer .notification-header{top:0;border-bottom:1px solid #dee2e6}
+        #notificationContainer .notification-footer{bottom:0;border-top:1px solid #dee2e6}
+        #notificationContainer::-webkit-scrollbar{width:8px}
+        #notificationContainer::-webkit-scrollbar-thumb{background:rgba(0,0,0,.25);border-radius:8px}
+        #notificationContainer::-webkit-scrollbar-track{background:transparent}
+
+        .notification-table th,.notification-table td{vertical-align:middle}
+        .pagination{margin-bottom:0}
+        .page-item.disabled .page-link{cursor:not-allowed}
+
+        /* =========================================
+           MODAL “XEM TẤT CẢ” — Theme #153054 + size cố định
+           ========================================= */
+        #notificationModal .modal-dialog{
+            max-width:min(860px,95vw);
+            width:min(860px,95vw);
+        }
+        #notificationModal .modal-content{
+            height:70vh; /* cao cố định */
+            display:flex;flex-direction:column;overflow:hidden;
+            border:1px solid rgba(21,48,84,.15); border-radius:.75rem;
+            box-shadow:0 .75rem 2rem rgba(0,0,0,.12);
+        }
+        /* Header tông #153054 */
+        #notificationModal .modal-header{
+            background-color:var(--acv-primary) !important;
+            color:#fff !important;
+            border-bottom:none !important;
+        }
+        #notificationModal .modal-title{ color:#fff !important; font-weight:700; letter-spacing:.2px; }
+        #notificationModal .btn-close{ filter:brightness(0) invert(1); opacity:.9; }
+        #notificationModal .btn-close:hover{ opacity:1; }
+
+        /* Body cuộn khi dài */
+        #notificationModal .modal-body{
+            overflow-y:auto; overflow-x:hidden; -webkit-overflow-scrolling:touch; overscroll-behavior:contain;
+        }
+        #notificationModal .modal-body::-webkit-scrollbar{width:8px}
+        #notificationModal .modal-body::-webkit-scrollbar-thumb{background:rgba(0,0,0,.25);border-radius:8px}
+        #notificationModal .modal-body::-webkit-scrollbar-track{background:transparent}
+
+        /* Footer & các thành phần theo màu chủ đạo */
+        #notificationModal .modal-footer{
+            background:#f8f9fa; border-top:1px solid rgba(21,48,84,.15);
+        }
+        #notificationModal .btn-outline-primary{
+            color:var(--acv-primary) !important; border-color:var(--acv-primary) !important;
+        }
+        #notificationModal .btn-outline-primary:hover{
+            background:var(--acv-primary) !important; color:#fff !important;
+        }
+        #notificationModal .btn-primary{
+            background:var(--acv-primary) !important; border-color:var(--acv-primary) !important;
+        }
+        #notificationModal .page-link{ color:var(--acv-primary); }
+        #notificationModal .page-link:hover{ color:#fff; background:var(--acv-primary); border-color:var(--acv-primary); }
+        #notificationModal .page-item.active .page-link{
+            background:var(--acv-primary); border-color:var(--acv-primary); color:#fff;
+        }
+    </style>
+</head>
+<body>
+<div th:fragment="accountDropdown(user)">
+    <div th:if="${user != null}" class="dropdown ms-auto d-flex align-items-center">
+        <!-- 🔔 Notification Bell (dropdown GIỮ NGUYÊN) -->
+        <div class="dropdown me-3">
+            <a href="#" class="position-relative text-decoration-none dropdown-toggle"
+               id="notificationDropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false">
+                <i class="fas fa-bell fa-lg text-primary"></i>
+                <span th:if="${unreadCount != null and unreadCount > 0}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge">
+                  <span th:text="${unreadCount}">0</span>
+                </span>
+                <span th:if="${unreadCount == null or unreadCount == 0}" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notification-badge d-none">
+                  <span>0</span>
+                </span>
+            </a>
+
+            <ul id="notificationContainer"
+                class="dropdown-menu dropdown-menu-end shadow border-0 mt-2"
+                aria-labelledby="notificationDropdown"
+                data-bs-boundary="viewport"
+                style="
+      min-width:350px;
+      max-width:400px;
+      max-height:70vh;      /* chỉ giới hạn tối đa */
+      height:auto;          /* co giãn theo nội dung */
+      overflow-y:auto;      /* dài thì mới hiện cuộn */
+      overflow-x:hidden;
+      padding:0;
+      -webkit-overflow-scrolling:touch;
+    ">
+                <li class="notification-header">
+                    <div class="px-3 py-2 d-flex justify-content-between align-items-center">
+                        <div class="fw-bold">Thông báo</div>
+                        <div class="d-flex gap-2">
+                            <button th:if="${unreadCount != null and unreadCount > 0}" class="btn btn-sm btn-outline-primary" onclick="markAllAsRead()" title="Đánh dấu tất cả đã đọc">
+                                <i class="fas fa-check-double"></i>
+                            </button>
+                            <a href="#" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#notificationModal" title="Xem tất cả">
+                                <i class="fas fa-external-link-alt"></i>
+                            </a>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="notification-item px-3 py-2" id="loadingState">
+                    <div class="text-center">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                        <div class="mt-1 small text-muted">Đang tải thông báo...</div>
+                    </div>
+                </li>
+
+                <li class="notification-item px-3 py-4 notification-empty d-none" id="emptyState">
+                    <div class="text-center">
+                        <i class="fas fa-bell-slash fa-2x text-muted mb-2"></i>
+                        <div>Không có thông báo nào</div>
+                    </div>
+                </li>
+
+                <li id="notificationInsertAnchor"></li>
+
+                <li class="notification-footer">
+                    <div class="px-3 py-2">
+                        <a class="d-block text-center text-decoration-none small text-primary fw-bold" href="#" data-bs-toggle="modal" data-bs-target="#notificationModal">
+                            <i class="fas fa-bell me-1"></i>Xem tất cả thông báo
+                        </a>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 👤 Account -->
+        <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle"
+           id="accountDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle fa-lg me-2 text-primary"></i>
+            <span th:text="${user.hoTen}">Tên người dùng</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0 mt-2" aria-labelledby="accountDropdown" style="min-width:250px;">
+            <li class="px-3 py-2">
+                <div class="fw-bold mb-1" th:text="${user.vaiTro == 'admin' ? 'QUẢN TRỊ VIÊN' : 'NHÂN VIÊN'}">Vai trò</div>
+                <div class="text-muted small" th:text="${user.email}">email@example.com</div>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item text-danger" th:href="@{/acvstore/logout}">
+                    <i class="fas fa-sign-out-alt me-2"></i>Đăng xuất
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- 📋 Notification Modal (kích thước cố định + theme #153054) -->
+    <div class="modal fade" id="notificationModal" tabindex="-1" aria-labelledby="notificationModalLabel" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notificationModalLabel">Danh Sách Thông Báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <select class="form-select w-auto" id="filterStatus" onchange="filterNotificationsByStatus()">
+                            <option value="">-- Tất cả trạng thái --</option>
+                            <option value="unread">Thông báo mới</option>
+                            <option value="read">Đã đọc</option>
+                        </select>
+
+                        <div class="d-flex gap-2">
+                            <button th:if="${unreadCount != null and unreadCount > 0}" class="btn btn-outline-primary" id="markAllAsReadButton" onclick="markAllAsRead()">
+                                <i class="fas fa-check-double me-1"></i>Đánh dấu tất cả đã đọc
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="deleteAllNotifications()">
+                                <i class="fas fa-trash-alt me-1"></i>Xoá tất cả thông báo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive">
+                        <table class="table table-hover notification-table">
+                            <thead>
+                            <tr>
+                                <th>Tiêu đề</th>
+                                <th>Nội dung</th>
+                                <th>Thời gian</th>
+                                <th>Trạng thái</th>
+                                <th>Hành động</th>
+                            </tr>
+                            </thead>
+                            <tbody id="modalNotificationTableBody">
+                            <tr id="modalTableLoadingState">
+                                <td colspan="5" class="text-center">
+                                    <div class="spinner-border text-primary" role="status"><span class="visually-hidden">Loading...</span></div>
+                                    <div class="mt-2">Đang tải thông báo...</div>
+                                </td>
+                            </tr>
+                            <tr id="modalTableEmptyState" class="d-none">
+                                <td colspan="5" class="text-center notification-empty">
+                                    <i class="fas fa-bell-slash fa-2x text-muted mb-2 d-block"></i>
+                                    Không có thông báo nào
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <nav aria-label="Notification pagination">
+                        <ul class="pagination pagination-sm justify-content-center">
+                            <li class="page-item" id="prevPage"><a class="page-link" href="#" onclick="changePage(-1)">Trước</a></li>
+                            <li class="page-item active" id="currentPage"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item" id="nextPage"><a class="page-link" href="#" onclick="changePage(1)">Sau</a></li>
+                        </ul>
+                    </nav>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 📩 Confirmation Modal (giữ nguyên) -->
+    <div class="modal fade" id="confirmReadModal" tabindex="-1" aria-labelledby="confirmReadModalLabel" aria-hidden="true" data-bs-backdrop="false" data-bs-keyboard="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmReadModalLabel">Xác nhận đọc thông báo</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+                <div class="modal-body">Bạn có chắc chắn muốn đánh dấu thông báo này là đã đọc?</div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="button" class="btn btn-primary" id="confirmReadButton">Xác nhận</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Khi modal danh sách mở -> đóng dropdown chuông -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var modalEl = document.getElementById('notificationModal');
+        if (!modalEl) return;
+
+        modalEl.addEventListener('show.bs.modal', function () {
+            var toggle = document.getElementById('notificationDropdown');
+            if (!toggle) return;
+            // Nếu dropdown đang mở, đóng lại
+            if (toggle.getAttribute('aria-expanded') === 'true') {
+                var dd = (bootstrap.Dropdown.getInstance ? bootstrap.Dropdown.getInstance(toggle) : null)
+                    || new bootstrap.Dropdown(toggle);
+                dd.hide();
+            }
+        });
+    });
+
+</script>
+
+<script src="/js/notification.js"></script>
+</body>
+</html>

@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACV Store - Quản lý hóa đơn</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <script th:src="@{/js/sidebar.js}" defer></script>
+  <style>
+    :root {
+      --primary-color: #10b981; /* Thay đổi sang xanh lá */
+      --primary-hover: #00CC00;
+      --success-color: #10b981;
+      --warning-color: #f59e0b;
+      --danger-color: #ef4444;
+      --info-color: #06b6d4;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #153054; /* Đổi từ #111827 thành #153054 (xanh than) */
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: var(--gray-900); /* Màu chữ toàn trang là #153054 */
+      font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    .content {
+      margin-left: 250px;
+      padding: 2rem;
+      transition: margin-left 0.3s ease;
+      min-height: 100vh;
+      background-color: #ffffff;
+    }
+
+    .sidebar-container {
+      background: linear-gradient(180deg, var(--gray-900) 0%, var(--gray-800) 100%);
+      color: #ffffff;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 250px;
+      z-index: 1000;
+      box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+    }
+
+    .content {
+      margin-top: 70px;
+    }
+
+    h1 {
+      color: var(--gray-900);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 2rem;
+      font-size: 2.5rem;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    h1::before {
+      content: "📋";
+      margin-right: 0.5rem;
+    }
+
+    h1::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: var(--primary-color);
+      border-radius: 2px;
+    }
+
+    .search-bar {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--gray-200);
+    }
+
+    .search-row {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .filter-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .search-bar input {
+      padding: 0.75rem 1rem;
+      flex-grow: 1;
+      border: 1px solid var(--gray-300);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      background: #ffffff;
+      transition: all 0.2s ease;
+      color: var(--gray-900); /* Màu chữ input là #153054 */
+    }
+
+    .search-bar input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.1);
+      outline: none;
+    }
+
+    .search-bar select {
+      padding: 0.75rem 1rem;
+      min-width: 200px;
+      border: 1px solid var(--gray-300);
+      border-radius: 8px;
+      font-size: 0.875rem;
+      background: #ffffff;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      color: var(--gray-900); /* Màu chữ select là #153054 */
+    }
+
+    .search-bar select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.1);
+      outline: none;
+    }
+
+    .search-bar button {
+      padding: 0.75rem 1.5rem;
+      background: #153054;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .search-bar button:hover {
+      background: #153054;
+      transform: translateY(-1px);
+    }
+
+    .table-container {
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--gray-200);
+    }
+
+    .table-scroll-wrapper {
+      overflow-x: auto;
+      overflow-y: auto;
+      max-height: 600px;
+      min-width: 100%;
+    }
+
+    .table-scroll-wrapper::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    .table-scroll-wrapper::-webkit-scrollbar-track {
+      background: #f0f0f0;
+      border-radius: 4px;
+    }
+
+    .table-scroll-wrapper::-webkit-scrollbar-thumb {
+      background: #ffffff;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      transition: background 0.3s ease;
+    }
+
+    .table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+      background: #f5f5f5;
+      border-color: #b0b0b0;
+    }
+
+    .table-scroll-wrapper::-webkit-scrollbar-corner {
+      background: #f0f0f0;
+    }
+
+    .table-scroll-wrapper {
+      scrollbar-width: thin;
+      scrollbar-color: #ffffff #f0f0f0;
+    }
+
+    table {
+      width: 100%;
+      min-width: 1200px;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin: 0;
+    }
+
+    th, td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--gray-200);
+      vertical-align: middle;
+      white-space: nowrap;
+      color: var(--gray-900); /* Màu chữ th và td là #153054 */
+    }
+
+    th {
+      background: var(--gray-50);
+      font-weight: 600;
+      color: var(--gray-900); /* Màu chữ th là #153054 */
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    th:nth-child(1), td:nth-child(1) { min-width: 120px; }
+    th:nth-child(2), td:nth-child(2) { min-width: 150px; }
+    th:nth-child(3), td:nth-child(3) { min-width: 150px; } /* Cột Tên nhân viên */
+    th:nth-child(4), td:nth-child(4) { min-width: 120px; }
+    th:nth-child(5), td:nth-child(5) { min-width: 140px; }
+    th:nth-child(6), td:nth-child(6) { min-width: 180px; }
+    th:nth-child(7), td:nth-child(7) { min-width: 180px; }
+    th:nth-child(8), td:nth-child(8) { min-width: 140px; }
+    th:nth-child(9), td:nth-child(9) { min-width: 100px; }
+
+    tr:hover {
+      background: var(--gray-50);
+    }
+
+    .status-confirmed-bg {
+      background: var(--success-color);
+      color: #ffffff;
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .status-completed-bg {
+      background: var(--info-color);
+      color: #ffffff;
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      background: var(--warning-color);
+      color: #ffffff;
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .status-shipping {
+      background: var(--primary-color);
+      color: #ffffff;
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .action-btn {
+      padding: 0.5rem;
+      background: #ffffff;
+      color: var(--gray-900); /* Đổi màu icon thành #153054 */
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+    }
+
+    .action-btn:hover {
+      background: var(--gray-100);
+      border-color: var(--gray-400);
+    }
+
+    .dropdown-menu {
+      background: #ffffff;
+      border: 1px solid var(--gray-200);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      padding: 0.5rem 0;
+    }
+
+    .dropdown-item {
+      color: var(--gray-900); /* Màu chữ dropdown là #153054 */
+      padding: 0.5rem 1rem;
+      transition: all 0.2s ease;
+      font-size: 0.875rem;
+    }
+
+    .dropdown-item:hover {
+      background: var(--gray-100);
+      color: var(--gray-900);
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0;
+      padding: 1.5rem;
+      background: var(--gray-50);
+      border-top: 1px solid var(--gray-200);
+    }
+
+    .pagination a, .pagination span {
+      padding: 0.5rem 0.75rem;
+      border: 1px solid var(--gray-300);
+      border-radius: 6px;
+      text-decoration: none;
+      color: var(--gray-900); /* Màu chữ pagination là #153054 */
+      font-weight: 500;
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
+      background: #ffffff;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .pagination a:hover {
+      background: var(--gray-900);
+      color: #ffffff;
+      border-color: var(--gray-900);
+    }
+
+    .pagination .active {
+      background: var(--gray-900);
+      color: #fff;
+      border-color: var(--gray-900);
+    }
+
+    .pagination .disabled {
+      color: var(--gray-400);
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    td:nth-child(4) {
+      font-weight: 600;
+      color: var(--success-color);
+    }
+
+    #hoa-don-table-online td:nth-child(3) { /* Màu "Tổng tiền" trong tab Online là xanh lá */
+      color: var(--primary-color);
+    }
+
+    #hoa-don-table-online td:nth-child(4) { /* Màu "Ngày tạo" trong tab Online không in đậm */
+      color: #000000;
+      font-weight: normal;
+    }
+
+    .spinner {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border: 4px solid var(--gray-200);
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      z-index: 9999;
+    }
+
+    @keyframes spin {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.3s ease;
+      transform: translateX(100%);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      min-width: 300px;
+      font-weight: 500;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .toast.success {
+      background: var(--success-color);
+      color: #fff;
+    }
+
+    .toast.error {
+      background: var(--danger-color);
+      color: #fff;
+    }
+
+    .scroll-to-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .scroll-to-top.show {
+      opacity: 1;
+    }
+
+    td:nth-child(3) {
+      color: var(--gray-900); /* Màu chữ cột Tên nhân viên là #153054 */
+      font-weight: 500;
+    }
+
+    .scroll-to-top:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+
+      .search-bar {
+        padding: 1rem;
+      }
+
+      .search-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .search-bar input,
+      .search-bar select,
+      .search-bar button {
+        width: 100%;
+      }
+
+      .filter-row {
+        flex-direction: column;
+      }
+
+      h1 {
+        font-size: 1.75rem;
+      }
+
+      table {
+        min-width: 800px;
+      }
+
+      th, td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.75rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .table-container::after {
+        content: "← Vuốt để xem thêm →";
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        background: var(--primary-color);
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        opacity: 0.8;
+        pointer-events: none;
+      }
+    }
+
+    .status-cancelled {
+      background: var(--danger-color);
+      color: #ffffff;
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .status-returned {
+      background: #10b981;
+      color: #ffffff;
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .status-partial-returned {
+      background: #f59e0b;
+      color: #ffffff;
+      padding: 0.375rem 0.75rem;
+      border-radius: 20px;
+      display: inline-block;
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    .nav-tabs {
+      border-bottom: 2px solid var(--gray-200);
+      margin-bottom: 1.5rem;
+    }
+
+    .nav-tabs .nav-link {
+      color: var(--gray-900); /* Màu chữ nav-tabs là #153054 */
+      font-weight: 500;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      padding: 0.75rem 1.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .nav-tabs .nav-link:hover {
+      background: var(--gray-100);
+      color: var(--gray-900);
+    }
+
+    .nav-tabs .nav-link.active {
+      background: #153054;
+      color: #fff;
+      border-bottom: 2px solid #153054;
+    }
+  </style>
+</head>
+<body>
+<div class="d-flex">
+  <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+  <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+    <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+  </nav>
+  <div class="content mt-16" id="mainContent">
+    <h1>Quản Lý Hóa Đơn</h1>
+    <ul class="nav nav-tabs mb-3" id="salesMethodTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="delivery" aria-selected="true" onclick="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), $('#statusFilterDelivery').val(), $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">Giao hàng</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="instore-tab" data-bs-toggle="tab" data-bs-target="#instore" type="button" role="tab" aria-controls="instore" aria-selected="false" onclick="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">Tại quầy</button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="online-tab" data-bs-toggle="tab" data-bs-target="#online" type="button" role="tab" aria-controls="online" aria-selected="false" onclick="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), $('#paymentMethodFilterOnline').val(), 'Online', 'online')">Online</button>
+      </li>
+    </ul>
+    <div class="tab-content" id="salesMethodTabContent">
+      <div class="tab-pane fade show active" id="delivery" role="tabpanel" aria-labelledby="delivery-tab">
+        <div class="search-bar">
+          <div class="search-row">
+            <input id="searchInputDelivery" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterDelivery').val(), $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
+            <button onclick="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), $('#statusFilterDelivery').val(), $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
+              <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+          </div>
+          <div class="filter-row">
+            <!-- Tab Giao hàng -->
+            <select id="statusFilterDelivery" onchange="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), this.value, $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
+              <option value="">Tất cả trạng thái</option>
+              <option value="Chưa xác nhận">Chưa xác nhận</option>
+              <option value="Đã xác nhận">Đã xác nhận</option>
+              <option value="Đang vận chuyển">Đang vận chuyển</option>
+              <option value="Vận chuyển thành công">Vận chuyển thành công</option>
+              <option value="Hoàn thành">Hoàn thành</option>
+              <option value="Đã trả hàng">Đã trả hàng</option>
+              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
+              <option value="Hủy đơn hàng">Hủy đơn hàng</option>
+            </select>
+
+            <select id="paymentMethodFilterDelivery" onchange="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), $('#statusFilterDelivery').val(), this.value, 'Giao hàng', 'delivery')">
+              <option value="">Tất cả phương thức thanh toán</option>
+              <option value="Tiền mặt">Tiền mặt</option>
+              <option value="Chuyển khoản">Chuyển khoản</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-container">
+          <div class="table-scroll-wrapper">
+            <table id="hoa-don-table-delivery">
+              <thead>
+              <tr>
+                <th>Mã đơn hàng</th>
+                <th>Khách hàng</th>
+                <th>Tên nhân viên</th>
+                <th>Tổng tiền</th>
+                <th>Ngày tạo</th>
+                <th>Phương thức thanh toán</th>
+                <th>Phương thức bán hàng</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+              </thead>
+              <tbody id="invoiceListDelivery"></tbody>
+            </table>
+          </div>
+          <div id="invoiceSpinnerDelivery" class="spinner"></div>
+          <div id="paginationDelivery" class="pagination"></div>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="instore" role="tabpanel" aria-labelledby="instore-tab">
+        <div class="search-bar">
+          <div class="search-row">
+            <input id="searchInputInstore" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterInstore').val(), $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
+            <button onclick="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
+              <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+          </div>
+          <div class="filter-row">
+            <!-- Tab Tại quầy -->
+            <select id="statusFilterInstore" onchange="loadHoaDonList(0, 5, $('#searchInputInstore').val(), this.value, $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
+              <option value="">Tất cả trạng thái</option>
+              <option value="Chưa xác nhận">Chưa xác nhận</option>
+              <option value="Đã xác nhận">Đã xác nhận</option>
+              <option value="Hoàn thành">Hoàn thành</option>
+              <option value="Đã trả hàng">Đã trả hàng</option>
+              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
+              <option value="Hủy đơn hàng">Hủy đơn hàng</option>
+            </select>
+            <select id="paymentMethodFilterInstore" onchange="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), this.value, 'Tại quầy', 'instore')">
+              <option value="">Tất cả phương thức thanh toán</option>
+              <option value="Tiền mặt">Tiền mặt</option>
+              <option value="Chuyển khoản">Chuyển khoản</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-container">
+          <div class="table-scroll-wrapper">
+            <table id="hoa-don-table-instore">
+              <thead>
+              <tr>
+                <th>Mã đơn hàng</th>
+                <th>Khách hàng</th>
+                <th>Tên nhân viên</th>
+                <th>Tổng tiền</th>
+                <th>Ngày tạo</th>
+                <th>Phương thức thanh toán</th>
+                <th>Phương thức bán hàng</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+              </thead>
+              <tbody id="invoiceListInstore"></tbody>
+            </table>
+          </div>
+          <div id="invoiceSpinnerInstore" class="spinner"></div>
+          <div id="paginationInstore" class="pagination"></div>
+        </div>
+      </div>
+
+      <div class="tab-pane fade" id="online" role="tabpanel" aria-labelledby="online-tab">
+        <div class="search-bar">
+          <div class="search-row">
+            <input id="searchInputOnline" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterOnline').val(), $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
+            <button onclick="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
+              <i class="fas fa-search"></i> Tìm kiếm
+            </button>
+          </div>
+          <div class="filter-row">
+            <!-- Tab Online -->
+            <select id="statusFilterOnline" onchange="loadHoaDonList(0, 5, $('#searchInputOnline').val(), this.value, $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
+              <option value="">Tất cả trạng thái</option>
+              <option value="Chưa xác nhận">Chưa xác nhận</option>
+              <option value="Đã xác nhận Online">Đã xác nhận Online</option>
+              <option value="Đang xử lý Online">Đang xử lý Online</option>
+              <option value="Đang vận chuyển">Đang vận chuyển</option>
+              <option value="Vận chuyển thành công">Vận chuyển thành công</option>
+              <option value="Hoàn thành">Hoàn thành</option>
+              <option value="Đã trả hàng">Đã trả hàng</option>
+              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
+              <option value="Hủy đơn hàng">Hủy đơn hàng</option>
+            </select>
+            <select id="paymentMethodFilterOnline" onchange="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), this.value, 'Online', 'online')">
+              <option value="">Tất cả phương thức thanh toán</option>
+              <option value="Tiền mặt">Tiền mặt</option>
+              <option value="Chuyển khoản">Chuyển khoản</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-container">
+          <div class="table-scroll-wrapper">
+            <table id="hoa-don-table-online">
+              <thead>
+              <tr>
+                <th>Mã đơn hàng</th>
+                <th>Khách hàng</th>
+                <th>Tổng tiền</th>
+                <th>Ngày tạo</th>
+                <th>Phương thức thanh toán</th>
+                <th>Phương thức bán hàng</th>
+                <th>Trạng thái</th>
+                <th>Hành động</th>
+              </tr>
+              </thead>
+              <tbody id="invoiceListOnline"></tbody>
+            </table>
+          </div>
+          <div id="invoiceSpinnerOnline" class="spinner"></div>
+          <div id="paginationOnline" class="pagination"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">
+  <i class="fas fa-chevron-up"></i>
+</button>
+<div id="toastContainer"></div>
+<script>
+  function formatCurrency(value) {
+    const formatter = new Intl.NumberFormat('vi-VN', {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    });
+    return formatter.format(value) + ' VNĐ';
+  }
+
+  function showToast(message, type = "info") {
+    const container = document.getElementById("toastContainer");
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`;
+    const icon = type === "success" ? "fas fa-check-circle" :
+            type === "error" ? "fas fa-exclamation-triangle" : "fas fa-info-circle";
+    toast.innerHTML = `<i class="${icon}"></i><span>${message}</span>`;
+    container.appendChild(toast);
+    toast.classList.add("show");
+    setTimeout(() => {
+      toast.classList.remove("show");
+      setTimeout(() => toast.remove(), 300);
+    }, 3000);
+  }
+
+  function updatePagination(totalPages, currentPage, search = "", trangThai = "", paymentMethod = "", salesMethod = "", tabId = "delivery") {
+    const pagination = document.getElementById(`pagination${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+    pagination.innerHTML = "";
+    if (totalPages <= 1) return;
+    const first = document.createElement("a");
+    first.innerText = "«";
+    first.className = `${currentPage === 0 ? "disabled" : ""}`;
+    if (currentPage > 0) first.onclick = () => loadHoaDonList(0, 5, search, trangThai, paymentMethod, salesMethod, tabId);
+    pagination.appendChild(first);
+    const prev = document.createElement("a");
+    prev.innerText = "Trước";
+    prev.className = `${currentPage === 0 ? "disabled" : ""}`;
+    if (currentPage > 0) prev.onclick = () => loadHoaDonList(currentPage - 1, 5, search, trangThai, paymentMethod, salesMethod, tabId);
+    pagination.appendChild(prev);
+    let startPage = Math.max(0, currentPage - 2);
+    let endPage = Math.min(totalPages - 1, startPage + 4);
+    if (endPage - startPage < 4 && endPage < totalPages - 1) {
+      startPage = Math.max(0, endPage - 4);
+    }
+    for (let i = startPage; i <= endPage; i++) {
+      const page = document.createElement(i === currentPage ? "span" : "a");
+      page.innerText = i + 1;
+      page.className = `${i === currentPage ? "active" : ""}`;
+      if (i !== currentPage) page.onclick = () => loadHoaDonList(i, 5, search, trangThai, paymentMethod, salesMethod, tabId);
+      pagination.appendChild(page);
+    }
+    const next = document.createElement("a");
+    next.innerText = "Sau";
+    next.className = `${currentPage === totalPages - 1 ? "disabled" : ""}`;
+    if (currentPage < totalPages - 1) next.onclick = () => loadHoaDonList(currentPage + 1, 5, search, trangThai, paymentMethod, salesMethod, tabId);
+    pagination.appendChild(next);
+    const last = document.createElement("a");
+    last.innerText = "»";
+    last.className = `${currentPage === totalPages - 1 ? "disabled" : ""}`;
+    if (currentPage < totalPages - 1) last.onclick = () => loadHoaDonList(totalPages - 1, 5, search, trangThai, paymentMethod, salesMethod, tabId);
+    pagination.appendChild(last);
+  }
+
+  function initScrollHandling() {
+    const scrollWrappers = document.querySelectorAll('.table-scroll-wrapper');
+    const scrollToTopBtn = document.getElementById('scrollToTop');
+    scrollWrappers.forEach(wrapper => {
+      wrapper.addEventListener('scroll', function() {
+        if (this.scrollTop > 200) {
+          scrollToTopBtn.classList.add('show');
+        } else {
+          scrollToTopBtn.classList.remove('show');
+        }
+      });
+    });
+  }
+
+  function scrollToTop() {
+    const scrollWrappers = document.querySelectorAll('.table-scroll-wrapper');
+    scrollWrappers.forEach(wrapper => {
+      wrapper.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+  }
+
+  function loadHoaDonList(page = 0, size = 5, search = "", trangThai = "", paymentMethod = "", salesMethod = "", tabId = "delivery") {
+    const tbody = $(`#invoiceList${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+    const spinner = $(`#invoiceSpinner${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+    spinner.show();
+    $.ajax({
+      url: "/acvstore/hoa-don/list",
+      type: "GET",
+      data: {
+        page,
+        size,
+        search,
+        trangThai: trangThai === "" ? null : trangThai,
+        paymentMethod: paymentMethod === "" ? null : paymentMethod,
+        salesMethod: salesMethod === "" ? null : salesMethod
+      },
+      success: function (response) {
+        const hoaDonList = response.hoaDon;
+        tbody.empty();
+        if (hoaDonList.length === 0) {
+          const colspan = tabId === 'online' ? 8 : 9;
+          tbody.append(`<tr><td colspan="${colspan}" class="text-center py-4" style="color: var(--gray-900);">Không có hóa đơn nào.</td></tr>`);
+        } else {
+          hoaDonList.forEach(hoaDon => {
+            let trangThaiText = hoaDon.trangThai;
+            let statusClass = '';
+            switch (hoaDon.trangThai) {
+              case 'Chưa xác nhận': statusClass = 'status-pending'; break;
+              case 'Đã xác nhận':
+              case 'Vận chuyển thành công': statusClass = 'status-confirmed-bg'; break;
+              case 'Đang vận chuyển': statusClass = 'status-shipping'; break;
+              case 'Hoàn thành': statusClass = 'status-completed-bg'; break;
+              case 'Đã trả hàng': statusClass = 'status-returned'; break;
+              case 'Đã trả hàng một phần': statusClass = 'status-partial-returned'; break;
+              case 'Hủy đơn hàng': statusClass = 'status-cancelled'; break;
+              case 'Đã xác nhận Online':
+              case 'Đang xử lý Online': statusClass = 'status-pending'; break;
+              default: statusClass = 'status-pending'; break;
+            }
+
+            let html = `
+            <tr>
+              <td>${hoaDon.maHoaDon}</td>
+              <td>${hoaDon.tenKhachHang}</td>
+          `;
+            if (tabId !== "online") {
+              html += `<td>${hoaDon.tenNhanVien || 'Không rõ'}</td>`;
+            }
+            html += `
+              <td><strong>${formatCurrency(hoaDon.tongTien)}</strong></td>
+              <td>${new Date(hoaDon.thoiGianTao).toLocaleString("vi-VN")}</td>
+              <td>${hoaDon.phuongThucThanhToan}</td>
+              <td>${hoaDon.phuongThucBanHang || "Không rõ"}</td>
+              <td><span class="${statusClass}">${trangThaiText}</span></td>
+              <td>
+                  <a href="/acvstore/hoa-don/detail/${hoaDon.id}" class="action-btn">
+                      <i class="fas fa-eye"></i>
+                  </a>
+              </td>
+            </tr>
+          `;
+            tbody.append(html);
+          });
+        }
+        updatePagination(response.totalPages, response.currentPage, search, trangThai, paymentMethod, salesMethod, tabId);
+        initScrollHandling();
+        spinner.hide();
+      },
+      error: function (error) {
+        console.error("Lỗi khi tải danh sách hóa đơn:", error);
+        showToast("Lỗi khi tải danh sách hóa đơn.", "error");
+        spinner.hide();
+      }
+    });
+  }
+
+  function cancelHoaDon(id, tabId = "delivery") {
+    const lyDo = prompt("Vui lòng nhập lý do hủy đơn hàng:");
+    if (lyDo && lyDo.trim() !== "") {
+      const spinner = $(`#invoiceSpinner${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+      spinner.show();
+      $.ajax({
+        url: `/acvstore/hoa-don/cancel/${id}`,
+        type: "POST",
+        data: JSON.stringify({ ghiChu: lyDo }),
+        contentType: "application/json",
+        success: function (response) {
+          showToast(response.message, "success");
+          const searchInput = $(`#searchInput${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).val();
+          const statusFilter = $(`#statusFilter${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).val();
+          const paymentMethodFilter = $(`#paymentMethodFilter${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).val();
+          loadHoaDonList(0, 5, searchInput, statusFilter, paymentMethodFilter, tabId === "delivery" ? "Giao hàng" : tabId === "instore" ? "Tại quầy" : "Online", tabId);
+        },
+        error: function (error) {
+          console.error("Lỗi khi hủy hóa đơn:", error);
+          showToast("Lỗi khi hủy hóa đơn: " + (error.responseJSON?.error || "Không xác định"), "error");
+        },
+        complete: function () {
+          spinner.hide();
+        }
+      });
+    } else {
+      showToast("Lý do hủy không được để trống.", "error");
+    }
+  }
+
+  function confirmHoaDon(id, tabId = "delivery") {
+    if (confirm("Bạn có chắc chắn muốn xác nhận đơn hàng này?")) {
+      const spinner = $(`#invoiceSpinner${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`);
+      spinner.show();
+      $.ajax({
+        url: `/acvstore/hoa-don/confirm/${id}`,
+        type: "POST",
+        data: JSON.stringify({ ghiChu: "Đã xác nhận" }),
+        contentType: "application/json",
+        success: function (response) {
+          showToast(response.message, "success");
+          const searchInput = $(`#searchInput${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).val();
+          const statusFilter = $(`#statusFilter${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).val();
+          const paymentMethodFilter = $(`#paymentMethodFilter${tabId.charAt(0).toUpperCase() + tabId.slice(1)}`).val();
+          loadHoaDonList(0, 5, searchInput, statusFilter, paymentMethodFilter, tabId === "delivery" ? "Giao hàng" : tabId === "instore" ? "Tại quầy" : "Online", tabId);
+        },
+        error: function (error) {
+          console.error("Lỗi khi xác nhận hóa đơn:", error);
+          showToast("Lỗi khi xác nhận hóa đơn: " + (error.responseJSON?.error || "Không xác định"), "error");
+        },
+        complete: function () {
+          spinner.hide();
+        }
+      });
+    }
+  }
+
+  function showReturnModal(id, tabId = "delivery") {
+    console.log(`Mở modal trả hàng cho hóa đơn ${id} trên tab ${tabId}`);
+    // Thêm logic để hiển thị modal và xử lý trả hàng
+    // Sau khi trả hàng thành công, gọi lại loadHoaDonList với tabId tương ứng
+  }
+
+  window.onload = () => {
+    loadHoaDonList(0, 5, "", "", "", "Giao hàng", "delivery");
+  };
+</script>
+<script th:src="@{/js/notification.js}"></script>
+</body>
+</html>

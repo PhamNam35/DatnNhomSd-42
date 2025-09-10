@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<style>
+  /* Tối ưu navbar */
+  .navbar .container {
+    flex-wrap: nowrap; /* Ngăn xuống dòng */
+    gap: 0.5rem; /* Khoảng cách nhỏ giữa các phần tử */
+  }
+
+  /* Logo */
+  .navbar-logo {
+    flex: 0 0 auto;
+    font-size: 1.5rem; /* Kích thước logo */
+  }
+
+  /* Added styles for logo image */
+  .navbar-logo img {
+    height: 32px;
+    width: auto;
+    object-fit: contain;
+  }
+
+  /* Nút tìm kiếm trên mobile */
+  .navbar-search-btn {
+    flex: 0 0 auto;
+    padding: 0.25rem 0.5rem;
+  }
+
+  /* Khu vực người dùng */
+  .navbar-user {
+    flex: 0 0 auto;
+    gap: 0.5rem !important;
+  }
+
+  /* Icon giỏ hàng và người dùng */
+  .navbar-user .fs-5 {
+    font-size: 1.25rem !important;
+  }
+
+  /* Nút đăng nhập/người dùng */
+  .navbar-user .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .navbar-user .btn.rounded-circle {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Modal tìm kiếm */
+  #searchModal .modal-dialog {
+    max-width: 90%; /* Modal full width trên mobile */
+  }
+
+  #searchModal .form-control {
+    font-size: 1rem;
+    padding: 0.5rem 1rem;
+  }
+
+  #searchModal .search-suggestions {
+    position: static; /* Không absolute trong modal */
+    max-height: 300px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    z-index: 2000;
+  }
+
+  /* Mobile-specific */
+  @media (max-width: 767px) {
+    .navbar-logo {
+      font-size: 1.25rem; /* Logo nhỏ hơn */
+    }
+
+    /* Smaller logo on mobile */
+    .navbar-logo img {
+      height: 28px;
+    }
+
+    .navbar-search-btn .fs-5 {
+      font-size: 1.25rem !important; /* Icon tìm kiếm */
+    }
+
+    .navbar-user .fs-5 {
+      font-size: 1rem !important; /* Icon giỏ hàng */
+    }
+
+    .navbar-user .badge {
+      font-size: 0.625rem;
+      padding: 0.25em 0.4em;
+    }
+
+    .navbar-user .btn.rounded-circle {
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  /* Màn hình rất nhỏ */
+  @media (max-width: 576px) {
+    .navbar-logo {
+      font-size: 1rem;
+    }
+
+    /* Even smaller logo on very small screens */
+    .navbar-logo img {
+      height: 24px;
+    }
+
+    #searchModal .form-control {
+      font-size: 0.875rem;
+    }
+  }
+
+  /* Đảm bảo navbar dưới ticker */
+  .navbar {
+    top: 40px;
+  }
+</style>
+<body>
+<th:block th:fragment="navbar(user, keyword, cartCount)">
+  <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background: linear-gradient(135deg, #153054 0%, #1e4066 100%);">
+    <div class="container d-flex align-items-center py-2">
+      <!-- Logo -->
+      <a class="navbar-brand text-white fw-bold fs-4 navbar-logo d-flex align-items-center" href="/">
+        <img src="/image/ACV.png" alt="ACV Store" class="me-2" style="height: 40px; width: auto;">
+<!--        <span class="d-none d-sm-inline"></span>-->
+      </a>
+
+      <!-- Tìm kiếm (hiển thị trên desktop) -->
+      <form class="navbar-search mx-8 position-relative d-none d-lg-flex" style="max-width: 900px;" action="/search" method="get">
+        <div class="input-group">
+          <input type="text" class="form-control rounded-start-pill border-0"
+                 placeholder="Tìm kiếm sản phẩm..."
+                 name="keyword" id="searchInput" th:value="${keyword}" autocomplete="off">
+          <button class="btn btn-light rounded-end-pill px-4" type="submit">
+            <i class="fas fa-search text-blue-800"></i>
+          </button>
+        </div>
+        <div id="searchSuggestions" class="search-suggestions"></div>
+      </form>
+
+      <!-- Nút tìm kiếm (hiển thị trên mobile) -->
+      <button class="btn text-white fs-5 navbar-search-btn d-lg-none mx-2" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Tìm kiếm">
+        <i class="fas fa-search"></i>
+      </button>
+
+      <!-- Giỏ hàng + Người dùng -->
+      <div class="navbar-user d-flex align-items-center gap-2">
+        <!-- Giỏ hàng -->
+        <a th:href="@{/cart}" class="text-white fs-5 position-relative" aria-label="Giỏ hàng">
+          <i class="fas fa-shopping-cart"></i>
+          <span id="cart-count"
+                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                th:text="${cartCount != null} ? ${cartCount} : 0">0</span>
+        </a>
+
+        <!-- Nếu đã đăng nhập -->
+        <div th:if="${user != null}" class="dropdown">
+          <button class="btn text-white fw-semibold dropdown-toggle d-none d-lg-block" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle me-1"></i> <span th:text="${user.hoTen}">Tên người dùng</span>
+          </button>
+          <button class="btn text-white d-lg-none" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="fas fa-user-circle"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li><a class="dropdown-item" th:href="@{/profile}">Tài khoản của tôi</a></li>
+            <li><a class="dropdown-item" th:href="@{/dsdon-mua}">Đơn mua</a></li>
+            <li><a class="dropdown-item" th:href="@{/vi}">Ví thanh toán</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item text-danger" th:href="@{/customers/logout}">Đăng xuất</a></li>
+          </ul>
+        </div>
+
+        <!-- Nếu chưa đăng nhập -->
+        <a th:if="${user == null}" th:href="@{/customers/login}" class="btn btn-light fw-semibold rounded-pill px-3 d-none d-lg-block" id="loginButton">
+          Đăng nhập
+        </a>
+        <a th:if="${user == null}" th:href="@{/customers/login}" class="btn btn-light rounded-circle px-2 d-lg-none" id="loginButtonMobile">
+          <i class="fas fa-sign-in-alt"></i>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Modal tìm kiếm (hiển thị trên mobile) -->
+  <div class="modal fade" id="searchModal" tabindex="-1" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-lg">
+        <div class="modal-header" style="background-color: #153054; color: white;">
+          <h5 class="modal-title" id="searchModalLabel">Tìm kiếm sản phẩm</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body p-4">
+          <form id="modalSearchForm" action="/search" method="get">
+            <div class="input-group">
+              <input type="text" class="form-control rounded-start-pill border-0"
+                     placeholder="Tìm kiếm sản phẩm..."
+                     name="keyword" id="modalSearchInput" autocomplete="off">
+              <button class="btn btn-light rounded-end-pill px-4" type="submit">
+                <i class="fas fa-search text-blue-800"></i>
+              </button>
+            </div>
+            <div id="modalSearchSuggestions" class="search-suggestions mt-2"></div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</th:block>
+
+<!-- Nếu muốn inject script qua fragment (tuỳ chọn) -->
+<th:block th:fragment="navbarScripts">
+  <script src="/js/navbar.js"></script>
+</th:block>
+</body>
+</html>

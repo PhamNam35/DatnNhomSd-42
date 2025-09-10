@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập khách hàng</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #153054;
+            --secondary-color: #9FD5F7;
+            --accent-color: #666666;
+            --light-gray: #f8f9fa;
+            --medium-gray: #e9ecef;
+            --dark-gray: #495057;
+            --white: #ffffff;
+            --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.15);
+            --shadow-heavy: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                    linear-gradient(45deg, transparent 40%, rgba(0,0,0,0.02) 50%, transparent 60%),
+                    linear-gradient(-45deg, transparent 40%, rgba(0,0,0,0.02) 50%, transparent 60%);
+            background-size: 60px 60px;
+            animation: patternMove 20s linear infinite;
+        }
+
+        @keyframes patternMove {
+            0% { background-position: 0 0, 0 0; }
+            100% { background-position: 60px 60px, -60px 60px; }
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            border: 2px solid rgba(0,0,0,0.05);
+            border-radius: 50%;
+            animation: float1 15s ease-in-out infinite;
+        }
+
+        @keyframes float1 {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .container-fluid {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 80px;
+            height: 80px;
+            border: 1px solid rgba(0,0,0,0.1);
+            transform: rotate(45deg);
+            animation: float2 12s ease-in-out infinite;
+        }
+
+        .login-container::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 60px;
+            height: 60px;
+            background: rgba(0,0,0,0.03);
+            border-radius: 50%;
+            animation: float3 18s ease-in-out infinite;
+        }
+
+        @keyframes float2 {
+            0%, 100% { transform: rotate(45deg) translate(0, 0); }
+            50% { transform: rotate(225deg) translate(20px, -20px); }
+        }
+
+        @keyframes float3 {
+            0%, 100% { transform: scale(1) translate(0, 0); }
+            50% { transform: scale(1.2) translate(-10px, 10px); }
+        }
+
+        .login-card {
+            background: var(--white);
+            border: 1px solid var(--medium-gray);
+            border-radius: 16px;
+            padding: 30px 25px;
+            box-shadow: var(--shadow-medium);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 16px 16px 0 0;
+        }
+
+        .login-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .brand-section {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .brand-logo {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 10px;
+            display: block;
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.05);
+        }
+
+        .welcome-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+
+        .welcome-subtitle {
+            color: var(--dark-gray);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-floating {
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .form-floating .form-control {
+            height: 50px;
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            padding-left: 45px;
+            transition: all 0.3s ease;
+            background: var(--white);
+            color: var(--primary-color);
+        }
+
+        .form-floating .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+            background: var(--white);
+        }
+
+        .form-floating label {
+            padding-left: 45px;
+            color: var(--dark-gray);
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--accent-color);
+            font-size: 16px;
+            z-index: 5;
+            transition: color 0.3s ease;
+        }
+
+        .form-floating .form-control:focus + label + .input-icon {
+            color: var(--primary-color);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--accent-color);
+            font-size: 16px;
+            cursor: pointer;
+            z-index: 5;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary-color);
+        }
+
+        .btn-login {
+            width: 100%;
+            height: 48px;
+            background: var(--primary-color);
+            border: none;
+            border-radius: 10px;
+            color: var(--white);
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .alert {
+            border: none;
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-weight: 500;
+            margin-bottom: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .alert-danger {
+            background: #f8f9fa;
+            color: #dc3545;
+            border: 1px solid #f5c6cb;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert-success {
+            background: #f8f9fa;
+            color: #28a745;
+            border: 1px solid #c3e6cb;
+            border-left: 4px solid #28a745;
+        }
+
+        .divider {
+            position: relative;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--medium-gray), transparent);
+        }
+
+        .divider span {
+            background: var(--white);
+            padding: 0 15px;
+            color: var(--dark-gray);
+            font-weight: 500;
+            font-size: 12px;
+        }
+
+        .oauth-btn {
+            width: 100%;
+            height: 45px;
+            border: 2px solid var(--medium-gray);
+            border-radius: 10px;
+            background: var(--white);
+            color: var(--primary-color);
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .oauth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-light);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            text-decoration: none;
+            background: var(--light-gray);
+        }
+
+        .oauth-btn i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .google-btn i {
+            color: #4285f4;
+        }
+
+        .facebook-btn i {
+            color: #1877f2;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid var(--medium-gray);
+        }
+
+        .footer-links a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 13px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 50%;
+            background: var(--primary-color);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        .footer-links a:hover {
+            color: var(--secondary-color);
+        }
+
+        .separator {
+            color: var(--accent-color);
+            margin: 0 8px;
+        }
+
+        .btn-loading {
+            pointer-events: none;
+            opacity: 0.8;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 25px 20px;
+                margin: 5px;
+            }
+
+            .welcome-title {
+                font-size: 20px;
+            }
+
+            .brand-logo {
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        .form-control:focus {
+            outline: none;
+        }
+
+        .btn:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        .was-validated .form-control:invalid {
+            border-color: #dc3545;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+<div class="container-fluid">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="brand-section">
+                <img src="/image/acv-logo2.png" alt="Company Logo" class="brand-logo">
+                <h1 class="welcome-title">Chào mừng trở lại</h1>
+                <p class="welcome-subtitle">Đăng nhập để tận hưởng niềm vui mua sắm tại ACVStore</p>
+            </div>
+
+            <form method="post" action="/customers/login" class="needs-validation" novalidate>
+                <div class="form-floating">
+                    <input type="text"
+                           class="form-control"
+                           id="tenDangNhap"
+                           name="tenDangNhap"
+                           placeholder="Tên đăng nhập"
+                           required>
+                    <label for="tenDangNhap">Tên đăng nhập</label>
+                    <i class="fas fa-user input-icon"></i>
+                </div>
+
+                <div class="form-floating">
+                    <input type="password"
+                           class="form-control"
+                           id="matKhau"
+                           name="matKhau"
+                           placeholder="Mật khẩu"
+                           required>
+                    <label for="matKhau">Mật khẩu</label>
+                    <i class="fas fa-lock input-icon"></i>
+                    <button type="button" class="password-toggle" onclick="togglePassword()">
+                        <i class="fas fa-eye" id="toggleIcon"></i>
+                    </button>
+                </div>
+
+                <div th:if="${param.error}" class="alert alert-danger">
+                    <i class="fas fa-exclamation-circle me-2"></i>
+                    <span th:text="${param.error == 'accessDenied'} ? 'Bạn không có quyền truy cập.' : 'Tên đăng nhập hoặc mật khẩu không đúng.'">
+                            Tên đăng nhập hoặc mật khẩu không đúng.
+                        </span>
+                </div>
+
+                <div th:if="${param.logout}" class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i>
+                    Bạn đã đăng xuất thành công.
+                </div>
+
+                <button type="submit" class="btn btn-login" onclick="showLoading(this)">
+                    <span class="btn-text">Đăng nhập</span>
+                </button>
+
+                <div class="footer-links">
+                    <a href="/customers/auth/forgot-password">Quên mật khẩu?</a>
+                    <span class="separator">|</span>
+                    <a href="/customers/register">Đăng ký ngay</a>
+                </div>
+            </form>
+
+            <div class="divider">
+                <span>Hoặc đăng nhập bằng</span>
+            </div>
+
+            <div class="oauth-section">
+                <a href="/oauth2/authorization/google" class="oauth-btn google-btn">
+                    <i class="fab fa-google"></i>
+                    Đăng nhập bằng Google
+                </a>
+                <a href="/oauth2/authorization/facebook" class="oauth-btn facebook-btn">
+                    <i class="fab fa-facebook-f"></i>
+                    Đăng nhập bằng Facebook
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    function togglePassword() {
+        const passwordInput = document.getElementById('matKhau');
+        const toggleIcon = document.getElementById('toggleIcon');
+
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            toggleIcon.classList.remove('fa-eye');
+            toggleIcon.classList.add('fa-eye-slash');
+        } else {
+            passwordInput.type = 'password';
+            toggleIcon.classList.remove('fa-eye-slash');
+            toggleIcon.classList.add('fa-eye');
+        }
+    }
+
+    function showLoading(button) {
+        button.classList.add('btn-loading');
+        button.innerHTML = '<span class="spinner"></span>Đang đăng nhập...';
+    }
+
+    (function() {
+        'use strict';
+        window.addEventListener('load', function() {
+            var forms = document.getElementsByClassName('needs-validation');
+            var validation = Array.prototype.filter.call(forms, function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (form.checkValidity() === false) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            });
+        }, false);
+    })();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const alerts = document.querySelectorAll('.alert');
+        alerts.forEach(function(alert) {
+            setTimeout(function() {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-20px)';
+                setTimeout(function() {
+                    alert.style.display = 'none';
+                }, 300);
+            }, 5000);
+        });
+    });
+
+    document.querySelectorAll('.form-control').forEach(function(input) {
+        input.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+
+        input.addEventListener('blur', function() {
+            if (this.value === '') {
+                this.parentElement.classList.remove('focused');
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,3365 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ACV Store - Thanh toán</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" href="/image/ACV.png" type="image/png" sizes="32x32"/>
+    <style>
+        :root {
+            --primary-color: #153054;
+            --secondary-color: #9FD5F7;
+            --secondary-color: #9FD5F7;
+            --primary-hover: #1e4066;
+            --secondary-hover: #7bc3f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
+            --gradient-surface: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 50%, var(--gray-50) 100%);
+            padding-top: 100px;
+            scroll-behavior: smooth;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .search-suggestions.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .suggestion-item:hover {
+            background-color: #f1f5f9;
+        }
+        .suggestion-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .history-item:hover {
+            background-color: #e2e8f0;
+        }
+        .history-item .highlight {
+            background-color: #9FD5F7;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .history-item .delete-btn {
+            color: #ef4444;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        .history-item .delete-btn:hover {
+            color: #b91c1c;
+        }.search-suggestions {
+             position: absolute;
+             top: 100%;
+             left: 0;
+             right: 0;
+             background: white;
+             border: 1px solid #ccc;
+             border-radius: 8px;
+             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+             z-index: 1000;
+             max-height: 300px;
+             overflow-y: auto;
+             opacity: 0;
+             visibility: hidden;
+             transition: opacity 0.3s ease, visibility 0.3s ease;
+         }
+        .search-suggestions.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .suggestion-item:hover {
+            background-color: #f1f5f9;
+        }
+        .suggestion-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .history-item:hover {
+            background-color: #e2e8f0;
+        }
+        .history-item .highlight {
+            background-color: #9FD5F7;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .history-item .delete-btn {
+            color: #ef4444;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        .history-item .delete-btn:hover {
+            color: #b91c1c;
+        }
+
+        /* Enhanced button system with micro-interactions */
+        .btn-primary {
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 14px 28px;
+            font-weight: 600;
+            color: white;
+            font-size: 15px;
+            transition: var(--transition);
+            box-shadow: var(--shadow-sm);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: var(--transition-slow);
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, var(--primary-hover) 0%, #2a5a8a 100%);
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: var(--shadow);
+            transition: var(--transition-fast);
+        }
+
+        .btn-primary:focus {
+            outline: 3px solid rgba(21, 48, 84, 0.3);
+            outline-offset: 2px;
+        }
+
+        /* Enhanced form controls with better states */
+        .form-control {
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: 16px 20px;
+            font-size: 15px;
+            transition: var(--transition);
+            background: white;
+            font-family: var(--font-family);
+            position: relative;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(21, 48, 84, 0.1);
+            outline: none;
+            background: var(--gray-50);
+            transform: translateY(-1px);
+        }
+
+        .form-control:hover:not(:focus):not(:disabled) {
+            border-color: var(--gray-300);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .form-control:disabled {
+            background: var(--gray-50);
+            border-color: var(--gray-200);
+            color: var(--gray-600);
+            cursor: not-allowed;
+        }
+
+        /* Enhanced section boxes with better animations */
+        .section-box {
+            background: white;
+            border-radius: var(--border-radius-lg);
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-100);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .section-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: var(--transition);
+            transform: scaleX(0);
+            transform-origin: left;
+        }
+
+        .section-box::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(21, 48, 84, 0.03) 0%, transparent 70%);
+            opacity: 0;
+            transition: var(--transition-slow);
+            pointer-events: none;
+        }
+
+        .section-box:hover {
+            transform: translateY(-6px) scale(1.01);
+            box-shadow: var(--shadow-2xl);
+            border-color: var(--secondary-color);
+        }
+
+        .section-box:hover::before {
+            opacity: 1;
+            transform: scaleX(1);
+        }
+
+        .section-box:hover::after {
+            opacity: 1;
+        }
+
+        /* Enhanced payment methods with better interactions */
+        .payment-method {
+            padding: 24px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: var(--transition);
+            background: white;
+            position: relative;
+            overflow: hidden;
+            transform: translateZ(0);
+        }
+
+        .payment-method::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(21, 48, 84, 0.05), transparent);
+            transition: var(--transition-slow);
+        }
+
+        .payment-method::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: radial-gradient(circle, rgba(21, 48, 84, 0.1) 0%, transparent 70%);
+            transition: var(--transition);
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+        }
+
+        .payment-method:hover {
+            border-color: var(--primary-color);
+            background: var(--gradient-surface);
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .payment-method:hover::before {
+            left: 100%;
+        }
+
+        .payment-method:hover::after {
+            width: 100px;
+            height: 100px;
+        }
+
+        .payment-method.active {
+            border-color: #9FD5F7;
+            background: #9FD5F7;
+            box-shadow: var(--shadow-md);
+            transform: scale(1.02);
+        }
+
+        .payment-method.active::after {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(21, 48, 84, 0.05) 0%, transparent 70%);
+        }
+
+        /* Enhanced address cards */
+        .address-card {
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid var(--gray-200);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 16px;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .address-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-primary);
+            transform: scaleY(0);
+            transition: var(--transition);
+            transform-origin: bottom;
+        }
+
+        .address-card:hover {
+            background: var(--gradient-surface);
+            border-color: var(--primary-color);
+            transform: translateY(-2px) translateX(4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .address-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .address-card.active {
+            border-color: var(--primary-color);
+            background: var(--gradient-secondary);
+            box-shadow: var(--shadow-md);
+            transform: translateX(4px);
+        }
+
+        .address-card.active::before {
+            transform: scaleY(1);
+        }
+
+        /* Enhanced modal system */
+        .modal-content {
+            border-radius: var(--border-radius-xl);
+            border: none;
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+        }
+
+        .modal-header {
+            background: var(--gradient-primary);
+            color: white;
+            border-bottom: none;
+            padding: 28px 36px;
+            position: relative;
+        }
+
+        .modal-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+        }
+
+        .modal-body {
+            padding: 36px;
+            background: var(--gradient-surface);
+        }
+
+        .modal-footer {
+            background: linear-gradient(135deg, white 0%, var(--gray-50) 100%);
+            border-top: 1px solid var(--gray-200);
+            padding: 24px 36px;
+        }
+
+        /* Enhanced voucher modal */
+        #voucherModal .modal-dialog {
+            max-width: 800px;
+        }
+
+        #voucherModal .voucher-card {
+            padding: 24px;
+            border: 2px solid var(--gray-200) !important;
+            border-radius: var(--border-radius) !important;
+            transition: var(--transition);
+            background: white;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        #voucherModal .voucher-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(21, 48, 84, 0.05), transparent);
+            transition: var(--transition-slow);
+        }
+
+        #voucherModal .voucher-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 0;
+            height: 100%;
+            background: var(--gradient-primary);
+            transition: var(--transition);
+        }
+
+        #voucherModal .voucher-card:hover {
+            border-color: var(--primary-color) !important;
+            background: var(--gradient-surface);
+            transform: translateY(-2px) translateX(4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        #voucherModal .voucher-card:hover::before {
+            left: 100%;
+        }
+
+        #voucherModal .voucher-card:hover::after {
+            width: 4px;
+        }
+
+        /* Enhanced animations */
+        @keyframes spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1.05);
+            }
+            70% {
+                transform: scale(0.9);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Enhanced form labels with icons */
+        .form-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            letter-spacing: 0.025em;
+        }
+
+        .form-label i {
+            margin-right: 8px;
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        /* Enhanced order items */
+        .order-item {
+            border-bottom: 1px solid var(--gray-200);
+            padding-bottom: 24px;
+            margin-bottom: 24px;
+            transition: var(--transition);
+            border-radius: var(--border-radius);
+        }
+
+        .order-item:hover {
+            background: var(--gradient-surface);
+            padding: 20px;
+            margin: -4px -20px 20px -20px;
+            box-shadow: var(--shadow-sm);
+            transform: translateY(-1px);
+        }
+
+        .order-item-img {
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            transition: var(--transition);
+            border: 2px solid var(--gray-100);
+        }
+
+        .order-item:hover .order-item-img {
+            transform: scale(1.05) rotate(1deg);
+            box-shadow: var(--shadow-md);
+            border-color: var(--secondary-color);
+        }
+
+        /* Enhanced responsive design */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 80px;
+            }
+
+            .section-box {
+                padding: 24px 20px;
+                margin-bottom: 16px;
+            }
+
+            .modal-body {
+                padding: 24px 20px;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-footer {
+                padding: 16px 20px;
+            }
+
+            .payment-method {
+                padding: 20px;
+            }
+
+            .address-card {
+                padding: 20px;
+            }
+
+            .order-item-img {
+                width: 70px;
+                height: 70px;
+            }
+        }
+
+        /* Enhanced focus states for accessibility */
+        .btn:focus,
+        .form-control:focus,
+        .payment-method:focus,
+        .address-card:focus,
+        .voucher-card:focus {
+            outline: 3px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+
+        /* Enhanced scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+            transition: var(--transition);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Enhanced utility classes */
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .text-secondary {
+            color: var(--gray-600) !important;
+        }
+
+        .text-muted {
+            color: var(--gray-500) !important;
+        }
+
+        .fw-bold {
+            font-weight: 700 !important;
+        }
+
+        .fw-semibold {
+            font-weight: 600 !important;
+        }
+
+        /* Enhanced grid system */
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .grid-cols-1 {
+            grid-template-columns: repeat(1, minmax(0, 1fr));
+        }
+
+        @media (min-width: 1024px) {
+            .lg\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+
+            .lg\:col-span-2 {
+                grid-column: span 2 / span 2;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .md\:grid-cols-3 {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        /* Enhanced section animations */
+        .section-box {
+            animation: fadeInUp 0.6s ease-out;
+            animation-fill-mode: both;
+        }
+
+        .section-box:nth-child(1) { animation-delay: 0.1s; }
+        .section-box:nth-child(2) { animation-delay: 0.2s; }
+        .section-box:nth-child(3) { animation-delay: 0.3s; }
+        .section-box:nth-child(4) { animation-delay: 0.4s; }
+
+        /* Enhanced button loading state */
+        .btn.loading {
+            position: relative;
+            color: transparent !important;
+            pointer-events: none;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 20px;
+            height: 20px;
+            margin: -10px 0 0 -10px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        button[disabled] {
+            pointer-events: none;
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn-outline-primary {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary-color);
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-secondary {
+            background: var(--gray-100);
+            border: 1px solid var(--gray-300);
+            color: var(--gray-700);
+            border-radius: var(--border-radius);
+            padding: 12px 24px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-200);
+            border-color: var(--gray-400);
+            transform: translateY(-1px);
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 50%, #2a5a8a 100%);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            box-shadow: var(--shadow-lg);
+            position: fixed;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            z-index: 1040;
+        }
+
+        .ticker {
+            background: linear-gradient(90deg, var(--secondary-color) 0%, #b8e0f8 50%, var(--secondary-color) 100%);
+            color: var(--primary-color);
+            font-weight: 700;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1050;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .section-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            position: relative;
+            padding-bottom: 12px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border-radius: 2px;
+        }
+
+        .section-title i {
+            margin-right: 12px;
+            font-size: 20px;
+            color: var(--secondary-color);
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .payment-method input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary-color);
+        }
+
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+            position: relative;
+        }
+
+        .voucher-disabled {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .voucher-disabled .form-check-input {
+            pointer-events: none;
+        }
+
+        .submit-btn {
+            position: sticky;
+            bottom: 20px;
+            z-index: 10;
+        }
+
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+
+        .text-secondary {
+            color: var(--gray-600) !important;
+        }
+
+        .text-muted {
+            color: var(--gray-500) !important;
+        }
+
+        .fw-bold {
+            font-weight: 700 !important;
+        }
+
+        .fw-semibold {
+            font-weight: 600 !important;
+        }
+
+        /* Enhanced form control focus states */
+        #add-address-form .form-control:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 3px rgba(21, 48, 84, 0.1) !important;
+            outline: none;
+        }
+
+        /* Enhanced button hover effects */
+        #add-address-form button:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md) !important;
+        }
+
+        #add-address-form button[onclick="hideAddAddressForm()"]:hover {
+            background: var(--gray-200) !important;
+            border-color: var(--gray-300) !important;
+        }
+
+        /* Enhanced add new address button hover */
+        button[onclick="showAddAddressForm()"]:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg) !important;
+            background: linear-gradient(135deg, #8dd3f7 0%, #6bb8e8 100%) !important;
+        }
+
+        /* Enhanced scrollbar for address list */
+        #address-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        #address-list::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 3px;
+        }
+
+        #address-list::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 3px;
+        }
+
+        #address-list::-webkit-scrollbar-thumb:hover {
+            background: #1a3a5f;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+<div class="ticker py-1 overflow-hidden fixed top-0 w-full z-50">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+        🎉 Khuyến mãi đặc biệt: Giảm giá lên đến 50% cho tất cả sản phẩm hôm nay! 🎉 - Miễn phí vận chuyển cho đơn từ 500k!
+    </marquee>
+</div>
+
+<div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
+
+<section class="container mx-auto py-8">
+    <h1 class="text-3xl font-bold text-gray-800 mb-6">Thanh toán</h1>
+    <div th:if="${error}" class="bg-red-100 text-red-700 p-4 rounded mb-4" th:text="${error}"></div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- LEFT -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="section-box">
+                <h2 class="section-title mb-4"><i class="fas fa-user mr-2"></i> Thông tin khách hàng</h2>
+                <form id="checkout-form">
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ giao hàng</label>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addressModal">
+                            Chọn địa chỉ giao hàng
+                        </button>
+                        <input type="hidden" id="addressId" name="addressId"/>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label for="fullName" class="form-label">
+                                <i class="fas fa-user"></i>
+                                Họ và tên
+                            </label>
+                            <input type="text" id="fullName" name="fullName" class="form-control w-full" th:value="${nguoiNhan}" required disabled/>
+                        </div>
+                        <div>
+                            <label for="phone" class="form-label">
+                                <i class="fas fa-phone"></i>
+                                Số điện thoại
+                            </label>
+                            <input type="tel" id="phone" name="phone" class="form-control w-full" th:value="${soDienThoaiNguoiNhan}" required disabled/>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="address" class="form-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Địa chỉ nhận hàng
+                        </label>
+                        <input type="text" id="address" name="address" class="form-control w-full" th:value="${loggedInUser?.chiTietDiaChi}" required disabled/>
+                    </div>
+
+                    <!-- hidden region selects for shipping calc -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 mt-4" hidden>
+                        <select id="province" class="form-control" required disabled>
+                            <option value="">-- Chọn tỉnh/thành --</option>
+                        </select>
+                        <select id="district" class="form-control" required disabled>
+                            <option value="">-- Chọn quận/huyện --</option>
+                        </select>
+                        <select id="ward" class="form-control" required disabled>
+                            <option value="">-- Chọn phường/xã --</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div class="section-box" hidden>
+                <h2 class="section-title mb-4"><i class="fas fa-truck mr-2"></i> Phương thức vận chuyển</h2>
+                <select id="shippingMethod" name="shippingMethod" class="form-control w-full" required>
+                    <option value="53321">Giao hàng nhanh (Hàng nhẹ)</option>
+                    <option value="100039">Giao hàng chậm (Hàng nặng)</option>
+                </select>
+            </div>
+
+            <div class="section-box">
+                <h2 class="section-title mb-4"><i class="fas fa-credit-card mr-2"></i> Phương thức thanh toán</h2>
+                <div class="payment-method active" data-value="550E8400-E29B-41D4-A716-446655440017">
+                    <input type="radio" name="paymentMethod" value="550E8400-E29B-41D4-A716-446655440017" checked>
+                    <span class="ml-2 font-medium">Thanh toán khi nhận hàng (COD)</span>
+                </div>
+                <div class="payment-method" data-value="550E8400-E29B-41D4-A716-446655440018">
+                    <input type="radio" name="paymentMethod" value="550E8400-E29B-41D4-A716-446655440018">
+                    <span class="ml-2 font-medium">Chuyển khoản ngân hàng</span>
+                </div>
+                <div class="payment-method" data-value="550E8400-E29B-41D4-A716-446655440019">
+                    <input type="radio" name="paymentMethod" value="550E8400-E29B-41D4-A716-446655440019">
+                    <span class="ml-2 font-medium">Ví điện tử</span>
+                    <span id="wallet-balance" class="ml-2 text-sm text-gray-600">(Đang tải...)</span>
+                </div>
+            </div>
+
+            <div class="section-box">
+                <h2 class="section-title mb-4"><i class="fas fa-sticky-note mr-2"></i> Ghi chú</h2>
+                <textarea id="note" name="note" class="form-control w-full" rows="4" placeholder="Ghi chú cho đơn hàng (tùy chọn)"></textarea>
+            </div>
+        </div>
+
+        <!-- RIGHT -->
+        <div class="section-box">
+            <h2 class="section-title mb-4"><i class="fas fa-shopping-bag mr-2"></i> Đơn hàng</h2>
+            <div id="order-items" class="space-y-4 mb-6"></div>
+
+            <div class="border-top pt-3">
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span>Tạm tính:</span><span id="subtotal" class="fw-semibold">0 VNĐ</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span>Phí vận chuyển:</span><span id="shipping-fee" class="fw-semibold">0 VNĐ</span>
+                </div>
+                <div class="d-flex justify-content-between mb-1 small">
+                    <span>Giảm giá đơn (ORDER):</span><span id="discount-order" class="fw-semibold">0 VNĐ</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small">
+                    <span>Giảm phí vận chuyển (FREESHIP):</span><span id="discount-ship" class="fw-semibold">0 VNĐ</span>
+                </div>
+                <div class="d-flex justify-content-between fs-5 fw-bold">
+                    <span>Tổng tiền:</span><span id="total" class="text-[#153054]">0 VNĐ</span>
+                </div>
+            </div>
+
+            <!-- ========== CHỌN MÃ GIẢM GIÁ (NEW) ========== -->
+            <div class="mt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div class="d-flex align-items-center gap-3">
+                        <i class="fas fa-ticket-alt fs-3 text-primary"></i>
+                        <h3 class="fs-5 fw-bold mb-0">Chọn mã giảm giá</h3>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="openVoucherModal()">Chọn</button>
+                </div>
+                <!-- tóm tắt mã đang chọn -->
+                <div id="voucher-summary" class="small text-muted"></div>
+
+                <!-- Giữ 2 select ẨN để dùng lại applyOrderVoucher/applyShipVoucher -->
+                <select id="order-voucher" hidden>
+                    <option value=""></option>
+                    <th:block th:each="voucher : ${vouchers}">
+                        <option th:if="${voucher.phamViApDung != 'SHIPPING'}"
+                                th:value="${voucher.ma}"
+                                th:text="${voucher.ten} + ' (Tối thiểu: ' + ${#numbers.formatDecimal(voucher.giaTriGiamToiThieu, 0, 'COMMA', 0, 'POINT')} + ' VNĐ)'">
+                        </option>
+                    </th:block>
+                </select>
+
+                <select id="ship-voucher" hidden>
+                    <option value=""></option>
+                    <th:block th:each="voucher : ${vouchers}">
+                        <option th:if="${voucher.phamViApDung == 'SHIPPING'}"
+                                th:value="${voucher.ma}"
+                                th:text="${voucher.ten}">
+                        </option>
+                    </th:block>
+                </select>
+            </div>
+
+
+            <button id="submit-order" class="btn btn-primary w-100 mt-4 submit-btn" disabled>
+                <i class="fas fa-check-circle me-2"></i> Đặt hàng
+            </button>
+
+        </div>
+    </div>
+</section>
+
+<!-- Address Modal -->
+<div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: var(--border-radius-lg); border: none; box-shadow: var(--shadow-xl);">
+            <!-- Enhanced modal header with better styling and icon -->
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, #1a3a5f 100%); color: white; border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0; padding: 24px; border-bottom: none;">
+                <h5 class="modal-title d-flex align-items-center" id="addressModalLabel" style="font-weight: 600; font-size: 1.25rem;">
+                    <i class="fas fa-map-marker-alt me-3" style="color: var(--secondary-color);"></i>
+                    Chọn địa chỉ giao hàng
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="filter: brightness(0) invert(1);"></button>
+            </div>
+
+            <!-- Enhanced modal body with better spacing and visual hierarchy -->
+            <div class="modal-body" style="padding: 32px; background: linear-gradient(135deg, #f8fafc 0%, white 100%);">
+                <!-- Enhanced address list section -->
+                <div class="mb-4">
+                    <h6 class="text-gray-700 mb-3 d-flex align-items-center" style="font-weight: 600; font-size: 1rem;">
+                        <i class="fas fa-list me-2 text-primary"></i>
+                        Địa chỉ đã lưu
+                    </h6>
+                    <div id="address-list" class="mb-4" style="max-height: 300px; overflow-y: auto; padding-right: 8px;"></div>
+                </div>
+
+                <button type="button" class="btn w-100 mb-4 d-flex align-items-center justify-content-center"
+                        onclick="openAddAddressModal()"
+                        style="background: linear-gradient(135deg, var(--secondary-color) 0%, #7cc7f0 100%);
+               border: none; color: var(--primary-color); font-weight: 600;
+               padding: 16px; border-radius: var(--border-radius);">
+                    <i class="fas fa-plus me-2"></i>
+                    Thêm địa chỉ mới
+                </button>
+            </div>
+
+            <!-- Enhanced modal footer -->
+            <div class="modal-footer" style="background: var(--gray-50); border-top: 1px solid var(--gray-200); padding: 20px 32px; border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);">
+                <button type="button" class="btn px-4 py-2" data-bs-dismiss="modal"
+                        style="background: var(--gray-100); color: var(--gray-600); border: 2px solid var(--gray-200);
+                               border-radius: var(--border-radius); font-weight: 500; transition: var(--transition);">
+                    <i class="fas fa-times me-1"></i>
+                    Đóng
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Address Modal (mới) -->
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="border-radius: var(--border-radius-lg); border: none; box-shadow: var(--shadow-xl);">
+            <div class="modal-header" style="background: linear-gradient(135deg, var(--primary-color) 0%, #1a3a5f 100%); color: #fff;">
+                <h5 class="modal-title"><i class="fas fa-plus-circle me-2"></i>Thêm địa chỉ mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body" style="padding: 24px;">
+                <form id="new-address-form">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fas fa-user me-1 text-primary"></i>Họ và tên</label>
+                            <input id="new-fullName" class="form-control" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label"><i class="fas fa-phone me-1 text-primary"></i>Số điện thoại</label>
+                            <input id="new-phone" class="form-control" required>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-home me-1 text-primary"></i>Địa chỉ chi tiết</label>
+                        <input id="new-address" class="form-control" required placeholder="Số nhà, tên đường...">
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><i class="fas fa-map me-1 text-primary"></i>Tỉnh/Thành phố</label>
+                            <select id="new-province" class="form-control" required>
+                                <option value="">-- Chọn tỉnh/thành --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><i class="fas fa-building me-1 text-primary"></i>Quận/Huyện</label>
+                            <select id="new-district" class="form-control" required>
+                                <option value="">-- Chọn quận/huyện --</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label"><i class="fas fa-location-dot me-1 text-primary"></i>Phường/Xã</label>
+                            <select id="new-ward" class="form-control" required>
+                                <option value="">-- Chọn phường/xã --</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="modal-footer" style="background:#f8fafc;">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-1"></i>Hủy
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveNewAddress()">
+                    <i class="fas fa-save me-1"></i>Lưu địa chỉ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<footer style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+            <h3 class="text-lg font-bold mb-4">ACV Store</h3>
+            <p class="text-sm">Cửa hàng thời trang hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
+            <ul class="space-y-2">
+                <li><a href="/new" class="hover:text-blue-300">Sản phẩm mới</a></li>
+                <li><a href="/all" class="hover:text-blue-300">Tất cả sản phẩm</a></li>
+                <li><a href="/bestsellers" class="hover:text-blue-300">Sản phẩm bán chạy</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold mb-4">Liên hệ</h3>
+            <p class="text-sm">Địa chỉ: 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội, Việt Nam</p>
+            <p class="text-sm">Email: datn.acv@gmail.com</p>
+            <p class="text-sm">Hotline: 0911 006 045</p>
+            <div class="flex space-x-4 mt-4">
+                <a href="https://www.facebook.com" class="text-white hover:text-blue-300" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com" class="text-white hover:text-blue-300" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com" class="text-white hover:text-blue-300" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="container mx-auto mt-8">
+        <div class="map-container relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7142835949912!2d105.85287637508011!3d21.004087180639065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ad002fc50fd1%3A0x9a7962d208d20498!2sACV%20Store!5e0!3m2!1sen!2s!4v1755701406991!5m2!1sen!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="text-center text-sm mt-2 text-gray-300">* Bản đồ hiển thị vị trí chi nhánh chính tại ACV Store tại 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội. Vui lòng liên hệ để xác nhận giờ mở cửa.</p>
+    </div>
+    <div class="text-center mt-8 text-sm">© 2025 ACV Store. All rights reserved.</div>
+
+    <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10"></div>
+</footer>
+
+<!-- ========== MODAL CHỌN VOUCHER (compact, centered, scrollable) ========== -->
+<div class="modal fade" id="voucherModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <div class="d-flex align-items-center gap-3">
+                    <i class="fas fa-ticket-alt fs-3 text-primary"></i>
+                    <h3 class="fs-4 fw-bold mb-0">Chọn mã giảm giá</h3>
+                </div>
+                <button type="button" class="btn-close" aria-label="Close" onclick="closeVoucherModal()"></button>
+            </div>
+
+            <!-- BODY cuộn dọc -->
+            <div class="modal-body pt-0" style="max-height: 60vh; overflow-y: auto;">
+
+                <!-- Thanh tìm kiếm (STICKY) -->
+                <div class="voucher-search">
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input id="voucher-search" type="text" class="form-control"
+                               placeholder="Tìm theo tên mã, code, mô tả...">
+                        <button id="voucher-search-clear" class="btn btn-outline-secondary" type="button" title="Xóa">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SHIPPING -->
+                <!-- SHIPPING -->
+                <div class="mb-3" id="ship-list">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="fas fa-truck"></i>
+                        <span class="fw-bold">Freeship (SHIPPING)</span>
+                    </div>
+
+                    <th:block th:each="v : ${vouchers}">
+                        <th:block th:if="${v.phamViApDung == 'SHIPPING'}">
+                            <label class="voucher-card d-flex align-items-start gap-3 border rounded mb-2 w-100"
+                                   style="cursor:pointer;"
+                                   th:attr="data-scope=${'SHIPPING'},
+                      data-code=${v.ma},
+                      data-min-order=${v.giaTriGiamToiThieu},
+                      data-loai=${v.loai},
+                      data-giam=${v.giaTriGiam != null ? v.giaTriGiam : 0},
+                      data-cap=${v.giaTriGiamToiDa != null ? v.giaTriGiamToiDa : 0}">
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold" th:text="${v.ten}">Tên phiếu</div>
+                                    <div class="text-muted small">
+            <span th:text="${
+              v.loai == 'FREESHIP_FULL' ? 'Miễn phí vận chuyển'
+              : (v.loai == 'FREESHIP_CAP'
+                  ? 'Giảm ' + #numbers.formatDecimal(v.giaTriGiamToiDa, 0, 'POINT', 0, 'COMMA') + ' VND'
+                  : 'Giảm phí vận chuyển')
+            }">Mô tả freeship</span>
+                                        • ĐH tối thiểu:
+                                        <span th:text="${#numbers.formatDecimal(v.giaTriGiamToiThieu, 0, 'POINT', 0, 'COMMA')}">0</span> VND
+                                        • HSD:
+                                        <span th:text="${#temporals.format(v.ngayKetThuc,'d/M/yyyy')}"></span>
+                                        • PTTT:
+                                        <span th:text="${
+              #maps.containsKey(voucherPtttMapById, v.id) ? voucherPtttMapById[v.id]
+              : (#maps.containsKey(voucherPtttMapByMa, v.ma) ? voucherPtttMapByMa[v.ma]
+              : 'Tất cả')
+            }">Tất cả</span>
+                                    </div>
+                                </div>
+                                <input class="form-check-input mt-1" type="radio" name="rb-ship" th:value="${v.ma}">
+                            </label>
+                        </th:block>
+                    </th:block>
+                </div>
+
+
+                <!-- ORDER -->
+                <!-- ORDER -->
+                <div class="mt-4" id="order-list">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <i class="fas fa-receipt"></i>
+                        <span class="fw-bold">Mã giảm giá đơn hàng (ORDER)</span>
+                    </div>
+
+                    <th:block th:each="v : ${vouchers}">
+                        <th:block th:if="${v.phamViApDung != 'SHIPPING'}">
+                            <label class="voucher-card d-flex align-items-start gap-3 border rounded mb-2 w-100"
+                                   style="cursor:pointer;"
+                                   th:attr="data-scope=${'ORDER'},
+                      data-code=${v.ma},
+                      data-min-order=${v.giaTriGiamToiThieu},
+                      data-loai=${v.loai},
+                      data-giam=${v.giaTriGiam != null ? v.giaTriGiam : 0},
+                      data-cap=${v.giaTriGiamToiDa != null ? v.giaTriGiamToiDa : 0}">
+                                <div class="flex-grow-1">
+                                    <div class="fw-semibold" th:text="${v.ten}">Tên phiếu</div>
+                                    <div class="text-muted small">
+                                        Giảm
+                                        <span th:text="${#numbers.formatDecimal(v.giaTriGiam, 0, 'POINT', 0, 'COMMA')}">0</span>
+                                        <span th:text="${v.loai=='PERCENT' ? '%' : 'VND'}"></span>
+                                        • ĐH tối thiểu:
+                                        <span th:text="${#numbers.formatDecimal(v.giaTriGiamToiThieu, 0, 'POINT', 0, 'COMMA')}">0</span> VND
+                                        • HSD:
+                                        <span th:text="${#temporals.format(v.ngayKetThuc,'d/M/yyyy')}"></span>
+                                        • PTTT:
+                                        <span th:text="${#maps.containsKey(voucherPtttMapById, v.id) ? voucherPtttMapById[v.id] :
+                              (#maps.containsKey(voucherPtttMapByMa, v.ma) ? voucherPtttMapByMa[v.ma] : 'Tất cả')}">
+              Tất cả
+            </span>
+                                    </div>
+                                </div>
+                                <input class="form-check-input mt-1" type="radio" name="rb-order" th:value="${v.ma}">
+                            </label>
+                        </th:block>
+                    </th:block>
+                </div>
+
+
+
+
+                <!-- Không có kết quả -->
+                <div id="voucher-no-result" class="text-center text-muted py-3 d-none">
+                    Không tìm thấy mã phù hợp
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" id="btn-clear-vouchers" class="btn btn-outline-secondary">Bỏ chọn tất cả</button>
+                <button type="button" id="btn-apply-vouchers" class="btn btn-primary">Áp dụng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!-- Added SockJS and STOMP for WebSocket support -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@7/bundles/stomp.umd.min.js"></script>
+
+<script th:inline="javascript">
+    function normalizeVNPhone(raw='') {
+        let s = String(raw).trim().replace(/\s|\.|-/g,'');
+        if (s.startsWith('+84')) s = '0' + s.slice(3);
+        else if (s.startsWith('84')) s = '0' + s.slice(2);
+        return s;
+    }
+
+    // Trả về { ok, errors[], data{fullName, phone, address} }
+    function validateNewAddressForm() {
+        const elName = document.getElementById('new-fullName');
+        const elPhone = document.getElementById('new-phone');
+        const elAddr = document.getElementById('new-address');
+
+        // reset trạng thái invalid
+        [elName, elPhone, elAddr].forEach(el => el.classList.remove('is-invalid'));
+
+        const fullName = (elName.value || '').trim().replace(/\s+/g,' ');
+        const phoneRaw = (elPhone.value || '');
+        const address = (elAddr.value || '').trim();
+
+        const errors = [];
+
+        // --- HỌ TÊN ---
+        // - Tối thiểu 2 từ
+        // - Không chứa số/ký tự lạ; cho phép chữ có dấu, khoảng trắng, dấu nối
+        const nameHasTwoWords = fullName.split(/\s+/).length >= 2;
+        const nameOkChars = /^[A-Za-zÀ-ỹĐđ'’. -]+$/u.test(fullName);
+        const nameLenOK = fullName.length >= 4 && fullName.length <= 60;
+        if (!fullName || !nameHasTwoWords || !nameOkChars || !nameLenOK) {
+            elName.classList.add('is-invalid');
+            errors.push('• Họ và tên không hợp lệ (ít nhất 2 từ, 4–60 ký tự, chỉ bao gồm chữ và khoảng trắng).');
+        }
+
+        // --- SỐ ĐIỆN THOẠI ---
+        // - Chuẩn hoá +84 -> 0
+        // - 10 số, bắt đầu bằng 0
+        const phone = normalizeVNPhone(phoneRaw);
+        const phoneOk = /^0\d{9}$/.test(phone); // mobile VN hiện là 10 số
+        if (!phoneOk) {
+            elPhone.classList.add('is-invalid');
+            errors.push('• Số điện thoại không hợp lệ (10 số, bắt đầu bằng 0; chấp nhận nhập dạng +84...).');
+        }
+
+        // --- ĐỊA CHỈ CHI TIẾT ---
+        // - 5–150 ký tự; cho phép chữ số, dấu / , . - #
+        // - Khuyến khích có số nhà
+        const addrOkChars = /^[0-9A-Za-zÀ-ỹĐđ\s,./#-]{5,150}$/u.test(address);
+        const addrHasNumber = /\d/.test(address); // thường có số nhà
+        if (!address || !addrOkChars || !addrHasNumber) {
+            elAddr.classList.add('is-invalid');
+            errors.push('• Địa chỉ chi tiết chưa đúng (5–150 ký tự, nên có số nhà; chỉ dùng chữ số).');
+        }
+
+        return {
+            ok: errors.length === 0,
+            errors,
+            data: { fullName, phone, address }
+        };
+    }
+
+    // 👉 Thêm submit cho form để Enter hoạt động
+    document.addEventListener('DOMContentLoaded', () => {
+        const form = document.getElementById('new-address-form');
+        if (form) {
+            // Submit mặc định
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                if (typeof saveNewAddress === 'function') saveNewAddress();
+            });
+
+            // Bắt Enter trong input/select của modal (phòng khi trình duyệt không tự submit)
+            document.querySelectorAll('#addAddressModal input, #addAddressModal select').forEach(el => {
+                el.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (typeof saveNewAddress === 'function') saveNewAddress();
+                    }
+                });
+            });
+        }
+    });
+
+    window.openAddAddressModal = function () {
+        // reset field
+        document.getElementById('new-fullName').value = '';
+        document.getElementById('new-phone').value = '';
+        document.getElementById('new-address').value = '';
+        document.getElementById('new-province').innerHTML = '<option value="">-- Chọn tỉnh/thành --</option>';
+        document.getElementById('new-district').innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+        document.getElementById('new-ward').innerHTML     = '<option value="">-- Chọn phường/xã --</option>';
+
+        // nạp tỉnh/thành cho modal mới
+        loadProvinces('new-province');
+
+        // mở modal thêm địa chỉ (không cần đóng addressModal, Bootstrap cho phép xếp chồng)
+        new bootstrap.Modal(document.getElementById('addAddressModal')).show();
+    };
+
+    // Chỉ bật đặt hàng khi đã nhận được phản hồi tính phí ship (kể cả 0đ vẫn OK)
+    let shippingFeeReady = false;
+
+    function updateSubmitEnabled() {
+        const btn = document.getElementById('submit-order');
+        if (btn) btn.disabled = !shippingFeeReady;
+    }
+
+    // ===== SEARCH HELPERS =====
+    function vnNormalize(str = '') {
+        return String(str)
+            .toLowerCase()
+            .normalize('NFD')                // tách dấu
+            .replace(/[\u0300-\u036f]/g, '') // bỏ dấu
+            .replace(/[.,]/g, '')            // loại dấu phân cách số để tìm 23000 ~ 23.000
+            .trim();
+    }
+
+    function filterVouchersInModal(termRaw = '') {
+        const modal = document.getElementById('voucherModal');
+        if (!modal) return;
+
+        const term = vnNormalize(termRaw);
+        const cards = modal.querySelectorAll('label.voucher-card');
+        let anyShown = false;
+
+        cards.forEach(card => {
+            const code = card.dataset.code || '';
+            const text = card.innerText || '';
+            const hay  = vnNormalize(code + ' ' + text);
+
+            const matched = term === '' || hay.includes(term);
+            card.classList.toggle('d-none', !matched);
+            if (matched) anyShown = true;
+        });
+
+        const noRes = document.getElementById('voucher-no-result');
+        if (noRes) noRes.classList.toggle('d-none', anyShown);
+    }
+
+    function debounce(fn, wait = 150) {
+        let t;
+        return (...args) => {
+            clearTimeout(t);
+            t = setTimeout(() => fn.apply(null, args), wait);
+        };
+    }
+
+    // ================== STATE & HELPERS ==================
+    const loadingState = {
+        provinces: false,
+        addresses: false,
+        orderItems: false,
+        walletBalance: false,
+        shippingServices: false,
+    };
+
+    function checkLoadingComplete() {
+        const overlay = document.getElementById('loading-overlay');
+        if (!overlay) return; // Không có overlay thì thôi, khỏi thao tác classList
+        const allLoaded = Object.values(loadingState).every(s => s === true);
+        if (allLoaded) overlay.classList.remove('active');
+    }
+
+    function formatVND(number) {
+        return new Intl.NumberFormat('vi-VN', { style: 'decimal', minimumFractionDigits: 0 }).format(Number(number||0)) + ' VNĐ';
+    }
+
+    function onlyDigits(s) {
+        return Number(String(s || '').replace(/[^\d]/g, '')) || 0;
+    }
+    // để không đụng các chỗ đang gọi _num ở computePotentialDiscount
+    function _num(x) { return onlyDigits(x); }
+
+    function getCheckoutMode() {
+        const qs = new URLSearchParams(location.search).get('from');
+        if (['cart','cart-selected','buy-now'].includes(qs)) return qs;
+
+        // Ưu tiên dữ liệu thực tế đang có
+        if (localStorage.getItem('checkoutItem'))       return 'buy-now';
+        if (localStorage.getItem('cartSelectedItems'))  return 'cart-selected';
+
+        // Cuối cùng mới dùng session (có thể là giá trị cũ)
+        const ss = sessionStorage.getItem('checkout.from');
+        if (['cart','cart-selected','buy-now'].includes(ss)) return ss;
+
+        return 'cart';
+    }
+
+    // ================== GHN LOCATION & SHIPPING ==================
+    let provinceList = [];
+    let districtList = [];
+
+    async function loadProvinces(target = "province") {
+        try {
+            const res = await fetch('/api/ghn/provinces');
+            const json = await res.json();
+            if (!json || !json.data) throw new Error('Không có dữ liệu tỉnh/thành');
+            const result = JSON.parse(json.data);
+            provinceList = result.data || [];
+
+            const select = document.getElementById(target);
+            select.innerHTML = '<option value="">-- Chọn tỉnh/thành --</option>';
+            provinceList.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.ProvinceID;
+                opt.textContent = p.ProvinceName;
+                select.appendChild(opt);
+            });
+
+            loadingState.provinces = true;
+            checkLoadingComplete();
+        } catch (err) {
+            console.error('Lỗi tải tỉnh/thành:', err);
+            // Swal.fire({ icon: 'error', title: 'Lỗi tải tỉnh/thành', text: err.message });
+            loadingState.provinces = true;
+            checkLoadingComplete();
+        }
+    }
+    function markVoucherEligibility() {
+        const subtotal = onlyDigits(document.getElementById('subtotal').textContent);
+        const shipping = onlyDigits(document.getElementById('shipping-fee').textContent);
+        const selOrder = document.getElementById('order-voucher');
+        const selShip  = document.getElementById('ship-voucher');
+
+        // Đánh dấu khả dụng / không khả dụng
+        document.querySelectorAll('#voucherModal label[data-scope]').forEach(label => {
+            const scope    = label.dataset.scope;              // 'ORDER' | 'SHIPPING'
+            const minOrder = Number(label.dataset.minOrder||0);
+            const radio    = label.querySelector('input[type="radio"]');
+
+            const okByOrder = subtotal >= minOrder;
+            const okByShip  = (scope !== 'SHIPPING') || (shipping > 0);
+            const eligible  = okByOrder && okByShip;
+
+            if (eligible) {
+                label.classList.remove('voucher-disabled');
+                radio.disabled = false;
+                label.removeAttribute('title');
+            } else {
+                label.classList.add('voucher-disabled');
+                radio.checked = false;
+                radio.disabled = true;
+                const reason = !okByOrder
+                    ? `Chưa đạt ĐH tối thiểu ${formatVND(minOrder)}`
+                    : `Chưa có phí vận chuyển (hãy chọn địa chỉ)`;
+                label.setAttribute('title', reason);
+            }
+        });
+
+        // Nếu hidden select đang giữ 1 mã nhưng mã đó vừa bị disable -> clear
+        const clearIfDisabled = (scope, code, selEl, discountId) => {
+            if (!code) return;
+            const selector = `#voucherModal label[data-scope="${scope}"][data-code="${CSS.escape(code)}"]`;
+            const lab = document.querySelector(selector);
+            if (lab && lab.classList.contains('voucher-disabled')) {
+                selEl.value = '';
+                document.getElementById(discountId).textContent = formatVND(0);
+            }
+        };
+        clearIfDisabled('ORDER',    selOrder.value, selOrder, 'discount-order');
+        clearIfDisabled('SHIPPING', selShip.value,  selShip,  'discount-ship');
+
+        // Cập nhật tóm tắt
+        const parts = [];
+        if (selOrder.value) {
+            const t = selOrder.querySelector(`option[value="${selOrder.value}"]`)?.textContent || selOrder.value;
+            parts.push('ORDER: ' + t);
+        }
+        if (selShip.value) {
+            const t = selShip.querySelector(`option[value="${selShip.value}"]`)?.textContent || selShip.value;
+            parts.push('SHIP: ' + t);
+        }
+        // document.getElementById('voucher-summary').textContent = parts.length ? parts.join(' | ') : 'Chưa chọn';
+    }
+    function _num(x){ const n = Number(String(x??0).toString().replace(/[^\d.]/g,'')); return isFinite(n)? n : 0; }
+
+    function computePotentialDiscount(label, subtotal, shipping){
+        const scope = label.dataset.scope;
+        const loai  = (label.dataset.loai || '').toUpperCase();
+        const giam  = _num(label.dataset.giam);
+        const cap   = _num(label.dataset.cap);
+        const minOrder = _num(label.dataset.minOrder);
+
+        // Điều kiện cơ bản (đã phản ánh cùng logic markVoucherEligibility)
+        const okByOrder = subtotal >= minOrder;
+        const okByShip  = scope !== 'SHIPPING' || shipping > 0;
+        const eligible  = okByOrder && okByShip;
+
+        let potential = 0;
+
+        if (scope === 'ORDER'){
+            if (!eligible) return { eligible:false, potential:0 };
+            if (loai === 'PERCENT'){
+                potential = Math.floor(subtotal * giam / 100);
+            } else { // AMOUNT hoặc các loại số tiền khác
+                potential = giam;
+            }
+            if (cap > 0) potential = Math.min(potential, cap);
+            potential = Math.min(potential, subtotal);
+        } else { // SHIPPING
+            if (!eligible) return { eligible:false, potential:0 };
+            if (loai === 'FREESHIP_FULL'){
+                potential = shipping;
+            } else if (loai === 'FREESHIP_CAP'){
+                potential = Math.min(cap || shipping, shipping);
+            } else if (loai === 'PERCENT'){
+                potential = Math.floor(shipping * giam / 100);
+                if (cap > 0) potential = Math.min(potential, cap);
+                potential = Math.min(potential, shipping);
+            } else { // AMOUNT hoặc fallback
+                potential = Math.min(giam, shipping);
+            }
+        }
+        return { eligible:true, potential: Math.max(0, potential) };
+    }
+
+    function sortVouchersInModal() {
+        const modal = document.getElementById('voucherModal');
+        if (!modal) return;
+
+        // LẤY GIÁ TRỊ THỰC TỪ DOM (100.000 VNĐ -> 100000)
+        const subtotal = onlyDigits(document.getElementById('subtotal')?.textContent);
+        const shipping = onlyDigits(document.getElementById('shipping-fee')?.textContent);
+
+        const sortContainer = (containerSelector) => {
+            const box = modal.querySelector(containerSelector);
+            if (!box) return;
+
+            const items = Array.from(box.querySelectorAll('label.voucher-card'));
+            if (!items.length) return;
+
+            const scored = items.map(el => {
+                const isDisabled = el.classList.contains('voucher-disabled'); // đã set ở markVoucherEligibility
+                const { eligible, potential } = computePotentialDiscount(el, subtotal, shipping);
+                const finalEligible = !isDisabled && eligible;
+                return {
+                    el,
+                    eligible: finalEligible,
+                    potential: finalEligible ? potential : 0,
+                    code: (el.dataset.code || '')
+                };
+            });
+
+            scored.sort((a, b) => {
+                // đủ điều kiện trước, không đủ xuống dưới
+                if (a.eligible !== b.eligible) return a.eligible ? -1 : 1;
+                // mức giảm tiềm năng cao lên trên
+                if (b.potential !== a.potential) return b.potential - a.potential;
+                // tie-break ổn định
+                return a.code.localeCompare(b.code);
+            });
+
+            scored.forEach(s => box.appendChild(s.el));
+        };
+
+        sortContainer('#ship-list');
+        sortContainer('#order-list');
+    }
+
+
+    // Gọi sắp xếp sau khi đánh dấu eligibility
+    const _origMarkVoucherEligibility = markVoucherEligibility;
+    markVoucherEligibility = function(){
+        _origMarkVoucherEligibility();
+        // Sau khi đánh dấu enable/disable -> sort lại
+        sortVouchersInModal();
+    };
+
+    // Khi lọc tìm kiếm trong modal xong cũng sort lại (đảm bảo thứ tự trong kết quả)
+    const _origFilterInModal = filterVouchersInModal;
+    filterVouchersInModal = function(term){
+        _origFilterInModal(term);
+        sortVouchersInModal();
+    };
+
+    // An toàn: khi mở modal lần đầu, tính & sort
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalEl = document.getElementById('voucherModal');
+        if (modalEl){
+            modalEl.addEventListener('shown.bs.modal', () => {
+                if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+                sortVouchersInModal();
+            });
+        }
+    });
+
+
+    async function loadDistricts(provinceId, target = "district") {
+        try {
+            const res = await fetch(`/api/ghn/districts?provinceId=${provinceId}`);
+            const json = await res.json();
+            if (!json || !json.data) throw new Error('Không có dữ liệu quận/huyện');
+
+            const result = JSON.parse(json.data);
+            districtList = result.data || [];
+
+            const select = document.getElementById(target);
+            select.innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+            districtList.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d.DistrictID;
+                opt.textContent = d.DistrictName;
+                select.appendChild(opt);
+            });
+
+            document.getElementById(target === 'district' ? 'ward' : 'new-ward').innerHTML =
+                '<option value="">-- Chọn phường/xã --</option>';
+        } catch (err) {
+            console.error('Lỗi tải quận/huyện:', err);
+            Swal.fire({ icon: 'error', title: 'Lỗi tải quận/huyện', text: err.message });
+        }
+    }
+
+    async function loadWards(districtId, target = "ward") {
+        try {
+            const res = await fetch(`/api/ghn/wards?districtId=${districtId}`);
+            const json = await res.json();
+            if (!json || !json.data) throw new Error('Không có dữ liệu phường/xã');
+
+            const result = JSON.parse(json.data);
+            const wards = result.data || [];
+
+            const select = document.getElementById(target);
+            select.innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+            wards.forEach(w => {
+                const opt = document.createElement('option');
+                opt.value = w.WardCode;
+                opt.textContent = w.WardName;
+                select.appendChild(opt);
+            });
+        } catch (err) {
+            console.error('Lỗi tải phường/xã:', err);
+            Swal.fire({ icon: 'error', title: 'Lỗi tải phường/xã', text: err.message });
+        }
+    }
+
+    async function loadShippingServices(toDistrictId) {
+        const fromDistrictId = 1542;
+        try {
+            const res = await fetch(`/api/ghn/available-services?fromDistrictId=${fromDistrictId}&toDistrictId=${toDistrictId}`);
+            const json = await res.json();
+            const services = JSON.parse(json.data).data || [];
+
+            const select = document.getElementById('shippingMethod');
+            select.innerHTML = '';
+            services.forEach(srv => {
+                const opt = document.createElement('option');
+                opt.value = srv.service_id;
+                opt.textContent = srv.short_name + ` (${srv.service_type_id})`;
+                select.appendChild(opt);
+            });
+
+            if (services.length) {
+                select.value = services[0].service_id;
+                await calculateShipping();
+            }
+
+            loadingState.shippingServices = true;
+            checkLoadingComplete();
+        } catch (err) {
+            console.error('Lỗi tải dịch vụ vận chuyển:', err);
+            // Swal.fire({ icon: 'error', title: 'Lỗi', text: 'Không lấy được dịch vụ vận chuyển: ' + err.message });
+            loadingState.shippingServices = true;
+            checkLoadingComplete();
+        }
+    }
+
+    async function calculateShipping() {
+        // khóa nút trong lúc đang tính lại phí
+        shippingFeeReady = false;
+        updateSubmitEnabled();
+
+        const toDistrictId = document.getElementById('district').value;
+        const toWardCode   = document.getElementById('ward').value;
+        const serviceId    = document.getElementById('shippingMethod').value;
+        const fromDistrictId = 1542;
+
+        // Chưa đủ dữ liệu để gọi API -> coi như chưa sẵn sàng
+        if (!toDistrictId || !toWardCode || !serviceId) {
+            document.getElementById('shipping-fee').textContent = formatVND(0);
+            shippingFeeReady = false;
+            updateSubmitEnabled();
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/ghn/shipping-fee?fromDistrictId=${fromDistrictId}&toDistrictId=${toDistrictId}&toWardCode=${toWardCode}&weight=500&length=20&width=15&height=10&serviceId=${serviceId}&insuranceValue=100000`);
+            const json = await res.json();
+            const fee  = JSON.parse(json.data).data.total || 0;
+
+            document.getElementById('shipping-fee').textContent = formatVND(fee);
+
+            if (document.getElementById('ship-voucher').value) {
+                await applyShipVoucher(); // re-apply freeship với phí mới
+            } else {
+                document.getElementById('discount-ship').textContent = formatVND(0);
+            }
+            updateTotal();
+            if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+
+            // >>> ĐÃ NHẬN PHẢN HỒI (kể cả 0đ) -> cho phép đặt hàng
+            shippingFeeReady = true;
+            updateSubmitEnabled();
+        } catch (err) {
+            console.error('Lỗi tính phí vận chuyển:', err);
+            Swal.fire({ icon:'error', title:'Lỗi tính phí vận chuyển', text: err.message });
+            shippingFeeReady = false;
+            updateSubmitEnabled();
+        }
+    }
+
+
+    // ================== TOTAL & UI FNs ==================
+    function updateTotal() {
+        const subtotal = onlyDigits(document.getElementById('subtotal').textContent);
+        const shipping = onlyDigits(document.getElementById('shipping-fee').textContent);
+        const discountOrder = onlyDigits(document.getElementById('discount-order').textContent);
+        const discountShip = onlyDigits(document.getElementById('discount-ship').textContent);
+        const total = Math.max(0, subtotal + shipping - discountOrder - discountShip);
+        document.getElementById('total').textContent = formatVND(total);
+    }
+
+    // ================== ADDRESS BOOK ==================
+    async function loadSavedAddresses() {
+        try {
+            if (!provinceList.length) await loadProvinces();
+
+            const res = await fetch('/api/checkout/addresses', { credentials: 'include' });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Không thể tải danh sách địa chỉ');
+
+            const listEl = document.getElementById('address-list');
+            listEl.innerHTML = data.data.length ? '' : '<p>Không có địa chỉ nào được lưu.</p>';
+
+            data.data.forEach(address => {
+                const card = document.createElement('div');
+                card.className = 'address-card card mb-2 p-3';
+                card.setAttribute('data-id', address.id);
+                card.setAttribute('data-nguoi-nhan', address.nguoiNhan || '');
+                card.setAttribute('data-sdt', address.soDienThoaiNguoiNhan || '');
+                card.setAttribute('data-chi-tiet', address.chiTietDiaChi || '');
+                card.setAttribute('data-phuong-xa', address.phuongXa || '');
+                card.setAttribute('data-quan-huyen', address.quanHuyen || '');
+                card.setAttribute('data-tinh-thanh-pho', address.tinhThanhPho || '');
+                card.innerHTML = `
+              <div class="card-body">
+                <h6 class="card-title">${address.nguoiNhan} ${address.macDinh ? '<span class="badge bg-primary ms-2">Mặc định</span>' : ''}</h6>
+                <p class="card-text">${address.chiTietDiaChi}, ${address.phuongXa}, ${address.quanHuyen}, ${address.tinhThanhPho}</p>
+                <p class="card-text">SĐT: ${address.soDienThoaiNguoiNhan}</p>
+                <button type="button" class="btn btn-primary btn-sm" onclick="selectAddress(this)">Chọn</button>
+              </div>`;
+                listEl.appendChild(card);
+            });
+
+            const defaultAddress = data.data.find(a => a.macDinh);
+            if (defaultAddress) {
+                const fullNameInput = document.getElementById('fullName');
+                const phoneInput = document.getElementById('phone');
+                const addressInput = document.getElementById('address');
+                const addressIdInput = document.getElementById('addressId');
+                const provinceSelect = document.getElementById('province');
+                const districtSelect = document.getElementById('district');
+                const wardSelect = document.getElementById('ward');
+
+                addressIdInput.value = defaultAddress.id;
+                fullNameInput.value = defaultAddress.nguoiNhan || fullNameInput.value;
+                phoneInput.value = defaultAddress.soDienThoaiNguoiNhan || phoneInput.value;
+                addressInput.value = `${defaultAddress.chiTietDiaChi || ''}, ${defaultAddress.phuongXa || ''}, ${defaultAddress.quanHuyen || ''}, ${defaultAddress.tinhThanhPho || ''}`
+                    .replace(/, ,/g, '').replace(/^,|,$/g, '');
+
+                const normalize = (str) => str?.toLowerCase().replace(/(tỉnh|thành phố)/gi,'').replace(/[\s.\-]/g,'')
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+                const provinceMatch = provinceList.find(p => normalize(p.ProvinceName).includes(normalize(defaultAddress.tinhThanhPho)));
+                if (provinceMatch) {
+                    provinceSelect.value = provinceMatch.ProvinceID;
+                    await loadDistricts(provinceMatch.ProvinceID);
+
+                    const districtMatch = districtList.find(d => normalize(d.DistrictName).includes(normalize(defaultAddress.quanHuyen)));
+                    if (districtMatch) {
+                        districtSelect.value = districtMatch.DistrictID;
+                        await loadWards(districtMatch.DistrictID);
+
+                        const wardRes = await fetch(`/api/ghn/wards?districtId=${districtMatch.DistrictID}`);
+                        const wardJson = await wardRes.json();
+                        const wards = JSON.parse(wardJson.data).data || [];
+                        const wardMatch = wards.find(w => normalize(w.WardName).includes(normalize(defaultAddress.phuongXa)));
+                        if (wardMatch) {
+                            wardSelect.value = wardMatch.WardCode;
+                            await loadShippingServices(districtMatch.DistrictID);
+                        }
+                    }
+                }
+
+                const defaultCard = listEl.querySelector(`[data-id="${defaultAddress.id}"]`);
+                if (defaultCard) {
+                    document.querySelectorAll('.address-card').forEach(c => c.classList.remove('active'));
+                    defaultCard.classList.add('active');
+                }
+            } else {
+                // Không có địa chỉ mặc định -> tránh kẹt overlay
+                loadingState.shippingServices = true;
+                checkLoadingComplete();
+            }
+
+            loadingState.addresses = true;
+            checkLoadingComplete();
+        } catch (err) {
+            console.error('Lỗi tải danh sách địa chỉ:', err);
+
+            loadingState.addresses = true;
+            loadingState.shippingServices = true; // tránh kẹt overlay
+            checkLoadingComplete();
+        }
+    }
+
+    window.selectAddress = function (button) {
+        const card = button.closest('.address-card');
+        const fullNameInput = document.getElementById('fullName');
+        const phoneInput    = document.getElementById('phone');
+        const addressInput  = document.getElementById('address');
+        const addressIdInput= document.getElementById('addressId');
+        const provinceSelect= document.getElementById('province');
+        const districtSelect= document.getElementById('district');
+        const wardSelect    = document.getElementById('ward');
+
+        addressIdInput.value = card.dataset.id;
+        fullNameInput.value  = card.dataset.nguoiNhan || fullNameInput.value;
+        phoneInput.value     = card.dataset.sdt || phoneInput.value;
+        addressInput.value   = `${card.dataset.chiTiet}, ${card.dataset.phuongXa}, ${card.dataset.quanHuyen}, ${card.dataset.tinhThanhPho}`;
+
+        const normalize = (str)=>str?.toLowerCase().replace(/(tỉnh|thành phố)/gi,'').replace(/[\s.\-]/g,'')
+            .normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+
+        // >>> Khóa nút trước khi tính lại ship cho địa chỉ mới
+        shippingFeeReady = false;
+        updateSubmitEnabled();
+
+        (async function updateAddressDetails() {
+            try {
+                if (!provinceList.length) await loadProvinces();
+                const province = provinceList.find(p => normalize(p.ProvinceName).includes(normalize(card.dataset.tinhThanhPho)));
+                if (province) {
+                    provinceSelect.value = province.ProvinceID;
+                    await loadDistricts(province.ProvinceID);
+
+                    const district = districtList.find(d => normalize(d.DistrictName).includes(normalize(card.dataset.quanHuyen)));
+                    if (district) {
+                        districtSelect.value = district.DistrictID;
+                        await loadWards(district.DistrictID);
+
+                        const wardRes = await fetch(`/api/ghn/wards?districtId=${district.DistrictID}`);
+                        const wardJson= await wardRes.json();
+                        const wards   = JSON.parse(wardJson.data).data || [];
+                        const ward    = wards.find(w => normalize(w.WardName).includes(normalize(card.dataset.phuongXa)));
+                        if (ward) {
+                            wardSelect.value = ward.WardCode;
+                            await loadShippingServices(district.DistrictID); // sẽ tự gọi calculateShipping()
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error('Lỗi khi cập nhật địa chỉ:', err);
+                // Swal.fire({ icon: 'error', title: 'Lỗi cập nhật địa chỉ', text: err.message });
+            }
+        })();
+
+        document.querySelectorAll('.address-card').forEach(c => c.classList.remove('active'));
+        card.classList.add('active');
+        bootstrap.Modal.getInstance(document.getElementById('addressModal')).hide();
+    };
+
+    window.showAddAddressForm = function () {
+        document.getElementById('add-address-form').classList.remove('d-none');
+        document.getElementById('new-fullName').value = '';
+        document.getElementById('new-phone').value = '';
+        document.getElementById('new-address').value = '';
+        document.getElementById('new-province').value = '';
+        document.getElementById('new-district').innerHTML = '<option value="">-- Chọn quận/huyện --</option>';
+        document.getElementById('new-ward').innerHTML = '<option value="">-- Chọn phường/xã --</option>';
+        loadProvinces('new-province');
+    };
+
+    window.hideAddAddressForm = function () {
+        document.getElementById('add-address-form').classList.add('d-none');
+    };
+
+    window.saveNewAddress = async function () {
+        const v = validateNewAddressForm();
+        if (!v.ok) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Thông tin chưa hợp lệ',
+                html: v.errors.join('<br>'),
+            });
+            // focus vào ô lỗi đầu tiên
+            const firstInvalid = document.querySelector('#addAddressModal .is-invalid');
+            if (firstInvalid) firstInvalid.focus();
+            return;
+        }
+        // Dùng dữ liệu đã chuẩn hoá
+        const fullName = v.data.fullName;
+        const phone    = v.data.phone;   // đã chuẩn hoá 0xxxxxxxxx
+        const address  = v.data.address;
+
+        // (phần còn lại của hàm giữ nguyên như bạn đang có)
+        const pSel = document.getElementById('new-province');
+        const dSel = document.getElementById('new-district');
+        const wSel = document.getElementById('new-ward');
+
+        const provinceId = pSel.value;
+        const districtId = dSel.value;
+        const wardCode   = wSel.value;
+
+        const province = pSel.options[pSel.selectedIndex]?.text || '';
+        const district = dSel.options[dSel.selectedIndex]?.text || '';
+        const ward     = wSel.options[wSel.selectedIndex]?.text || '';
+
+        if (!fullName || !phone || !address || !provinceId || !districtId || !wardCode) {
+            Swal.fire({icon:'warning',title:'Lỗi',text:'Vui lòng điền đầy đủ thông tin!'});
+            return;
+        }
+
+        try {
+            const res = await fetch('/api/checkout/addresses', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                credentials: 'include',
+                body: JSON.stringify({
+                    nguoiNhan: fullName,
+                    soDienThoaiNguoiNhan: phone,
+                    chiTietDiaChi: address,
+                    phuongXa: ward,
+                    quanHuyen: district,
+                    tinhThanhPho: province,
+                    wardCode: wardCode,
+                    districtId: Number(districtId),
+                    provinceId: Number(provinceId),
+                    macDinh: false
+                })
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.message || 'Không thể lưu địa chỉ.');
+
+            const newId = data.data?.id || data.data;
+
+            // Đổ vào form chính
+            document.getElementById('fullName').value = fullName;
+            document.getElementById('phone').value    = phone;
+            document.getElementById('address').value  = `${address}, ${ward}, ${district}, ${province}`;
+            document.getElementById('addressId').value= newId || '';
+
+            // Đồng bộ select ẩn
+            document.getElementById('province').value = provinceId;
+            document.getElementById('district').value = districtId;
+            document.getElementById('ward').value     = wardCode;
+
+            // >>> Khóa nút trước khi tính lại ship
+            shippingFeeReady = false;
+            updateSubmitEnabled();
+
+            // Refresh danh sách + highlight
+            await loadSavedAddresses();
+            if (newId) {
+                const newCard = document.querySelector(`.address-card[data-id="${CSS.escape(newId)}"]`);
+                if (newCard) newCard.classList.add('active');
+            }
+
+            // Tính ship theo địa chỉ mới
+            await loadShippingServices(districtId);
+            await calculateShipping();
+
+            const addM = bootstrap.Modal.getInstance(document.getElementById('addAddressModal'));
+            if (addM) addM.hide();
+            Swal.fire({icon:'success',title:'Đã thêm địa chỉ',timer:1200,showConfirmButton:false});
+        } catch (err) {
+            console.error(err);
+            Swal.fire({icon:'error',title:'Lỗi',text: err.message || 'Không thể thêm địa chỉ.'});
+        }
+    };
+
+    // ================== WALLET ==================
+    async function LoadWalletBalance() {
+        const el = document.getElementById('wallet-balance');
+        if (!el) return;
+
+        el.textContent = '(Đang tải...)';
+        el.classList.add('loading');
+
+        try {
+            const res = await fetch('/api/wallet/balance', { credentials: 'include' });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                el.textContent = `(Số dư: ${formatVND(data.data || 0)})`;
+            } else {
+                el.textContent = '(Không có ví)';
+            }
+            loadingState.walletBalance = true;
+            checkLoadingComplete();
+        } catch (err) {
+            console.error('Lỗi tải số dư ví:', err);
+            el.textContent = '(Lỗi tải số dư)';
+            loadingState.walletBalance = true;
+            checkLoadingComplete();
+        } finally {
+            el.classList.remove('loading');
+        }
+    }
+
+    // ================== ORDER ITEMS ==================
+    async function loadOrderItems() {
+        const container = document.getElementById('order-items');
+        if (!container) return;
+
+        const mode = getCheckoutMode();
+        let items = [];
+        let subtotal = 0;
+
+        if (mode === 'cart') {
+            try {
+                const response = await fetch('/api/cart', { credentials: 'include' });
+                if (!response.ok) throw new Error('Không thể tải giỏ hàng');
+                const cartData = await response.json();
+                items = (cartData.chiTietGioHang || []).map(item => ({
+                    chiTietSanPhamId: item.chiTietSanPham.id,
+                    tenSanPham: item.chiTietSanPham.sanPham.tenSanPham,
+                    soLuong: item.soLuong,
+                    gia: item.gia,
+                    urlHinhAnh: (item.chiTietSanPhams?.[0]?.urlHinhAnh)
+                        || (item.chiTietSanPham.hinhAnhSanPhams?.[0]?.urlHinhAnh)
+                        || item.chiTietSanPham.sanPham.urlHinhAnh
+                        || '/images/default-product.jpg',
+                    sizeName: item.chiTietSanPham.kichCo?.ten || 'N/A',
+                    colorName: item.chiTietSanPham.mauSac?.tenMau || 'N/A',
+                }));
+            } catch (e) {
+                Swal.fire({ icon:'error', title:'Lỗi', text: e.message || 'Không thể tải giỏ hàng!' });
+            }
+        } else if (mode === 'cart-selected') {
+            const ls = localStorage.getItem('cartSelectedItems');
+            items = ls ? JSON.parse(ls) : [];
+            if (!items.length) {
+                container.innerHTML = `<p class="text-gray-600">Không có sản phẩm nào được chọn để thanh toán.</p>`;
+                document.getElementById('submit-order').disabled = true;
+            }
+        } else {
+            const checkoutItem = JSON.parse(localStorage.getItem('checkoutItem'));
+            items = checkoutItem ? [checkoutItem] : [];
+            if (!items.length) {
+                container.innerHTML = `<p class="text-gray-600">Không có sản phẩm trong đơn hàng.</p>`;
+                document.getElementById('submit-order').disabled = true;
+            }
+        }
+
+        subtotal = items.reduce((sum, it) => sum + Number(it.gia || 0) * Number(it.soLuong || 0), 0);
+
+        if (items.length) {
+            container.innerHTML = items.map(item => `
+      <div class="order-item d-flex align-items-center gap-3">
+        <img src="${item.urlHinhAnh}" alt="${item.tenSanPham}" class="order-item-img" onerror="this.src='/images/default-product.jpg'"/>
+        <div class="flex-1">
+          <h6 class="fw-semibold text-gray-800 mb-1">${item.tenSanPham}</h6>
+          <p class="text-gray-600 small mb-0">Kích cỡ: ${item.sizeName}</p>
+          <p class="text-gray-600 small mb-0">Màu sắc: ${item.colorName}</p>
+          <p class="text-gray-600 small mb-0">Số lượng: ${item.soLuong}</p>
+          <p class="text-gray-600 small mb-0">Đơn giá: ${formatVND(item.gia)}</p>
+          <p class="text-[#153054] fw-bold mb-0">Thành tiền: ${formatVND(Number(item.gia)*Number(item.soLuong))}</p>
+        </div>
+      </div>
+    `).join('');
+        }
+
+        const subtotalEl = document.getElementById('subtotal');
+        const shippingEl = document.getElementById('shipping-fee');
+        const discountOrderEl = document.getElementById('discount-order');
+        const discountShipEl = document.getElementById('discount-ship');
+
+        if (subtotalEl) subtotalEl.textContent = formatVND(subtotal);
+        if (shippingEl && !shippingEl.textContent.trim()) {
+            shippingEl.textContent = formatVND(0);
+        }
+        if (discountOrderEl) discountOrderEl.textContent = formatVND(0);
+        if (discountShipEl) discountShipEl.textContent = formatVND(0);
+
+        updateTotal();
+
+        loadingState.orderItems = true;
+        checkLoadingComplete();
+
+        // Call markVoucherEligibility if it exists
+        if (typeof markVoucherEligibility === 'function') {
+            markVoucherEligibility();
+        }
+    }
+
+    // Build body for voucher APIs (for buy-now & cart-selected)
+    function buildVoucherBodyForCurrentMode() {
+        const mode = getCheckoutMode();
+        if (mode === 'cart') return []; // server dùng toàn bộ giỏ
+        if (mode === 'cart-selected') {
+            const items = JSON.parse(localStorage.getItem('cartSelectedItems') || '[]');
+            return items.map(i => ({
+                chiTietSanPhamId: i.chiTietSanPhamId,
+                gia: Number(i.gia || 0),
+                soLuong: Number(i.soLuong || 0),
+            }));
+        }
+        const it = JSON.parse(localStorage.getItem('checkoutItem') || 'null');
+        return it ? [{ chiTietSanPhamId: it.chiTietSanPhamId, gia: Number(it.gia||0), soLuong: Number(it.soLuong||0) }] : [];
+    }
+
+    // ================== VOUCHERS ==================
+    // Hàm áp dụng voucher ORDER
+    async function applyOrderVoucher({ silent = false } = {}) {
+        const voucherCode = document.getElementById('order-voucher').value.trim();
+        const discountEl = document.getElementById('discount-order');
+        const selOrder = document.getElementById('order-voucher');
+
+        console.log("[v0] Applying ORDER voucher:", voucherCode);
+
+        // Không chọn mã -> clear
+        if (!voucherCode) {
+            discountEl.textContent = formatVND(0);
+            selOrder.value = ''; // Đảm bảo select ẩn được reset
+            updateTotal();
+            if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+            return { ok: true, discount: 0, message: 'Không chọn mã ORDER' };
+        }
+
+        const mode = getCheckoutMode();
+        const source = mode;
+        const subtotal = onlyDigits(document.getElementById('subtotal').textContent);
+        const checkoutItems = buildVoucherBodyForCurrentMode();
+
+        console.log("[v0] Voucher request data:", {
+            voucherCode,
+            mode,
+            source,
+            subtotal,
+            checkoutItems
+        });
+
+        // LẤY PTTT ĐANG CHỌN
+        const paymentMethodId = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+        if (!paymentMethodId) {
+            if (!silent) Swal.fire({ icon: 'warning', title: 'Chưa chọn phương thức thanh toán' });
+            discountEl.textContent = formatVND(0);
+            selOrder.value = ''; // Bỏ chọn nếu thiếu PTTT
+            updateTotal();
+            return { ok: false, discount: 0, message: 'missing paymentMethodId' };
+        }
+
+        const url = `/api/checkout/apply-voucher`
+            + `?voucher=${encodeURIComponent(voucherCode)}`
+            + `&source=${encodeURIComponent(source)}`
+            + `&type=ORDER`
+            + `&subtotal=${subtotal}`
+            + `&paymentMethodId=${encodeURIComponent(paymentMethodId)}`;
+
+        console.log("[v0] API URL:", url);
+        console.log("[v0] Request timestamp:", new Date().toISOString());
+
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(checkoutItems)
+            });
+            const data = await res.json();
+
+            console.log("[v0] API Response:", {
+                status: res.status,
+                ok: res.ok,
+                data: data
+            });
+
+            if (res.ok && (data.success || data.isSuccess)) {
+                const discount = Number(data.data || 0);
+                discountEl.textContent = formatVND(discount);
+
+                console.log("[v0] Voucher applied successfully, discount:", discount);
+
+                if (!silent) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Áp dụng mã ORDER thành công',
+                        text: `Giảm ${formatVND(discount)}`,
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
+                }
+                return { ok: true, discount, message: data.message || '' };
+            } else {
+                discountEl.textContent = formatVND(0);
+                selOrder.value = ''; // Bỏ chọn nếu áp dụng thất bại
+
+                console.log("[v0] Voucher application failed:", data.message);
+
+                if (!silent) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'ORDER thất bại',
+                        text: data.message || 'Áp dụng mã thất bại'
+                    });
+                }
+                return { ok: false, discount: 0, message: data.message || 'Áp dụng mã thất bại' };
+            }
+        } catch (err) {
+            console.error('Lỗi ORDER voucher:', err);
+            console.log("[v0] Voucher application error:", err);
+
+            discountEl.textContent = formatVND(0);
+            selOrder.value = ''; // Bỏ chọn nếu có lỗi
+            if (!silent) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Đã xảy ra lỗi khi áp dụng mã ORDER!'
+                });
+            }
+            return { ok: false, discount: 0, message: 'Lỗi áp dụng mã ORDER' };
+        } finally {
+            updateTotal();
+            if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+        }
+    }
+
+    // Hàm áp dụng voucher SHIPPING
+    async function applyShipVoucher({ silent = false } = {}) {
+        const code = document.getElementById('ship-voucher').value.trim();
+        const elDiscountShip = document.getElementById('discount-ship');
+        const selShip = document.getElementById('ship-voucher');
+
+        if (!code) {
+            elDiscountShip.textContent = formatVND(0);
+            selShip.value = ''; // Đảm bảo select ẩn được reset
+            updateTotal();
+            if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+            return { ok: true, discount: 0, message: 'Không chọn mã FREESHIP' };
+        }
+
+        const shippingFee = onlyDigits(document.getElementById('shipping-fee').textContent);
+        const subtotal = onlyDigits(document.getElementById('subtotal').textContent);
+        const mode = getCheckoutMode();
+        const source = mode;
+
+        if (shippingFee <= 0) {
+            if (!silent) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Chưa có phí vận chuyển',
+                    text: 'Vui lòng chọn địa chỉ để tính phí ship trước.'
+                });
+            }
+            elDiscountShip.textContent = formatVND(0);
+            selShip.value = ''; // Bỏ chọn nếu chưa có phí ship
+            updateTotal();
+            if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+            return { ok: false, discount: 0, message: 'Chưa có phí vận chuyển' };
+        }
+
+        const paymentMethodId = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+        if (!paymentMethodId) {
+            if (!silent) Swal.fire({ icon: 'warning', title: 'Chưa chọn phương thức thanh toán' });
+            elDiscountShip.textContent = formatVND(0);
+            selShip.value = ''; // Bỏ chọn nếu thiếu PTTT
+            updateTotal();
+            return { ok: false, discount: 0, message: 'missing paymentMethodId' };
+        }
+
+        const url = `/api/checkout/apply-voucher`
+            + `?voucher=${encodeURIComponent(code)}`
+            + `&source=${encodeURIComponent(source)}`
+            + `&type=SHIPPING`
+            + `&shippingFee=${shippingFee}`
+            + `&subtotal=${subtotal}`
+            + `&paymentMethodId=${encodeURIComponent(paymentMethodId)}`;
+
+        const payload = buildVoucherBodyForCurrentMode() || [];
+
+        try {
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+
+            if (res.ok && (data.success || data.isSuccess)) {
+                const currentShip = onlyDigits(document.getElementById('shipping-fee').textContent);
+                const discount = Math.min(Number(data.data || 0), currentShip);
+                elDiscountShip.textContent = formatVND(discount);
+                if (!silent) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Áp dụng FREESHIP thành công',
+                        text: `Giảm ${formatVND(discount)} phí vận chuyển`,
+                        timer: 1200,
+                        showConfirmButton: false
+                    });
+                }
+                return { ok: true, discount, message: data.message || '' };
+            } else {
+                elDiscountShip.textContent = formatVND(0);
+                selShip.value = ''; // Bỏ chọn nếu áp dụng thất bại
+                if (!silent) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'FREESHIP thất bại',
+                        text: data.message || 'Áp dụng mã freeship thất bại'
+                    });
+                }
+                return { ok: false, discount: 0, message: data.message || 'Áp dụng mã freeship thất bại' };
+            }
+        } catch (e) {
+            console.error('Lỗi FREESHIP:', e);
+            elDiscountShip.textContent = formatVND(0);
+            selShip.value = ''; // Bỏ chọn nếu có lỗi
+            if (!silent) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Đã xảy ra lỗi khi áp dụng mã freeship!'
+                });
+            }
+            return { ok: false, discount: 0, message: 'Lỗi áp dụng mã FREESHIP' };
+        } finally {
+            updateTotal();
+            if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+        }
+    }
+
+
+
+
+    // ================== SUBMIT ORDER ==================
+    async function submitOrder(e) {
+        e.preventDefault();
+
+        // >>> Chặn nếu phí ship chưa sẵn sàng (phòng người dùng gỡ disabled bằng DevTools)
+        if (!shippingFeeReady) {
+            Swal.fire({ icon:'warning', title:'Chưa có phí vận chuyển', text:'Vui lòng chọn địa chỉ/đợi tính phí ship xong.' });
+            return;
+        }
+
+        const btn = document.getElementById('submit-order');
+        btn.classList.add('loading');
+        btn.disabled = true;
+
+        const fullName = document.getElementById('fullName').value.trim();
+        const phone    = document.getElementById('phone').value.trim();
+        const address  = document.getElementById('address').value.trim();
+        const addressId= document.getElementById('addressId').value.trim();
+
+        const province = document.getElementById('province').options[document.getElementById('province').selectedIndex]?.text || '';
+        const district = document.getElementById('district').options[document.getElementById('district').selectedIndex]?.text || '';
+        const ward     = document.getElementById('ward').options[document.getElementById('ward').selectedIndex]?.text || '';
+
+        if (!fullName || !phone || !address) {
+            Swal.fire({ icon:'warning', title:'Lỗi', text:'Vui lòng chọn hoặc nhập đầy đủ thông tin giao hàng!' });
+            btn.classList.remove('loading'); btn.disabled = false; return;
+        }
+
+        const mode = getCheckoutMode();
+        let items = [];
+        let source = '';
+
+        try {
+            if (mode === 'cart') {
+                const response = await fetch('/api/cart', { credentials: 'include' });
+                if (!response.ok) throw new Error('Không thể tải giỏ hàng');
+                const cartData = await response.json();
+                items = (cartData.chiTietGioHang || []).map(i => ({
+                    chiTietSanPhamId: i.chiTietSanPham.id,
+                    soLuong: i.soLuong,
+                    tenSanPham: i.chiTietSanPham.sanPham.tenSanPham,
+                    gia: i.gia
+                }));
+                source = 'Giỏ hàng (API /cart)';
+            } else if (mode === 'cart-selected') {
+                items = JSON.parse(localStorage.getItem('cartSelectedItems') || '[]')
+                    .map(i => ({ chiTietSanPhamId: i.chiTietSanPhamId, soLuong: i.soLuong, tenSanPham: i.tenSanPham, gia: i.gia }));
+                source = 'Giỏ hàng (đã chọn)';
+            } else {
+                const checkoutItem = JSON.parse(localStorage.getItem('checkoutItem') || 'null');
+                if (checkoutItem) {
+                    items = [{ chiTietSanPhamId: checkoutItem.chiTietSanPhamId, soLuong: checkoutItem.soLuong, tenSanPham: checkoutItem.tenSanPham, gia: checkoutItem.gia }];
+                    source = 'Mua ngay (localStorage.checkoutItem)';
+                }
+            }
+        } catch (err) {
+            Swal.fire({ icon:'error', title:'Lỗi', text: err.message || 'Không thể tải giỏ hàng!' });
+            btn.classList.remove('loading'); btn.disabled = false; return;
+        }
+
+        if (!items.length) {
+            Swal.fire({ icon:'warning', title:'Lỗi', text:`Không có sản phẩm trong ${mode==='cart'?'giỏ hàng':(mode==='cart-selected'?'danh sách đã chọn':'đơn hàng')}!` });
+            btn.classList.remove('loading'); btn.disabled = false; return;
+        }
+
+        const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+        const shippingFee    = onlyDigits(document.getElementById('shipping-fee').textContent);
+        const subtotal       = onlyDigits(document.getElementById('subtotal').textContent);
+        const discountOrder  = onlyDigits(document.getElementById('discount-order').textContent);
+        const discountShip   = onlyDigits(document.getElementById('discount-ship').textContent);
+        const totalAmount    = subtotal + shippingFee - discountOrder - discountShip;
+
+        const orderVoucher = document.getElementById('order-voucher').value.trim();
+        const shipVoucher  = document.getElementById('ship-voucher').value.trim();
+
+        const orderData = {
+            addressId: addressId,
+            fullName: fullName,
+            phone: phone,
+            address: addressId ? '' : `${address}, ${ward}, ${district}, ${province}`,
+            shippingMethod: document.getElementById('shippingMethod').value,
+            paymentMethodId: selectedMethod,
+            notes: document.getElementById('note').value,
+            voucherOrder: orderVoucher || '',
+            voucherShipping: shipVoucher || '',
+            shippingFee: shippingFee,
+            orderItems: items.map(i => ({ chiTietSanPhamId: i.chiTietSanPhamId, soLuong: i.soLuong })),
+            source: source
+        };
+
+        // Ví điện tử – kiểm tra số dư
+        if (selectedMethod === '550E8400-E29B-41D4-A716-446655440019') {
+            try {
+                const res = await fetch('/api/wallet/balance', { credentials: 'include' });
+                const data = await res.json();
+                if (!res.ok || !data.success || (data.data || 0) < totalAmount) {
+                    Swal.fire({
+                        icon:'warning',
+                        title:'Số dư không đủ',
+                        html:`<p>Bạn cần <strong>${formatVND(totalAmount)}</strong> nhưng số dư hiện tại là <strong>${formatVND(data.data || 0)}</strong>.</p><p>Vui lòng nạp thêm tiền vào ví để tiếp tục.</p>`,
+                        showCancelButton:true,
+                        confirmButtonText:'Nạp tiền ngay',
+                        cancelButtonText:'Quay lại',
+                        confirmButtonColor:'#153054',
+                        cancelButtonColor:'#d33',
+                        customClass:{ cancelButton:'swal-cancel-button' }
+                    }).then(r => { if (r.isConfirmed) location.href = '/vi?redirect=/thanh-toan'; });
+                    btn.classList.remove('loading'); btn.disabled = false; return;
+                }
+            } catch (err) {
+                console.error('Lỗi kiểm tra số dư ví:', err);
+                Swal.fire({ icon:'error', title:'Lỗi', text:'Không thể kiểm tra số dư ví. Vui lòng thử lại!' });
+                btn.classList.remove('loading'); btn.disabled = false; return;
+            }
+        }
+
+        const confirmResult = await Swal.fire({
+            icon:'question',
+            title:'Xác nhận thanh toán',
+            html: `
+            <p><strong>Tổng tiền:</strong> ${formatVND(totalAmount)}</p>
+            <p><strong>Phương thức thanh toán:</strong> ${
+                selectedMethod === '550E8400-E29B-41D4-A716-446655440017' ? 'Thanh toán khi nhận hàng (COD)'
+                    : selectedMethod === '550E8400-E29B-41D4-A716-446655440018' ? 'Chuyển khoản ngân hàng'
+                        : 'Ví điện tử'
+            }</p>
+            <p>Bạn có chắc chắn muốn tiếp tục thanh toán?</p>
+        `,
+            showCancelButton:true,
+            confirmButtonText:'Xác nhận',
+            cancelButtonText:'Hủy',
+            confirmButtonColor:'#153054',
+            cancelButtonColor:'#d33'
+        });
+
+        if (!confirmResult.isConfirmed) { btn.classList.remove('loading'); btn.disabled = false; return; }
+
+        try {
+            if (selectedMethod === '550E8400-E29B-41D4-A716-446655440018') {
+                if (totalAmount <= 0) {
+                    Swal.fire({ icon:'warning', title:'Lỗi', text:'Tổng tiền phải lớn hơn 0.' });
+                    btn.classList.remove('loading'); btn.disabled = false; return;
+                }
+                const form = document.createElement('form');
+                form.method = 'POST'; form.action = '/kh-payment/kh-create-payment-link'; form.style.display = 'none';
+
+                const productNameInput = document.createElement('input');
+                productNameInput.type = 'hidden'; productNameInput.name = 'productName';
+                productNameInput.value = items.map(i => i.tenSanPham).join(', '); form.appendChild(productNameInput);
+
+                const priceInput = document.createElement('input');
+                priceInput.type = 'hidden'; priceInput.name = 'price';
+                priceInput.value = totalAmount.toString(); form.appendChild(priceInput);
+
+                const descriptionInput = document.createElement('input');
+                descriptionInput.type = 'hidden'; descriptionInput.name = 'description';
+                descriptionInput.value = 'Thanh toán đơn hàng'; form.appendChild(descriptionInput);
+
+                sessionStorage.setItem('pendingOrder', JSON.stringify({ orderData }));
+                const mode = getCheckoutMode();
+                sessionStorage.setItem('checkout.from', mode);
+
+                const fromInput = document.createElement('input');
+                fromInput.type = 'hidden';
+                fromInput.name = 'from';
+                fromInput.value = mode;
+                form.appendChild(fromInput);
+
+                document.body.appendChild(form); form.submit();
+            } else {
+                const response = await fetch('/api/checkout/submit', {
+                    method:'POST',
+                    headers:{ 'Content-Type':'application/json' },
+                    body: JSON.stringify(orderData),
+                    credentials:'include'
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    const mode = getCheckoutMode();
+                    if (mode === 'buy-now') localStorage.removeItem('checkoutItem');
+                    if (mode === 'cart-selected') localStorage.removeItem('cartSelectedItems');
+                    Swal.fire({
+                        icon:'success', title:'Thành công',
+                        text:`Đặt hàng thành công! Mã đơn hàng: ${data.data}`,
+                        showCancelButton:true, confirmButtonText:'Trang chủ', cancelButtonText:'Đơn mua',
+                        confirmButtonColor:'#153054', cancelButtonColor:'#9fd5f7',
+                        customClass:{ cancelButton:'swal-cancel-button' }
+                    }).then(r => {
+                        if (r.isConfirmed) location.href = '/';
+                        else if (r.isDismissed) location.href = '/dsdon-mua';
+                    });
+                } else {
+                    Swal.fire({ icon:'error', title:'Lỗi', text: data.message || 'Không thể đặt hàng! Vui lòng thử lại.' });
+                }
+            }
+        } catch (err) {
+            console.error('Lỗi gửi đơn hàng:', err);
+            Swal.fire({ icon:'error', title:'Lỗi', text:'Đã xảy ra lỗi khi gửi đơn hàng. Vui lòng thử lại!' });
+        } finally {
+            btn.classList.remove('loading');
+            btn.disabled = false;
+        }
+    }
+
+    // ================== CART COUNT ==================
+    async function updateCartCount() {
+        try {
+            const res = await fetch('/api/cart', { credentials: 'include' });
+            if (res.ok) {
+                const data = await res.json();
+                const count = data.chiTietGioHang ? data.chiTietGioHang.length : 0;
+                document.getElementById('cart-count').textContent = count;
+            } else if (res.status === 401) {
+                document.getElementById('cart-count').textContent = 0;
+            }
+        } catch (err) {
+            console.error('Lỗi khi cập nhật số lượng giỏ hàng:', err);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const mode = getCheckoutMode();
+        sessionStorage.setItem('checkout.from', mode);
+        if (mode === 'buy-now')       localStorage.removeItem('cartSelectedItems');
+        if (mode === 'cart-selected') localStorage.removeItem('checkoutItem');
+
+        // ===== INIT =====
+        shippingFeeReady = false;
+        updateSubmitEnabled();
+        loadProvinces();
+        loadOrderItems();
+        updateCartCount();
+        loadSavedAddresses();
+        LoadWalletBalance();
+
+        document
+            .querySelector('.payment-method[data-value="550E8400-E29B-41D4-A716-446655440017"]')
+            ?.classList.add('active');
+
+        // ===== ADDRESS / SHIPPING EVENTS =====
+        document.getElementById('province')?.addEventListener('change', (e) => {
+            const provinceId = parseInt(e.target.value);
+            if (provinceId) loadDistricts(provinceId);
+        });
+
+        document.getElementById('district')?.addEventListener('change', async (e) => {
+            const districtId = parseInt(e.target.value);
+            shippingFeeReady = false; updateSubmitEnabled();
+            if (districtId) await loadWards(districtId);
+            await loadShippingServices(districtId); // sẽ tự gọi calculateShipping()
+        });
+
+        document.getElementById('ward')?.addEventListener('change', () => {
+            shippingFeeReady = false; updateSubmitEnabled();
+            calculateShipping();
+        });
+
+        document.getElementById('new-province')?.addEventListener('change', (e) => {
+            const provinceId = parseInt(e.target.value);
+            if (provinceId) loadDistricts(provinceId, 'new-district');
+        });
+
+        document.getElementById('new-district')?.addEventListener('change', async (e) => {
+            const districtId = parseInt(e.target.value);
+            if (districtId) await loadWards(districtId, 'new-ward');
+        });
+
+        // ===== PAYMENT CARD SELECT =====
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', async () => {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+                method.classList.add('active');
+                method.querySelector('input').checked = true;
+
+                // ⬅️ PTTT đổi -> re-apply voucher để BE check PTTT
+                await applyOrderVoucher({ silent: true });
+                await applyShipVoucher({ silent: true });
+                if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+            });
+        });
+
+
+        // ===== VOUCHER HIDDEN SELECTS =====
+        document.getElementById('order-voucher')?.addEventListener('change', async () => {
+            await applyOrderVoucher();
+            if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+        });
+
+        document.getElementById('ship-voucher')?.addEventListener('change', async () => {
+            await applyShipVoucher();
+            if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+        });
+
+        document.getElementById('shippingMethod')?.addEventListener('change', () => {
+            shippingFeeReady = false; updateSubmitEnabled();
+            calculateShipping();
+        });
+
+        document.getElementById('submit-order')?.addEventListener('click', submitOrder);
+
+        // ===== VOUCHER MODAL HANDLERS =====
+        const modalEl   = document.getElementById('voucherModal');
+        const btnClear  = document.getElementById('btn-clear-vouchers');
+        const btnApply  = document.getElementById('btn-apply-vouchers');
+        const searchInput = document.getElementById('voucher-search');
+        const searchClear = document.getElementById('voucher-search-clear');
+
+        if (modalEl) {
+            // Khi mở modal -> đánh giá điều kiện & focus ô tìm kiếm
+            modalEl.addEventListener('shown.bs.modal', () => {
+                if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+                if (searchInput) {
+                    searchInput.focus({ preventScroll: true });
+                    if (typeof filterVouchersInModal === 'function') {
+                        filterVouchersInModal(searchInput.value || '');
+                    }
+                }
+            });
+
+            // Cho phép click lần 2 để bỏ chọn radio (bỏ qua radio bị disabled)
+            let lastShip = null, lastOrder = null;
+            modalEl.addEventListener('click', (e) => {
+                if (e.target.matches('input[name="rb-ship"]') && !e.target.disabled) {
+                    if (lastShip === e.target) { e.target.checked = false; lastShip = null; }
+                    else { lastShip = e.target; }
+                }
+                if (e.target.matches('input[name="rb-order"]') && !e.target.disabled) {
+                    if (lastOrder === e.target) { e.target.checked = false; lastOrder = null; }
+                    else { lastOrder = e.target; }
+                }
+            });
+
+            // Bỏ chọn tất cả trong modal
+            btnClear?.addEventListener('click', () => {
+                modalEl.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
+                lastShip = null; lastOrder = null;
+            });
+
+            // Áp dụng: đổ vào 2 select ẩn, gọi logic áp mã, cập nhật summary, đóng modal
+            btnApply?.addEventListener('click', async () => {
+                const ship  = modalEl.querySelector('input[name="rb-ship"]:checked')?.value || '';
+                const order = modalEl.querySelector('input[name="rb-order"]:checked')?.value || '';
+
+                const selShip  = document.getElementById('ship-voucher');
+                const selOrder = document.getElementById('order-voucher');
+                selShip.value  = ship;
+                selOrder.value = order;
+
+                // Gọi 2 hàm áp mã ở chế độ silent để KHÔNG bật Swal riêng lẻ
+                const orderResult = await applyOrderVoucher({ silent: true });
+                const shipResult  = await applyShipVoucher({ silent: true });
+
+                if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+
+                // Cập nhật tóm tắt
+                const parts = [];
+                if (order) {
+                    const t = selOrder.querySelector(`option[value="${CSS.escape(order)}"]`)?.textContent || order;
+                    parts.push('ORDER: ' + t);
+                }
+                if (ship) {
+                    const t = selShip.querySelector(`option[value="${CSS.escape(ship)}"]`)?.textContent || ship;
+                    parts.push('SHIP: ' + t);
+                }
+                // document.getElementById('voucher-summary').textContent =
+                //     parts.length ? parts.join(' | ') : 'Chưa chọn';
+
+                // Tạo thông báo tổng hợp
+                const lines = [];
+                if (order) {
+                    lines.push(orderResult.ok
+                        ? `ORDER: giảm <b>${formatVND(orderResult.discount)}</b>`
+                        : `ORDER: <span style="color:#c00">${orderResult.message || 'Không áp dụng được'}</span>`);
+                }
+                if (ship) {
+                    lines.push(shipResult.ok
+                        ? `FREESHIP: giảm <b>${formatVND(shipResult.discount)}</b>`
+                        : `FREESHIP: <span style="color:#c00">${shipResult.message || 'Không áp dụng được'}</span>`);
+                }
+
+                // Chọn icon phù hợp
+                const overallOk =
+                    (order ? orderResult.ok : true) &&
+                    (ship ? shipResult.ok : true);
+
+                Swal.fire({
+                    icon: overallOk ? 'success' : (orderResult.ok || shipResult.ok ? 'info' : 'error'),
+                    title: 'Kết quả áp mã',
+                    html: lines.join('<br>'),
+                    timer: 1600,
+                    showConfirmButton: false
+                });
+
+                // Đóng modal
+                (bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl)).hide();
+            });
+
+
+            // ====== TÌM KIẾM TRONG MODAL =====
+            if (searchInput) {
+                const doFilter = debounce(() => {
+                    if (typeof filterVouchersInModal === 'function') {
+                        filterVouchersInModal(searchInput.value);
+                    }
+                }, 150);
+                searchInput.addEventListener('input', doFilter);
+
+                // (Tuỳ chọn) reset khi đóng modal
+                // modalEl.addEventListener('hidden.bs.modal', () => {
+                //   searchInput.value = '';
+                //   if (typeof filterVouchersInModal === 'function') filterVouchersInModal('');
+                // });
+            }
+
+            if (searchClear) {
+                searchClear.addEventListener('click', () => {
+                    if (!searchInput) return;
+                    searchInput.value = '';
+                    if (typeof filterVouchersInModal === 'function') filterVouchersInModal('');
+                    searchInput.focus({ preventScroll: true });
+                });
+            }
+        }
+    });
+
+    // === MỞ/ĐÓNG MODAL (gọi ở nút "Chọn") ===
+    function openVoucherModal() {
+        const el = document.getElementById('voucherModal');
+        if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+        new bootstrap.Modal(el).show();
+    }
+    function closeVoucherModal() {
+        const m = bootstrap.Modal.getInstance(document.getElementById('voucherModal'));
+        if (m) m.hide();
+    }
+
+    async function reloadVouchersInModal() {
+        try {
+            console.log('[v0] Reloading vouchers in modal...');
+
+            // Simply reload the page's voucher modal content by fetching the current page
+            // This ensures we get the latest vouchers from the server
+            const currentUrl = window.location.href;
+            const response = await fetch(currentUrl, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // Indicate this is an AJAX request
+                }
+            });
+
+            if (!response.ok) {
+                console.error('[v0] Failed to reload vouchers:', response.status);
+                return;
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // Extract voucher lists from the fresh HTML
+            const newShipList = doc.getElementById('ship-list');
+            const newOrderList = doc.getElementById('order-list');
+
+            if (newShipList && newOrderList) {
+                // Update the modal content with fresh vouchers
+                const currentShipList = document.getElementById('ship-list');
+                const currentOrderList = document.getElementById('order-list');
+
+                if (currentShipList) currentShipList.innerHTML = newShipList.innerHTML;
+                if (currentOrderList) currentOrderList.innerHTML = newOrderList.innerHTML;
+
+                console.log('[v0] Vouchers reloaded successfully');
+
+                // Re-apply eligibility and sorting
+                if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+                if (typeof sortVouchersInModal === 'function') sortVouchersInModal();
+            }
+
+        } catch (error) {
+            console.error('[v0] Error reloading vouchers:', error);
+        }
+    }
+
+    function handlePaymentVoucherUpdate(update) {
+        console.log('[v0] Voucher update received:', update);
+
+        const { action, voucherId, voucherCode, status, quantity, message } = update;
+
+        // Auto-refresh page when vouchers are created, updated, or deleted from admin
+        if (action === 'CREATED' || action === 'UPDATED' || action === 'DELETED') {
+            console.log('[v0] Auto-refreshing page due to voucher update from admin:', action);
+
+            // Show notification before refresh
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Cập nhật mã giảm giá!',
+                    text: `Trang sẽ tự động làm mới để cập nhật mã giảm giá mới nhất.`,
+                    timer: 2000,
+                    showConfirmButton: false,
+                    position: 'top-end',
+                    toast: true
+                });
+            }
+
+            // Auto-refresh after 2.5 seconds to allow notification to show
+            setTimeout(() => {
+                console.log('[v0] Refreshing page now...');
+                window.location.reload();
+            }, 2500);
+
+            return; // Exit early since we're refreshing
+        }
+
+        // Show notification for new vouchers
+        if (action === 'CREATED') {
+            // Show toast notification for new voucher
+            if (typeof Swal !== 'undefined') {
+                Swal.fire({
+                    icon: 'info',
+                    title: 'Mã giảm giá mới!',
+                    text: `Có mã giảm giá mới: ${voucherCode}`,
+                    timer: 3000,
+                    showConfirmButton: false,
+                    position: 'top-end',
+                    toast: true
+                });
+            }
+        }
+
+        // Check if currently applied vouchers are affected
+        const currentOrderVoucher = document.getElementById('order-voucher')?.value;
+        const currentShipVoucher = document.getElementById('ship-voucher')?.value;
+
+        if (currentOrderVoucher === voucherCode || currentShipVoucher === voucherCode) {
+            console.log('[v0] Currently applied voucher affected:', voucherCode);
+
+            // Re-validate current vouchers
+            setTimeout(async () => {
+                if (currentOrderVoucher === voucherCode) {
+                    const result = await applyOrderVoucher({ silent: true });
+                    if (!result.ok) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Mã giảm giá không còn hiệu lực',
+                            text: `Mã ORDER "${voucherCode}" đã thay đổi và không thể áp dụng.`,
+                            confirmButtonText: 'Đã hiểu'
+                        });
+                    }
+                }
+
+                if (currentShipVoucher === voucherCode) {
+                    const result = await applyShipVoucher({ silent: true });
+                    if (!result.ok) {
+                        Swal.fire({
+                            icon: 'warning',
+                            title: 'Mã freeship không còn hiệu lực',
+                            text: `Mã FREESHIP "${voucherCode}" đã thay đổi và không thể áp dụng.`,
+                            confirmButtonText: 'Đã hiểu'
+                        });
+                    }
+                }
+            }, 2000); // Increased delay to 2 seconds for better backend sync
+        }
+
+        if (action === 'CREATED' || action === 'UPDATED' || action === 'DELETED') {
+            console.log('[v0] Reloading voucher dropdowns due to action:', action);
+
+            setTimeout(async () => {
+                await reloadVoucherDropdowns();
+
+                // Also reload modal if it's open
+                const modal = document.getElementById('voucherModal');
+                if (modal && modal.classList.contains('show')) {
+                    console.log('[v0] Modal is open, reloading vouchers...');
+                    await reloadVouchersInModal();
+                } else {
+                    console.log('[v0] Modal is closed, vouchers will be updated when opened');
+                }
+            }, 1500); // Increased delay to 1.5 seconds for better backend sync
+        }
+    }
+
+    async function reloadVoucherDropdowns() {
+        try {
+            console.log('[v0] Reloading voucher dropdowns...');
+            const response = await fetch(window.location.href, {
+                method: 'GET',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (!response.ok) {
+                console.error('[v0] Failed to reload voucher dropdowns:', response.status);
+                return;
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            const newOrderVoucherSelect = doc.getElementById('order-voucher');
+            const newShipVoucherSelect = doc.getElementById('ship-voucher');
+
+            if (newOrderVoucherSelect && newShipVoucherSelect) {
+                const currentOrderVoucherSelect = document.getElementById('order-voucher');
+                const currentShipVoucherSelect = document.getElementById('ship-voucher');
+
+                if (currentOrderVoucherSelect) currentOrderVoucherSelect.innerHTML = newOrderVoucherSelect.innerHTML;
+                if (currentShipVoucherSelect) currentShipVoucherSelect.innerHTML = newShipVoucherSelect.innerHTML;
+
+                console.log('[v0] Voucher dropdowns reloaded successfully');
+            }
+        } catch (error) {
+            console.error('[v0] Error reloading voucher dropdowns:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const modalEl = document.getElementById('voucherModal');
+        if (modalEl) {
+            modalEl.addEventListener('show.bs.modal', () => {
+                console.log('[v0] Modal opening, reloading vouchers...');
+                setTimeout(() => {
+                    reloadVouchersInModal();
+                }, 100);
+            });
+
+            modalEl.addEventListener('shown.bs.modal', () => {
+                if (typeof markVoucherEligibility === 'function') markVoucherEligibility();
+                if (typeof sortVouchersInModal === 'function') sortVouchersInModal();
+            });
+        }
+    });
+
+    function connectWebSocket() {
+        try {
+            console.log('[v0] Connecting to WebSocket...');
+            const socket = new SockJS('/ws');
+            stompClient = new StompJs.Client({
+                webSocketFactory: () => socket,
+                debug: (str) => console.log('[v0 WebSocket]', str),
+                reconnectDelay: 5000,
+                heartbeatIncoming: 4000,
+                heartbeatOutgoing: 4000,
+            });
+
+            stompClient.onConnect = (frame) => {
+                console.log('[v0] Connected to voucher updates successfully');
+
+                // Subscribe to payment voucher updates
+                stompClient.subscribe('/topic/payment/vouchers', (message) => {
+                    try {
+                        const update = JSON.parse(message.body);
+                        console.log('[v0] Received voucher update:', update);
+                        handlePaymentVoucherUpdate(update);
+                    } catch (e) {
+                        console.error('[v0] Error parsing voucher update:', e);
+                    }
+                });
+            };
+
+            stompClient.onStompError = (frame) => {
+                console.error('[v0] STOMP error:', frame);
+            };
+
+            stompClient.onDisconnect = () => {
+                console.log('[v0] WebSocket disconnected');
+            };
+
+            stompClient.activate();
+        } catch (error) {
+            console.error('[v0] WebSocket connection failed:', error);
+        }
+    }
+
+    connectWebSocket();
+
+    let voucherReloadInProgress = false;
+    let pendingVoucherUpdates = [];
+
+    // Enhanced voucher dropdown reload with cache busting and retry mechanism
+    async function reloadVoucherDropdowns(retryCount = 0) {
+        if (voucherReloadInProgress) {
+            console.log('[v0] Voucher reload already in progress, skipping...');
+            return false;
+        }
+
+        try {
+            voucherReloadInProgress = true;
+            console.log('[v0] Reloading voucher dropdowns...');
+
+            const timestamp = Date.now();
+            const response = await fetch(`${window.location.pathname}?_t=${timestamp}`, {
+                method: 'GET',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+
+            // Update order voucher dropdown
+            const newOrderSelect = doc.querySelector('#order-voucher');
+            const currentOrderSelect = document.querySelector('#order-voucher');
+            if (newOrderSelect && currentOrderSelect) {
+                const selectedValue = currentOrderSelect.value;
+                currentOrderSelect.innerHTML = newOrderSelect.innerHTML;
+                if (currentOrderSelect.querySelector(`option[value="${selectedValue}"]`)) {
+                    currentOrderSelect.value = selectedValue;
+                }
+            }
+
+            // Update ship voucher dropdown
+            const newShipSelect = doc.querySelector('#ship-voucher');
+            const currentShipSelect = document.querySelector('#ship-voucher');
+            if (newShipSelect && currentShipSelect) {
+                const selectedValue = currentShipSelect.value;
+                currentShipSelect.innerHTML = newShipSelect.innerHTML;
+                if (currentShipSelect.querySelector(`option[value="${selectedValue}"]`)) {
+                    currentShipSelect.value = selectedValue;
+                }
+            }
+
+            console.log('[v0] Voucher dropdowns reloaded successfully');
+            return true;
+
+        } catch (error) {
+            console.error('[v0] Error reloading voucher dropdowns:', error);
+
+            if (retryCount < 3) {
+                const delay = Math.pow(2, retryCount) * 1000;
+                console.log(`[v0] Retrying in ${delay}ms... (${retryCount + 1}/3)`);
+                setTimeout(() => reloadVoucherDropdowns(retryCount + 1), delay);
+            }
+            return false;
+        } finally {
+            voucherReloadInProgress = false;
+        }
+    }
+
+    // Process pending voucher updates
+    async function processPendingVoucherUpdates() {
+        if (pendingVoucherUpdates.length === 0) return;
+
+        console.log(`[v0] Processing ${pendingVoucherUpdates.length} pending voucher updates`);
+
+        while (pendingVoucherUpdates.length > 0) {
+            const update = pendingVoucherUpdates.shift();
+            await handleVoucherUpdate(update);
+            await new Promise(resolve => setTimeout(resolve, 500)); // Small delay between updates
+        }
+    }
+
+    // Handle individual voucher update
+    async function handleVoucherUpdate(data) {
+        console.log('[v0] Processing voucher update:', data);
+
+        // Wait for backend to fully process the change
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Reload voucher dropdowns
+        const reloadSuccess = await reloadVoucherDropdowns();
+
+        if (reloadSuccess) {
+            // If modal is open, also reload modal content
+            const modal = document.querySelector('#voucherModal');
+            if (modal && modal.style.display !== 'none') {
+                console.log('[v0] Modal is open, reloading modal vouchers...');
+                setTimeout(() => {
+                    if (typeof reloadVouchersInModal === 'function') {
+                        reloadVouchersInModal();
+                    }
+                }, 500);
+            }
+        }
+    }
+
+    // Cleanup on page unload
+    window.addEventListener('beforeunload', () => {
+        if (stompClient && stompClient.connected) {
+            stompClient.deactivate();
+        }
+    });
+
+</script>
+</body>
+</html>

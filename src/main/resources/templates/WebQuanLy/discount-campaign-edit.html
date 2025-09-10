@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chỉnh sửa đợt giảm giá</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        :root{ --primary:#153054; --secondary:#9FD5F7; --text:#263238; --line:#e5e7eb; }
+        body { background-color: #f5f5f5; color: var(--text); }
+        .form-label { font-weight: 500; color: #333; }
+        .form-control,.form-select{ border-radius:.375rem;border:1px solid #d1d3e2;background:#fff;transition:border-color .2s,box-shadow .2s;}
+        .form-control:focus,.form-select:focus{ border-color:var(--secondary); box-shadow:0 0 0 .25rem rgba(159,213,247,.4); }
+        .form-control:disabled,.form-select:disabled{ background-color:#e9ecef; opacity:1; }
+        .btn-primary,.btn-secondary{ padding:.75rem 1.5rem; font-size:1rem; border-radius:.375rem; background:var(--primary); border-color:var(--primary); color:#fff; transition:background-color .2s, transform .2s, box-shadow .2s; min-width:120px; }
+        .btn-primary:hover,.btn-secondary:hover{ background:#1e4066; border-color:#1e4066; transform:translateY(-1px); box-shadow:0 2px 4px rgba(0,0,0,.1);}
+        .btn-outline-secondary{ border-color:var(--primary); color:var(--primary); }
+        .btn-outline-secondary:hover{ background:var(--primary); color:#fff; }
+        .btn:disabled{ cursor:not-allowed; opacity:.5; background:#6b7280; border-color:#6b7280; }
+        .content{ padding:2rem; margin-left:256px; margin-top:70px; }
+        .sticky-header{ position:sticky; top:60px; z-index:1000; background:#fff; padding:.75rem 2rem; margin:-2rem -2rem 1rem; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; }
+        .sticky-header h2{ font-weight:700; color:#1f2937; margin:0; }
+        .card-header{ background:linear-gradient(90deg,var(--primary),#1e4066); color:#fff; }
+        .table th,.table td{ vertical-align:middle; border-color:var(--line); }
+        .alert-container{ position:fixed; bottom:1rem; right:1rem; z-index:9999; }
+        .alert{ border-radius:.375rem; }
+        .role-badge{ background:linear-gradient(135deg,var(--primary),#1e4066); color:#fff; padding:.5rem 1rem; border-radius:20px; font-size:.875rem; font-weight:600; text-transform:uppercase; letter-spacing:.5px; box-shadow:0 4px 15px rgba(21,48,84,.25); }
+        .role-badge.employee{ background:linear-gradient(135deg,#1f7a8c,var(--secondary)); color:#0b2239; }
+        .employee-notice{ background:#eaf6ff; border:1px solid #d7eeff; color:#0b2239; padding:.75rem 1rem; border-radius:.375rem; margin-bottom:1rem; }
+        .form-check-input:checked{ background-color:var(--primary); border-color:var(--primary); }
+        .page-link{ color:var(--primary); }
+        .page-item.active .page-link{ background:var(--primary); border-color:var(--primary); color:#fff; }
+        .page-link:hover{ color:#0f223f; }
+    </style>
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</head>
+<body>
+<div class="d-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+    <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+        <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </nav>
+    <div class="content">
+        <div class="sticky-header">
+            <div class="d-flex align-items-center">
+                <a th:href="@{/acvstore/chien-dich-giam-gia}" class="btn btn-outline-secondary me-3">
+                    <i class="fas fa-arrow-left me-2"></i>Quay lại
+                </a>
+                <h2>
+                    <i class="fas fa-tags me-2"></i>
+                    <span th:text="${viewMode != null && viewMode} ? 'Xem chi tiết đợt giảm giá' : 'Chỉnh sửa đợt giảm giá'">Chỉnh sửa đợt giảm giá</span>
+                </h2>
+            </div>
+            <div class="role-badge" th:classappend="${isAdmin != null && isAdmin} ? '' : ' employee'">
+                <i class="fas fa-user-shield me-1" th:if="${isAdmin != null && isAdmin}"></i>
+                <i class="fas fa-user me-1" th:unless="${isAdmin != null && isAdmin}"></i>
+                <span th:text="${isAdmin != null && isAdmin} ? 'ADMIN' : 'EMPLOYEE'"></span>
+            </div>
+        </div>
+
+        <div th:unless="${isAdmin}" class="employee-notice">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Chế độ xem:</strong> Bạn đang ở chế độ chỉ xem. Không thể chỉnh sửa thông tin chiến dịch.
+        </div>
+
+        <div class="alert-container">
+            <div class="alert alert-info alert-dismissible fade" role="alert" id="readOnlyWarningToast"
+                 th:if="${isReadOnly}" style="display: none;">
+                <div class="d-flex">
+                    <div class="alert-body">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Chiến dịch đang diễn ra hoặc đã kết thúc, chỉ có thể xem thông tin.
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- FORM EDIT -->
+        <form th:action="@{/acvstore/chien-dich-giam-gia/update}"
+              th:object="${chienDich}"
+              method="post"
+              id="updateCampaignForm"
+              th:classappend="${isReadOnly} ? 'read-only'">
+            <input type="hidden" th:field="*{id}"/>
+
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">Thông tin đợt giảm giá</div>
+                        <div class="card-body row g-3">
+                            <!-- MA: readonly khi edit -->
+                            <div class="col-md-4">
+                                <label class="form-label">Mã đợt</label>
+                                <input type="text" class="form-control" th:field="*{ma}" required
+                                       pattern="[A-Za-z0-9]+"
+                                       th:readonly="${true}"
+                                       oninvalid="this.setCustomValidity('Mã gồm chữ và số, viết liền, không ký tự đặc biệt.')"
+                                       oninput="this.setCustomValidity('')">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tên đợt</label>
+                                <!-- Validate bằng JS: cho chữ (có dấu), số, '-', '/'; nhóm cách 1 space; >=6 ký tự (không tính space) -->
+                                <input type="text" class="form-control"
+                                       th:field="*{ten}"
+                                       required maxlength="100"
+                                       th:readonly="${isReadOnly or !isAdmin}"
+                                       oninput="this.setCustomValidity('')"
+                                       onblur="validateTen(this)"
+                                       oninvalid="this.setCustomValidity('Tên phải có ít nhất 6 ký tự (không tính khoảng trắng), chỉ gồm chữ (có dấu), số, dấu gạch ngang (-) và dấu gạch chéo (/), giữa các nhóm cách 1 khoảng trắng.')">
+                            </div>
+
+                            <!-- % giảm: số nguyên 1..99 -->
+                            <div class="col-md-4">
+                                <label class="form-label">% giảm</label>
+                                <input type="number" class="form-control"
+                                       th:field="*{phanTramGiam}"
+                                       th:value="*{phanTramGiam != null ? phanTramGiam.stripTrailingZeros().toPlainString() : ''}"
+                                       required min="1" max="99" step="1"
+                                       th:readonly="${isReadOnly or !isAdmin}"
+                                       oninput="(function(el){ const v=el.value.trim(); const ok=/^\d+$/.test(v)&& +v>=1 && +v<=99; el.setCustomValidity(ok||v===''?'':'Phần trăm giảm phải là số nguyên từ 1 đến 99.'); })(this)"
+                                       oninvalid="this.setCustomValidity('Phần trăm giảm phải là số nguyên từ 1 đến 99.')">
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <label class="form-label">Ngày bắt đầu</label>
+                                <input type="datetime-local" class="form-control" th:field="*{ngayBatDau}"
+                                       th:readonly="${isReadOnly or !isAdmin}" required
+                                       oninvalid="this.setCustomValidity(this.validity.valueMissing ? 'Vui lòng chọn ngày bắt đầu.' : (this.validity.rangeUnderflow ? 'Ngày bắt đầu không được nằm trong quá khứ.' : ''))"
+                                       oninput="this.setCustomValidity('')">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Ngày kết thúc</label>
+                                <input type="datetime-local" class="form-control" th:field="*{ngayKetThuc}"
+                                       th:readonly="${isReadOnly or !isAdmin}" required
+                                       oninvalid="this.setCustomValidity(this.validity.valueMissing ? 'Vui lòng chọn ngày kết thúc.' : (this.validity.rangeUnderflow ? 'Ngày kết thúc không được trước ngày bắt đầu.' : ''))"
+                                       oninput="this.setCustomValidity('')">
+                            </div>
+
+                            <div class="col-md-12 d-flex justify-content-end" th:if="${isAdmin and !isReadOnly}">
+                                <button type="reset" class="btn btn-secondary me-2">Làm mới</button>
+                                <button type="submit" class="btn btn-primary">Cập nhật đợt giảm giá</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Danh sách sản phẩm -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Danh sách sản phẩm</div>
+                        <div class="card-body">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text bg-white">
+                                    <i class="fas fa-search text-secondary"></i>
+                                </span>
+                                <input type="text" class="form-control border-start-0" id="productSearchInput"
+                                       placeholder="Nhập tên sản phẩm..."
+                                       th:readonly="${!isAdmin}">
+                            </div>
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllProducts" th:disabled="${!isAdmin}"></th>
+                                    <th>Mã</th>
+                                    <th>Tên sản phẩm</th>
+                                </tr>
+                                </thead>
+                                <tbody id="productTableBody">
+                                <tr th:each="product : ${productPage.content}" th:data-id="${product.id}" class="product-row">
+                                    <td><input type="checkbox" class="product-checkbox" th:value="${product.id}"
+                                               th:checked="${selectedProductIds.contains(product.id)}"
+                                               th:disabled="${!isAdmin}"></td>
+                                    <td th:text="${product.maSanPham}"></td>
+                                    <td th:text="${product.tenSanPham}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <nav id="productPagination" class="mt-3"></nav>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chi tiết sản phẩm -->
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">Chi tiết sản phẩm</div>
+                        <div class="card-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAllDetails" th:disabled="${!isAdmin}"></th>
+                                    <th>Tên SP</th>
+                                    <th>Màu</th>
+                                    <th>Size</th>
+                                    <th>Giá</th>
+                                    <th>Tồn</th>
+                                </tr>
+                                </thead>
+                                <tbody id="productDetailTableBody">
+                                <tr th:if="${#lists.isEmpty(selectedDetails)}">
+                                    <td colspan="6" class="text-center text-muted">Chưa có chi tiết sản phẩm nào được chọn</td></tr>
+                                <tr th:each="detail : ${selectedDetails}">
+                                    <td><input type="checkbox" class="detail-checkbox" th:value="${detail.id}"
+                                               checked th:disabled="${!isAdmin}"></td>
+                                    <td th:text="${detail.sanPham?.tenSanPham ?: 'Không có tên sản phẩm'}"></td>
+                                    <td th:text="${detail.mauSac?.tenMau ?: 'Không có màu'}"></td>
+                                    <td th:text="${detail.kichCo?.ten ?: 'Không có kích cỡ'}"></td>
+                                    <td th:text="${detail.gia != null ? #numbers.formatDecimal(detail.gia, 0, 'POINT', 0, 'NONE') + ' VNĐ' : 'Không có giá'}"></td>
+                                    <td th:text="${detail.soLuongTonKho != null ? detail.soLuongTonKho : 0}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <input type="hidden" id="selectedProductDetailIdsInput" name="selectedProductDetailIds"
+                                   th:value="${#strings.listJoin(selectedDetails.![id], ',')}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <!-- Modal Xác nhận -->
+<!--        <div class="modal fade" id="confirmUpdateModal" tabindex="-1" aria-hidden="true"-->
+<!--             th:if="${isAdmin and !isReadOnly}">-->
+<!--            <div class="modal-dialog modal-dialog-centered">-->
+<!--                <div class="modal-content">-->
+<!--                    <div class="modal-header border-0">-->
+<!--                        <h5 class="modal-title"><i class="fas fa-circle-question me-2"></i>Xác nhận cập nhật</h5>-->
+<!--                        <button type="button" class="btn-close" data-bs-dismiss="modal"-->
+<!--                                aria-label="Close"></button>-->
+<!--                    </div>-->
+<!--                    <div class="modal-body"><p class="mb-0">Bạn có chắc muốn cập nhật đợt giảm giá này?</p></div>-->
+<!--                    <div class="modal-footer border-0">-->
+<!--                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>-->
+<!--                        <button type="button" id="confirmUpdateBtn" class="btn btn-primary">Xác nhận cập nhật</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+    const currentCampaignId = /*[[${chienDich.id}]]*/ null;
+
+    const pageSize = 5;
+    const selectedProductIds = new Set([[${selectedProductIds}]].map(String));
+    const initialSelectedDetailIds = new Set([[${#strings.listJoin(selectedDetails.![id], ',')}]].split(",").filter(Boolean));
+    const selectedDetailIds = new Set(initialSelectedDetailIds);
+    const isAdmin   = /*[[${isAdmin}]]*/ false;
+    const isReadOnly= /*[[${isReadOnly}]]*/ false;
+    const viewMode  = /*[[${viewMode}]]*/ false;
+    let currentProductKeyword = "";
+    let currentProductPage = 0;
+
+    /* ===== Helpers cho TÊN đợt ===== */
+    function normalizeTen(el){
+        if(!el) return;
+        // chỉ gọi sau khi HỢP LỆ: trim + gộp nhiều space -> 1
+        el.value = (el.value || '').trim().replace(/\s+/g,' ');
+    }
+    function validateTen(el){
+        if(!el) return;
+        const raw = el.value || '';
+
+        if (raw === '') { el.setCustomValidity(''); return; } // required xử lý riêng
+
+        // Kiểm tra trên phiên bản đã trim (KHÔNG gán ngược ở đây)
+        const trimmed = raw.trim();
+
+        // 1) Không cho 2+ khoảng trắng liên tiếp ở giữa
+        if (/\s{2,}/.test(trimmed)) {
+            el.setCustomValidity('Giữa các từ chỉ được 1 khoảng trắng.');
+            return;
+        }
+
+        // 2) Cho phép: chữ (có dấu), số, '-', '/' ; các nhóm ngăn cách bằng đúng 1 khoảng trắng
+        //    Dùng Unicode property cho \p{L} với cờ 'u'
+        const allowed = /^[\p{L}\d\-\/]+(?: [\p{L}\d\-\/]+)*$/u;
+        if (!allowed.test(trimmed)) {
+            el.setCustomValidity('Tên chỉ được dùng chữ (có dấu), số, dấu gạch ngang (-) và dấu gạch chéo (/), giữa các nhóm cách 1 khoảng trắng.');
+            return;
+        }
+
+        // 3) Độ dài tối thiểu 6 ký tự (không tính khoảng trắng)
+        const nonSpaceLen = trimmed.replace(/\s+/g,'').length;
+        if (nonSpaceLen < 6) {
+            el.setCustomValidity('Tên phải có ít nhất 6 ký tự (không tính khoảng trắng).');
+            return;
+        }
+
+        // 4) Tối đa 100 ký tự tổng thể
+        if (trimmed.length > 100) {
+            el.setCustomValidity('Tên tối đa 100 ký tự.');
+            return;
+        }
+
+        el.setCustomValidity('');
+    }
+
+
+
+    function toLocalDatetimeValue(d){
+        const pad=n=>String(n).padStart(2,'0');
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+    function wireDateValidation(){
+        const form=document.getElementById('updateCampaignForm');
+        if(!form) return;
+        const start=form.querySelector('input[name="ngayBatDau"]');
+        const end  =form.querySelector('input[name="ngayKetThuc"]');
+        const ten  =form.querySelector('input[name="ten"]');
+        const percent=form.querySelector('input[name="phanTramGiam"]');
+
+        const now=new Date(); now.setSeconds(0,0);
+        const nowStr=toLocalDatetimeValue(now);
+        if(!start?.readOnly){ start.min=nowStr; }
+        if(!end?.readOnly){ end.min=start.value || nowStr; }
+
+        start?.addEventListener('invalid', function(){
+            if(this.validity.valueMissing){ this.setCustomValidity('Vui lòng chọn ngày bắt đầu.'); }
+            else if(this.validity.rangeUnderflow){ this.setCustomValidity('Ngày bắt đầu không được nằm trong quá khứ.'); }
+            else this.setCustomValidity('');
+        });
+        start?.addEventListener('input', function(){
+            this.setCustomValidity('');
+            if(!end?.readOnly){
+                end.min=this.value || nowStr;
+                if(end.value && end.value < end.min){
+                    end.setCustomValidity('Ngày kết thúc không được trước ngày bắt đầu.');
+                }else end.setCustomValidity('');
+            }
+        });
+        end?.addEventListener('invalid', function(){
+            if(this.validity.valueMissing){ this.setCustomValidity('Vui lòng chọn ngày kết thúc.'); }
+            else if(this.validity.rangeUnderflow){ this.setCustomValidity('Ngày kết thúc không được trước ngày bắt đầu.'); }
+            else this.setCustomValidity('');
+        });
+        end?.addEventListener('input', function(){ this.setCustomValidity(''); });
+
+        // Tên: validate trước, nếu OK mới normalize khi blur
+        if(ten){
+            ten.addEventListener('input', ()=> ten.setCustomValidity(''));
+            ten.addEventListener('blur',  ()=>{
+                validateTen(ten);
+                if (ten.checkValidity()) normalizeTen(ten);
+                ten.reportValidity();
+            });
+        }
+        if (percent) {
+            percent.addEventListener('input', function () {
+                const v = this.value.trim();
+                const intOk = /^\d+$/.test(v);
+                const num = +v;
+                const ok = intOk && num >= 1 && num <= 99;
+                this.setCustomValidity(ok || v === '' ? '' : 'Phần trăm giảm phải là số nguyên từ 1 đến 99.');
+            });
+        }
+
+
+        form.addEventListener('submit', function(e){
+            if(!isAdmin){
+                e.preventDefault();
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Không có quyền',
+                    text: 'Bạn không có quyền thực hiện thao tác này!',
+                    confirmButtonText: 'Đã hiểu'
+                });
+                return;
+            }
+
+            // Tên: VALIDATE trước, hợp lệ mới normalize
+            if(ten){
+                validateTen(ten);
+                if (ten.checkValidity()) normalizeTen(ten);
+            }
+            if (percent) {
+                const v = percent.value.trim();
+                const intOk = /^\d+$/.test(v);
+                const num = +v;
+                const ok = intOk && num >= 1 && num <= 99;
+                percent.setCustomValidity(ok || v === '' ? '' : 'Phần trăm giảm phải là số nguyên từ 1 đến 99.');
+            }
+
+            if(!this.reportValidity()){
+                e.preventDefault();
+                return;
+            }
+
+            // Dùng Swal.fire để xác nhận + hiển thị "Đang xử lý..."
+            if (!this._asked) {
+                e.preventDefault();
+                const formEl = this;
+
+                Swal.fire({
+                    title: 'Xác nhận cập nhật',
+                    text: 'Bạn có chắc muốn cập nhật đợt giảm giá này?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Xác nhận cập nhật',
+                    cancelButtonText: 'Hủy',
+                    reverseButtons: true,
+                    focusCancel: true
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        formEl._asked = true;
+
+                        // Hiển thị trạng thái đang xử lý
+                        Swal.fire({
+                            title: 'Đang xử lý...',
+                            html: '<small>Vui lòng đợi trong giây lát.</small>',
+                            allowEscapeKey: false,
+                            allowOutsideClick: false,
+                            didOpen: () => {
+                                Swal.showLoading();
+                            }
+                        });
+
+                        // Cho loader kịp hiển thị rồi submit
+                        setTimeout(() => formEl.submit(), 120);
+                    }
+                });
+            }
+        });
+
+    }
+
+    // ====== (giữ nguyên) render list SP/CTSP, pagination... ======
+    function formatPrice(price){ if(price==null) return 'Không có giá'; return new Intl.NumberFormat('vi-VN',{minimumFractionDigits:0,maximumFractionDigits:0}).format(price)+' VNĐ'; }
+    function updateSelectAll(selector, masterId){
+        const all=[...document.querySelectorAll(selector)]; const master=document.getElementById(masterId);
+        if(master && all.length>0){ master.checked=all.every(cb=>cb.checked); }
+    }
+    function attachCheckboxHandler(selector, selectedSet, masterId){
+        document.querySelectorAll(selector).forEach(cb=>{
+            cb.addEventListener("change", ()=>{
+                if(!isAdmin) return;
+                cb.checked?selectedSet.add(cb.value):selectedSet.delete(cb.value);
+                if(masterId) updateSelectAll(selector, masterId);
+                if(selector === '.product-checkbox'){ loadProductDetails(); } else { syncHiddenFromVisible(); }
+            });
+        });
+    }
+    function getVisibleDetailIdsSet(){ return new Set([...document.querySelectorAll(".detail-checkbox")].map(cb=>cb.value)); }
+    function syncHiddenFromVisible(){
+        const visible=getVisibleDetailIdsSet();
+        const effective=[...selectedDetailIds].filter(id=>visible.has(id));
+        document.getElementById("selectedProductDetailIdsInput").value = effective.join(',');
+    }
+    function rowHtml(detail, disabled, checked){
+        return `
+    <tr>
+      <td><input type="checkbox" class="detail-checkbox" value="${detail.id}" ${checked?'checked':''} ${disabled?'disabled':''}></td>
+      <td>${detail.sanPham?.tenSanPham || 'Không có tên sản phẩm'}</td>
+      <td>${detail.mauSac?.tenMau || 'Không có màu'}</td>
+      <td>${detail.kichCo?.ten || 'Không có kích cỡ'}</td>
+      <td>${formatPrice(detail.gia)}</td>
+      <td>${detail.soLuongTonKho ?? 0}</td>
+    </tr>`;
+    }
+    function loadProductDetails(){
+        const container=document.getElementById("productDetailTableBody");
+        const existingDetails = /*[[${selectedDetails}]]*/[];
+
+        if (viewMode || (isReadOnly && !isAdmin)) {
+            if (existingDetails && existingDetails.length) {
+                container.innerHTML = existingDetails.map(d => rowHtml(d, true, true)).join('');
+            } else {
+                container.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Chưa có chi tiết sản phẩm nào được chọn</td></tr>`;
+            }
+            return;
+        }
+
+        function renderList(list){
+            const map=new Map();
+            (list||[]).forEach(d=>{ const k=String(d.id); if(!map.has(k)) map.set(k,d); });
+            const finalList=[...map.values()];
+            container.innerHTML = finalList.map(d => rowHtml(d, false, selectedDetailIds.has(String(d.id)))).join('');
+            attachCheckboxHandler(".detail-checkbox", selectedDetailIds, "selectAllDetails");
+            updateSelectAll(".detail-checkbox","selectAllDetails");
+            syncHiddenFromVisible();
+        }
+
+        if (selectedProductIds.size === 0) {
+            if (existingDetails && existingDetails.length) { renderList(existingDetails); }
+            else { container.innerHTML = `<tr><td colspan="6" class="text-center text-muted">Chưa chọn sản phẩm nào</td></tr>`; syncHiddenFromVisible(); }
+            return;
+        }
+
+        const idsParam=[...selectedProductIds].join(',');
+        const url=`/acvstore/chien-dich-giam-gia/multiple-product-details?productIds=${idsParam}&currentCampaignId=${currentCampaignId}`;
+        fetch(url)
+            .then(res=>res.json())
+            .then(data=>{
+                const apiList=Array.isArray(data)?data:[];
+                const unionList=[...(existingDetails||[]), ...apiList];
+                if(unionList.length===0){
+                    container.innerHTML=`<tr><td colspan="6" class="text-center text-muted">Không tìm thấy chi tiết sản phẩm</td></tr>`;
+                    syncHiddenFromVisible(); return;
+                }
+                renderList(unionList);
+            })
+            .catch(err=>{
+                console.error('Error fetching product details:', err);
+                if (existingDetails && existingDetails.length) { renderList(existingDetails); }
+                else { container.innerHTML = `<tr><td colspan="6" class="text-center text-danger">Lỗi khi tải chi tiết sản phẩm</td></tr>`; syncHiddenFromVisible(); }
+            });
+    }
+    function renderPagination(totalPages, currentPage, keyword) {
+        const pagination = document.getElementById("productPagination");
+        if (!pagination || !isAdmin) return;
+
+        if (!Number.isFinite(totalPages) || totalPages <= 1) {
+            pagination.innerHTML = "";
+            return;
+        }
+
+        let html = `<ul class="pagination justify-content-center mb-0">`;
+
+        const prevDisabled = currentPage <= 0 ? " disabled" : "";
+        const prevPage = Math.max(0, currentPage - 1);
+        html += `
+    <li class="page-item${prevDisabled}">
+      <a class="page-link" href="#" data-page="${prevPage}" data-keyword="${keyword}">Trước</a>
+    </li>`;
+
+        for (let i = 0; i < totalPages; i++) {
+            html += `
+      <li class="page-item ${i === currentPage ? "active" : ""}">
+        <a class="page-link" href="#" data-page="${i}" data-keyword="${keyword}">${i + 1}</a>
+      </li>`;
+        }
+
+        const nextDisabled = currentPage >= totalPages - 1 ? " disabled" : "";
+        const nextPage = Math.min(totalPages - 1, currentPage + 1);
+        html += `
+    <li class="page-item${nextDisabled}">
+      <a class="page-link" href="#" data-page="${nextPage}" data-keyword="${keyword}">Sau</a>
+    </li>`;
+
+        html += `</ul>`;
+        pagination.innerHTML = html;
+
+        pagination.querySelectorAll(".page-link").forEach(link => {
+            link.addEventListener("click", e => {
+                e.preventDefault();
+                if (!isAdmin) return;
+                if (link.closest(".disabled")) return;
+
+                let page = parseInt(link.dataset.page, 10); // ✅ base 10
+                const kw = link.dataset.keyword || "";
+
+                // Clamp nếu tổng trang vừa thay đổi
+                if (Number.isFinite(currentProductTotalPages) && currentProductTotalPages > 0) {
+                    page = Math.min(Math.max(0, page), currentProductTotalPages - 1);
+                }
+
+                searchProducts(kw, page);
+            });
+        });
+    }
+
+    function searchProducts(keyword = "", page = 0, _retry = false) {
+        if (!isAdmin) return;
+
+        const url =
+            `/acvstore/chien-dich-giam-gia/search-products` +
+            `?keyword=${encodeURIComponent(keyword)}` +
+            `&page=${Math.max(0, page)}` +
+            `&size=${pageSize}`; // pageSize = 5
+
+        fetch(url)
+            .then(res => res.json())
+            .then(data => {
+                const list = Array.isArray(data.content) ? data.content : [];
+                const totalPages = Number.isFinite(data.totalPages) ? data.totalPages : 0;
+                const current = Number.isFinite(data.number) ? data.number : 0;
+
+                // Lưu lại để clamp các click sau
+                currentProductTotalPages = totalPages;
+
+                // Fallback: nếu trang vượt quá giới hạn (VD: sau khi lọc), nhảy về trang cuối
+                if (!list.length && totalPages > 0 && current >= totalPages && !_retry) {
+                    return searchProducts(keyword, totalPages - 1, true);
+                }
+
+                renderProductList(list);
+                renderPagination(totalPages, current, keyword);
+            })
+            .catch(console.error);
+    }
+
+    function renderProductList(products) {
+        const tbody = document.getElementById("productTableBody");
+        if (!tbody) return;
+
+        if (!Array.isArray(products) || products.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="3" class="text-center">Không tìm thấy sản phẩm nào</td></tr>`;
+        } else {
+            tbody.innerHTML = products.map(p => {
+                const idStr = String(p.id);
+                const checked = selectedProductIds.has(idStr) ? "checked" : "";
+                const disabled = !isAdmin ? "disabled" : "";
+                return `
+        <tr class="product-row" data-id="${idStr}">
+          <td><input type="checkbox" class="product-checkbox" value="${idStr}" ${checked} ${disabled}></td>
+          <td>${p.maSanPham ?? ""}</td>
+          <td>${p.tenSanPham ?? ""}</td>
+        </tr>`;
+            }).join("");
+        }
+
+        attachCheckboxHandler(".product-checkbox", selectedProductIds, "selectAllProducts");
+        updateSelectAll(".product-checkbox", "selectAllProducts");
+    }
+
+    document.addEventListener("DOMContentLoaded", ()=>{
+        wireDateValidation();
+
+        // init checkboxes
+        attachCheckboxHandler(".product-checkbox", selectedProductIds, "selectAllProducts");
+        updateSelectAll(".product-checkbox", "selectAllProducts");
+        attachCheckboxHandler(".detail-checkbox", selectedDetailIds, "selectAllDetails");
+        updateSelectAll(".detail-checkbox", "selectAllDetails");
+        loadProductDetails();
+
+        document.getElementById("selectAllProducts")?.addEventListener("change", function(){
+            if(!isAdmin) return;
+            document.querySelectorAll(".product-checkbox").forEach(cb=>{
+                cb.checked=this.checked;
+                this.checked?selectedProductIds.add(cb.value):selectedProductIds.delete(cb.value);
+            });
+            loadProductDetails();
+        });
+        document.getElementById("selectAllDetails")?.addEventListener("change", function(){
+            if(!isAdmin) return;
+            document.querySelectorAll(".detail-checkbox").forEach(cb=>{
+                cb.checked=this.checked;
+                this.checked?selectedDetailIds.add(cb.value):selectedDetailIds.delete(cb.value);
+            });
+            syncHiddenFromVisible();
+        });
+
+        // modal confirm submit
+        // const form=document.getElementById("updateCampaignForm");
+        // const modalEl=document.getElementById("confirmUpdateModal");
+        // const confirmBtn=document.getElementById("confirmUpdateBtn");
+        // let confirmModal=null;
+        // if(modalEl && typeof bootstrap!=="undefined"){ confirmModal=new bootstrap.Modal(modalEl); }
+        // confirmBtn?.addEventListener("click", function(){
+        //     this.disabled=true; this.textContent="Đang cập nhật...";
+        //     form?.submit();
+        // });
+
+        document.getElementById("productSearchInput")?.addEventListener("input", function(){
+            if(!isAdmin) return;
+            clearTimeout(this._searchTimer);
+            const query=this.value.trim();
+            this._searchTimer=setTimeout(()=>searchProducts(query,0),300);
+        });
+
+        if(isAdmin && !isReadOnly && !viewMode){
+            searchProducts("", /*[[${currentProductPage}]]*/ 0);
+        }
+    });
+</script>
+<script th:src="@{/js/notification.js}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+</body>
+</html>

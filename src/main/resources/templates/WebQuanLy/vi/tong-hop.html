@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tổng hợp ví</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <script th:src="@{/js/sidebar.js}" defer></script>
+
+    <!-- Style nội bộ giống với yêu cầu rút tiền -->
+    <style>
+        :root {
+            --primary-color: #000000;
+            --border-color: #dee2e6;
+            --light-gray: #f8f9fa;
+        }
+
+        body {
+            background-color: #fff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #212529;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .cart-table th {
+            background: var(--light-gray);
+            font-weight: 700;
+            border: none;
+        }
+
+        .cart-table td {
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .badge {
+            font-size: 0.9rem;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+        }
+
+        .content {
+            margin-top: 5rem;
+            padding: 2rem;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="d-flex">
+    <!-- Sidebar -->
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <!-- Navbar -->
+    <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+        <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </nav>
+
+    <!-- Main content -->
+    <div class="content" id="mainContent">
+        <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fs-3 fw-bold text-dark mb-0">
+                    <i class="fas fa-wallet me-2 text-primary"></i>
+                    Tổng hợp ví thanh toán
+                </h2>
+            </div>
+
+            <div class="mb-4">
+                <h5 class="fw-semibold text-secondary">
+                    <i class="fas fa-coins me-2"></i>
+                    Tổng số dư tất cả ví:
+                    <span class="badge bg-success fs-6" th:text="${#numbers.formatDecimal(tongSoDu, 0, 'COMMA', 0, 'POINT')} + ' đ'">0 đ</span>
+                </h5>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table cart-table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>Người dùng</th>
+                        <th>Tên đăng nhập</th>
+                        <th>Số dư</th>
+                        <th>Trạng thái</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="vi : ${danhSachVi}">
+                        <td th:text="${vi.nguoiDung.hoTen}"></td>
+                        <td th:text="${vi.nguoiDung.tenDangNhap}"></td>
+                        <td>
+                            <span class="badge bg-success fw-semibold">
+                                <i class="fas fa-money-bill-wave me-1"></i>
+                                <span th:text="${#numbers.formatDecimal(vi.soDu, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                            </span>
+                        </td>
+                        <td>
+                            <span th:classappend="${vi.trangThai} ? 'badge bg-primary' : 'badge bg-danger'"
+                                  class="badge fw-medium"
+                                  th:text="${vi.trangThai ? 'Hoạt động' : 'Khoá'}"></span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/notification.js}"></script>
+
+</body>
+</html>

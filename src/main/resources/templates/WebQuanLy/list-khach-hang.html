@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Quản lý khách hàng</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff;
+            color: #153054;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 32px;
+            padding-top: 100px;
+            min-height: 100vh;
+            background: #ffffff;
+            transition: all 0.3s ease;
+        }
+
+        .content.full-width {
+            margin-left: 0;
+            width: 100%;
+            padding-top: 100px;
+        }
+
+        .page-title {
+            color: #153054;
+            margin-bottom: 10px;
+            font-weight: 700;
+            font-size: 2.25rem;
+            letter-spacing: -0.025em;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            justify-content: center;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: "";
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 10%;
+            height: 4px; /* Tăng độ dày lên 4px để đậm hơn */
+            background-color: #1e90ff;
+        }
+
+        .page-title i {
+            background: #153054;
+            color: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.25rem;
+        }
+
+        .page-subtitle {
+            color: #6b7280;
+            font-size: 1.1rem;
+            margin-bottom: 32px;
+            font-weight: 400;
+            text-align: center;
+        }
+
+        .card {
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        .search-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-control, .form-select {
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            color: #153054;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
+            font-weight: 400;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #153054;
+            box-shadow: 0 0 0 3px rgba(21, 48, 84, 0.1);
+            background: #ffffff;
+            color: #153054;
+            outline: none;
+        }
+
+        .input-group-text {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            color: #6b7280;
+            border-radius: 12px 0 0 12px;
+            border-right: none;
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .form-label {
+            color: #153054;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn {
+            border-radius: 12px;
+            font-weight: 600;
+            padding: 12px 24px;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #153054;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary:hover {
+            background: #1e4a7a;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-success {
+            background: #153054;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-success:hover {
+            background: #1e4a7a;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
+        }
+
+        .btn-danger i {
+            text-decoration: underline;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #153054;
+            border: 2px solid #e5e7eb;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            color: #153054;
+            transform: translateY(-2px);
+        }
+
+        .btn-action {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .table-container {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            overflow-x: auto;
+            overflow-y: visible;
+            margin-top: 24px;
+            border: 1px solid #e5e7eb;
+            max-width: 100%;
+        }
+
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+            min-width: 1300px;
+            width: 100%;
+        }
+
+        .table th {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: none;
+            font-weight: 700;
+            color: #153054;
+            padding: 20px 16px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            border-bottom: 2px solid #e5e7eb;
+            white-space: nowrap;
+        }
+
+        .table td {
+            padding: 16px;
+            vertical-align: middle;
+            color: #153054;
+            border-bottom: 1px solid #f3f4f6;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .table tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        .table tbody tr:hover {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            transform: scale(1.01);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .address-cell {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .modal-content {
+            background: #ffffff;
+            border: none;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: #153054;
+            color: #ffffff;
+            border-bottom: none;
+            padding: 24px 32px;
+        }
+
+        .modal-header .modal-title {
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+            opacity: 0.8;
+        }
+
+        .modal-header .btn-close:hover {
+            opacity: 1;
+        }
+
+        .modal-body {
+            background: #ffffff;
+            color: #153054;
+            padding: 32px;
+        }
+
+        .modal-dialog-lg {
+            max-width: 900px;
+        }
+
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 16px 20px;
+            font-weight: 500;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            color: #065f46;
+            border-left: 4px solid #10b981;
+        }
+
+        .alert-danger {
+            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
+            color: #991b1b;
+            border-left: 4px solid #ef4444;
+        }
+
+        .pagination {
+            gap: 8px;
+        }
+
+        .pagination .page-link {
+            color: #153054;
+            background: #ffffff;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 12px 16px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .pagination .page-link:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+            transform: translateY(-2px);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: #153054;
+            color: #ffffff;
+            border-color: #153054;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            background: #f9fafb;
+            color: #9ca3af;
+            border-color: #e5e7eb;
+        }
+
+        .badge {
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.bg-primary {
+            background: #153054 !important;
+            color: #ffffff !important;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .badge.bg-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .badge.bg-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+            color: #ffffff !important;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .table-container::-webkit-scrollbar {
+            height: 12px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 6px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+            border-radius: 6px;
+            border: 2px solid #f1f5f9;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                padding: 16px;
+                padding-top: 90px;
+            }
+
+            .custom-navbar {
+                left: 0;
+                height: 60px;
+            }
+
+            .page-title {
+                font-size: 1.75rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.8rem;
+            }
+
+            .modal-body {
+                padding: 20px;
+            }
+
+            .table {
+                min-width: 900px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card, .table-container {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .modal-header.bg-danger {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+        }
+
+        .row {
+            margin-bottom: 16px;
+        }
+
+        .row:last-child {
+            margin-bottom: 0;
+        }
+
+        .text-danger {
+            color: #dc2626 !important;
+        }
+
+        .text-muted {
+            color: #6b7280 !important;
+        }
+
+        .text-warning {
+            color: #f59e0b !important;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            opacity: 0.7;
+            transition: opacity 0.2s ease;
+        }
+
+        .btn-close:hover {
+            opacity: 1;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/sidebar.js}" defer></script>
+</head>
+<body>
+<div class="d-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}"></div>
+
+    <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4">
+        <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </nav>
+
+    <div class="content" id="mainContent">
+        <h2 class="page-title">
+            <i class="fa-solid fa-users"></i>
+            <span>Quản Lý Khách Hàng</span>
+        </h2>
+
+        <div th:if="${message}" class="alert mb-4" th:classappend="${messageType == 'success'} ? 'alert-success' : 'alert-danger'" role="alert">
+            <i class="fa-solid fa-check-circle me-2" th:if="${messageType == 'success'}"></i>
+            <i class="fa-solid fa-exclamation-triangle me-2" th:if="${messageType != 'success'}"></i>
+            <span th:text="${message}"></span>
+            <button type="button" class="btn-close float-end" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="card search-card mb-4">
+            <div class="card-body">
+                <form th:action="@{/acvstore/customers}" method="get">
+                    <div class="row align-items-end">
+                        <div class="col-md-10">
+                            <label class="form-label">Tìm kiếm khách hàng</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fa-solid fa-search"></i>
+                                </span>
+                                <input type="text" name="keyword" class="form-control"
+                                       th:value="${keyword}"
+                                       placeholder="Tìm theo tên, email hoặc số điện thoại">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="fa-solid fa-search me-2"></i> Tìm kiếm
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="mb-4 d-flex justify-content-between align-items-center">
+            <div class="text-muted">
+                <i class="fa-solid fa-info-circle me-1"></i>
+                Hiển thị <strong th:text="${#lists.size(customers)}">0</strong> khách hàng
+            </div>
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+                <i class="fa-solid fa-plus me-2"></i> Thêm khách hàng mới
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="table table-hover mb-0">
+                <thead>
+                <tr>
+                    <th><i class="fa-solid fa-hashtag me-2"></i>ID</th>
+                    <th><i class="fa-solid fa-user me-2"></i>Họ tên</th>
+                    <th><i class="fa-solid fa-user-circle me-2"></i>Tên đăng nhập</th>
+                    <th><i class="fa-solid fa-lock me-2"></i>Mật khẩu</th>
+                    <th><i class="fa-solid fa-envelope me-2"></i>Email</th>
+                    <th><i class="fa-solid fa-phone me-2"></i>Số điện thoại</th>
+                    <th><i class="fa-solid fa-map-marker-alt me-2"></i>Địa chỉ</th>
+                    <th><i class="fa-solid fa-tag me-2"></i>Vai trò</th>
+                    <th><i class="fa-solid fa-toggle-on me-2"></i>Trạng thái</th>
+                    <th><i class="fa-solid fa-cogs me-2"></i>Hành động</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="customer, customerStat : ${customers}">
+                    <td><strong th:text="${(currentPage * 5) + customerStat.index + 1}"></strong></td>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-dark text-white rounded-circle d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-size: 0.9rem; font-weight: 600;">
+                                <span th:text="${#strings.substring(customer.hoTen, 0, 1)}"></span>
+                            </div>
+                            <strong th:text="${customer.hoTen}"></strong>
+                        </div>
+                    </td>
+                    <td th:text="${customer.tenDangNhap}"></td>
+                    <td>
+                        <span class="text-muted">••••••••</span>
+                    </td>
+                    <td>
+                        <a th:href="'mailto:' + ${customer.email}" class="text-decoration-none" th:text="${customer.email}"></a>
+                    </td>
+                    <td>
+                        <a th:href="'tel:' + ${customer.soDienThoai}" class="text-decoration-none" th:text="${customer.soDienThoai}"></a>
+                    </td>
+                    <td class="address-cell">
+    <span th:if="${defaultAddresses[customerStat.index] != null}"
+          th:text="${defaultAddresses[customerStat.index].tinhThanhPho} + ', ' + ${defaultAddresses[customerStat.index].quanHuyen} + ', ' + ${defaultAddresses[customerStat.index].phuongXa} + ', ' + ${defaultAddresses[customerStat.index].chiTietDiaChi}"
+          th:title="${defaultAddresses[customerStat.index].tinhThanhPho} + ', ' + ${defaultAddresses[customerStat.index].quanHuyen} + ', ' + ${defaultAddresses[customerStat.index].phuongXa} + ', ' + ${defaultAddresses[customerStat.index].chiTietDiaChi}">
+    </span>
+                        <span th:unless="${defaultAddresses[customerStat.index] != null}" class="text-muted">Chưa có địa chỉ</span>
+                    </td>
+                    <td>
+                        <span class="badge bg-primary" th:text="${customer.vaiTro}"></span>
+                    </td>
+                    <td>
+                        <span class="badge" th:classappend="${customer.trangThai} ? 'bg-success' : 'bg-danger'"
+                              th:text="${customer.trangThai} ? 'Kích hoạt' : 'Vô hiệu hóa'"></span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button type="button" class="btn btn-primary btn-sm btn-action"
+                                    data-bs-toggle="modal"
+                                    th:data-bs-target="'#editCustomerModal' + ${customer.id}"
+                                    title="Chỉnh sửa">
+                                <i class="fa-solid fa-edit"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <nav aria-label="Phân trang" class="mt-5">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/acvstore/customers(page=${currentPage - 1}, keyword=${keyword})}">
+                        <i class="fa-solid fa-chevron-left me-1"></i> Trước
+                    </a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/acvstore/customers(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/acvstore/customers(page=${currentPage + 1}, keyword=${keyword})}">
+                        Sau <i class="fa-solid fa-chevron-right ms-1"></i>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="modal fade" id="addCustomerModal" tabindex="-1" aria-labelledby="addCustomerModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addCustomerModalLabel">
+                            <i class="fa-solid fa-user-plus me-2"></i> Thêm khách hàng mới
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="addCustomerForm" th:action="@{/acvstore/customers/add}" th:object="${customer}" method="post" novalidate>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addHoTen" class="form-label">Họ tên <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="addHoTen" th:field="*{hoTen}" required>
+                                        <div class="text-danger small error-message" id="addHoTenError"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addTenDangNhap" class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="addTenDangNhap" th:field="*{tenDangNhap}" required>
+                                        <div class="text-danger small error-message" id="addTenDangNhapError"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                        <input type="email" class="form-control" id="addEmail" th:field="*{email}" required>
+                                        <div class="text-danger small error-message" id="addEmailError"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addSoDienThoai" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control" id="addSoDienThoai" th:field="*{soDienThoai}" required>
+                                        <div class="text-danger small error-message" id="addSoDienThoaiError"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addMatKhau" class="form-label">Mật khẩu <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="addMatKhau" th:field="*{matKhau}" required>
+                                        <div class="text-danger small error-message" id="addMatKhauError"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addNgaySinh" class="form-label">Ngày sinh</label>
+                                        <input type="date" class="form-control" id="addNgaySinh" th:field="*{ngaySinh}">
+                                        <div class="text-danger small error-message" id="addNgaySinhError"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addGioiTinh" class="form-label">Giới tính</label>
+                                        <select class="form-select" id="addGioiTinh" th:field="*{gioiTinh}">
+                                            <option value="true">Nam</option>
+                                            <option value="false">Nữ</option>
+                                        </select>
+                                        <div class="text-danger small error-message" id="addGioiTinhError"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addTinhThanhPho" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="addTinhThanhPho" name="tinhThanhPho" required>
+                                            <option value="">Chọn tỉnh/thành phố</option>
+                                        </select>
+                                        <div class="text-danger small error-message" id="addTinhThanhPhoError"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addQuanHuyen" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="addQuanHuyen" name="quanHuyen" required>
+                                            <option value="">Chọn quận/huyện</option>
+                                        </select>
+                                        <div class="text-danger small error-message" id="addQuanHuyenError"></div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="addPhuongXa" class="form-label">Phường/Xã <span class="text-danger">*</span></label>
+                                        <select class="form-select" id="addPhuongXa" name="phuongXa" required>
+                                            <option value="">Chọn phường/xã</option>
+                                        </select>
+                                        <div class="text-danger small error-message" id="addPhuongXaError"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label for="addChiTietDiaChi" class="form-label">Địa chỉ chi tiết</label>
+                                        <input type="text" class="form-control" id="addChiTietDiaChi" name="chiTietDiaChi">
+                                        <div class="text-danger small error-message" id="addChiTietDiaChiError"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="text-end pt-3 border-top">
+                                <button type="button" class="btn btn-secondary me-3" data-bs-dismiss="modal">
+                                    <i class="fa-solid fa-times me-2"></i> Hủy bỏ
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fa-solid fa-save me-2"></i> Lưu thông tin
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <th:block th:each="customer, customerStat : ${customers}">
+            <div class="modal fade" th:id="'editCustomerModal' + ${customer.id}" tabindex="-1"
+                 th:aria-labelledby="'editCustomerModalLabel' + ${customer.id}" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" th:id="'editCustomerModalLabel' + ${customer.id}">
+                                <i class="fa-solid fa-user-edit me-2"></i> Sửa thông tin khách hàng
+                            </h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form th:action="@{/acvstore/customers/edit}" method="post" novalidate>
+                                <input type="hidden" name="id" th:value="${customer.id}">
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Họ tên <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="hoTen"
+                                                   th:value="${customer.hoTen}" required>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="tenDangNhap"
+                                                   th:value="${customer.tenDangNhap}" required>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Email <span class="text-danger">*</span></label>
+                                            <input type="email" class="form-control" name="email"
+                                                   th:value="${customer.email}" required>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                            <input type="text" class="form-control" name="soDienThoai"
+                                                   th:value="${customer.soDienThoai}" required>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Mật khẩu <span class="text-danger">*</span></label>
+                                            <input type="password" class="form-control" name="matKhau"
+                                                   th:value="${customer.matKhau}" required>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Ngày sinh</label>
+                                            <input type="date" class="form-control" name="ngaySinh"
+                                                   th:value="${customer.ngaySinh != null ? #temporals.format(customer.ngaySinh, 'yyyy-MM-dd') : ''}">
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Giới tính</label>
+                                            <select class="form-select" name="gioiTinh">
+                                                <option value="true" th:selected="${customer.gioiTinh == true}">Nam</option>
+                                                <option value="false" th:selected="${customer.gioiTinh == false}">Nữ</option>
+                                            </select>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Trạng thái</label>
+                                            <select class="form-select" name="trangThai">
+                                                <option value="true" th:selected="${customer.trangThai == true}">Kích hoạt</option>
+                                                <option value="false" th:selected="${customer.trangThai == false}">Vô hiệu hóa</option>
+                                            </select>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                                            <select class="form-select" th:id="'editTinhThanhPho' + ${customer.id}"
+                                                    name="tinhThanhPho" required
+                                                    th:data-current-value="${defaultAddresses[customerStat.index] != null ? defaultAddresses[customerStat.index].tinhThanhPho : ''}">
+                                                <option value="">Chọn tỉnh/thành phố</option>
+                                            </select>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                                            <select class="form-select" th:id="'editQuanHuyen' + ${customer.id}"
+                                                    name="quanHuyen" required
+                                                    th:data-current-value="${defaultAddresses[customerStat.index] != null ? defaultAddresses[customerStat.index].quanHuyen : ''}">
+                                                <option value="">Chọn quận/huyện</option>
+                                            </select>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Phường/Xã <span class="text-danger">*</span></label>
+                                            <select class="form-select" th:id="'editPhuongXa' + ${customer.id}"
+                                                    name="phuongXa" required
+                                                    th:data-current-value="${defaultAddresses[customerStat.index] != null ? defaultAddresses[customerStat.index].phuongXa : ''}">
+                                                <option value="">Chọn phường/xã</option>
+                                            </select>
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label class="form-label">Địa chỉ chi tiết</label>
+                                            <input type="text" class="form-control" name="chiTietDiaChi"
+                                                   th:value="${defaultAddresses[customerStat.index] != null ? defaultAddresses[customerStat.index].chiTietDiaChi : ''}">
+                                            <div class="text-danger small error-message"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="text-end pt-3 border-top">
+                                    <button type="button" class="btn btn-secondary me-3" data-bs-dismiss="modal">
+                                        <i class="fa-solid fa-times me-2"></i> Hủy bỏ
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa-solid fa-save me-2"></i> Cập nhật
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </th:block>
+
+
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Hàm validate cho form thêm khách hàng
+        function validateAddCustomerForm() {
+            let isValid = true;
+            const hoTen = document.getElementById('addHoTen');
+            const tenDangNhap = document.getElementById('addTenDangNhap');
+            const email = document.getElementById('addEmail');
+            const soDienThoai = document.getElementById('addSoDienThoai');
+            const matKhau = document.getElementById('addMatKhau');
+            const ngaySinh = document.getElementById('addNgaySinh');
+            const tinhThanhPho = document.getElementById('addTinhThanhPho');
+            const quanHuyen = document.getElementById('addQuanHuyen');
+            const phuongXa = document.getElementById('addPhuongXa');
+            const chiTietDiaChi = document.getElementById('addChiTietDiaChi');
+
+            // Xóa thông báo lỗi cũ
+            document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+            // Validate Họ tên
+            const hoTenValue = hoTen.value.trim(); // Loại bỏ khoảng trắng đầu và cuối
+            const hoTenRegex = /^[A-Za-zÀ-ỹ\s]+$/; // Chỉ cho phép chữ cái và khoảng trắng
+            if (!hoTenValue) {
+                document.getElementById('addHoTenError').textContent = 'Họ tên không được để trống';
+                isValid = false;
+            } else if (!hoTenRegex.test(hoTenValue)) {
+                document.getElementById('addHoTenError').textContent = 'Họ tên chỉ được chứa chữ cái và khoảng trắng';
+                isValid = false;
+            } else if (hoTenValue.indexOf('  ') !== -1) { // Kiểm tra có nhiều hơn 1 khoảng trắng liên tiếp
+                document.getElementById('addHoTenError').textContent = 'Họ tên chỉ được chứa 1 khoảng trắng giữa các từ';
+                isValid = false;
+            }
+
+            // Validate Tên đăng nhập
+            const tenDangNhapRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
+            if (!tenDangNhap.value.trim()) {
+                document.getElementById('addTenDangNhapError').textContent = 'Tên đăng nhập không được để trống';
+                isValid = false;
+            } else if (!tenDangNhapRegex.test(tenDangNhap.value.trim())) {
+                document.getElementById('addTenDangNhapError').textContent = 'Tên đăng nhập phải chứa cả chữ cái và số';
+                isValid = false;
+            }
+
+            // Validate Email
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            if (!email.value.trim()) {
+                document.getElementById('addEmailError').textContent = 'Email không được để trống';
+                isValid = false;
+            } else if (!emailRegex.test(email.value.trim())) {
+                document.getElementById('addEmailError').textContent = 'Email phải có định dạng @gmail.com';
+                isValid = false;
+            }
+
+            // Validate Số điện thoại
+            const soDienThoaiRegex = /^[0-9]{10}$/;
+            if (!soDienThoai.value.trim()) {
+                document.getElementById('addSoDienThoaiError').textContent = 'Số điện thoại không được để trống';
+                isValid = false;
+            } else if (!soDienThoaiRegex.test(soDienThoai.value.trim())) {
+                document.getElementById('addSoDienThoaiError').textContent = 'Số điện thoại phải là 10 chữ số';
+                isValid = false;
+            }
+
+            // Validate Mật khẩu
+            if (!matKhau.value.trim()) {
+                document.getElementById('addMatKhauError').textContent = 'Mật khẩu không được để trống';
+                isValid = false;
+            } else if (matKhau.value.length < 6) {
+                document.getElementById('addMatKhauError').textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+                isValid = false;
+            }
+
+            // Validate Ngày sinh (tùy chọn, chỉ kiểm tra định dạng nếu có giá trị)
+            if (!ngaySinh.value) {
+                document.getElementById('addNgaySinhError').textContent = 'Ngày sinh không được để trống';
+                isValid = false;
+            } else {
+                const today = new Date();
+                const birthDate = new Date(ngaySinh.value);
+                const age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                if (birthDate > today) {
+                    document.getElementById('addNgaySinhError').textContent = 'Ngày sinh không được lớn hơn ngày hiện tại';
+                    isValid = false;
+                } else if (age < 13 || (age === 13 && monthDiff < 0) || (age === 13 && monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    document.getElementById('addNgaySinhError').textContent = 'Tuổi phải từ 13 tuổi trở lên';
+                    isValid = false;
+                } else if (age > 120) {
+                    document.getElementById('addNgaySinhError').textContent = 'Tuổi không được vượt quá 120 tuổi';
+                    isValid = false;
+                }
+            }
+
+            // Validate Tỉnh/Thành phố
+            if (!tinhThanhPho.value) {
+                document.getElementById('addTinhThanhPhoError').textContent = 'Vui lòng chọn tỉnh/thành phố';
+                isValid = false;
+            }
+
+            // Validate Quận/Huyện
+            if (!quanHuyen.value) {
+                document.getElementById('addQuanHuyenError').textContent = 'Vui lòng chọn quận/huyện';
+                isValid = false;
+            }
+
+            // Validate Phường/Xã
+            if (!phuongXa.value) {
+                document.getElementById('addPhuongXaError').textContent = 'Vui lòng chọn phường/xã';
+                isValid = false;
+            }
+
+            // Validate Địa chỉ chi tiết
+            const chiTietDiaChiValue = chiTietDiaChi.value.trim();
+            if (!chiTietDiaChiValue) {
+                document.getElementById('addChiTietDiaChiError').textContent = 'Địa chỉ chi tiết không được để trống';
+                isValid = false;
+            } else if (chiTietDiaChiValue.length < 5) {
+                document.getElementById('addChiTietDiaChiError').textContent = 'Địa chỉ chi tiết phải có ít nhất 5 ký tự';
+                isValid = false;
+            } else if (chiTietDiaChiValue.length > 200) {
+                document.getElementById('addChiTietDiaChiError').textContent = 'Địa chỉ chi tiết không được vượt quá 200 ký tự';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Gắn sự kiện submit cho form thêm khách hàng
+        const addCustomerForm = document.getElementById('addCustomerForm');
+        if (addCustomerForm) {
+            addCustomerForm.addEventListener('submit', function (event) {
+                if (!validateAddCustomerForm()) {
+                    event.preventDefault(); // Ngăn form submit nếu validate thất bại
+                }
+            });
+        }
+
+        // Hàm validate cho form chỉnh sửa khách hàng
+        function validateEditCustomerForm(form) {
+            let isValid = true;
+            const hoTen = form.querySelector('input[name="hoTen"]');
+            const tenDangNhap = form.querySelector('input[name="tenDangNhap"]');
+            const email = form.querySelector('input[name="email"]');
+            const soDienThoai = form.querySelector('input[name="soDienThoai"]');
+            const matKhau = form.querySelector('input[name="matKhau"]');
+            const ngaySinh = form.querySelector('input[name="ngaySinh"]');
+            const tinhThanhPho = form.querySelector('select[name="tinhThanhPho"]');
+            const quanHuyen = form.querySelector('select[name="quanHuyen"]');
+            const phuongXa = form.querySelector('select[name="phuongXa"]');
+            const chiTietDiaChi = form.querySelector('input[name="chiTietDiaChi"]');
+
+            // Xóa thông báo lỗi cũ
+            form.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+
+            // Validate Họ tên
+            const hoTenValue = hoTen.value.trim(); // Loại bỏ khoảng trắng đầu và cuối
+            const hoTenRegex = /^[A-Za-zÀ-ỹ\s]+$/; // Chỉ cho phép chữ cái và khoảng trắng
+            if (!hoTenValue) {
+                hoTen.nextElementSibling.textContent = 'Họ tên không được để trống';
+                isValid = false;
+            } else if (!hoTenRegex.test(hoTenValue)) {
+                hoTen.nextElementSibling.textContent = 'Họ tên chỉ được chứa chữ cái và khoảng trắng';
+                isValid = false;
+            } else if (hoTenValue.indexOf('  ') !== -1) { // Kiểm tra có nhiều hơn 1 khoảng trắng liên tiếp
+                hoTen.nextElementSibling.textContent = 'Họ tên chỉ được chứa 1 khoảng trắng giữa các từ';
+                isValid = false;
+            }
+
+            // Validate Tên đăng nhập
+            const tenDangNhapRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
+            if (!tenDangNhap.value.trim()) {
+                tenDangNhap.nextElementSibling.textContent = 'Tên đăng nhập không được để trống';
+                isValid = false;
+            } else if (!tenDangNhapRegex.test(tenDangNhap.value.trim())) {
+                tenDangNhap.nextElementSibling.textContent = 'Tên đăng nhập phải chứa cả chữ cái và số';
+                isValid = false;
+            }
+
+            // Validate Email
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            if (!email.value.trim()) {
+                email.nextElementSibling.textContent = 'Email không được để trống';
+                isValid = false;
+            } else if (!emailRegex.test(email.value.trim())) {
+                email.nextElementSibling.textContent = 'Email phải có định dạng @gmail.com';
+                isValid = false;
+            }
+
+            // Validate Số điện thoại
+            const soDienThoaiRegex = /^[0-9]{10}$/;
+            if (!soDienThoai.value.trim()) {
+                soDienThoai.nextElementSibling.textContent = 'Số điện thoại không được để trống';
+                isValid = false;
+            } else if (!soDienThoaiRegex.test(soDienThoai.value.trim())) {
+                soDienThoai.nextElementSibling.textContent = 'Số điện thoại phải là 10 chữ số';
+                isValid = false;
+            }
+
+            // Validate Mật khẩu
+            if (!matKhau.value.trim()) {
+                matKhau.nextElementSibling.textContent = 'Mật khẩu không được để trống';
+                isValid = false;
+            } else if (matKhau.value.length < 6) {
+                matKhau.nextElementSibling.textContent = 'Mật khẩu phải có ít nhất 6 ký tự';
+                isValid = false;
+            }
+
+            // Validate Ngày sinh (tùy chọn)
+            if (!ngaySinh.value) {
+                ngaySinh.nextElementSibling.textContent = 'Ngày sinh không được để trống';
+                isValid = false;
+            } else {
+                const today = new Date();
+                const birthDate = new Date(ngaySinh.value);
+                const age = today.getFullYear() - birthDate.getFullYear();
+                const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                if (birthDate > today) {
+                    ngaySinh.nextElementSibling.textContent = 'Ngày sinh không được lớn hơn ngày hiện tại';
+                    isValid = false;
+                } else if (age < 13 || (age === 13 && monthDiff < 0) || (age === 13 && monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                    ngaySinh.nextElementSibling.textContent = 'Tuổi phải từ 13 tuổi trở lên';
+                    isValid = false;
+                } else if (age > 120) {
+                    ngaySinh.nextElementSibling.textContent = 'Tuổi không được vượt quá 120 tuổi';
+                    isValid = false;
+                }
+            }
+
+            // Validate Tỉnh/Thành phố
+            if (!tinhThanhPho.value) {
+                tinhThanhPho.nextElementSibling.textContent = 'Vui lòng chọn tỉnh/thành phố';
+                isValid = false;
+            }
+
+            // Validate Quận/Huyện
+            if (!quanHuyen.value) {
+                quanHuyen.nextElementSibling.textContent = 'Vui lòng chọn quận/huyện';
+                isValid = false;
+            }
+
+            // Validate Phường/Xã
+            if (!phuongXa.value) {
+                phuongXa.nextElementSibling.textContent = 'Vui lòng chọn phường/xã';
+                isValid = false;
+            }
+
+            // Validate Địa chỉ chi tiết
+            const chiTietDiaChiValue = chiTietDiaChi.value.trim();
+            if (!chiTietDiaChiValue) {
+                chiTietDiaChi.nextElementSibling.textContent = 'Địa chỉ chi tiết không được để trống';
+                isValid = false;
+            } else if (chiTietDiaChiValue.length < 5) {
+                chiTietDiaChi.nextElementSibling.textContent = 'Địa chỉ chi tiết phải có ít nhất 5 ký tự';
+                isValid = false;
+            } else if (chiTietDiaChiValue.length > 200) {
+                chiTietDiaChi.nextElementSibling.textContent = 'Địa chỉ chi tiết không được vượt quá 200 ký tự';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Gắn sự kiện submit cho các form chỉnh sửa
+        const editCustomerForms = document.querySelectorAll('form[action="/acvstore/customers/edit"]');
+        editCustomerForms.forEach(form => {
+            form.addEventListener('submit', function (event) {
+                if (!validateEditCustomerForm(form)) {
+                    event.preventDefault(); // Ngăn form submit nếu validate thất bại
+                }
+            });
+        });
+
+        async function ghnFetchProvinces() {
+            try {
+                const res  = await fetch('/api/ghn/provinces');
+                const json = await res.json();
+                const list = JSON.parse(json.data)?.data || []; // [{ProvinceID, ProvinceName}, ...]
+
+                const provinceSelects = document.querySelectorAll(
+                    'select[id^="addTinhThanhPho"], select[id^="editTinhThanhPho"]'
+                );
+                provinceSelects.forEach(select => {
+                    select.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
+                    list.forEach(p => {
+                        const opt = document.createElement('option');
+                        opt.value       = p.ProvinceName; // lưu tên để hiển thị/submit
+                        opt.textContent = p.ProvinceName;
+                        opt.dataset.id  = p.ProvinceID;   // GHN ProvinceID
+                        select.appendChild(opt);
+                    });
+                });
+                return list;
+            } catch (e) {
+                console.error('Lỗi tải tỉnh/thành phố (GHN):', e);
+                return [];
+            }
+        }
+
+        async function ghnFetchDistricts(provinceId, districtSelect, wardSelect) {
+            try {
+                const res  = await fetch(`/api/ghn/districts?provinceId=${provinceId}`);
+                const json = await res.json();
+                const list = JSON.parse(json.data)?.data || []; // [{DistrictID, DistrictName}, ...]
+
+                districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                wardSelect.innerHTML     = '<option value="">Chọn phường/xã</option>';
+
+                list.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value       = d.DistrictName;
+                    opt.textContent = d.DistrictName;
+                    opt.dataset.id  = d.DistrictID; // GHN DistrictID
+                    districtSelect.appendChild(opt);
+                });
+            } catch (e) {
+                console.error('Lỗi tải quận/huyện (GHN):', e);
+            }
+        }
+
+        async function ghnFetchWards(districtId, wardSelect) {
+            try {
+                const res  = await fetch(`/api/ghn/wards?districtId=${districtId}`);
+                const json = await res.json();
+                const list = JSON.parse(json.data)?.data || []; // [{WardCode, WardName}, ...]
+
+                wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                list.forEach(w => {
+                    const opt = document.createElement('option');
+                    opt.value        = w.WardName;
+                    opt.textContent  = w.WardName;
+                    opt.dataset.code = w.WardCode; // GHN WardCode
+                    wardSelect.appendChild(opt);
+                });
+            } catch (e) {
+                console.error('Lỗi tải phường/xã (GHN):', e);
+            }
+        }
+
+        function setSelectValue(selectElement, value) {
+            if (value && selectElement) {
+                const options = selectElement.querySelectorAll('option');
+                for (let option of options) {
+                    if (option.value === value) {
+                        option.selected = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        function setupEditFormGHN(customerId, currentProvince, currentDistrict, currentWard) {
+            const provinceSelect = document.getElementById(`editTinhThanhPho${customerId}`);
+            const districtSelect = document.getElementById(`editQuanHuyen${customerId}`);
+            const wardSelect     = document.getElementById(`editPhuongXa${customerId}`);
+            if (!provinceSelect || !districtSelect || !wardSelect) return;
+
+            setSelectValue(provinceSelect, currentProvince);
+            const pId = Number(provinceSelect.selectedOptions[0]?.dataset.id);
+            if (!pId) return;
+
+            ghnFetchDistricts(pId, districtSelect, wardSelect).then(() => {
+                setSelectValue(districtSelect, currentDistrict);
+                const dId = Number(districtSelect.selectedOptions[0]?.dataset.id);
+                if (!dId) return;
+
+                ghnFetchWards(dId, wardSelect).then(() => {
+                    setSelectValue(wardSelect, currentWard);
+                });
+            });
+        }
+
+        // === KHỞI TẠO GHN (sau khi đã khai báo các hàm ghn* ở trên) ===
+        ghnFetchProvinces().then(() => {
+            // --- ADD form selects ---
+            const addProvinceSelect = document.getElementById('addTinhThanhPho');
+            const addDistrictSelect = document.getElementById('addQuanHuyen');
+            const addWardSelect     = document.getElementById('addPhuongXa');
+
+            if (addProvinceSelect && addDistrictSelect && addWardSelect) {
+                addProvinceSelect.addEventListener('change', function () {
+                    const provinceId = Number(this.selectedOptions[0]?.dataset.id);
+                    if (provinceId) {
+                        ghnFetchDistricts(provinceId, addDistrictSelect, addWardSelect);
+                    } else {
+                        addDistrictSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                        addWardSelect.innerHTML     = '<option value="">Chọn phường/xã</option>';
+                    }
+                });
+
+                addDistrictSelect.addEventListener('change', function () {
+                    const districtId = Number(this.selectedOptions[0]?.dataset.id);
+                    if (districtId) {
+                        ghnFetchWards(districtId, addWardSelect);
+                    } else {
+                        addWardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                    }
+                });
+            }
+
+            // --- EDIT modals: load sẵn khi mở modal ---
+            const editModals = document.querySelectorAll('[id^="editCustomerModal"]');
+            editModals.forEach(modal => {
+                modal.addEventListener('show.bs.modal', function () {
+                    const customerId     = modal.id.replace('editCustomerModal', '');
+                    const provinceSelect = document.getElementById(`editTinhThanhPho${customerId}`);
+                    const districtSelect = document.getElementById(`editQuanHuyen${customerId}`);
+                    const wardSelect     = document.getElementById(`editPhuongXa${customerId}`);
+
+                    if (provinceSelect && districtSelect && wardSelect) {
+                        const currentProvince = provinceSelect.getAttribute('data-current-value') || '';
+                        const currentDistrict = districtSelect.getAttribute('data-current-value') || '';
+                        const currentWard     = wardSelect.getAttribute('data-current-value') || '';
+                        setupEditFormGHN(customerId, currentProvince, currentDistrict, currentWard);
+                    }
+                });
+            });
+        });
+
+        document.addEventListener('change', function (e) {
+            if (e.target.matches('select[id^="editTinhThanhPho"]')) {
+                const customerId     = e.target.id.replace('editTinhThanhPho','');
+                const districtSelect = document.getElementById(`editQuanHuyen${customerId}`);
+                const wardSelect     = document.getElementById(`editPhuongXa${customerId}`);
+                const provinceId     = Number(e.target.selectedOptions[0]?.dataset.id);
+
+                if (provinceId) {
+                    ghnFetchDistricts(provinceId, districtSelect, wardSelect);
+                } else {
+                    districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
+                    wardSelect.innerHTML     = '<option value="">Chọn phường/xã</option>';
+                }
+            }
+
+            if (e.target.matches('select[id^="editQuanHuyen"]')) {
+                const customerId = e.target.id.replace('editQuanHuyen','');
+                const wardSelect = document.getElementById(`editPhuongXa${customerId}`);
+                const districtId = Number(e.target.selectedOptions[0]?.dataset.id);
+
+                if (districtId) {
+                    ghnFetchWards(districtId, wardSelect);
+                } else {
+                    wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
+                }
+            }
+        });
+
+    });
+</script>
+<script th:src="@{/js/notification.js}"></script>
+
+</body>
+</html>

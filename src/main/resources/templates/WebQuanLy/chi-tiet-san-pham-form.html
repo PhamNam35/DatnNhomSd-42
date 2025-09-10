@@ -1,0 +1,2234 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quản Lý Chi Tiết Sản Phẩm</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap&subset=latin-ext" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/sidebar.js}" defer></script>
+    <!-- Add SweetAlert2 for custom confirm dialogs -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #153054;
+            --primary-hover: #102C47;
+            --secondary-color: #9FD5F7;
+            --secondary-hover: #84C7EA;
+            --accent-color: #479BD3;
+            --accent-hover: #CAEAFB;
+            --border-active: #62B2E7;
+            --main-background: #F4F9FC;
+            --content-background: #ffffff;
+            --header-background: #153054;
+            --text-primary: #153054;
+            --text-content: #333333;
+            --text-secondary: #6B7280;
+            --text-link: #479BD3;
+            --text-white: #ffffff;
+            --btn-danger: #F44336;
+            --btn-danger-hover: #D32F2F;
+            --success-bg: #D1FADF;
+            --success-text: #027A48;
+            --warning-bg: #FEF3C7;
+            --warning-text: #B45309;
+            --error-bg: #FECACA;
+            --error-text: #991B1B;
+            --border-color: #dee2e6;
+            --light-gray: #f8f9fa;
+            --shadow-light: 0 8px 32px rgba(21, 48, 84, 0.1);
+            --shadow-medium: 0 12px 40px rgba(21, 48, 84, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(21, 48, 84, 0.2);
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            background-color: var(--main-background);
+            color: var(--text-content);
+            min-height: 100vh;
+        }
+
+        .glass-card {
+            background: var(--content-background);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-light);
+            border-radius: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-title {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            background: var(--content-background);
+            backdrop-filter: blur(20px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--header-background), var(--primary-hover));
+            color: var(--text-white);
+            border-bottom: none;
+            padding: 1.5rem 2rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header span {
+            color: var(--text-white) !important;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(159, 213, 247, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .card-header:hover::before {
+            left: 100%;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--content-background);
+            color: var(--text-content);
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 4px rgba(98, 178, 231, 0.1);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .input-group-text {
+            background: var(--light-gray);
+            border: 2px solid var(--border-color);
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+            color: var(--text-primary);
+        }
+
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--text-white) !important;
+            box-shadow: 0 4px 15px rgba(21, 48, 84, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            border-color: var(--primary-hover);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.3);
+        }
+
+        .btn-warning {
+            background: var(--secondary-color);
+            border-color: var(--secondary-color);
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(159, 213, 247, 0.3);
+        }
+
+        .btn-warning:hover {
+            background: var(--secondary-hover);
+            border-color: var(--secondary-hover);
+            color: var(--text-primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(159, 213, 247, 0.4);
+        }
+
+        .btn-success {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(71, 155, 211, 0.3);
+        }
+
+        .btn-success:hover {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(71, 155, 211, 0.4);
+        }
+
+        .btn-danger {
+            background: var(--btn-danger);
+            border-color: var(--btn-danger);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+        }
+
+        .btn-danger:hover {
+            background: var(--btn-danger-hover);
+            border-color: var(--btn-danger-hover);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+        }
+
+        .btn-secondary {
+            background: var(--text-secondary);
+            border-color: var(--text-secondary);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+            border-color: #4b5563;
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+        }
+
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            min-width: 44px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .table {
+            margin-bottom: 0;
+            border-color: var(--border-color);
+            vertical-align: middle;
+            width: 100%;
+            background: var(--content-background);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-light);
+        }
+
+        .table thead {
+            background: var(--light-gray);
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .table th {
+            padding: 1.5rem 1rem;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .table td {
+            padding: 1.5rem 1rem;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+            text-align: center;
+            color: var(--text-content);
+        }
+
+        .table-hover > tbody > tr {
+            transition: all 0.3s ease;
+        }
+
+        .table-hover > tbody > tr:hover {
+            background: var(--accent-hover);
+            transform: scale(1.01);
+            box-shadow: 0 4px 20px rgba(71, 155, 211, 0.1);
+        }
+
+        .product-image {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.2);
+        }
+
+        .action-buttons {
+            position: relative;
+        }
+
+        .action-buttons .edit-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            padding: 8px 16px;
+            font-size: 0.875rem;
+            min-width: 44px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        .form-switch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .form-check-input {
+            cursor: pointer;
+            width: 3em;
+            height: 1.5em;
+            border-radius: 2em;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--success-text);
+            border-color: var(--success-text);
+            box-shadow: 0 0 0 4px rgba(2, 122, 72, 0.2);
+        }
+
+        .form-check-input:not(:checked) {
+            background-color: var(--btn-danger);
+            border-color: var(--btn-danger);
+            box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.2);
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            transition: all 0.3s ease;
+            color: var(--text-content);
+        }
+
+        .search-section {
+            background: var(--content-background);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .section-icon {
+            width: 32px;
+            height: 32px;
+            color: var(--accent-color);
+        }
+
+        .search-form-row {
+            display: flex;
+            align-items: end;
+            gap: 1.5rem;
+        }
+
+        .search-form-row .col-md-4 {
+            flex: 1;
+        }
+
+        .search-form-row .floating-label {
+            margin-bottom: 0;
+        }
+
+        .role-badge {
+            position: fixed;
+            top: 20px;
+            left: 280px;
+            z-index: 1000;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.15);
+        }
+
+        .role-admin {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+        }
+
+        .role-employee {
+            background: linear-gradient(135deg, var(--accent-color), var(--secondary-color));
+            color: var(--text-primary);
+        }
+
+        .text-dark {
+            color: var(--text-primary) !important;
+        }
+
+        .fw-semibold {
+            color: var(--text-content);
+        }
+
+        .fw-bold {
+            color: var(--text-content);
+        }
+
+        .badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-success {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .badge-warning {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .badge-danger {
+            background: var(--error-bg);
+            color: var(--error-text);
+        }
+
+        .modal-content {
+            border-radius: 24px;
+            border: none;
+            box-shadow: var(--shadow-heavy);
+            background: var(--content-background);
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+            border-bottom: none;
+            border-radius: 24px 24px 0 0;
+            padding: 2rem 2.5rem;
+            position: relative;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(159, 213, 247, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .modal-header:hover::before {
+            left: 100%;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1) grayscale(100%) brightness(200%);
+            font-size: 1.2rem;
+            padding: 0.5rem;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-white);
+        }
+
+        .modal-body {
+            padding: 2.5rem;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.95));
+        }
+
+        .modal-footer {
+            border-top: 2px solid var(--border-color);
+            padding: 2rem 2.5rem;
+            border-radius: 0 0 24px 24px;
+            background: rgba(248,249,250,0.8);
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+        }
+
+        .modal-footer .btn {
+            min-width: 140px;
+            padding: 12px 24px;
+            font-weight: 600;
+            border-radius: 12px;
+        }
+
+        .toast {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: var(--primary-color);
+            color: var(--text-white);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .floating-label {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .floating-label input,
+        .floating-label select,
+        .floating-label textarea {
+            padding-top: 1.75rem;
+            padding-bottom: 0.75rem;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--content-background);
+            color: var(--text-content);
+        }
+
+        .floating-label input:focus,
+        .floating-label select:focus,
+        .floating-label textarea:focus {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 4px rgba(98, 178, 231, 0.1);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .floating-label label {
+            position: absolute;
+            left: 1rem;
+            top: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--content-background);
+            padding: 0 0.5rem;
+            border-radius: 4px;
+        }
+
+        .image-preview-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+            background: rgba(248,249,250,0.8);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px dashed var(--border-color);
+            transition: all 0.3s ease;
+            min-height: 150px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-preview-container:hover {
+            border-color: var(--border-active);
+            background: rgba(248,249,250,0.95);
+        }
+
+        .image-preview {
+            position: relative;
+            width: 100px;
+            height: 100px;
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .image-preview img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.2);
+        }
+
+        .image-preview .remove-image {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: var(--btn-danger);
+            color: var(--text-white);
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .image-preview .remove-image:hover {
+            transform: scale(1.1);
+            background: var(--btn-danger-hover);
+        }
+
+        .status-badge {
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .status-inactive {
+            background: var(--error-bg);
+            color: var(--error-text);
+        }
+
+        .breadcrumb {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
+
+        .breadcrumb-item a {
+            color: var(--text-link);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb-item a:hover {
+            color: var(--primary-color);
+        }
+
+        .breadcrumb-item.active {
+            color: var(--text-secondary);
+        }
+
+        .employee-notice {
+            background: var(--secondary-hover);
+            border: 1px solid var(--secondary-color);
+            color: var(--text-primary);
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .employee-notice i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .error-message {
+            font-size: 0.875rem;
+            color: var(--error-text);
+            margin-top: 0.25rem;
+        }
+
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 10px;
+            background: rgba(248,249,250,0.8);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px dashed var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .qr-container:hover {
+            border-color: var(--border-active);
+            background: rgba(248,249,250,0.95);
+        }
+
+        .qr-image {
+            width: 200px;
+            height: 200px;
+            object-fit: contain;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .qr-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .card-body, .modal-body {
+                padding: 1.5rem;
+            }
+
+            .search-section {
+                padding: 1.5rem;
+            }
+
+            .search-form-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-form-row .floating-label {
+                margin-bottom: 1.5rem;
+            }
+
+            .breadcrumb {
+                margin-left: 1rem;
+                margin-right: 1rem;
+            }
+
+            .table th,
+            .table td {
+                font-size: 0.875rem;
+                padding: 1rem 0.5rem;
+            }
+
+            .product-image {
+                max-width: 40px;
+                max-height: 40px;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                gap: 4px;
+                min-height: auto;
+                justify-content: center;
+            }
+
+            .btn-sm {
+                min-width: 36px;
+                height: 36px;
+                padding: 6px 8px;
+                font-size: 0.75rem;
+            }
+
+            .form-check-input {
+                width: 2.5em;
+                height: 1.25em;
+            }
+
+            .role-badge {
+                left: 20px;
+                top: 80px;
+            }
+
+            .qr-image {
+                width: 150px;
+                height: 150px;
+            }
+        }
+
+        .modal-body .form-check.form-switch .form-check-input {
+            width: 3em;
+            height: 1.5em;
+        }
+
+        .modal-body .form-check.form-switch .form-check-label {
+            margin-left: 1rem;
+            white-space: nowrap;
+            line-height: 1.5em;
+        }
+    </style>
+</head>
+<body>
+<div class="d-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+
+    <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+        <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </nav>
+
+    <div th:if="${user != null}"
+         th:class="'role-badge ' + (${isAdmin} ? 'role-admin' : 'role-employee')">
+        <i class="fas fa-user-shield me-2"></i>
+        <span th:text="${isAdmin} ? 'Admin' : 'Employee'">Role</span>
+    </div>
+
+    <div class="content" id="content">
+        <div class="text-center mb-2 mt-3">
+            <h2 class="page-title">QUẢN LÝ CHI TIẾT SẢN PHẨM</h2>
+            <div th:if="${param.success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${param.success[0]}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb justify-content-center">
+                <li class="breadcrumb-item"><a th:href="@{/acvstore/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
+                <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-list me-1"></i>Chi Tiết Sản Phẩm</li>
+            </ol>
+        </nav>
+
+        <!-- Cập nhật thông báo để chỉ hiển thị cho user không có quyền chỉnh sửa -->
+        <div th:unless="${canEdit}" class="employee-notice">
+            <i class="fas fa-info-circle me-2"></i>
+            <strong>Chế độ xem:</strong> Bạn đang ở chế độ chỉ xem. Không thể chỉnh sửa thông tin sản phẩm.
+        </div>
+
+        <div class="card mb-4 glass-card">
+            <div class="card-body">
+                <div class="section-header">
+                    <i class="fas fa-filter section-icon"></i>
+                    <h3 class="fs-4 fw-bold text-dark mb-0">Bộ lọc chi tiết sản phẩm</h3>
+                </div>
+                <form th:action="@{/acvstore/chi-tiet-san-pham}" method="get">
+                    <input type="hidden" name="productId" th:value="${selectedProductId}"/>
+                    <div class="row g-4 align-items-end">
+
+                        <!-- Hàng 1: Sản phẩm -->
+                        <div class="col-12">
+                            <div class="floating-label">
+                                <label for="productFilter">Sản phẩm</label>
+                                <input type="text" class="form-control" id="productFilter"
+                                       th:value="${sanPhamDaChon?.tenSanPham}" disabled/>
+                            </div>
+                        </div>
+
+                        <!-- Hàng 2: Màu sắc - Kích cỡ - Trạng thái - Xóa bộ lọc -->
+                        <div class="col-md-3">
+                            <div class="floating-label">
+                                <label for="colorFilter">Màu sắc</label>
+                                <select class="form-select" id="colorFilter" name="colorId" onchange="this.form.submit()">
+                                    <option value="">-- Tất cả màu sắc --</option>
+                                    <option th:each="c : ${mauSacs}" th:value="${c.id}" th:text="${c.tenMau}"
+                                            th:selected="${c.id == selectedColorId}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="floating-label">
+                                <label for="sizeFilter">Kích cỡ</label>
+                                <select class="form-select" id="sizeFilter" name="sizeId" onchange="this.form.submit()">
+                                    <option value="">-- Tất cả kích cỡ --</option>
+                                    <option th:each="s : ${kichCos}" th:value="${s.id}" th:text="${s.ten}"
+                                            th:selected="${s.id == selectedSizeId}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="floating-label">
+                                <label for="statusFilter">Trạng thái</label>
+                                <select class="form-select" id="statusFilter" name="status" onchange="this.form.submit()">
+                                    <option value="">-- Tất cả trạng thái --</option>
+                                    <option value="true" th:selected="${selectedStatus != null and selectedStatus == true}">Đang Bán</option>
+                                    <option value="false" th:selected="${selectedStatus != null and selectedStatus == false}">Ngừng Bán</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Removed align-top class and simplified alignment -->
+                        <div class="col-md-3" style="margin-bottom: 35px">
+                            <a th:href="@{/acvstore/chi-tiet-san-pham(productId=${selectedProductId})}"
+                               class="btn btn-secondary d-flex align-items-center justify-content-center" style="height: 65px">
+                                <i class="fas fa-filter me-2"></i> Xóa bộ lọc
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+
+        <!-- Hide quick edit section for employees -->
+        <div class="d-flex justify-content-between align-items-center mb-3" th:if="${canEdit}">
+            <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-pen fs-5 text-muted"></i>
+                <span class="text-muted">Chọn biến thể để sửa nhanh</span>
+            </div>
+            <!-- Cập nhật để hiển thị nút sửa cho cả admin và employee -->
+            <button id="bulkEditBtn" class="btn btn-primary" disabled th:if="${canEdit}">
+                <i class="fas fa-edit me-2"></i>Sửa mục đã chọn
+            </button>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover mb-0" id="chiTietSanPhamTable">
+                <thead>
+                <tr>
+                    <!-- Hide checkbox column for employees -->
+                    <th style="width:42px;" th:if="${canEdit}">
+                        <input type="checkbox" id="selectAll" title="Chọn tất cả"/>
+                    </th>
+                    <th>#</th>
+                    <th>Ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Màu sắc</th>
+                    <th>Kích cỡ</th>
+                    <th>Giới tính</th>
+                    <th>Giá</th>
+                    <th>Số lượng tồn</th>
+                    <!-- Cập nhật header để hiển thị cột thao tác cho user có quyền chỉnh sửa -->
+                    <th style="min-width: 150px;">Trạng thái</th>
+                    <!-- Always show action column with different text based on user role -->
+                    <th th:text="${canEdit} ? 'Thao tác' : 'Xem'"></th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${chiTietSanPhamList == null or chiTietSanPhamList.isEmpty()}">
+                    <!-- Update colspan to account for hidden checkbox column -->
+                    <td th:colspan="${canEdit} ? 11 : 10" class="text-center text-muted py-5">Chưa có chi tiết sản phẩm nào được thêm.</td>
+                </tr>
+                <tr th:each="pd, stats : ${chiTietSanPhamList}" th:data-id="${pd.id}">
+                    <!-- Hide checkbox for employees -->
+                    <td th:if="${canEdit}">
+                        <input type="checkbox" class="row-check" th:value="${pd.id}" />
+                    </td>
+                    <td th:text="${stats.count}"></td>
+                    <td>
+                        <div th:if="${pd.hinhAnhSanPhams != null and !pd.hinhAnhSanPhams.isEmpty()}">
+                            <div th:with="img = ${pd.hinhAnhSanPhams[0]}">
+                                <img th:if="${img.urlHinhAnh != null and !#strings.isEmpty(img.urlHinhAnh)}"
+                                     th:src="${img.urlHinhAnh}"
+                                     class="product-image"
+                                     alt="Ảnh sản phẩm"
+                                     onerror="this.onerror=null; this.src='/image/placeholder.svg'; this.alt='Ảnh lỗi';">
+                                <span th:if="${img.urlHinhAnh == null or #strings.isEmpty(img.urlHinhAnh)}"
+                                      class="text-muted">Không có</span>
+                            </div>
+                        </div>
+                        <span th:unless="${pd.hinhAnhSanPhams != null and !pd.hinhAnhSanPhams.isEmpty()}"
+                              class="text-muted">Không có</span>
+                    </td>
+                    <td class="fw-semibold text-dark" th:text="${pd.sanPham?.tenSanPham ?: 'N/A'}"></td>
+                    <td th:text="${pd.mauSac?.tenMau ?: 'N/A'}"></td>
+                    <td th:text="${pd.kichCo?.ten ?: 'N/A'}"></td>
+                    <td th:text="${pd.gioiTinh ?: 'N/A'}"></td>
+                    <td class="fw-bold" th:text="${#numbers.formatDecimal(pd.gia, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></td>
+                    <td class="fw-bold" th:text="${pd.soLuongTonKho}"></td>
+                    <td style="min-width: 150px;">
+                        <!-- Cập nhật để hiển thị switch cho user có quyền chỉnh sửa -->
+                        <th:block th:if="${canEdit}">
+                            <div class="form-check form-switch d-flex justify-content-center align-items-center">
+                                <input class="form-check-input status-toggle"
+                                       type="checkbox"
+                                       th:checked="${pd.trangThai != null and pd.trangThai}"
+                                       th:data-id="${pd.id}"
+                                       role="switch">
+                                <label class="form-check-label ms-2"
+                                       th:text="${pd.trangThai != null and pd.trangThai} ? 'Đang Bán' : 'Ngừng Bán'"></label>
+                            </div>
+                        </th:block>
+                        <!-- Hiển thị status badge cho user không có quyền chỉnh sửa -->
+                        <th:block th:unless="${canEdit}">
+                            <span th:class="${pd.trangThai} ? 'status-badge status-active' : 'status-badge status-inactive'"
+                                  th:text="${pd.trangThai} ? 'Đang Bán' : 'Ngừng Bán'"></span>
+                        </th:block>
+                    </td>
+                    <!-- Updated to show view button for employees and edit button for admins -->
+                    <td class="text-center action-buttons">
+                        <!-- Show for both admin and employee, but different functionality -->
+                        <button class="btn btn-sm edit-btn"
+                                th:class="'btn btn-sm edit-btn ' + (${isAdmin} ? 'btn-warning' : 'btn-info')"
+                                th:data-id="${pd.id}"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editChiTietSanPhamModal"
+                                th:title="${isAdmin} ? 'Sửa' : 'Xem'">
+                            <i th:class="${isAdmin} ? 'fas fa-edit' : 'fas fa-eye'"></i>
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Updated modal to show for both admin and employee -->
+    <div class="modal fade" id="editChiTietSanPhamModal" tabindex="-1" aria-labelledby="editChiTietSanPhamModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- Dynamic title based on user role -->
+                    <h5 class="modal-title" id="editChiTietSanPhamModalLabel">
+                        <i th:class="${isAdmin} ? 'fas fa-edit me-2' : 'fas fa-eye me-2'"></i>
+                        <span th:text="${isAdmin} ? 'Sửa Chi Tiết Sản Phẩm' : 'Xem Chi Tiết Sản Phẩm'">Chi Tiết Sản Phẩm</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="editChiTietSanPhamForm" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <input type="hidden" id="editId" name="id"/>
+                        <input type="hidden" name="deletedImageIds" id="deletedImageIds">
+                        <input type="hidden" id="editMode" name="restricted" value="false"/>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editProduct">Sản phẩm</label>
+                                    <input type="text" class="form-control lockable" id="editProduct" th:value="${sanPhamDaChon?.tenSanPham}" disabled/>
+                                    <input type="hidden" id="editProductHidden" name="productId" class="lockable" th:value="${selectedProductId}"/>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editOrigin">Xuất xứ</label>
+                                    <select class="form-select lockable" id="editOrigin" name="originId" required>
+                                        <option value="">Chọn xuất xứ...</option>
+                                        <option th:each="o : ${xuatXus}" th:value="${o.id}" th:text="${o.tenXuatXu}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editSize">Kích cỡ</label>
+                                    <select class="form-select lockable" id="editSize" name="sizeId" required>
+                                        <option value="">Chọn kích cỡ...</option>
+                                        <option th:each="s : ${kichCos}" th:value="${s.id}" th:text="${s.ten}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editColor">Màu sắc</label>
+                                    <select class="form-select lockable" id="editColor" name="colorId" required>
+                                        <option value="">Chọn màu...</option>
+                                        <option th:each="c : ${mauSacs}" th:value="${c.id}" th:text="${c.tenMau}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editMaterial">Chất liệu</label>
+                                    <select class="form-select lockable" id="editMaterial" name="materialId" required>
+                                        <option value="">Chọn chất liệu...</option>
+                                        <option th:each="m : ${chatLieus}" th:value="${m.id}" th:text="${m.tenChatLieu}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editStyle">Kiểu dáng</label>
+                                    <select class="form-select lockable" id="editStyle" name="styleId" required>
+                                        <option value="">Chọn kiểu dáng...</option>
+                                        <option th:each="st : ${kieuDangs}" th:value="${st.id}" th:text="${st.tenKieuDang}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editSleeve">Tay áo</label>
+                                    <select class="form-select lockable" id="editSleeve" name="sleeveId" required>
+                                        <option value="">Chọn tay áo...</option>
+                                        <option th:each="sa : ${tayAos}" th:value="${sa.id}" th:text="${sa.tenTayAo}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editCollar">Cổ áo</label>
+                                    <select class="form-select lockable" id="editCollar" name="collarId" required>
+                                        <option value="">Chọn cổ áo...</option>
+                                        <option th:each="ca : ${coAos}" th:value="${ca.id}" th:text="${ca.tenCoAo}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editBrand">Thương hiệu</label>
+                                    <select class="form-select lockable" id="editBrand" name="brandId" required>
+                                        <option value="">Chọn thương hiệu...</option>
+                                        <option th:each="th : ${thuongHieus}" th:value="${th.id}" th:text="${th.tenThuongHieu}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editGender">Giới tính</label>
+                                    <select class="form-select lockable" id="editGender" name="gender" required>
+                                        <option value="">Chọn giới tính...</option>
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                        <option value="Unisex">Unisex</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editPrice">Giá bán</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">VNĐ</span>
+                                        <input type="text" class="form-control" id="editPrice" name="price" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editStockQuantity">Số lượng tồn</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-boxes"></i></span>
+                                        <input type="number" class="form-control" id="editStockQuantity" name="stockQuantity" min="0" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="editStatus" class="form-label fw-semibold text-dark mb-2">Trạng thái</label>
+                                    <div class="form-check form-switch d-flex align-items-center">
+                                        <input class="form-check-input" type="checkbox" id="editStatus" name="status" value="true">
+                                        <label class="form-check-label ms-3 fw-semibold fs-6" id="statusLabel" for="editStatus">Ngừng Bán</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold text-dark mb-3">
+                                    <i class="fas fa-images me-2"></i>Ảnh hiện có (Nhấn nút '×' để xóa)
+                                </label>
+                                <div class="image-preview-container" id="existingImages">
+                                    <div id="noExistingImagePlaceholder" class="d-flex flex-column align-items-center justify-content-center text-muted" style="min-height: 100px; display: none;">
+                                        <i class="fas fa-image fs-3 mb-2"></i>
+                                        <span>Chưa có ảnh nào</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label for="editImages" class="form-label fw-semibold text-dark mb-3">
+                                    <i class="fas fa-plus-circle me-2"></i>Thêm ảnh mới (tối đa 3 ảnh)
+                                </label>
+                                <input type="file" class="form-control" id="editImages" name="imageFiles" multiple accept="image/*">
+                                <div class="image-preview-container" id="newImagesPreview">
+                                    <div id="noNewImagePlaceholder" class="d-flex flex-column align-items-center justify-content-center text-muted" style="min-height: 100px;">
+                                        <i class="fas fa-upload fs-3 mb-2"></i>
+                                        <span>Chọn ảnh để xem trước</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-12">
+                                <label class="form-label fw-semibold text-dark mb-3">
+                                    <i class="fas fa-qrcode me-2"></i>Mã QR
+                                </label>
+                                <div class="qr-container" id="qrCodeContainer">
+                                    <img id="qrCodeImage" src="/placeholder.svg" alt="Mã QR" class="qr-image" onerror="this.onerror=null; this.src='/image/placeholder.svg'; this.alt='Không có mã QR';">
+                                    <a id="downloadQrLink" href="" download="qr_code.png" class="btn btn-primary btn-sm">
+                                        <i class="fas fa-download me-2"></i>Tải mã QR
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <span th:text="${isAdmin} ? 'Hủy' : 'Đóng'">Đóng</span>
+                        </button>
+                        <!-- Only show save button for admin -->
+                        <button type="submit" class="btn btn-primary" th:if="${isAdmin}">
+                            <i class="fas fa-save me-2"></i>Lưu thay đổi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="bulkFullEditModal" tabindex="-1" aria-hidden="true" th:if="${isAdmin}">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <form id="bulkFullEditForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><i class="fas fa-tools me-2"></i>Sửa toàn bộ thuộc tính (tất cả biến thể)</h5>
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Đóng</button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="hidden" id="bulkIds" name="ids"/>
+                        <!-- Reuse các block select giống modal edit, NHƯNG không gắn class lockable -->
+                        <!-- LƯU Ý: Modal này KHÔNG xử lý ảnh (mỗi biến thể ảnh khác nhau). -->
+                        <!-- Sản phẩm -->
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Xuất xứ</label>
+                                    <select class="form-select" name="originId" required>
+                                        <option value="">Chọn xuất xứ...</option>
+                                        <option th:each="o : ${xuatXus}" th:value="${o.id}" th:text="${o.tenXuatXu}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Chất liệu</label>
+                                    <select class="form-select" name="materialId" required>
+                                        <option value="">Chọn chất liệu...</option>
+                                        <option th:each="m : ${chatLieus}" th:value="${m.id}" th:text="${m.tenChatLieu}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4 mt-1">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Kiểu dáng</label>
+                                    <select class="form-select" name="styleId" required>
+                                        <option value="">Chọn kiểu dáng...</option>
+                                        <option th:each="st : ${kieuDangs}" th:value="${st.id}" th:text="${st.tenKieuDang}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Tay áo</label>
+                                    <select class="form-select" name="sleeveId" required>
+                                        <option value="">Chọn tay áo...</option>
+                                        <option th:each="sa : ${tayAos}" th:value="${sa.id}" th:text="${sa.tenTayAo}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4 mt-1">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Cổ áo</label>
+                                    <select class="form-select" name="collarId" required>
+                                        <option value="">Chọn cổ áo...</option>
+                                        <option th:each="ca : ${coAos}" th:value="${ca.id}" th:text="${ca.tenCoAo}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Thương hiệu</label>
+                                    <select class="form-select" name="brandId" required>
+                                        <option value="">Chọn thương hiệu...</option>
+                                        <option th:each="th : ${thuongHieus}" th:value="${th.id}" th:text="${th.tenThuongHieu}"></option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4 mt-1">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Giới tính</label>
+                                    <select class="form-select" name="gender" required>
+                                        <option value="">Chọn giới tính...</option>
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                        <option value="Unisex">Unisex</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Giá bán</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text">VNĐ</span>
+                                        <input type="text" class="form-control" id="bulkPrice" name="price" required>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row g-4 mt-1">
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Số lượng tồn</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-boxes"></i></span>
+                                        <input type="text" class="form-control" name="stockQuantity" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold text-dark mb-2">Trạng thái</label>
+                                <div class="form-check form-switch d-flex align-items-center">
+                                    <input class="form-check-input" type="checkbox" id="bulkStatus" name="status" value="true">
+                                    <label class="form-check-label ms-3">Đang Bán</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info mt-4">
+                            <i class="fas fa-info-circle me-2"></i>
+                            Thao tác này áp dụng cho <strong>tất cả biến thể được chọn</strong>. Ảnh chi tiết không chỉnh hàng loạt.
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Lưu thay đổi cho tất cả
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</div>
+</div>
+
+<div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    let totalCheckable = 0;
+    function countSelected() {
+        return $('.row-check:checked').length;
+    }
+
+
+    function validateNumberInput(value, fieldName) {
+        // Loại bỏ dấu chấm (.) để kiểm tra
+        const cleanValue = value.replace(/\./g, '');
+
+        // Kiểm tra trống
+        if (!cleanValue || cleanValue.trim() === '') {
+            return `${fieldName} không được để trống.`;
+        }
+
+        // Kiểm tra chỉ chứa số
+        if (!/^\d+$/.test(cleanValue)) {
+            return `${fieldName} chỉ được chứa số, không chứa ký tự đặc biệt hoặc chữ.`;
+        }
+
+        // Kiểm tra số âm
+        const numValue = parseInt(cleanValue);
+        if (numValue < 0) {
+            return `${fieldName} không được là số âm.`;
+        }
+
+        // Kiểm tra giá bán không được bằng 0
+        if (fieldName === 'Giá bán' && numValue === 0) {
+            return `${fieldName} phải lớn hơn 0.`;
+        }
+
+        return null; // Hợp lệ
+    }
+
+    function showToast(message, type = "info") {
+        const container = document.getElementById("toastContainer");
+        if (!container) return;
+
+        const toast = document.createElement("div");
+        const colors = {
+            success: "bg-success",
+            error: "bg-danger",
+            warning: "bg-warning",
+            info: "bg-primary"
+        };
+
+        toast.className = `toast show align-items-center text-white ${colors[type] || colors.info} border-0`;
+        toast.setAttribute('role', 'alert');
+        toast.setAttribute('aria-live', 'assertive');
+        toast.setAttribute('aria-atomic', 'true');
+
+        const icon = {
+            success: "fas fa-check-circle",
+            error: "fas fa-exclamation-circle",
+            warning: "fas fa-exclamation-triangle",
+            info: "fas fa-info-circle"
+        };
+
+        toast.innerHTML = `
+      <div class="d-flex">
+          <div class="toast-body d-flex align-items-center gap-2">
+              <i class="${icon[type] || icon.info}"></i>
+              <span class="fw-medium">${message}</span>
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+      </div>
+  `;
+
+        container.appendChild(toast);
+
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.remove();
+            }
+        }, 4000);
+    }
+
+    function formatNumber(num) {
+        if (num === null || num === undefined) return '';
+        return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    }
+
+    function parseNumber(str) {
+        if (str === null || str === undefined || str.trim() === '') return 0;
+        return parseInt(str.replace(/\./g, ''));
+    }
+
+    $(document).ready(function () {
+        const permissions = checkUserPermissions();
+
+        // Real-time formatting và validate cho giá bán và số lượng tồn
+        $('#editPrice, #editStockQuantity, #bulkPrice, #bulkFullEditForm input[name="stockQuantity"]').on('input', function() {
+            const fieldName = $(this).closest('.floating-label').find('label').text();
+            let value = $(this).val().replace(/\./g, '');
+
+            // Chỉ cho phép số
+            if (value && !/^\d*$/.test(value)) {
+                value = value.replace(/[^0-9]/g, '');
+                $(this).val(value);
+            }
+
+            // Định dạng số với dấu chấm
+            if (value) {
+                $(this).val(formatNumber(value));
+            }
+
+            // Validate
+            const error = validateNumberInput($(this).val(), fieldName);
+            const $parent = $(this).closest('.floating-label');
+
+            // Xóa thông báo lỗi cũ
+            $parent.find('.error-message').remove();
+
+            if (error) {
+                $(this).addClass('is-invalid');
+                $parent.append(`<div class="error-message text-danger mt-1">${error}</div>`);
+            } else {
+                $(this).removeClass('is-invalid');
+            }
+        });
+
+        $('#editChiTietSanPhamModal').on('show.bs.modal', function() {
+            if (permissions.isEmployee) {
+                setTimeout(makeFormReadOnly, 100);
+            }
+        });
+
+        if (!permissions.canEdit && permissions.isEmployee) {
+            console.log('Employee user - Read-only mode enabled');
+            $('#bulkEditBtn').text('Xem mục đã chọn').removeClass('btn-primary').addClass('btn-info');
+            $('#bulkEditBtn i').removeClass('fa-edit').addClass('fa-eye');
+            return;
+        }
+
+        function checkUserPermissions() {
+            const isAdmin = document.querySelector('[th\\:class*="role-admin"]') !== null;
+            const isEmployee = document.querySelector('[th\\:class*="role-employee"]') !== null;
+            const canEdit = document.querySelector('[th\\:if="${canEdit}"]') !== null ||
+                document.querySelector('.status-toggle') !== null;
+
+            return {
+                isAdmin: isAdmin,
+                isEmployee: isEmployee,
+                canEdit: canEdit
+            };
+        }
+
+        function makeFormReadOnly() {
+            // Disable all form inputs and make them visually read-only
+            $('#editChiTietSanPhamForm :input').prop('readonly', true).prop('disabled', true);
+            $('#editChiTietSanPhamForm select').prop('disabled', true);
+            $('#editChiTietSanPhamForm textarea').prop('readonly', true).prop('disabled', true);
+
+            // Hide all action buttons completely
+            $('#editChiTietSanPhamForm .btn').hide();
+            $('#editChiTietSanPhamForm .modal-footer .btn-primary').hide();
+            $('#editChiTietSanPhamForm .modal-footer .btn-secondary').text('Đóng');
+
+            // Completely remove image delete buttons and disable image interactions
+            $('#editChiTietSanPhamForm .remove-image').remove();
+            $('#editChiTietSanPhamForm .image-preview').css({
+                'pointer-events': 'none',
+                'cursor': 'default'
+            });
+
+            // Hide entire file upload section
+            $('#editChiTietSanPhamForm #editImages').prop('disabled', true).hide();
+            $('#editChiTietSanPhamForm label[for="editImages"]').hide();
+            $('#editChiTietSanPhamForm #newImagesPreview').hide();
+
+            // Completely disable and hide form switches
+            $('#editChiTietSanPhamForm .form-check-input').prop('disabled', true).hide();
+            $('#editChiTietSanPhamForm .form-check-label').hide();
+            $('#editChiTietSanPhamForm .form-check.form-switch').parent().html(
+                '<div class="mb-3">' +
+                '<label class="form-label fw-semibold text-dark mb-2">Trạng thái</label>' +
+                '<div class="form-control bg-light text-muted" style="border: none; cursor: default;">' +
+                ($('#editStatus').is(':checked') ? 'Đang Bán' : 'Ngừng Bán') +
+                '</div>' +
+                '</div>'
+            );
+
+            // Remove all event handlers completely
+            $('#editChiTietSanPhamForm').off();
+            $('#editChiTietSanPhamForm *').off();
+
+            // Add comprehensive visual styling for read-only state
+            $('#editChiTietSanPhamForm :input:not(.form-check-input)').addClass('bg-light text-muted').css({
+                'cursor': 'default',
+                'pointer-events': 'none'
+            });
+
+            // Disable all hover effects and interactions
+            $('#editChiTietSanPhamForm').css('pointer-events', 'auto');
+            $('#editChiTietSanPhamForm *').css('user-select', 'text');
+            $('#editChiTietSanPhamForm input, #editChiTietSanPhamForm select, #editChiTietSanPhamForm textarea').css({
+                'cursor': 'default',
+                'pointer-events': 'none'
+            });
+
+            // Add read-only notice at the top
+            if (!$('#readOnlyNotice').length) {
+                $('#editChiTietSanPhamForm .modal-body').prepend(
+                    '<div id="readOnlyNotice" class="alert alert-info mb-3">' +
+                    '<i class="fas fa-eye me-2"></i>' +
+                    'Bạn đang ở chế độ chỉ xem. Không thể chỉnh sửa thông tin.' +
+                    '</div>'
+                );
+            }
+        }
+
+        $('#editChiTietSanPhamModal').on('hidden.bs.modal', function () {
+            // Làm sạch trạng thái modal
+            $(this).find('form')[0].reset(); // Reset form
+            $('#existingImages').empty(); // Xóa ảnh hiện có
+            $('#newImagesPreview').empty(); // Xóa ảnh mới
+            $('#noExistingImagePlaceholder').show(); // Hiển thị placeholder ảnh hiện có
+            $('#noNewImagePlaceholder').show(); // Hiển thị placeholder ảnh mới
+            $('#deletedImageIds').val(''); // Xóa danh sách ID ảnh bị xóa
+            deletedImageIds = []; // Reset mảng ảnh bị xóa
+            $('#editMode').val('false'); // Reset chế độ chỉnh sửa
+            setRestrictedMode(false); // Mở khóa các trường lockable
+
+            // Xóa backdrop thủ công nếu vẫn còn
+            $('.modal-backdrop').remove();
+            $('body').removeClass('modal-open');
+            $('body').css('padding-right', ''); // Xóa padding do modal thêm vào
+        });
+
+        $('#editChiTietSanPhamModal .btn-secondary').on('click', function () {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editChiTietSanPhamModal'));
+            modal.hide(); // Đóng modal
+        });
+
+        function setRestrictedMode(enabled) {
+            if (enabled) {
+                // khóa tất cả field lockable
+                $('#editChiTietSanPhamModal .lockable').prop('disabled', true);
+                // mở các field được phép
+                $('#editPrice, #editStockQuantity, #editStatus, #editImages').prop('disabled', false);
+            } else {
+                // mở tất cả
+                $('#editChiTietSanPhamModal .lockable').prop('disabled', false);
+            }
+        }
+
+        function openRestrictedEdit(productDetailId) {
+            $.ajax({
+                url: '/acvstore/chi-tiet-san-pham/edit/' + productDetailId,
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    // fill dữ liệu như logic hiện có:
+                    $('#editId').val(response.id);
+                    $('#editProductHidden').val(response.productId);
+                    $('#editColor').val(response.colorId).trigger('change');
+                    $('#editSize').val(response.sizeId).trigger('change');
+                    $('#editOrigin').val(response.originId).trigger('change');
+                    $('#editMaterial').val(response.materialId).trigger('change');
+                    $('#editStyle').val(response.styleId).trigger('change');
+                    $('#editSleeve').val(response.sleeveId).trigger('change');
+                    $('#editCollar').val(response.collarId).trigger('change');
+                    $('#editBrand').val(response.brandId).trigger('change');
+                    $('#editGender').val(response.gender).trigger('change');
+                    $('#editPrice').val(formatNumber(response.price || 0));
+                    $('#editStockQuantity').val(formatNumber(response.stockQuantity || 0));
+                    $('#editStatus').prop('checked', response.status === true);
+
+                    const qrUrl = '/qr/qr_' + response.id + '.png';
+                    $('#qrCodeImage').attr('src', qrUrl);
+                    $('#downloadQrLink').attr('href', qrUrl);
+
+                    // ảnh cũ
+                    function loadExistingImages(images) {
+                        const existingImagesContainer = $('#existingImages');
+                        existingImagesContainer.empty();
+
+                        if (images && images.length > 0) {
+                            images.forEach(image => {
+                                if (image.imageUrl && image.imageUrl.trim() !== "") {
+                                    const deleteButton = window.isEmployee ? '' : `<button type="button" class="remove-image" data-image-id="${image.id}" onclick="deleteImage(this)">×</button>`;
+
+                                    existingImagesContainer.append(`
+                                        <div class="image-preview">
+                                            <img src="${image.imageUrl}" alt="Ảnh sản phẩm" onerror="this.onerror=null; this.src='/image/placeholder.svg'; this.alt='Ảnh lỗi';">
+                                            ${deleteButton}
+                                        </div>
+                                    `);
+                                }
+                            });
+                            $('#noExistingImagePlaceholder').hide();
+                        } else {
+                            $('#noExistingImagePlaceholder').show();
+                        }
+                    }
+                    loadExistingImages(response.images);
+
+                    // bật chế độ RESTRICTED
+                    setRestrictedMode(true);
+
+                    // mở modal
+                    const modal = new bootstrap.Modal(document.getElementById('editChiTietSanPhamModal'));
+                    modal.show();
+                    updateStatusLabel();
+                },
+                error: function (xhr) {
+                    showToast("Lỗi khi tải dữ liệu chi tiết sản phẩm: " + (xhr.responseText || xhr.statusText), 'error');
+                }
+            });
+        }
+
+        function updateStatusLabel() {
+            const statusInput = $('#editStatus');
+            const statusLabel = $('#statusLabel');
+            const stockQuantity = parseNumber($('#editStockQuantity').val()) || 0;
+
+            if (stockQuantity === 0) {
+                statusInput.prop('checked', false).prop('disabled', true);
+                statusLabel.text('Ngừng Bán (Hết hàng)');
+            } else {
+                statusInput.prop('disabled', false);
+                statusLabel.text(statusInput.is(':checked') ? 'Đang Bán' : 'Ngừng Bán');
+            }
+        }
+
+        $('#editStatus').on('change', updateStatusLabel);
+        $('#editStockQuantity').on('input', updateStatusLabel);
+
+        $('#editPrice').on('input', function() {
+            let value = $(this).val().replace(/\./g, '');
+            if (value) {
+                $(this).val(formatNumber(value));
+            }
+        });
+
+        $('#bulkFullEditForm').on('submit', function(e) {
+            e.preventDefault();
+
+            // Scope to the current form
+            var $form = $(this);
+            var $priceInput = $form.find('input[name="price"]');  // This is #bulkPrice
+            var $stockInput = $form.find('input[name="stockQuantity"]');
+
+            // Xóa thông báo lỗi cũ (scoped)
+            $priceInput.closest('.floating-label').find('.error-message').remove();
+            $stockInput.closest('.floating-label').find('.error-message').remove();
+
+            // Validate (using scoped values)
+            const priceError = validateNumberInput($priceInput.val(), 'Giá bán');
+            const stockError = validateNumberInput($stockInput.val(), 'Số lượng tồn');
+
+            let hasError = false;
+
+            if (priceError) {
+                $priceInput.addClass('is-invalid');
+                $priceInput.closest('.floating-label').append(`<div class="error-message text-danger mt-1">${priceError}</div>`);
+                hasError = true;
+            } else {
+                $priceInput.removeClass('is-invalid');
+            }
+
+            if (stockError) {
+                $stockInput.addClass('is-invalid');
+                $stockInput.closest('.floating-label').append(`<div class="error-message text-danger mt-1">${stockError}</div>`);
+                hasError = true;
+            } else {
+                $stockInput.removeClass('is-invalid');
+            }
+
+            if (hasError) {
+                showToast('Vui lòng kiểm tra và sửa lỗi trong biểu mẫu.', 'error');
+                return;
+            }
+
+            // Proceed with form data (scoped)
+            const fd = new FormData(this);
+            fd.set('price', parseNumber($priceInput.val()));
+            fd.set('stockQuantity', parseNumber($stockInput.val()));
+
+            $.ajax({
+                url: '/acvstore/chi-tiet-san-pham/update-bulk',
+                type: 'POST',
+                data: fd,
+                processData: false,
+                contentType: false,
+                success: function (res) {
+                    showToast(res.message || 'Cập nhật thành công!', 'success');
+                    setTimeout(() => {
+                        const pidRaw = $('#editProductHidden').val() || $('[name="productId"]').val();
+                        const pid = (pidRaw && pidRaw !== 'undefined' && pidRaw !== 'null' && pidRaw.trim() !== '') ? pidRaw : '';
+                        const href = pid
+                            ? `/acvstore/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
+                            : `/acvstore/chi-tiet-san-pham?success=Cập nhật thành công`;
+                        window.location.href = href;
+                    }, 800);
+                },
+                error: function (xhr) {
+                    showToast("Lỗi cập nhật hàng loạt: " + (xhr.responseText || xhr.statusText), 'error');
+                }
+            });
+        });
+
+
+        $(document).on('click', '.edit-btn', function () {
+            const productDetailId = $(this).data('id');
+            $.ajax({
+                url: '/acvstore/chi-tiet-san-pham/edit/' + productDetailId,
+                type: 'GET',
+                dataType: 'json',
+                success: function (response) {
+                    $('#editId').val(response.id);
+                    $('#editProductHidden').val(response.productId);
+                    $('#editColor').val(response.colorId).trigger('change');
+                    $('#editSize').val(response.sizeId).trigger('change');
+                    $('#editOrigin').val(response.originId).trigger('change');
+                    $('#editMaterial').val(response.materialId).trigger('change');
+                    $('#editStyle').val(response.styleId).trigger('change');
+                    $('#editSleeve').val(response.sleeveId).trigger('change');
+                    $('#editCollar').val(response.collarId).trigger('change');
+                    $('#editBrand').val(response.brandId).trigger('change');
+                    $('#editGender').val(response.gender).trigger('change');
+                    $('#editPrice').val(formatNumber(response.price || 0));
+                    $('#editStockQuantity').val(formatNumber(response.stockQuantity || 0));
+                    $('#editStatus').prop('checked', response.status === true);
+                    const qrUrl = '/qr/qr_' + response.id + '.png';
+                    $('#qrCodeImage').attr('src', qrUrl);
+                    $('#downloadQrLink').attr('href', qrUrl);
+                    updateStatusLabel();
+
+                    // ảnh cũ
+                    const existingImagesContainer = $('#existingImages');
+                    existingImagesContainer.empty();
+                    $('#deletedImageIds').val('');
+                    deletedImageIds = [];
+
+                    if (response.images && response.images.length > 0) {
+                        response.images.sort((a, b) => a.thuTu - b.thuTu);
+                        response.images.forEach(image => {
+                            if (image.imageUrl && image.imageUrl.trim() !== "") {
+                                const imageHtml = `
+                              <div class="image-preview">
+                                  <img src="${image.imageUrl}" alt="Ảnh sản phẩm" onerror="this.onerror=null; this.src='/image/placeholder.svg'; this.alt='Ảnh lỗi';">
+                                  <button type="button" class="remove-image" data-image-id="${image.id}" onclick="deleteImage(this)">×</button>
+                              </div>
+                          `;
+                                existingImagesContainer.append(imageHtml);
+                            }
+                        });
+                        $('#noExistingImagePlaceholder').hide();
+                    } else {
+                        $('#noExistingImagePlaceholder').show();
+                    }
+                    $('#newImagesPreview').empty();
+                    $('#editImages').val('');
+                    $('#noNewImagePlaceholder').show();
+                },
+                error: function (xhr) {
+                    showToast("Lỗi khi tải dữ liệu chi tiết sản phẩm: " + (xhr.responseText || xhr.statusText), 'error');
+                }
+            });
+        });
+
+        let deletedImageIds = [];
+
+        window.deleteImage = function(button) {
+            // Loại bỏ hoàn toàn chức năng xóa nếu user là employee
+            if (window.isEmployee) {
+                return false;
+            }
+
+            const imageId = $(button).data('image-id');
+            deletedImageIds.push(imageId);
+            $('#deletedImageIds').val(deletedImageIds.join(','));
+            $(button).closest('.image-preview').remove();
+            showToast('Ảnh đã được đánh dấu để xóa khi lưu.', 'info');
+            if ($('#existingImages .image-preview').length === 0) {
+                $('#noExistingImagePlaceholder').show();
+            }
+        };
+
+        $('#editImages').on('change', function () {
+            const currentExisting = $('#existingImages .image-preview').length;
+            const maxNew = 3 - currentExisting;
+            const previewContainer = $('#newImagesPreview');
+            previewContainer.empty();
+            const files = this.files;
+            if (files.length > maxNew) {
+                showToast(`Bạn chỉ có thể thêm tối đa ${maxNew} ảnh nữa.`, 'warning');
+                this.value = '';
+                $('#noNewImagePlaceholder').show();
+                return;
+            }
+            if (files.length > 0) {
+                $('#noNewImagePlaceholder').hide();
+            } else {
+                $('#noNewImagePlaceholder').show();
+            }
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const previewHtml = `
+                  <div class="image-preview">
+                      <img src="${e.target.result}" alt="Ảnh mới">
+                  </div>
+              `;
+                    previewContainer.append(previewHtml);
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
+        $('#editChiTietSanPhamForm').on('submit', function (e) {
+            e.preventDefault();
+
+            // Validate giá bán và số lượng tồn
+            const priceError = validateNumberInput($('#editPrice').val(), 'Giá bán');
+            const stockError = validateNumberInput($('#editStockQuantity').val(), 'Số lượng tồn');
+
+            // Xóa thông báo lỗi cũ
+            $('#editPrice').closest('.floating-label').find('.error-message').remove();
+            $('#editStockQuantity').closest('.floating-label').find('.error-message').remove();
+
+            let hasError = false;
+
+            if (priceError) {
+                $('#editPrice').addClass('is-invalid');
+                $('#editPrice').closest('.floating-label').append(`<div class="error-message text-danger mt-1">${priceError}</div>`);
+                hasError = true;
+            } else {
+                $('#editPrice').removeClass('is-invalid');
+            }
+
+            if (stockError) {
+                $('#editStockQuantity').addClass('is-invalid');
+                $('#editStockQuantity').closest('.floating-label').append(`<div class="error-message text-danger mt-1">${stockError}</div>`);
+                hasError = true;
+            } else {
+                $('#editStockQuantity').removeClass('is-invalid');
+            }
+
+            const totalImages = $('#existingImages .image-preview').length + $('#newImagesPreview .image-preview').length;
+            if (totalImages > 3) {
+                showToast('Tổng số ảnh không được vượt quá 3.', 'error');
+                hasError = true;
+            }
+
+            if (hasError) {
+                showToast('Vui lòng kiểm tra và sửa lỗi trong biểu mẫu.', 'error');
+                return;
+            }
+
+            const id = $('#editId').val();
+            if (!id || id === 'undefined' || id === 'null') {
+                showToast('Không xác định được ID chi tiết sản phẩm.', 'error');
+                return;
+            }
+            const formData = new FormData(this);
+            formData.set('status', $('#editStatus').is(':checked'));
+            formData.set('deletedImageIds', deletedImageIds.join(','));
+            formData.set('price', parseNumber($('#editPrice').val()));
+            formData.set('stockQuantity', parseNumber($('#editStockQuantity').val()));
+
+            $.ajax({
+                url: '/acvstore/chi-tiet-san-pham/update/' + id,
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $('#editChiTietSanPhamModal').modal('hide');
+                    showToast("Cập nhật thành công!", "success");
+                    setTimeout(() => {
+                        const pid = (response.productId && response.productId !== 'undefined' && response.productId !== 'null')
+                            ? response.productId : '';
+                        const href = pid
+                            ? `/acvstore/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
+                            : `/acvstore/chi-tiet-san-pham?success=Cập nhật thành công`;
+                        window.location.href = href;
+                    }, 1000);
+                },
+                error: function (xhr) {
+                    showToast("Lỗi khi cập nhật chi tiết sản phẩm: " + (xhr.responseText || xhr.statusText), 'error');
+                }
+            });
+        });
+
+        totalCheckable = $('.row-check').length;
+
+        $('#selectAll').on('change', function() {
+            const checked = $(this).is(':checked');
+            $('.row-check').prop('checked', checked);
+            $('#bulkEditBtn').prop('disabled', countSelected() === 0);
+        });
+
+        $(document).on('change', '.row-check', function() {
+            const allChecked = countSelected() === totalCheckable;
+            $('#selectAll').prop('checked', allChecked);
+            $('#bulkEditBtn').prop('disabled', countSelected() === 0);
+        });
+
+        $('#bulkEditBtn').on('click', function() {
+            const selected = $('.row-check:checked').map(function(){ return $(this).val(); }).get();
+            if (selected.length === 0) {
+                showToast('Hãy chọn ít nhất 1 biến thể.', 'warning');
+                return;
+            }
+            if (selected.length === totalCheckable && totalCheckable > 1) {
+                // FULL EDIT MODE: mở modal bulk
+                $('#bulkIds').val(selected.join(','));
+
+                // Lấy dữ liệu từ các biến thể được chọn
+                let commonAttributes = {
+                    originId: null,
+                    materialId: null,
+                    styleId: null,
+                    sleeveId: null,
+                    collarId: null,
+                    brandId: null,
+                    gender: null,
+                    price: null,
+                    stockQuantity: null,
+                    status: null
+                };
+
+                // Flag để kiểm tra giá trị có đồng nhất không
+                let isFirst = true;
+                let allSame = true;
+
+                // Duyệt qua các hàng được chọn
+                $('.row-check:checked').each(function() {
+                    const row = $(this).closest('tr');
+                    const id = $(this).val();
+
+                    // Lấy dữ liệu từ API hoặc trực tiếp từ DOM
+                    $.ajax({
+                        url: '/acvstore/chi-tiet-san-pham/edit/' + id,
+                        type: 'GET',
+                        dataType: 'json',
+                        async: false, // Đảm bảo đồng bộ để thu thập dữ liệu trước khi mở modal
+                        success: function(response) {
+                            if (isFirst) {
+                                // Lưu giá trị của biến thể đầu tiên
+                                commonAttributes.originId = response.originId;
+                                commonAttributes.materialId = response.materialId;
+                                commonAttributes.styleId = response.styleId;
+                                commonAttributes.sleeveId = response.sleeveId;
+                                commonAttributes.collarId = response.collarId;
+                                commonAttributes.brandId = response.brandId;
+                                commonAttributes.gender = response.gender;
+                                commonAttributes.price = response.price;
+                                commonAttributes.stockQuantity = response.stockQuantity;
+                                commonAttributes.status = response.status;
+                                isFirst = false;
+                            } else {
+                                // So sánh với các biến thể tiếp theo
+                                if (commonAttributes.originId !== response.originId) commonAttributes.originId = null;
+                                if (commonAttributes.materialId !== response.materialId) commonAttributes.materialId = null;
+                                if (commonAttributes.styleId !== response.styleId) commonAttributes.styleId = null;
+                                if (commonAttributes.sleeveId !== response.sleeveId) commonAttributes.sleeveId = null;
+                                if (commonAttributes.collarId !== response.collarId) commonAttributes.collarId = null;
+                                if (commonAttributes.brandId !== response.brandId) commonAttributes.brandId = null;
+                                if (commonAttributes.gender !== response.gender) commonAttributes.gender = null;
+                                if (commonAttributes.price !== response.price) commonAttributes.price = null;
+                                if (commonAttributes.stockQuantity !== response.stockQuantity) commonAttributes.stockQuantity = null;
+                                if (commonAttributes.status !== response.status) commonAttributes.status = null;
+                            }
+                        },
+                        error: function(xhr) {
+                            showToast("Lỗi khi tải dữ liệu biến thể: " + (xhr.responseText || xhr.statusText), 'error');
+                            allSame = false;
+                        }
+                    });
+                });
+
+                if (allSame) {
+                    // Điền dữ liệu vào modal
+                    $('#bulkFullEditForm select[name="originId"]').val(commonAttributes.originId || '').trigger('change');
+                    $('#bulkFullEditForm select[name="materialId"]').val(commonAttributes.materialId || '').trigger('change');
+                    $('#bulkFullEditForm select[name="styleId"]').val(commonAttributes.styleId || '').trigger('change');
+                    $('#bulkFullEditForm select[name="sleeveId"]').val(commonAttributes.sleeveId || '').trigger('change');
+                    $('#bulkFullEditForm select[name="collarId"]').val(commonAttributes.collarId || '').trigger('change');
+                    $('#bulkFullEditForm select[name="brandId"]').val(commonAttributes.brandId || '').trigger('change');
+                    $('#bulkFullEditForm select[name="gender"]').val(commonAttributes.gender || '').trigger('change');
+                    $('#bulkFullEditForm input[name="price"]').val(commonAttributes.price ? formatNumber(commonAttributes.price) : '');
+                    $('#bulkFullEditForm input[name="stockQuantity"]').val(commonAttributes.stockQuantity ? formatNumber(commonAttributes.stockQuantity) : '');
+                    $('#bulkFullEditForm input[name="status"]').prop('checked', commonAttributes.status === true);
+                    $('#bulkFullEditForm .form-check-label').text(commonAttributes.status ? 'Đang Bán' : 'Ngừng Bán');
+                }
+
+                // Mở modal
+                const modal = new bootstrap.Modal(document.getElementById('bulkFullEditModal'));
+                modal.show();
+            } else {
+                // SINGLE/RESTRICTED MODE: chỉ cho sửa giá, tồn, trạng thái, ảnh
+                if (selected.length > 1) {
+                    showToast('Muốn sửa toàn bộ thuộc tính: hãy chọn TẤT CẢ biến thể.', 'info');
+                    return;
+                }
+                const id = selected[0];
+                if (!id) {
+                    showToast('Hãy tick đúng 1 dòng để sửa nhanh.', 'warning');
+                    return;
+                }
+                openRestrictedEdit(id);
+                setRestrictedMode(true);
+                $('#editMode').val('true');
+            }
+        });
+
+        // Khi bấm nút edit riêng từng dòng → luôn mở RESTRICTED (theo yêu cầu)
+        $(document).off('click', '.edit-btn').on('click', '.edit-btn', function () {
+            const id = $(this).data('id');
+            openRestrictedEdit(id);
+            setRestrictedMode(true);
+            $('#editMode').val('true');
+        });
+
+        // format số ở bulk price
+        $('#bulkPrice').on('input', function(){
+            let v = $(this).val().replace(/\./g, '');
+            if (v) $(this).val(formatNumber(v));
+        });
+
+        $('.status-toggle').on('change', function () {
+            // Completely prevent status change if user is employee
+            if (window.isEmployee) {
+                $(this).prop('checked', !$(this).is(':checked'));
+                return false;
+            }
+
+            const productDetailId = $(this).data('id');
+            const newStatus = $(this).is(':checked');
+            const statusLabel = $(this).next('.form-check-label');
+            const toggleElement = $(this); // Lưu reference để dùng trong callback
+
+            const row = $(this).closest('tr');
+            // Sửa lại index column - kiểm tra đúng cột số lượng tồn
+            const stockQuantityText = row.find('td').eq(8).text().trim(); // Cột "Số lượng tồn" là cột thứ 9 (index 8)
+            const stockQuantity = parseInt(stockQuantityText) || 0;
+
+            console.log('Stock quantity:', stockQuantity, 'New status:', newStatus); // Debug
+
+            if (newStatus && stockQuantity === 0) {
+                showToast('Không thể bật trạng thái "Đang Bán" khi số lượng tồn kho bằng 0.', 'warning');
+                $(this).prop('checked', false);
+                statusLabel.text('Ngừng Bán');
+                return;
+            }
+
+            Swal.fire({
+                title: 'Xác nhận thay đổi trạng thái',
+                text: `Bạn có chắc muốn thay đổi trạng thái thành "${newStatus ? 'Đang Bán' : 'Ngừng Bán'}"?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Người dùng xác nhận, tiếp tục cập nhật
+                    statusLabel.text(newStatus ? 'Đang Bán' : 'Ngừng Bán');
+                    $.ajax({
+                        url: '/acvstore/chi-tiet-san-pham/update-status',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            id: productDetailId,
+                            trangThai: newStatus
+                        }),
+                        success: function (response) {
+                            if (response.success) {
+                                showToast(response.message || 'Cập nhật trạng thái thành công!', 'success');
+                                // Đảm bảo UI được cập nhật đúng
+                                toggleElement.prop('checked', newStatus);
+                                statusLabel.text(newStatus ? 'Đang Bán' : 'Ngừng Bán');
+                            } else {
+                                showToast(response.message || 'Có lỗi xảy ra', 'error');
+                                // Revert lại trạng thái cũ
+                                toggleElement.prop('checked', !newStatus);
+                                statusLabel.text(!newStatus ? 'Đang Bán' : 'Ngừng Bán');
+                            }
+                        },
+                        error: function (xhr) {
+                            console.error('Ajax error:', xhr); // Debug
+                            showToast("Lỗi khi cập nhật trạng thái: " + (xhr.responseJSON?.message || xhr.responseText || xhr.statusText), 'error');
+                            // Revert lại trạng thái cũ
+                            toggleElement.prop('checked', !newStatus);
+                            statusLabel.text(!newStatus ? 'Đang Bán' : 'Ngừng Bán');
+                        }
+                    });
+                } else {
+                    // Người dùng hủy, revert trạng thái gốc
+                    toggleElement.prop('checked', !newStatus);
+                }
+            });
+        });
+    });
+
+</script>
+<script th:src="@{/js/notification.js}"></script>
+</body>
+</html>

@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Quản lý yêu cầu đổi sản phẩm - ACV Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/admin.css}"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/sidebar.js}" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #153054;
+            --primary-light: #1e4a6b;
+            --primary-dark: #0f2340;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --white: #ffffff;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            color: var(--primary-color);
+            line-height: 1.6;
+            margin: 0;
+            padding-top: 100px;
+            min-height: 100vh;
+            font-weight: 400;
+        }
+
+        .page-title {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 3rem;
+            font-size: 2.5rem;
+            letter-spacing: -0.025em;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            border-radius: 2px;
+        }
+
+        .info-section {
+            background: var(--white);
+            border-radius: 24px;
+            padding: 0;
+            box-shadow: var(--shadow-xl);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 3rem;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .info-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--primary-light) 50%, var(--primary-color) 100%);
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 0 0 24px 24px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 1400px;
+            border-collapse: collapse;
+            background: var(--white);
+            margin: 0;
+        }
+
+        table thead {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        table th {
+            padding: 1.5rem 1rem;
+            text-align: left;
+            white-space: nowrap;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-bottom: 3px solid var(--primary-dark);
+            position: relative;
+        }
+
+        table th::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+        }
+
+        table td {
+            padding: 1.25rem 1rem;
+            text-align: left;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--gray-100);
+            font-size: 0.875rem;
+            color: var(--gray-700);
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        table tbody tr {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        table tbody tr:hover {
+            background: linear-gradient(135deg, var(--gray-50) 0%, rgba(21, 48, 84, 0.02) 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.08);
+        }
+
+        table tbody tr:hover td {
+            color: var(--primary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-buttons button {
+            padding: 0;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 44px;
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-buttons button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .action-buttons button:hover::before {
+            transform: translateX(0);
+        }
+
+        .btn-approve {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-approve:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-approve i {
+            font-size: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-reject {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-reject:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-reject i {
+            font-size: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-approve-all {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            width: auto;
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+
+        .btn-approve-all:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .price {
+            font-weight: 700;
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, rgba(21, 48, 84, 0.1) 0%, rgba(21, 48, 84, 0.05) 100%);
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 0.875rem;
+        }
+
+        .price.negative {
+            color: var(--danger-color);
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
+        }
+
+        /* Status badges */
+        td:nth-child(11) {
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+        }
+
+        .status-badge::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .status-badge:hover::before {
+            left: 100%;
+        }
+
+        .status-badge i {
+            font-size: 1rem;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.1));
+        }
+
+        .status-pending {
+            background: linear-gradient(135deg, var(--warning-color) 0%, #f59e0b 100%);
+            color: var(--white);
+            animation: pulse-warning 2s infinite;
+        }
+
+        .status-confirmed {
+            background: linear-gradient(135deg, var(--success-color) 0%, #059669 100%);
+            color: var(--white);
+        }
+
+        .status-cancelled {
+            background: linear-gradient(135deg, var(--danger-color) 0%, #dc2626 100%);
+            color: var(--white);
+        }
+
+        .status-processing {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: var(--white);
+            animation: pulse-processing 1.5s infinite;
+        }
+
+        @keyframes pulse-warning {
+            0%, 100% {
+                box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+                transform: scale(1);
+            }
+            50% {
+                box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5);
+                transform: scale(1.02);
+            }
+        }
+
+        @keyframes pulse-processing {
+            0%, 100% {
+                box-shadow: 0 4px 12px rgba(21, 48, 84, 0.3);
+            }
+            50% {
+                box-shadow: 0 6px 20px rgba(21, 48, 84, 0.5);
+            }
+        }
+
+        /* Enhanced status column width */
+        table th:nth-child(7), table td:nth-child(7) {
+            min-width: 180px;
+            text-align: center;
+        }
+
+        /* Pagination styling */
+        .pagination {
+            margin-top: 2rem;
+        }
+
+        .pagination .page-link {
+            color: var(--primary-color);
+            border: 2px solid var(--gray-200);
+            padding: 0.75rem 1rem;
+            margin: 0 0.25rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .pagination .page-link:hover {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.3);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            border-color: var(--primary-color);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.3);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: var(--gray-400);
+            background: var(--gray-100);
+            border-color: var(--gray-200);
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 1200px) {
+            .page-title {
+                font-size: 2rem;
+            }
+
+            table th, table td {
+                padding: 1rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Loading animation for buttons */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .action-buttons button:active {
+            animation: pulse 0.3s ease;
+        }
+
+        /* Custom scrollbar */
+        .table-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .table-container::-webkit-scrollbar-track {
+            background: var(--gray-100);
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            border-radius: 4px;
+        }
+
+        .table-container::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Enhanced product variant styling */
+        .product-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-width: 200px;
+        }
+
+        .product-name {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 0.875rem;
+            line-height: 1.3;
+        }
+
+        .product-variants {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .color-swatch {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            background: var(--gray-50);
+            border: 1px solid var(--gray-200);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--gray-700);
+            transition: all 0.2s ease;
+        }
+
+        .color-swatch:hover {
+            background: var(--gray-100);
+            transform: translateY(-1px);
+        }
+
+        .size-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            height: 24px;
+            padding: 0 0.5rem;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: var(--white);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+        }
+
+        .replacement-indicator {
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .replacement-indicator::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--success-color);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .product-section {
+            border-left: 3px solid var(--gray-200);
+            padding-left: 1rem;
+            position: relative;
+        }
+
+        .product-section.original {
+            border-left-color: var(--warning-color);
+        }
+
+        .product-section.replacement {
+            border-left-color: var(--success-color);
+        }
+
+        /* Color mapping for common colors */
+        .color-dot[data-color*="đỏ"], .color-dot[data-color*="red"] { background-color: #ef4444; }
+        .color-dot[data-color*="xanh"], .color-dot[data-color*="blue"] { background-color: #3b82f6; }
+        .color-dot[data-color*="vàng"], .color-dot[data-color*="yellow"] { background-color: #eab308; }
+        .color-dot[data-color*="xám"], .color-dot[data-color*="gray"] { background-color: #6b7280; }
+        .color-dot[data-color*="đen"], .color-dot[data-color*="black"] { background-color: #1f2937; }
+        .color-dot[data-color*="trắng"], .color-dot[data-color*="white"] { background-color: #ffffff; border-color: #d1d5db; }
+        .color-dot[data-color*="hồng"], .color-dot[data-color*="pink"] { background-color: #ec4899; }
+        .color-dot[data-color*="tím"], .color-dot[data-color*="purple"] { background-color: #8b5cf6; }
+        .color-dot[data-color*="cam"], .color-dot[data-color*="orange"] { background-color: #f97316; }
+        .color-dot[data-color*="nâu"], .color-dot[data-color*="brown"] { background-color: #92400e; }
+        .color-dot[data-color*="lục"], .color-dot[data-color*="green"] { background-color: #10b981; }
+
+        /* Enhanced table layout for product columns */
+        table th:nth-child(3), table th:nth-child(4) {
+            min-width: 220px;
+        }
+
+        table td:nth-child(3), table td:nth-child(4) {
+            white-space: normal;
+            min-width: 220px;
+        }
+
+        table th:nth-child(5), table th:nth-child(6),
+        table th:nth-child(7), table th:nth-child(8),
+        table th:nth-child(9) {
+            min-width: 120px;
+        }
+
+        /* Group separation */
+        .group-start {
+            border-top: 1px solid var(--primary-color) !important;
+            margin-top: 1rem;
+        }
+
+        .group-row {
+            background: rgba(21, 48, 84, 0.03);
+        }
+
+        .group-end {
+            border-bottom: 1px solid var(--primary-dark) !important;
+        }
+
+        /* Group header styling */
+            /*.group-header {*/
+            /*    background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);*/
+            /*    color: var(--white);*/
+            /*    font-weight: 700;*/
+            /*    font-size: 1rem;*/
+            /*    text-transform: uppercase;*/
+            /*    letter-spacing: 0.05em;*/
+            /*}*/
+
+        .group-header-cell {
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 2px solid var(--primary-dark);
+            /*box-shadow: var(--shadow-md);*/
+        }
+
+        /*.group-header-title {*/
+        /*    display: inline-block;*/
+        /*    padding: 0.5rem 1rem;*/
+        /*    !*border-radius: 8px;*!*/
+        /*    !*background: rgba(255, 255, 255, 0.1);*!*/
+        /*}*/
+    </style>
+</head>
+<body>
+<div class="d-flex">
+    <!-- Include sidebar fragment -->
+    <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+
+    <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+        <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </nav>
+
+    <!-- Nội dung chính bên phải -->
+    <div class="content" id="content">
+        <h1 class="page-title">Quản lý yêu cầu đổi sản phẩm</h1>
+
+        <div class="info-section mb-4">
+            <div class="p-4">
+                <form th:action="@{/acvstore/exchange-requests}" method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label for="searchMaDonHang" class="form-label">Mã hóa đơn</label>
+                        <input type="text" class="form-control" id="searchMaDonHang" name="searchMaDonHang"
+                               th:value="${searchMaDonHang}"
+                               placeholder="Nhập mã đơn hàng...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="searchHoTen" class="form-label">Tên khách hàng</label>
+                        <input type="text" class="form-control" id="searchHoTen" name="searchHoTen"
+                               th:value="${searchHoTen}"
+                               placeholder="Nhập tên khách hàng...">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="searchTrangThai" class="form-label">Trạng thái</label>
+                        <select class="form-select" id="searchTrangThai" name="searchTrangThai">
+                            <option value="" th:selected="${searchTrangThai == null or searchTrangThai == ''}">Tất cả</option>
+                            <option value="Chờ xử lý" th:selected="${searchTrangThai == 'Chờ xử lý'}">Chờ xử lý</option>
+                            <option value="Đã xác nhận" th:selected="${searchTrangThai == 'Đã xác nhận'}">Đã xác nhận</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex align-items-end">
+                        <button type="submit" class="btn w-100" style="background-color:#153054; border-color:#153054; color:#fff;">
+                            <i class="fas fa-search me-2"></i>Tìm kiếm
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <div class="table-container">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Mã đơn hàng</th>
+                        <th>Khách hàng</th>
+                        <th>Sản phẩm gốc</th>
+                        <th>Sản phẩm thay thế</th>
+                        <th>Số lượng</th>
+                        <th>Lý do</th>
+                        <th>Trạng thái</th>
+                        <th>Thời gian</th>
+                        <th>Chênh lệch giá</th>
+                        <th>Hành động</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <th:block th:each="group, groupStat : ${groups}">
+                        <!-- Group header row for invoice number -->
+                        <tr th:class="'group-start' + (${groupStat.first} ? ' group-header' : '')">
+                            <td colspan="10" class="group-header-cell">
+<!--                                <span class="group-header-title">Hoá đơn: <span th:text="${group[0].hoaDon.donHang.maDonHang}"></span></span>-->
+                            </td>
+                        </tr>
+                        <tr th:class="${groupStat.first} ? 'group-row' : ''">
+                            <td th:rowspan="${group.size}" th:text="${group[0].hoaDon.donHang.maDonHang}"></td>
+                            <td th:rowspan="${group.size}" th:text="${group[0].hoaDon.donHang.nguoiDung.hoTen}"></td>
+                            <td>
+                                <div class="product-section original">
+                                    <div class="product-info">
+                                        <div class="product-name" th:text="${group[0].chiTietDonHang.tenSanPham}"></div>
+                                        <div class="product-variants">
+                                            <div class="color-swatch" th:if="${group[0].chiTietDonHang.chiTietSanPham.mauSac != null}">
+                                                <div class="color-dot" th:attr="data-color=${group[0].chiTietDonHang.chiTietSanPham.mauSac.tenMau}"></div>
+                                                <span th:text="${group[0].chiTietDonHang.chiTietSanPham.mauSac.tenMau}"></span>
+                                            </div>
+                                            <div class="size-badge" th:if="${group[0].chiTietDonHang.chiTietSanPham.kichCo != null}"
+                                                 th:text="${group[0].chiTietDonHang.chiTietSanPham.kichCo.ten}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="product-section replacement">
+                                    <div class="product-info">
+                                        <div class="product-name" th:text="${group[0].chiTietSanPhamThayThe.sanPham.tenSanPham}"></div>
+                                        <div class="product-variants">
+                                            <div class="color-swatch" th:if="${group[0].chiTietSanPhamThayThe.mauSac != null}">
+                                                <div class="color-dot" th:attr="data-color=${group[0].chiTietSanPhamThayThe.mauSac.tenMau}"></div>
+                                                <span th:text="${group[0].chiTietSanPhamThayThe.mauSac.tenMau}"></span>
+                                            </div>
+                                            <div class="size-badge" th:if="${group[0].chiTietSanPhamThayThe.kichCo != null}"
+                                                 th:text="${group[0].chiTietSanPhamThayThe.kichCo.ten}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${group[0].soLuong}"></td>
+                            <td th:text="${group[0].lyDoDoiHang}"></td>
+                            <td>
+                                <div class="status-badge"
+                                     th:classappend="${group[0].trangThai == 'Chờ xử lý'} ? 'status-pending' :
+                                                    (${group[0].trangThai == 'Đã xác nhận'} ? 'status-confirmed' :
+                                                    (${group[0].trangThai == 'Đã hủy'} ? 'status-cancelled' : 'status-processing'))">
+                                    <i th:class="${group[0].trangThai == 'Chờ xử lý'} ? 'fas fa-clock' :
+                                                 (${group[0].trangThai == 'Đã xác nhận'} ? 'fas fa-check-circle' :
+                                                 (${group[0].trangThai == 'Đã hủy'} ? 'fas fa-times-circle' : 'fas fa-spinner'))"></i>
+                                    <span th:text="${group[0].trangThai}"></span>
+                                </div>
+                            </td>
+                            <td th:text="${group[0].thoiGianDoi}"></td>
+                            <td>
+                                <span class="price"
+                                      th:attr="data-value=${group[0].chenhLechGia != null ? group[0].chenhLechGia : 0}"
+                                      th:classappend="${group[0].chenhLechGia != null and group[0].chenhLechGia < 0} ? 'negative'"></span>
+                            </td>
+                            <td class="action-buttons" th:rowspan="${group.size}">
+                                <button th:if="${group[0].trangThai == 'Chờ xử lý'}"
+                                        class="btn-approve"
+                                        th:attr="data-id=${group[0].id}"
+                                        onclick="approveRequest(this)">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                                <button th:if="${group.size > 1 and group[0].trangThai == 'Chờ xử lý'}"
+                                        class="btn-approve-all"
+                                        th:attr="data-hoadon-id=${group[0].hoaDon.id}"
+                                        onclick="approveAll(this)">
+                                    <i class="fas fa-check-double me-1"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr th:each="request, stat : ${group}" th:if="${stat.index > 0}" th:class="'group-row' + (${stat.last} ? ' group-end' : '')">
+                            <td>
+                                <div class="product-section original">
+                                    <div class="product-info">
+                                        <div class="product-name" th:text="${request.chiTietDonHang.tenSanPham}"></div>
+                                        <div class="product-variants">
+                                            <div class="color-swatch" th:if="${request.chiTietDonHang.chiTietSanPham.mauSac != null}">
+                                                <div class="color-dot" th:attr="data-color=${request.chiTietDonHang.chiTietSanPham.mauSac.tenMau}"></div>
+                                                <span th:text="${request.chiTietDonHang.chiTietSanPham.mauSac.tenMau}"></span>
+                                            </div>
+                                            <div class="size-badge" th:if="${request.chiTietDonHang.chiTietSanPham.kichCo != null}"
+                                                 th:text="${request.chiTietDonHang.chiTietSanPham.kichCo.ten}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="product-section replacement">
+                                    <div class="product-info">
+                                        <div class="product-name" th:text="${request.chiTietSanPhamThayThe.sanPham.tenSanPham}"></div>
+                                        <div class="product-variants">
+                                            <div class="color-swatch" th:if="${request.chiTietSanPhamThayThe.mauSac != null}">
+                                                <div class="color-dot" th:attr="data-color=${request.chiTietSanPhamThayThe.mauSac.tenMau}"></div>
+                                                <span th:text="${request.chiTietSanPhamThayThe.mauSac.tenMau}"></span>
+                                            </div>
+                                            <div class="size-badge" th:if="${request.chiTietSanPhamThayThe.kichCo != null}"
+                                                 th:text="${request.chiTietSanPhamThayThe.kichCo.ten}"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td th:text="${request.soLuong}"></td>
+                            <td th:text="${request.lyDoDoiHang}"></td>
+                            <td>
+                                <div class="status-badge"
+                                     th:classappend="${request.trangThai == 'Chờ xử lý'} ? 'status-pending' :
+                                                    (${request.trangThai == 'Đã xác nhận'} ? 'status-confirmed' :
+                                                    (${request.trangThai == 'Đã hủy'} ? 'status-cancelled' : 'status-processing'))">
+                                    <i th:class="${request.trangThai == 'Chờ xử lý'} ? 'fas fa-clock' :
+                                                 (${request.trangThai == 'Đã xác nhận'} ? 'fas fa-check-circle' :
+                                                 (${request.trangThai == 'Đã hủy'} ? 'fas fa-times-circle' : 'fas fa-spinner'))"></i>
+                                    <span th:text="${request.trangThai}"></span>
+                                </div>
+                            </td>
+                            <td th:text="${request.thoiGianDoi}"></td>
+                            <td>
+                                <span class="price"
+                                      th:attr="data-value=${request.chenhLechGia != null ? request.chenhLechGia : 0}"
+                                      th:classappend="${request.chenhLechGia != null and request.chenhLechGia < 0} ? 'negative'"></span>
+                            </td>
+                            <td class="action-buttons">
+                                <button th:if="${request.trangThai == 'Chờ xử lý'}"
+                                        class="btn-approve"
+                                        th:attr="data-id=${request.id}"
+                                        onclick="approveRequest(this)">
+                                    <i class="fas fa-check"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </th:block>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Phân trang -->
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                    <a class="page-link" th:href="@{/acvstore/exchange-requests(page=${currentPage - 1})}">Trước</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
+                    th:classappend="${i == currentPage} ? 'active'">
+                    <a class="page-link" th:href="@{/acvstore/exchange-requests(page=${i})}" th:text="${i + 1}"></a>
+                </li>
+                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                    <a class="page-link" th:href="@{/acvstore/exchange-requests(page=${currentPage + 1})}">Tiếp</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+
+<script>
+    // Định dạng giá trị tiền tệ cho cột chênh lệch giá
+    document.addEventListener('DOMContentLoaded', function() {
+        const priceElements = document.querySelectorAll('.price[data-value]');
+        priceElements.forEach(element => {
+            const value = parseFloat(element.getAttribute('data-value'));
+            element.textContent = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(value).replace('₫', ' VNĐ');
+        });
+    });
+
+    function approveRequest(button) {
+        const id = button.getAttribute('data-id');
+        Swal.fire({
+            title: 'Xác nhận yêu cầu đổi hàng',
+            text: 'Bạn có chắc muốn xác nhận yêu cầu này?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Xác nhận',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Đang xử lý',
+                    text: 'Vui lòng chờ trong giây lát...',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                fetch(`/acvstore/exchange-requests/approve/${id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        Swal.fire({
+                            title: data.success ? 'Thành công!' : 'Lỗi!',
+                            text: data.message,
+                            icon: data.success ? 'success' : 'error',
+                            confirmButtonColor: '#153054'
+                        }).then(() => {
+                            if (data.success) {
+                                window.location.reload();
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Có lỗi xảy ra. Vui lòng thử lại.',
+                            icon: 'error',
+                            confirmButtonColor: '#153054'
+                        });
+                    });
+            }
+        });
+    }
+
+    function approveAll(button) {
+        const hoaDonId = button.getAttribute('data-hoadon-id');
+        Swal.fire({
+            title: 'Xác nhận tất cả yêu cầu',
+            text: 'Bạn có chắc muốn xác nhận tất cả yêu cầu đổi hàng cho hóa đơn này?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#10b981',
+            cancelButtonColor: '#ef4444',
+            confirmButtonText: 'Xác nhận tất cả',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Đang xử lý',
+                    text: 'Vui lòng chờ trong giây lát...',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                fetch(`/acvstore/exchange-requests/approve-all/${hoaDonId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        Swal.fire({
+                            title: data.success ? 'Thành công!' : 'Lỗi!',
+                            text: data.message,
+                            icon: data.success ? 'success' : 'error',
+                            confirmButtonColor: '#153054'
+                        }).then(() => {
+                            if (data.success) {
+                                window.location.reload();
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Có lỗi xảy ra. Vui lòng thử lại.',
+                            icon: 'error',
+                            confirmButtonColor: '#153054'
+                        });
+                    });
+            }
+        });
+    }
+
+    function rejectRequest(button) {
+        const id = button.getAttribute('data-id');
+        Swal.fire({
+            title: 'Hủy yêu cầu đổi hàng',
+            text: 'Vui lòng nhập lý do hủy (tùy chọn):',
+            input: 'text',
+            inputPlaceholder: 'Nhập lý do hủy...',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Hủy yêu cầu',
+            cancelButtonText: 'Đóng'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const reason = result.value || '';
+                Swal.fire({
+                    title: 'Đang xử lý',
+                    text: 'Vui lòng chờ trong giây lát...',
+                    icon: 'info',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+
+                fetch(`/acvstore/exchange-requests/reject/${id}?rejectReason=${encodeURIComponent(reason)}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.close();
+                        Swal.fire({
+                            title: data.success ? 'Thành công!' : 'Lỗi!',
+                            text: data.message,
+                            icon: data.success ? 'success' : 'error',
+                            confirmButtonColor: '#153054'
+                        }).then(() => {
+                            if (data.success) {
+                                window.location.reload();
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        Swal.close();
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Có lỗi xảy ra. Vui lòng thử lại.',
+                            icon: 'error',
+                            confirmButtonColor: '#153054'
+                        });
+                    });
+            }
+        });
+    }
+</script>
+<script th:src="@{/js/notification.js}"></script>
+</body>
+</html>

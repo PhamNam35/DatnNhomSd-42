@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chi tiết yêu cầu trả hàng - Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" th:href="@{/css/admin.css}">
+  <script th:src="@{/js/sidebar.js}" defer></script>
+  <script th:src="@{/js/notification.js}"></script>
+  <style>
+    :root {
+      --primary: #153054;
+      --primary-light: #1e4068;
+      --primary-dark: #0f2340;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --gray-900: #111827;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+      color: var(--gray-800);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+
+    .container-fluid {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+    }
+
+    .page-header {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+    }
+
+    .page-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .page-title::before {
+      content: "📋";
+      font-size: 1.5rem;
+    }
+
+    .error-state {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      text-align: center;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+    }
+
+    .error-icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    .error-message {
+      color: var(--danger);
+      font-size: 1.125rem;
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .card {
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--gray-200);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: var(--white);
+      padding: 1.5rem 2rem;
+      font-weight: 600;
+      font-size: 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-header.order-info::before { content: "📦"; }
+    .card-header.product-info::before { content: "🛍️"; }
+    .card-header.actions::before { content: "⚡"; }
+
+    .card-body {
+      padding: 2rem;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .info-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: var(--gray-700);
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .info-value {
+      font-size: 1rem;
+      color: var(--gray-900);
+      font-weight: 500;
+      padding: 0.75rem 1rem;
+      background: var(--gray-50);
+      border-radius: 8px;
+      border: 1px solid var(--gray-200);
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-pending {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .status-confirmed {
+      background: #d1fae5;
+      color: #065f46;
+      border: 1px solid #34d399;
+    }
+
+    .status-cancelled {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #f87171;
+    }
+
+    .form-section {
+      background: var(--gray-50);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border: 1px solid var(--gray-200);
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+      display: block;
+      font-weight: 600;
+      color: var(--gray-700);
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      border: 2px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      background: var(--white);
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(21, 48, 84, 0.1);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 1.5rem;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.875rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+      color: var(--white);
+    }
+
+    .btn-success::before {
+      content: "✓";
+      font-weight: bold;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+      color: var(--white);
+    }
+
+    .btn-danger::before {
+      content: "✕";
+      font-weight: bold;
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, var(--gray-600) 0%, var(--gray-700) 100%);
+      color: var(--white);
+    }
+
+    .btn-secondary::before {
+      content: "←";
+      font-weight: bold;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .back-button-container {
+      margin-top: 2rem;
+      text-align: center;
+    }
+
+    .highlight-amount {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: linear-gradient(135deg, #e0f2fe 0%, #f0f9ff 100%);
+      padding: 1rem;
+      border-radius: 8px;
+      border: 2px solid var(--primary);
+      text-align: center;
+    }
+
+    @media (max-width: 768px) {
+      .container-fluid {
+        padding: 1rem 0.5rem;
+      }
+
+      .page-header,
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .page-title {
+        font-size: 1.5rem;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+<div class="d-flex">
+  <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+  <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+    <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+  </nav>
+  <div class="content mt-16" id="mainContent">
+    <div class="container-fluid">
+      <div class="page-header fade-in">
+        <h2 class="page-title">Chi tiết yêu cầu trả hàng</h2>
+      </div>
+
+      <div th:if="${danhSachLichSuTraHang == null}" class="error-state fade-in">
+        <div class="error-icon">❌</div>
+        <p class="error-message">Không tìm thấy yêu cầu trả hàng.</p>
+        <a href="/acvstore/quan-ly-tra-hang" class="btn btn-secondary">Quay lại danh sách</a>
+      </div>
+
+      <div th:if="${danhSachLichSuTraHang != null && !danhSachLichSuTraHang.isEmpty()}">
+        <div class="card fade-in">
+          <div class="card-header order-info">Thông tin đơn hàng</div>
+          <div class="card-body">
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Mã đơn hàng</span>
+                <span class="info-value" th:text="${hoaDon?.donHang?.maDonHang ?: 'N/A'}"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Khách hàng</span>
+                <span class="info-value" th:text="${hoaDon?.donHang?.nguoiDung?.hoTen ?: 'N/A'}"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value" th:text="${hoaDon?.donHang?.nguoiDung?.email ?: 'N/A'}"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Trạng thái hóa đơn</span>
+                <span class="info-value status-badge status-confirmed" th:text="${hoaDon?.trangThai ?: 'N/A'}"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card fade-in">
+          <div class="card-header product-info">Thông tin sản phẩm trả</div>
+          <div class="card-body">
+            <table class="table table-bordered">
+              <thead>
+              <tr>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá mỗi sản phẩm</th>
+                <th>Lý do trả hàng</th>
+                <th>Thời gian yêu cầu</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr th:each="item : ${danhSachLichSuTraHang}">
+                <td th:text="${item.chiTietDonHang?.chiTietSanPham?.sanPham?.tenSanPham ?: 'N/A'}"></td>
+                <td th:text="${item.soLuong > 0 ? item.soLuong : 'N/A'}"></td>
+                <td th:text="${item.chiTietDonHang?.formattedGia ?: '0 VNĐ'}"></td>
+                <td th:text="${item.lyDoTraHang ?: 'N/A'}"></td>
+                <td th:text="${item.thoiGianTra != null ? #temporals.format(item.thoiGianTra, 'dd/MM/yyyy HH:mm') : 'N/A'}"></td>
+              </tr>
+              </tbody>
+            </table>
+
+            <div class="info-grid mt-4">
+              <div class="info-item">
+                <span class="info-label">Giảm giá đơn hàng</span>
+                <span class="info-value" th:text="${tongGiamOrder}"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Tổng tiền hoàn</span>
+                <span class="info-value highlight-amount" th:text="${formattedTongHoan != null ? formattedTongHoan : '0 VNĐ'}"></span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">Trạng thái</span>
+                <span class="info-value status-badge"
+                      th:classappend="${danhSachLichSuTraHang[0].trangThai == 'Đã xác nhận' ? 'status-confirmed' : danhSachLichSuTraHang[0].trangThai == 'Đã hủy' ? 'status-cancelled' : 'status-pending'}"
+                      th:text="${danhSachLichSuTraHang[0].trangThai ?: 'N/A'}"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card fade-in" th:if="${danhSachLichSuTraHang[0].trangThai == 'Chờ xác nhận'}">
+          <div class="card-header actions">Hành động</div>
+          <div class="card-body">
+            <div class="form-section">
+              <form id="confirmForm">
+                <div class="form-group">
+                  <label for="ghiChu" class="form-label">Ghi chú xác nhận</label>
+                  <textarea id="ghiChu" class="form-control" rows="4" placeholder="Nhập ghi chú cho việc xác nhận trả hàng..."></textarea>
+                </div>
+                <button type="button" class="btn btn-success" onclick="confirmReturn()">Xác nhận trả hàng</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <div class="back-button-container">
+          <a href="/acvstore/quan-ly-tra-hang" class="btn btn-secondary">Quay lại danh sách</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script th:inline="javascript">
+  const lichSuId = /*[[${danhSachLichSuTraHang != null ? danhSachLichSuTraHang[0].id : null}]]*/ null;
+
+  // Kiểm tra an toàn hơn
+  if (!lichSuId || lichSuId === 'null' || lichSuId === '') {
+    console.error('Không tìm thấy ID yêu cầu trả hàng');
+    Swal.fire({
+      icon: 'error',
+      title: 'Lỗi',
+      text: 'Không tìm thấy ID yêu cầu trả hàng.',
+      confirmButtonText: 'OK',
+      confirmButtonColor: '#153054'
+    }).then(() => {
+      window.location.href = '/acvstore/quan-ly-tra-hang';
+    });
+  }
+
+  function confirmReturn() {
+    if (!lichSuId) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi',
+        text: 'Không thể xác định ID yêu cầu trả hàng.',
+        confirmButtonColor: '#153054'
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Xác nhận trả hàng',
+      text: 'Bạn có chắc chắn muốn xác nhận tất cả yêu cầu trả hàng cho đơn hàng này?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#153054',
+      cancelButtonColor: '#ef4444',
+      confirmButtonText: 'Xác nhận',
+      cancelButtonText: 'Hủy'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const ghiChu = document.getElementById('ghiChu').value || '';
+
+        // Hiển thị loading
+        Swal.fire({
+          title: 'Đang xử lý...',
+          text: 'Vui lòng chờ trong giây lát',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
+
+        fetch(`/acvstore/quan-ly-tra-hang/api/xac-nhan/${lichSuId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ ghiChu: ghiChu }),
+        })
+                .then(response => {
+                  if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                  }
+                  return response.json();
+                })
+                .then(data => {
+                  Swal.close(); // Đóng loading
+
+                  if (data.success) {
+                    Swal.fire({
+                      icon: 'success',
+                      title: 'Thành công',
+                      text: 'Xác nhận trả hàng thành công!',
+                      confirmButtonColor: '#153054'
+                    }).then(() => {
+                      // Thêm delay nhỏ để đảm bảo transaction được commit
+                      setTimeout(() => {
+                        window.location.reload();
+                      }, 500);
+                    });
+                  } else {
+                    Swal.fire({
+                      icon: 'error',
+                      title: 'Lỗi',
+                      text: 'Lỗi: ' + (data.message || 'Không xác định'),
+                      confirmButtonColor: '#153054'
+                    });
+                  }
+                })
+                .catch(error => {
+                  Swal.close(); // Đóng loading
+                  console.error('Error:', error);
+                  Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi',
+                    text: 'Lỗi khi xác nhận: ' + error.message,
+                    confirmButtonColor: '#153054'
+                  });
+                });
+      }
+    });
+  }
+
+  // Thêm error handling cho trang
+  window.addEventListener('error', function(e) {
+    console.error('JavaScript Error:', e.error);
+  });
+
+  // Kiểm tra nếu trang load không đầy đủ
+  document.addEventListener('DOMContentLoaded', function() {
+    // Kiểm tra các element quan trọng đã load chưa
+    const importantElements = [
+      '.page-title',
+      '.info-grid'
+    ];
+
+    let allLoaded = true;
+    importantElements.forEach(selector => {
+      if (!document.querySelector(selector)) {
+        allLoaded = false;
+        console.warn('Element not found:', selector);
+      }
+    });
+
+    if (!allLoaded) {
+      console.warn('Page may not have loaded completely');
+    }
+  });
+</script>
+</body>
+</html>

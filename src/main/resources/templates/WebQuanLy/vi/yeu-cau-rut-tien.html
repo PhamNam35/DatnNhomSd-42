@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Yêu cầu rút tiền</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Bootstrap & FontAwesome -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="d-flex">
+    <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+
+    <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
+        <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
+    </nav>
+
+    <div class="content" id="mainContent" style="margin-top: 5rem; padding: 2rem; width: 100%;">
+        <div class="glass-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fs-3 fw-bold text-dark mb-0">
+                    <i class="fas fa-wallet me-2 text-primary"></i> Danh sách yêu cầu rút tiền
+                </h2>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table cart-table table-hover align-middle">
+                    <thead>
+                    <tr>
+                        <th>Mã GD</th>
+                        <th>Người dùng</th>
+                        <th>Số tiền</th>
+                        <th>Người thụ hưởng</th>
+                        <th>Ngân hàng</th>
+                        <th>Số tài khoản</th>
+                        <th>Trạng thái</th>
+                        <th>Thời gian</th>
+                        <th>Thao tác</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="yc : ${danhSachYeuCau}">
+                        <td class="fw-bold text-dark" th:text="${yc.maGiaoDich}"></td>
+                        <td th:text="${yc.viThanhToan.nguoiDung.hoTen}"></td>
+                        <td>
+                                <span class="badge bg-success fw-semibold">
+                                    <i class="fas fa-money-bill-wave me-1"></i>
+                                    <span th:text="${#numbers.formatDecimal(yc.soTien, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                </span>
+                        </td>
+                        <td th:text="${yc.nguoiThuHuong}"></td>
+                        <td th:text="${yc.tenNganHang}"></td>
+                        <td th:text="${yc.soTaiKhoan}"></td>
+                        <td>
+                                <span th:classappend="${yc.trangThai == 'Đã duyệt'} ? 'badge bg-success' : (yc.trangThai == 'Từ chối' ? 'badge bg-danger' : 'badge bg-warning text-dark')"
+                                      class="badge fw-medium"
+                                      th:text="${yc.trangThai}"></span>
+                        </td>
+                        <td th:text="${#temporals.format(yc.thoiGianYeuCau, 'dd/MM/yyyy HH:mm')}"></td>
+                        <td>
+                            <div class="d-flex flex-column gap-2">
+
+                                <!-- Nếu đang chờ -->
+                                <div th:if="${yc.trangThai == 'Đang chờ'}">
+                                    <button type="button"
+                                            class="btn btn-success btn-sm d-flex align-items-center gap-2"
+                                            data-bs-toggle="modal"
+                                            th:data-bs-target="${'#modalDuyet_' + yc.id}">
+                                        <i class="fas fa-check-circle"></i> Duyệt
+                                    </button>
+
+                                    <!-- Modal -->
+                                    <div class="modal fade" th:id="'modalDuyet_' + ${yc.id}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form th:action="@{/acvstore/vi/duyet/{id}(id=${yc.id})}" method="post" enctype="multipart/form-data">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title">Xác nhận duyệt giao dịch</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p><strong>Mã GD:</strong> <span th:text="${yc.maGiaoDich}"></span></p>
+                                                        <p><strong>Số tiền:</strong>
+                                                            <span th:text="${#numbers.formatDecimal(yc.soTien, 0, 'COMMA', 0, 'POINT')} + ' đ'"></span>
+                                                        </p>
+                                                        <div class="mb-3">
+                                                            <label class="form-label">Ảnh bằng chứng</label>
+                                                            <input type="file" name="anhBangChung" accept="image/*" class="form-control" required>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                        <button type="submit" class="btn btn-success">
+                                                            <i class="fas fa-check"></i> Xác nhận duyệt
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Từ chối -->
+                                    <form th:action="@{/acvstore/vi/tu-choi/{id}(id=${yc.id})}" method="post" class="mt-2">
+                                        <input type="text" name="lyDo" placeholder="Lý do từ chối" class="form-control mb-2" required>
+                                        <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center gap-2">
+                                            <i class="fas fa-times-circle"></i> Từ chối
+                                        </button>
+                                    </form>
+                                </div>
+
+                                <!-- Nếu đã duyệt -->
+                                <div th:if="${yc.trangThai == 'Đã duyệt'}" class="text-success small">
+                                    <i class="fas fa-check-circle me-1"></i> Đã xử lý
+                                    <!-- Nút mở modal -->
+                                    <button type="button"
+                                            th:if="${yc.anhBangChung != null}"
+                                            class="btn btn-outline-secondary btn-sm mt-1"
+                                            data-bs-toggle="modal"
+                                            th:data-bs-target="${'#modalBangChung_' + yc.id}">
+                                        <i class="fas fa-image"></i> Xem bằng chứng
+                                    </button>
+
+                                    <!-- Modal xem bằng chứng -->
+                                    <div class="modal fade" th:id="'modalBangChung_' + ${yc.id}" tabindex="-1">
+                                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Bằng chứng giao dịch - <span th:text="${yc.maGiaoDich}"></span></h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body text-center">
+                                                    <img th:src="@{|/uploads/bang-chung/${yc.anhBangChung}|}" class="img-fluid rounded shadow">
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <!-- Nếu từ chối -->
+                                <div th:if="${yc.trangThai == 'Từ chối'}" class="text-danger small">
+                                    <i class="fas fa-times-circle me-1"></i> Đã từ chối
+                                    <p th:if="${yc.ghiChu != null}" class="text-muted small mb-0">Lý do: <span th:text="${yc.ghiChu}"></span></p>
+                                </div>
+
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/notification.js}"></script>
+
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>ACV Store - Chính sách</title>
+    <link rel="icon" href="/image/ACV.png" type="image/png" sizes="32x32"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .navbar {  background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1); }
+        /* Enhanced navbar with better shadows and transitions */
+        .navbar { position: fixed; top: 40px; left: 0; width: 100%; z-index: 1040; }
+
+
+        .navbar-brand img {
+            transition: transform 0.3s ease;
+        }
+
+        .navbar-brand:hover img {
+            transform: scale(1.1);
+        }
+
+        .nav-link {
+            position: relative;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #9FD5F7 !important;
+            transform: translateY(-2px);
+        }
+
+        .nav-link.active {
+            color: #9FD5F7 !important;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: #9FD5F7;
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .nav-link:hover::after,
+        .nav-link.active::after {
+            width: 80%;
+        }
+
+        /* Enhanced ticker with better animation */
+        .ticker {
+            background: linear-gradient(90deg, #9FD5F7 0%, #B8E0F8 50%, #9FD5F7 100%);
+            color: #153054;
+            font-weight: 600;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1050;
+            box-shadow: 0 2px 10px rgba(21, 48, 84, 0.2);
+        }
+
+        .ticker marquee {
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar {
+            position: fixed;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            z-index: 1040;
+        }
+
+        /* Enhanced body background with subtle pattern */
+        body {
+            padding-top: 118px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Significantly improved policy sections with modern card design */
+        .policy-section {
+            background: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(21, 48, 84, 0.08);
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(21, 48, 84, 0.05);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .policy-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #153054, #1e4066, #9FD5F7);
+        }
+
+        .policy-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(21, 48, 84, 0.12);
+        }
+
+        .policy-section h2 {
+            color: #153054;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .policy-section h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #153054, #9FD5F7);
+            border-radius: 2px;
+        }
+
+        .policy-section h3 {
+            color: #153054;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #f1f8ff 0%, #e8f2ff 100%);
+            border-left: 4px solid #153054;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .policy-section h3::before {
+            content: '📋';
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .policy-section p {
+            color: #4b5563;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        .policy-section li {
+            color: #4b5563;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 8px;
+            padding-left: 10px;
+            position: relative;
+        }
+
+        .policy-section ul {
+            list-style: none;
+            padding-left: 0;
+            margin-left: 20px;
+        }
+
+        .policy-section li::before {
+            content: '✓';
+            position: absolute;
+            left: -20px;
+            color: #153054;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        .policy-section a {
+            color: #153054;
+            text-decoration: none;
+            font-weight: 600;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: rgba(21, 48, 84, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .policy-section a:hover {
+            color: #fff;
+            background: #153054;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.3);
+        }
+
+        /* Enhanced back-to-top button */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #153054, #1e4066);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(21, 48, 84, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            border: 3px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.4);
+        }
+
+
+        /* Enhanced map container */
+        .map-container {
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .map-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .policy-section {
+                padding: 25px;
+                margin-bottom: 20px;
+            }
+
+            .policy-section h2 {
+                font-size: 1.8rem;
+            }
+
+            .policy-section h3 {
+                font-size: 1.2rem;
+                padding: 10px 15px;
+            }
+
+            .back-to-top {
+                width: 50px;
+                height: 50px;
+                bottom: 20px;
+                right: 20px;
+            }
+
+            footer {
+                padding: 30px 0 20px;
+            }
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Loading animation for better UX */
+        .policy-section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .search-suggestions.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .suggestion-item:hover {
+            background-color: #f1f5f9;
+        }
+        .suggestion-item img {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 10px;
+            border-radius: 4px;
+        }
+        .history-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background 0.2s;
+            background-color: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .history-item:hover {
+            background-color: #e2e8f0;
+        }
+        .history-item .highlight {
+            background-color: #9FD5F7;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        .history-item .delete-btn {
+            color: #ef4444;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        .history-item .delete-btn:hover {
+            color: #b91c1c;
+        }
+        @media (max-width: 640px){
+            #chatbot-box{
+                width: 92vw;
+                right: 4vw;
+                bottom: 90px;   /* tránh đè nút nổi */
+                height: 70vh;
+            }
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            min-width: 200px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            z-index: 1000;
+            padding: 8px;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            animation: fadeInUp 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+<div class="ticker py-1 overflow-hidden" style="height: 40px;">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+        🎉 Khuyến mãi đặc biệt: Giảm giá lên đến 50% cho tất cả sản phẩm hôm nay! 🎉 - Miễn phí vận chuyển cho đơn từ 500k!
+    </marquee>
+</div>
+
+<div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
+
+
+<div class="container mx-auto py-10">
+    <div class="policy-section">
+        <h2>Chính sách của ACV Store</h2>
+        <p>Chào mừng bạn đến với ACV Store. Dưới đây là các chính sách được áp dụng nhằm đảm bảo trải nghiệm mua sắm tốt nhất cho khách hàng.</p>
+
+        <h3>1. Chính sách mua hàng</h3>
+        <p>Tất cả sản phẩm tại ACV Store đều được kiểm tra kỹ lưỡng trước khi giao đến tay khách hàng. Chúng tôi cam kết:</p>
+        <ul>
+            <li>Cung cấp sản phẩm chính hãng, chất lượng cao.</li>
+            <li>Giá cả được niêm yết công khai và minh bạch.</li>
+            <li>Hỗ trợ khách hàng chọn size, màu sắc và tư vấn chi tiết qua <a href="/chatbot">chatbot</a> hoặc hotline <a href="tel:0911006045">0911 006 045</a>.</li>
+        </ul>
+
+        <h3>2. Chính sách vận chuyển</h3>
+        <p>Chúng tôi cung cấp dịch vụ vận chuyển nhanh chóng và đáng tin cậy:</p>
+        <ul>
+            <li>Miễn phí vận chuyển cho đơn hàng từ 500.000 VNĐ trở lên.</li>
+            <li>Thời gian giao hàng dự kiến: 2-5 ngày làm việc (tùy khu vực).</li>
+            <li>Khách hàng có thể kiểm tra trạng thái đơn hàng qua email hoặc tài khoản cá nhân trên website.</li>
+        </ul>
+
+        <h3>3. Chính sách đổi trả</h3>
+        <p>ACV Store hỗ trợ đổi trả sản phẩm trong các trường hợp sau:</p>
+        <ul>
+            <li>Sản phẩm bị lỗi do nhà sản xuất hoặc sai sót từ phía ACV Store.</li>
+            <li>Khi đơn hàng hoàn thành thì sẽ không được đổi trả.</li>
+            <li>Sản phẩm đổi trả phải còn nguyên tem, nhãn mác và chưa qua sử dụng.</li>
+            <li>Đối với đơn hàng đã thanh toán trước khi nhận hàng, nếu có nhu cầu huỷ/hoàn trả thì số tiền quý khách đã thanh toán sẽ tự động hoàn vào ví cá nhân của quý khách.</li>
+            <li>Vui lòng liên hệ qua email <a href="mailto:datn.acv@gmail.com">datn.acv@gmail.com</a> để được hỗ trợ.</li>
+        </ul>
+
+        <h3>4. Chính sách bảo mật</h3>
+        <p>Chúng tôi cam kết bảo vệ thông tin cá nhân của khách hàng:</p>
+        <ul>
+            <li>Thông tin chỉ được sử dụng để xử lý đơn hàng và cải thiện trải nghiệm mua sắm.</li>
+            <li>Không chia sẻ thông tin với bên thứ ba trừ khi được sự đồng ý của khách hàng.</li>
+            <li>Áp dụng các biện pháp bảo mật tiên tiến để bảo vệ dữ liệu.</li>
+        </ul>
+    </div>
+</div>
+
+<footer style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
+    <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+            <h3 class="text-lg font-bold mb-4">ACV Store</h3>
+            <p class="text-sm">Cửa hàng thời trang hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
+            <ul class="space-y-2">
+                <li><a href="/new" class="hover:text-blue-300">Sản phẩm mới</a></li>
+                <li><a href="/all" class="hover:text-blue-300">Tất cả sản phẩm</a></li>
+                <li><a href="/bestsellers" class="hover:text-blue-300">Sản phẩm bán chạy</a></li>
+                <li><a href="/chinh-sach" class="hover:text-blue-300">Chính sách</a></li>
+            </ul>
+        </div>
+        <div>
+            <h3 class="text-lg font-bold mb-4">Liên hệ</h3>
+            <p class="text-sm">Địa chỉ: 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội, Việt Nam</p>
+            <p class="text-sm">Email: datn.acv@gmail.com</p>
+            <p class="text-sm">Hotline: 0911 006 045</p>
+            <div class="flex space-x-4 mt-4">
+                <a href="https://www.facebook.com" class="text-white hover:text-blue-300" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                <a href="https://www.instagram.com" class="text-white hover:text-blue-300" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://twitter.com" class="text-white hover:text-blue-300" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+            </div>
+        </div>
+    </div>
+    <div class="container mx-auto mt-8">
+        <div class="map-container relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7142835949912!2d105.85287637508011!3d21.004087180639065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ad002fc50fd1%3A0x9a7962d208d20498!2sACV%20Store!5e0!3m2!1sen!2s!4v1755701406991!5m2!1sen!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <p class="text-center text-sm mt-2 text-gray-300">* Bản đồ hiển thị vị trí chi nhánh chính tại ACV Store tại 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội. Vui lòng liên hệ để xác nhận giờ mở cửa.</p>
+    </div>
+    <div class="text-center mt-8 text-sm">© 2025 ACV Store. All rights reserved.</div>
+
+    <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10"></div>
+</footer>
+
+<button id="back-to-top" class="back-to-top" aria-label="Quay lại đầu trang">
+    <i class="fas fa-arrow-up"></i>
+</button>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script src="/js/navbar.js"></script>
+<script>
+    const backToTop = document.getElementById('back-to-top');
+    window.addEventListener('scroll', () => {
+        backToTop.classList.toggle('visible', window.scrollY > 200);
+    });
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+</script>
+</body>
+</html>

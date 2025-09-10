@@ -1,0 +1,1422 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Yêu cầu đổi sản phẩm - ACV Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="/image/ACV.png" type="image/png" sizes="32x32"/>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-color: #153054;
+            --primary-light: #153054;
+            --primary-dark: #357abd;
+            --accent-color: #6fb1fc;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --error-color: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+            color: var(--gray-800);
+            line-height: 1.6;
+            margin: 0;
+            padding-top: 150px;
+            min-height: 100vh;
+        }
+
+        .ticker { background-color: #9FD5F7; color: #153054; font-weight: bold; position: fixed; top: 0; left: 0; width: 100%; z-index: 1050; }
+        .navbar { background: linear-gradient(135deg, #153054 0%, #1e4066 100%);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255,255,255,0.1); position: fixed; top: 45px; left: 0; width: 100%; z-index: 1040; }
+
+        .page-title {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+            border-radius: 2px;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: #153054;
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 500;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid var(--gray-200);
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .back-button:hover {
+            background: var(--primary-color);
+            color: white;
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            color: var(--warning-color);
+            margin-bottom: 1rem;
+        }
+
+        .empty-state h3 {
+            color: var(--gray-800);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-state p {
+            color: var(--gray-600);
+            margin-bottom: 2rem;
+        }
+
+        .main-container {
+            display: grid;
+            gap: 2rem;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--gray-200);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-color) 100%);
+        }
+
+        .info-section h4 {
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-section h4 i {
+            color: var(--accent-color);
+        }
+
+        .info-section p {
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .info-section p strong {
+            color: var(--gray-700);
+            min-width: 100px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        table thead {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+        }
+
+        table th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-200);
+            vertical-align: middle;
+        }
+
+        table tbody tr:hover {
+            background: var(--gray-50);
+            transition: background-color 0.2s ease;
+        }
+
+        table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .product-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .product-img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: var(--shadow-sm);
+            border: 2px solid var(--gray-200);
+        }
+
+        .product-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .product-details strong {
+            color: var(--gray-800);
+            font-weight: 600;
+        }
+
+        .product-details small {
+            color: var(--gray-600);
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .price {
+            font-weight: 600;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        select,
+        textarea,
+        input[type="number"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--gray-300);
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            color: var(--gray-800);
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        select:focus,
+        textarea:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .replacement-product {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .replacement-product:hover {
+            background: white;
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-confirm:hover {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-cancel {
+            background: white;
+            color: var(--gray-600);
+            border: 2px solid var(--gray-300);
+            padding: 16px 32px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cancel:hover {
+            background: var(--gray-100);
+            border-color: var(--gray-400);
+            color: var(--gray-700);
+            transform: translateY(-2px);
+        }
+
+        /* Modal styles */
+        .modal-lg {
+            max-width: 900px;
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+            color: white;
+            border-radius: 0.5rem 0.5rem 0 0;
+        }
+
+        .modal-header .btn-close {
+            filter: invert(1);
+        }
+
+        .modal-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .replacement-product-modal {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 1rem;
+            background: var(--gray-50);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .replacement-product-modal:hover {
+            background: white;
+            border-color: var(--primary-color);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .replacement-product-modal.selected {
+            border-color: var(--primary-color);
+            background: #f0f8ff;
+        }
+
+        .search-form {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .info-section {
+                padding: 1.5rem;
+            }
+
+            table {
+                font-size: 0.875rem;
+            }
+
+            .product-info {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-confirm,
+            .btn-cancel {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="ticker py-2 overflow-hidden fixed top-0 w-full z-50">
+    <marquee behavior="scroll" direction="left" scrollamount="5">
+        🎉 Khuyến mãi đặc biệt: Giảm giá lên đến 50% cho tất cả sản phẩm hôm nay! 🎉
+    </marquee>
+</div>
+
+<div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
+
+<section class="container mx-auto py-8 px-4">
+    <h1 class="page-title text-4xl text-center mb-8">
+        <i class="fas fa-exchange-alt mr-3"></i>Yêu cầu đổi sản phẩm
+    </h1>
+
+    <a th:href="@{/dsdon-mua}" class="back-button">
+        <i class="fas fa-arrow-left"></i> Quay lại danh sách đơn mua
+    </a>
+
+    <div th:if="${hoaDon == null or chiTietDonHangs.isEmpty()}" class="empty-state">
+        <i class="fas fa-exclamation-triangle"></i>
+        <h3 th:if="${hoaDon == null}">Không tìm thấy đơn hàng</h3>
+        <h3 th:if="${hoaDon != null and chiTietDonHangs.isEmpty()}">Sản phẩm không hợp lệ</h3>
+        <p th:if="${hoaDon == null}">Đơn hàng bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.</p>
+        <p th:if="${hoaDon != null and chiTietDonHangs.isEmpty()}">Sản phẩm đã được yêu cầu đổi trước đó hoặc không hợp lệ.</p>
+        <a href="/dsdon-mua" class="back-button">
+            <i class="fas fa-arrow-left mr-2"></i>Quay lại danh sách đơn mua
+        </a>
+    </div>
+
+    <div th:unless="${hoaDon == null or chiTietDonHangs.isEmpty()}" class="main-container">
+        <div class="info-section">
+            <h4><i class="fas fa-receipt mr-2"></i>Thông tin đơn hàng</h4>
+            <p><strong>Mã đơn:</strong> <span th:text="${hoaDon.donHang.maDonHang}"></span></p>
+            <p><strong>Ngày đặt:</strong> <span th:text="${hoaDon.ngayTao.toLocalDate()} + ' ' + ${hoaDon.ngayTao.toLocalTime()}"></span></p>
+        </div>
+
+        <form id="exchangeForm" th:action="@{/dsdon-mua/api/orders/exchange/{id}(id=${hoaDon.id})}" method="post">
+            <!-- Phần sản phẩm được chọn để đổi -->
+            <div class="info-section">
+                <h4><i class="fas fa-box mr-2"></i>Chọn sản phẩm để đổi</h4>
+                <table>
+                    <thead>
+                    <tr>
+                        <th><i class="fas fa-check-square mr-2"></i>Chọn</th>
+                        <th><i class="fas fa-image mr-2"></i>Sản phẩm</th>
+                        <th><i class="fas fa-sort-numeric-up mr-2"></i>Số lượng</th>
+                        <th><i class="fas fa-tag mr-2"></i>Giá</th>
+                        <th><i class="fas fa-tags mr-2"></i>Giá gốc</th>
+                        <th><i class="fas fa-fire mr-2"></i>Giảm giá</th>
+                        <th><i class="fas fa-percent mr-2"></i>Giá sau giảm</th>
+<!--                        <th><i class="fas fa-bullhorn mr-2"></i>Chiến dịch</th>-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="chiTiet : ${chiTietDonHangs}">
+                        <td>
+                            <input type="checkbox"
+                                   name="selectedProducts"
+                                   th:value="${chiTiet.id}"
+                                   th:disabled="${chiTiet.trangThaiHoanTra or chiTiet.trangThaiDoiSanPham}"
+                                   class="product-select-checkbox"/>
+                        </td>
+                        <td>
+                            <div class="product-info">
+                                <img th:src="${chiTiet.chiTietSanPham.hinhAnhSanPhams != null and !#lists.isEmpty(chiTiet.chiTietSanPham.hinhAnhSanPhams) ? chiTiet.chiTietSanPham.hinhAnhSanPhams[0].urlHinhAnh : '/images/default-product.jpg'}"
+                                     class="product-img" alt="Ảnh sản phẩm"/>
+                                <div class="product-details">
+                                    <strong th:text="${chiTiet.tenSanPham}"></strong>
+                                    <small th:if="${chiTiet.chiTietSanPham.mauSac != null}">
+                                        <i class="fas fa-palette mr-1"></i>Màu sắc: <span th:text="${chiTiet.chiTietSanPham.mauSac.tenMau}"></span>
+                                    </small>
+                                    <small th:if="${chiTiet.chiTietSanPham.kichCo != null}">
+                                        <i class="fas fa-ruler mr-1"></i>Kích cỡ: <span th:text="${chiTiet.chiTietSanPham.kichCo.ten}"></span>
+                                    </small>
+                                </div>
+                            </div>
+                        </td>
+                        <td th:text="${chiTiet.soLuong}" class="max-quantity"></td>
+                        <!-- Đơn giá (snapshot đã lưu trong đơn) -->
+                        <td>
+                            <span class="price" th:attr="data-value=${chiTiet.gia}"></span>
+                        </td>
+
+
+                        <!-- Giá gốc: không lưu riêng trong DB -> hiển thị '-' -->
+                        <td>-</td>
+
+                        <!-- Giảm giá dòng (snapshot): (gia * soLuong) - thanhTien -->
+                        <td>
+                              <span class="price"
+                                    th:attr="data-value=${(chiTiet.gia != null && chiTiet.soLuong != null && chiTiet.thanhTien != null)
+                                   ? (chiTiet.gia * chiTiet.soLuong - chiTiet.thanhTien)
+                                   : 0}">
+                              </span>
+                        </td>
+
+                        <td>
+                              <span class="price"
+                                    th:attr="data-value=${(chiTiet.thanhTien != null and chiTiet.soLuong != null and chiTiet.soLuong > 0)
+                                         ? (chiTiet.thanhTien / chiTiet.soLuong)
+                                         : chiTiet.gia}">
+                              </span>
+                        </td>
+
+<!--                        &lt;!&ndash; Chiến dịch: không snapshot tên chiến dịch -> '-' &ndash;&gt;-->
+<!--                        <td>-</td>-->
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="info-section" id="selectedReplacementProducts" style="display: none;">
+                <h4><i class="fas fa-check-circle mr-2"></i>Sản phẩm thay thế đã chọn</h4>
+                <div id="replacementList"></div>
+            </div>
+
+            <!-- Phần thông tin yêu cầu đổi -->
+            <div class="info-section">
+                <h4><i class="fas fa-comment mr-2"></i>Thông tin yêu cầu đổi</h4>
+                <div class="form-group">
+                    <label for="reason">Lý do đổi:</label>
+                    <select id="reason" name="reason" required>
+                        <option value="">-- Chọn lý do --</option>
+                        <option value="Không đúng kích cỡ/màu sắc">Không đúng kích cỡ/màu sắc</option>
+                        <option value="Thay đổi ý định">Thay đổi ý định</option>
+                        <option value="Khác">Khác</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Mô tả chi tiết (tùy chọn):</label>
+                    <textarea id="description" name="description" rows="4" placeholder="Vui lòng mô tả chi tiết lý do đổi sản phẩm..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email nhận thông báo:</label>
+                    <input type="email" id="email" name="email" th:value="${user.email}" required placeholder="example@email.com"/>
+                </div>
+                <div class="form-group">
+                    <label>Chênh lệch giá cần thanh toán:</label>
+                    <p id="priceDifference" class="price">0 VNĐ</p>
+                    <input type="hidden" id="priceDifferenceValue" name="priceDifference" value="0"/>
+                </div>
+            </div>
+
+            <!-- Phần phương thức thanh toán (chỉ hiển thị nếu priceDifference > 0) -->
+            <div class="info-section" id="paymentSection" style="display: none;">
+                <h4><i class="fas fa-credit-card mr-2"></i>Phương thức thanh toán chênh lệch</h4>
+                <div class="payment-method active" data-value="550E8400-E29B-41D4-A716-446655440017">
+                    <input type="radio" name="paymentMethod" value="550E8400-E29B-41D4-A716-446655440017" checked>
+                    <span class="ml-2 font-medium">Thanh toán khi nhận hàng (COD)</span>
+                </div>
+                <div class="payment-method" data-value="550E8400-E29B-41D4-A716-446655440019">
+                    <input type="radio" name="paymentMethod" value="550E8400-E29B-41D4-A716-446655440019">
+                    <span class="ml-2 font-medium">Ví điện tử</span>
+                    <span id="wallet-balance" class="ml-2 text-sm text-gray-600">(Đang tải...)</span>
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="submit" class="btn-confirm">
+                    <i class="fas fa-exchange-alt"></i> Gửi yêu cầu đổi
+                </button>
+                <a th:href="@{/dsdon-mua}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Hủy
+                </a>
+            </div>
+        </form>
+    </div>
+</section>
+
+<!-- Modal chọn sản phẩm thay thế -->
+<div class="modal fade" id="replacementProductModal" tabindex="-1" aria-labelledby="replacementProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="replacementProductModalLabel">
+                    <i class="fas fa-box-open mr-2"></i>Chọn sản phẩm thay thế
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group mb-4 position-relative search-form">
+                    <label for="searchProduct">Tìm kiếm sản phẩm thay thế:</label>
+                    <input type="text" id="searchProduct" name="keyword" placeholder="Nhập tên sản phẩm..." class="form-control"/>
+                </div>
+
+                <div class="form-group mb-4">
+                    <label for="soLuong">Số lượng muốn đổi:</label>
+                    <input type="number" id="soLuong" name="soLuong" min="1" required placeholder="Nhập số lượng"/>
+                </div>
+
+                <div id="replacementProductsContainer">
+                    <!-- Danh sách sản phẩm sẽ được render bởi JavaScript -->
+                </div>
+
+                <!-- Phân trang -->
+                <div id="paginationContainer" class="pagination mt-4 d-flex justify-content-center">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination" id="paginationLinks">
+                            <!-- Phân trang sẽ được render bởi JavaScript -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times"></i> Hủy
+                </button>
+                <button type="button" class="btn btn-primary" id="confirmSelection">
+                    <i class="fas fa-check"></i> Xác nhận chọn
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let selectedProductData = []; // Mảng lưu tất cả sản phẩm được chọn để đổi
+        let productReplacementMap = new Map(); // Map để lưu sản phẩm thay thế theo từng sản phẩm gốc
+        let maxSoLuongTotal = 0; // Tổng số lượng tối đa của các sản phẩm được chọn
+        let currentProductId = null; // Biến lưu ID sản phẩm đang được chọn trong modal
+        let currentSearchKeyword = ''; // Lưu từ khóa tìm kiếm hiện tại
+        let currentPage = 0; // Lưu trang hiện tại
+
+        // Định dạng giá tiền cho các phần tử .price
+        const priceElements = document.querySelectorAll('.price[data-value]');
+        priceElements.forEach(element => {
+            const value = parseFloat(element.getAttribute('data-value'));
+            element.textContent = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(value).replace('₫', ' VNĐ');
+        });
+
+        // Thêm: Tải số dư ví
+        async function loadWalletBalance() {
+            const el = document.getElementById('wallet-balance');
+            if (!el) return;
+            el.textContent = '(Đang tải...)';
+            try {
+                const res = await fetch('/api/wallet/balance', { credentials: 'include' });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    el.textContent = `(Số dư: ${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.data || 0).replace('₫', ' VNĐ')})`;
+                } else {
+                    el.textContent = '(Không có ví)';
+                }
+            } catch (err) {
+                el.textContent = '(Lỗi tải số dư)';
+            }
+        }
+
+        // Thêm: Xử lý chọn phương thức thanh toán
+        document.querySelectorAll('.payment-method').forEach(method => {
+            method.addEventListener('click', () => {
+                document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+                method.classList.add('active');
+                method.querySelector('input').checked = true;
+            });
+        });
+
+        // Xử lý checkbox chọn sản phẩm
+        document.querySelectorAll('.product-select-checkbox').forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const row = this.closest('tr');
+                const maxSoLuong = parseInt(row.querySelector('.max-quantity').textContent) || 1;
+
+                if (this.checked) {
+                    // Lấy đơn giá gốc (cột 4) & đơn giá sau giảm (cột 7)
+                    const unitPriceEl = row.querySelector('td:nth-child(4) .price[data-value]'); // Giá
+                    const finalPriceEl = row.querySelector('td:nth-child(7) .price[data-value]'); // Giá sau giảm
+
+                    const unitPrice = unitPriceEl ? parseFloat(unitPriceEl.dataset.value) : 0;
+                    const unitFinalPrice = finalPriceEl ? parseFloat(finalPriceEl.dataset.value) : unitPrice; // fallback
+
+                    const productData = {
+                        id: this.value,
+                        name: row.querySelector('.product-details strong').textContent,
+                        maxQuantity: maxSoLuong,
+                        priceOriginal: unitPrice,
+                        priceFinal: unitFinalPrice // Lưu giá sau giảm
+                    };
+
+                    selectedProductData.push(productData);
+                    productReplacementMap.set(productData.id, []); // Khởi tạo mảng thay thế cho sản phẩm mới
+                    maxSoLuongTotal += maxSoLuong;
+
+                    // Tự động mở modal cho sản phẩm vừa được chọn
+                    currentProductId = productData.id;
+                    showModalForProduct(productData.id);
+
+                    console.log(`Đã chọn sản phẩm: ${productData.name}, Giá gốc: ${unitPrice}, Giá sau giảm: ${unitFinalPrice}`);
+                } else {
+                    const productId = this.value;
+                    const removedProduct = selectedProductData.find(p => p.id === productId);
+                    if (removedProduct) {
+                        maxSoLuongTotal -= removedProduct.maxQuantity;
+                        console.log(`Đã bỏ chọn sản phẩm: ${removedProduct.name}`);
+                    }
+                    selectedProductData = selectedProductData.filter(p => p.id !== productId);
+                    productReplacementMap.delete(productId); // Xóa danh sách thay thế khi bỏ chọn
+
+                    // Cập nhật currentProductId
+                    if (selectedProductData.length > 0) {
+                        currentProductId = selectedProductData[0].id; // Chuyển sang sản phẩm khác
+                    } else {
+                        currentProductId = null;
+                        hideModal();
+                    }
+                }
+
+                updatePriceDifference();
+            });
+        });
+
+        // Hàm mở modal riêng cho từng sản phẩm
+        function showModalForProduct(productId) {
+            currentProductId = productId;
+            const product = selectedProductData.find(p => p.id === productId);
+            if (!product) return;
+
+            // Cập nhật title modal
+            const modalTitle = document.getElementById('replacementProductModalLabel');
+            modalTitle.innerHTML = `<i class="fas fa-box-open mr-2"></i>Chọn sản phẩm thay thế cho: ${product.name}`;
+
+            // Reset modal
+            document.getElementById('soLuong').value = 1;
+            document.getElementById('soLuong').max = product.maxQuantity;
+            document.getElementById('searchProduct').value = '';
+            currentSearchKeyword = '';
+            currentPage = 0;
+
+            // Load sản phẩm thay thế
+            loadReplacementProducts(currentPage, currentSearchKeyword);
+
+            // Hiển thị modal
+            const modal = new bootstrap.Modal(document.getElementById('replacementProductModal'));
+            modal.show();
+        }
+
+        // Hàm ẩn modal
+        function hideModal() {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('replacementProductModal'));
+            if (modal) modal.hide();
+        }
+
+        // Hàm tính và cập nhật chênh lệch giá
+        function updatePriceDifference() {
+            let totalOriginalPrice = 0;
+            let totalReplacementPrice = 0;
+
+            // Tính tổng giá trị sản phẩm gốc dựa trên giá sau giảm thực tế (từ cột thứ 7)
+            selectedProductData.forEach(product => {
+                const checkbox = document.querySelector(`.product-select-checkbox[value="${product.id}"]`);
+                if (checkbox && checkbox.checked) {
+                    const row = checkbox.closest('tr');
+                    const finalPriceElement = row.querySelector('td:nth-child(7) .price[data-value]'); // Cột "Giá sau giảm"
+
+                    let unitFinalPrice;
+                    if (finalPriceElement && finalPriceElement.dataset.value) {
+                        unitFinalPrice = parseFloat(finalPriceElement.dataset.value);
+                    } else {
+                        // Fallback: nếu không có giá sau giảm, sử dụng giá gốc
+                        unitFinalPrice = product.priceFinal || product.priceOriginal || 0;
+                    }
+
+                    totalOriginalPrice += unitFinalPrice * product.maxQuantity;
+
+                    console.log(`Sản phẩm gốc ${product.name}: Đơn giá sau giảm = ${unitFinalPrice}, Số lượng = ${product.maxQuantity}, Thành tiền = ${unitFinalPrice * product.maxQuantity}`);
+                }
+            });
+
+            // Tính tổng giá trị sản phẩm thay thế (đã bao gồm giảm giá)
+            productReplacementMap.forEach(replacements => {
+                totalReplacementPrice += replacements.reduce((sum, replacement) => {
+                    const totalPrice = replacement.price * replacement.quantity;
+                    console.log(`Sản phẩm thay thế ${replacement.name}: Đơn giá sau giảm = ${replacement.price}, Số lượng = ${replacement.quantity}, Thành tiền = ${totalPrice}`);
+                    return sum + totalPrice;
+                }, 0);
+            });
+
+            const priceDifference = totalReplacementPrice - totalOriginalPrice;
+            const priceDifferenceElement = document.getElementById('priceDifference');
+            const priceDifferenceValue = document.getElementById('priceDifferenceValue');
+            const paymentSection = document.getElementById('paymentSection');
+
+            console.log(`Tính toán chênh lệch: Tổng gốc = ${totalOriginalPrice}, Tổng thay thế = ${totalReplacementPrice}, Chênh lệch = ${priceDifference}`);
+
+            // Cập nhật hiển thị
+            priceDifferenceElement.textContent = new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            }).format(priceDifference).replace('₫', ' VNĐ');
+            priceDifferenceValue.value = priceDifference;
+
+            // Hiển thị/ẩn phần thanh toán
+            if (priceDifference > 0) {
+                paymentSection.style.display = 'block';
+                loadWalletBalance(); // Tải số dư ví khi hiển thị
+            } else {
+                paymentSection.style.display = 'none';
+            }
+
+            // Đổi màu tùy thuộc vào chênh lệch
+            if (priceDifference > 0) {
+                priceDifferenceElement.style.color = '#ef4444'; // Đỏ - cần trả thêm
+                priceDifferenceElement.title = 'Cần thanh toán thêm';
+            } else if (priceDifference < 0) {
+                priceDifferenceElement.style.color = '#10b981'; // Xanh lá - được hoàn
+                priceDifferenceElement.title = 'Sẽ được hoàn tiền';
+            } else {
+                priceDifferenceElement.style.color = '#6b7280'; // Xám - bằng nhau
+                priceDifferenceElement.title = 'Không có chênh lệch';
+            }
+
+            // Cập nhật danh sách sản phẩm thay thế đã chọn
+            renderSelectedReplacementProducts();
+        }
+
+        // Hàm tải danh sách sản phẩm thay thế sử dụng currentProductId
+        function loadReplacementProducts(page = 0, keyword = '') {
+            if (selectedProductData.length === 0 || !currentProductId) return;
+
+            const hoaDonId = document.getElementById('exchangeForm').getAttribute('action').match(/\/(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/)[1];
+            const size = 5;
+
+            const url = `/dsdon-mua/api/replacement-products/${hoaDonId}?page=${page}&size=${size}&keyword=${encodeURIComponent(keyword)}&currentProductId=${currentProductId}`;
+
+            fetch(url, {
+                method: 'GET',
+                credentials: 'include'
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        renderReplacementProducts(data.products);
+                        renderPagination(data.currentPage, data.totalPages, keyword);
+
+                        // Log để debug
+                        console.log(`Loaded ${data.products.length} replacement products for product ${currentProductId}, minPrice: ${data.minPriceAfterDiscount}`);
+                    } else {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonColor: '#153054'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading replacement products:', error);
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Không thể tải danh sách sản phẩm thay thế.',
+                        icon: 'error',
+                        confirmButtonColor: '#153054'
+                    });
+                });
+        }
+
+        // Hàm render danh sách sản phẩm thay thế trong modal
+        function renderReplacementProducts(products) {
+            const container = document.getElementById('replacementProductsContainer');
+            container.innerHTML = '';
+
+            if (products.length === 0) {
+                container.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-search text-muted" style="font-size: 3rem; margin-bottom: 1rem;"></i>
+                    <p class="text-muted">Không tìm thấy sản phẩm thay thế phù hợp cho sản phẩm này</p>
+                    <small class="text-muted">Gợi ý: Chỉ hiển thị sản phẩm có giá >= giá sau giảm của sản phẩm cần đổi</small>
+                </div>
+            `;
+                return;
+            }
+
+            products.forEach(product => {
+                const isSelected = (productReplacementMap.get(currentProductId) || []).find(p => p.id === product.id);
+                const selectedClass = isSelected ? 'selected' : '';
+
+                const productHtml = `
+                <div class="replacement-product-modal ${selectedClass}" data-product-id="${product.id}">
+                    <input type="checkbox"
+                           class="replacement-checkbox"
+                           value="${product.id}"
+                           data-stock="${product.soLuongTonKho}"
+                           data-price="${product.giaValue}"
+                           data-name="${product.tenSanPham} (${product.mauSac}, ${product.kichCo})"
+                           ${isSelected ? 'checked' : ''}/>
+                    <img src="${product.imageUrl}" class="product-img" alt="Ảnh sản phẩm thay thế"/>
+                    <div class="flex-1">
+                        <div><strong>${product.tenSanPham}</strong></div>
+                        <div class="text-sm text-gray-600 mb-2">Màu: ${product.mauSac} | Kích cỡ: ${product.kichCo}</div>
+                        <div class="d-flex align-items-center gap-3 flex-wrap">
+                            <span class="price" data-value="${product.giaValue}">${product.gia}</span>
+                            ${product.oldPrice ? `<span><del class="text-muted">${product.oldPrice}</del></span>` : ''}
+                            ${product.discount ? `<span class="badge bg-danger">${product.discount}</span>` : ''}
+                            ${product.campaignName ? `<span class="badge bg-primary">${product.campaignName}</span>` : ''}
+                            <span class="text-sm text-gray-600">Tồn kho: ${product.soLuongTonKho}</span>
+                        </div>
+                        <div class="mt-2 quantity-section">
+                            <label class="form-label">Số lượng:</label>
+                            <input type="number"
+                                   class="replacement-quantity form-control"
+                                   min="1"
+                                   max="${Math.min(product.soLuongTonKho, maxSoLuongTotal)}"
+                                   value="${isSelected ? isSelected.quantity : 1}"
+                                   style="width: 120px;" ${isSelected ? '' : 'disabled'}/>
+                        </div>
+                    </div>
+                </div>
+            `;
+                container.insertAdjacentHTML('beforeend', productHtml);
+            });
+
+            // Gắn sự kiện cho checkbox
+            document.querySelectorAll('.replacement-checkbox').forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const container = this.closest('.replacement-product-modal');
+                    const qtyInput = container.querySelector('.replacement-quantity');
+                    const imageUrl = container.querySelector('img').getAttribute('src');
+
+                    if (this.checked) {
+                        container.classList.add('selected');
+                        qtyInput.disabled = false;
+
+                        const productData = {
+                            id: this.value,
+                            name: this.getAttribute('data-name'),
+                            price: parseFloat(this.getAttribute('data-price')),
+                            stock: parseInt(this.getAttribute('data-stock')),
+                            quantity: parseInt(qtyInput.value) || 1,
+                            imageUrl: imageUrl
+                        };
+
+                        const replacements = productReplacementMap.get(currentProductId) || [];
+                        replacements.push(productData);
+                        productReplacementMap.set(currentProductId, replacements);
+                    } else {
+                        container.classList.remove('selected');
+                        qtyInput.disabled = true;
+                        const replacements = productReplacementMap.get(currentProductId) || [];
+                        productReplacementMap.set(currentProductId, replacements.filter(p => p.id !== this.value));
+                    }
+
+                    updatePriceDifference();
+                });
+            });
+
+            // Gắn sự kiện cho input số lượng
+            document.querySelectorAll('.replacement-quantity').forEach(input => {
+                input.addEventListener('change', function() {
+                    const container = this.closest('.replacement-product-modal');
+                    const checkbox = container.querySelector('.replacement-checkbox');
+                    const soLuong = parseInt(this.value) || 0;
+                    const stock = parseInt(checkbox.getAttribute('data-stock'));
+
+                    if (soLuong > stock) {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: `Số lượng sản phẩm thay thế không đủ. Tồn kho hiện tại: ${stock}.`,
+                            icon: 'error',
+                            confirmButtonColor: '#153054'
+                        });
+                        this.value = stock;
+                    } else if (soLuong > maxSoLuongTotal) {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: `Số lượng đổi không được vượt quá tổng số lượng đã mua: ${maxSoLuongTotal}.`,
+                            icon: 'error',
+                            confirmButtonColor: '#153054'
+                        });
+                        this.value = maxSoLuongTotal;
+                    } else if (soLuong <= 0) {
+                        this.value = 1;
+                    }
+
+                    const replacements = productReplacementMap.get(currentProductId) || [];
+                    const productIndex = replacements.findIndex(p => p.id === checkbox.value);
+                    if (productIndex !== -1) {
+                        replacements[productIndex].quantity = parseInt(this.value) || 1;
+                        productReplacementMap.set(currentProductId, replacements);
+                    }
+
+                    updatePriceDifference();
+                });
+            });
+        }
+
+        // Hàm render danh sách sản phẩm thay thế đã chọn, tách theo sản phẩm gốc
+        function renderSelectedReplacementProducts() {
+            const replacementList = document.getElementById('replacementList');
+            const selectedSection = document.getElementById('selectedReplacementProducts');
+            replacementList.innerHTML = '';
+
+            if (selectedProductData.length === 0) {
+                selectedSection.style.display = 'none';
+                return;
+            }
+
+            selectedProductData.forEach(product => {
+                const replacements = productReplacementMap.get(product.id) || [];
+                if (replacements.length > 0) {
+                    const sectionHtml = `
+                    <div class="info-section mb-4">
+                        <h4><i class="fas fa-check-circle mr-2"></i>Sản phẩm thay thế cho: ${product.name}</h4>
+                        <div id="replacementList-${product.id}">
+                `;
+                    replacementList.insertAdjacentHTML('beforeend', sectionHtml);
+
+                    replacements.forEach(replacement => {
+                        const productHtml = `
+                        <div class="replacement-product">
+                            <img src="${replacement.imageUrl || '/images/default-product.jpg'}" class="product-img" alt="Ảnh sản phẩm thay thế"/>
+                            <div class="flex-1">
+                                <div><strong>${replacement.name}</strong></div>
+                                <div class="text-sm text-gray-600">Số lượng: ${replacement.quantity}</div>
+                                <div class="price" data-value="${replacement.price}">${new Intl.NumberFormat('vi-VN', {
+                            style: 'currency',
+                            currency: 'VND'
+                        }).format(replacement.price).replace('₫', ' VNĐ')}</div>
+                            </div>
+                        </div>
+                    `;
+                        document.getElementById(`replacementList-${product.id}`).insertAdjacentHTML('beforeend', productHtml);
+                    });
+
+                    replacementList.insertAdjacentHTML('beforeend', '</div></div>');
+                }
+            });
+
+            selectedSection.style.display = replacementList.innerHTML.trim() ? 'block' : 'none';
+        }
+
+        // Hàm render phân trang
+        function renderPagination(currentPageNum, totalPages, keyword) {
+            const paginationLinks = document.getElementById('paginationLinks');
+            paginationLinks.innerHTML = '';
+            currentPage = currentPageNum; // Cập nhật current page
+
+            if (totalPages <= 1) return;
+
+            const prevDisabled = currentPageNum === 0 ? 'disabled' : '';
+            paginationLinks.insertAdjacentHTML('beforeend', `
+            <li class="page-item ${prevDisabled}">
+                <a class="page-link" href="#" data-page="${currentPageNum - 1}" aria-label="Previous">
+                    <span aria-hidden="true">&laquo;</span>
+                </a>
+            </li>
+        `);
+
+            for (let i = 0; i < totalPages; i++) {
+                const active = i === currentPageNum ? 'active' : '';
+                paginationLinks.insertAdjacentHTML('beforeend', `
+                <li class="page-item ${active}">
+                    <a class="page-link" href="#" data-page="${i}">${i + 1}</a>
+                </li>
+            `);
+            }
+
+            const nextDisabled = currentPageNum === totalPages - 1 ? 'disabled' : '';
+            paginationLinks.insertAdjacentHTML('beforeend', `
+            <li class="page-item ${nextDisabled}">
+                <a class="page-link" href="#" data-page="${currentPageNum + 1}" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                </a>
+            </li>
+        `);
+
+            document.querySelectorAll('.page-link[data-page]').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const page = parseInt(e.currentTarget.getAttribute('data-page'));
+                    if (page >= 0 && page < totalPages) {
+                        currentPage = page;
+                        loadReplacementProducts(page, keyword);
+                    }
+                });
+            });
+        }
+
+        // Xử lý tìm kiếm trong modal
+        let searchTimeout;
+        const searchInput = document.getElementById('searchProduct');
+        searchInput.addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const keyword = this.value.trim();
+                currentSearchKeyword = keyword;
+                currentPage = 0;
+                loadReplacementProducts(currentPage, keyword);
+            }, 500);
+        });
+
+        // Xử lý thay đổi số lượng muốn đổi
+        document.getElementById('soLuong').addEventListener('input', function() {
+            const selectedQuantity = parseInt(this.value) || 1;
+            if (selectedQuantity > maxSoLuongTotal) {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: `Số lượng đổi không được vượt quá tổng số lượng đã mua: ${maxSoLuongTotal}.`,
+                    icon: 'error',
+                    confirmButtonColor: '#153054'
+                });
+                this.value = maxSoLuongTotal;
+            } else if (selectedQuantity <= 0) {
+                this.value = 1;
+            }
+
+            document.querySelectorAll('.replacement-quantity').forEach(input => {
+                input.max = Math.min(parseInt(input.closest('.replacement-product-modal').querySelector('.replacement-checkbox').getAttribute('data-stock')), selectedQuantity);
+            });
+
+            updatePriceDifference();
+        });
+
+        // Xử lý xác nhận chọn sản phẩm thay thế
+        document.getElementById('confirmSelection').addEventListener('click', function() {
+            const soLuongInput = document.getElementById('soLuong');
+            const selectedQuantity = parseInt(soLuongInput.value) || 1;
+
+            // Chỉ tính tổng số lượng thay thế của sản phẩm hiện tại
+            const replacementsForCurrentProduct = productReplacementMap.get(currentProductId) || [];
+            const totalReplacementQuantity = replacementsForCurrentProduct.reduce((sum, product) => sum + product.quantity, 0);
+
+            if (totalReplacementQuantity > selectedQuantity) {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: `Tổng số lượng sản phẩm thay thế (${totalReplacementQuantity}) không được vượt quá số lượng muốn đổi (${selectedQuantity}) cho sản phẩm hiện tại.`,
+                    icon: 'error',
+                    confirmButtonColor: '#153054'
+                });
+                return;
+            }
+
+            const modal = bootstrap.Modal.getInstance(document.getElementById('replacementProductModal'));
+            modal.hide();
+
+            renderSelectedReplacementProducts();
+
+            Swal.fire({
+                title: 'Thành công!',
+                text: `Đã chọn ${totalReplacementQuantity} sản phẩm thay thế cho sản phẩm hiện tại.`,
+                icon: 'success',
+                confirmButtonColor: '#153054',
+                timer: 2000
+            });
+        });
+
+        // Reset khi đóng modal
+        document.getElementById('replacementProductModal').addEventListener('hidden.bs.modal', function() {
+            if (Array.from(productReplacementMap.values()).flat().length === 0 && selectedProductData.length > 0) {
+                selectedProductData.forEach(product => {
+                    const checkbox = document.querySelector(`.product-select-checkbox[value="${product.id}"]`);
+                    if (checkbox) checkbox.checked = false;
+                });
+                selectedProductData = [];
+                productReplacementMap.clear();
+                maxSoLuongTotal = 0;
+                currentProductId = null;
+                document.getElementById('selectedReplacementProducts').style.display = 'none';
+                document.getElementById('replacementList').innerHTML = '';
+                updatePriceDifference();
+            }
+        });
+
+        // Xử lý form submit
+        document.getElementById('exchangeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            // Validate sản phẩm được chọn
+            if (selectedProductData.length === 0) {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng chọn ít nhất một sản phẩm để đổi.',
+                    icon: 'error',
+                    confirmButtonColor: '#153054'
+                });
+                return;
+            }
+
+            // Validate sản phẩm thay thế
+            const totalReplacements = Array.from(productReplacementMap.values()).flat();
+            if (totalReplacements.length === 0) {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng chọn ít nhất một sản phẩm thay thế.',
+                    icon: 'error',
+                    confirmButtonColor: '#153054'
+                });
+                return;
+            }
+
+            // Validate phương thức thanh toán nếu priceDifference > 0
+            const priceDifference = parseFloat(document.getElementById('priceDifferenceValue').value);
+            if (priceDifference > 0) {
+                const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+                if (!selectedMethod) {
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'Chưa chọn phương thức thanh toán',
+                        text: 'Vui lòng chọn một phương thức thanh toán để tiếp tục.',
+                        confirmButtonColor: '#153054'
+                    });
+                    return;
+                }
+
+                // Nếu chọn Ví, kiểm tra số dư
+                if (selectedMethod === '550E8400-E29B-41D4-A716-446655440019') {
+                    try {
+                        const res = await fetch('/api/wallet/balance', { credentials: 'include' });
+                        const data = await res.json();
+                        if (!res.ok || !data.success || (data.data || 0) < priceDifference) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Số dư không đủ',
+                                html: `<p>Bạn cần <strong>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(priceDifference).replace('₫', ' VNĐ')}</strong> nhưng số dư hiện tại là <strong>${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(data.data || 0).replace('₫', ' VNĐ')}</strong>.</p><p>Vui lòng nạp thêm tiền vào ví để tiếp tục.</p>`,
+                                showCancelButton: true,
+                                confirmButtonText: 'Nạp tiền ngay',
+                                cancelButtonText: 'Quay lại',
+                                confirmButtonColor: '#153054',
+                                cancelButtonColor: '#d33'
+                            }).then(r => {
+                                if (r.isConfirmed) {
+                                    const id = document.getElementById('exchangeForm').getAttribute('action').match(/\/(\w{8}-\w{4}-\w{4}-\w{4}-\w{12})/)[1];
+                                    location.href = '/vi?redirect=/tra-doi-san-pham/' + id;
+                                }
+                            });
+                            return;
+                        }
+                    } catch (err) {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Không thể kiểm tra số dư ví.',
+                            confirmButtonColor: '#153054'
+                        });
+                        return;
+                    }
+                }
+            }
+
+            // Thu thập dữ liệu form
+            const reason = document.getElementById('reason').value;
+            const description = document.getElementById('description').value;
+            const email = document.getElementById('email').value;
+
+            const formData = new FormData();
+            selectedProductData.forEach(product => formData.append('selectedProducts[]', product.id));
+            totalReplacements.forEach(product => {
+                formData.append('replacementProducts[]', product.id);
+                formData.append('soLuong[]', product.quantity);
+            });
+            formData.append('reason', reason);
+            formData.append('description', description);
+            formData.append('email', email);
+            formData.append('priceDifference', priceDifference);
+
+            // Thêm paymentMethodId nếu priceDifference > 0
+            if (priceDifference > 0) {
+                const selectedMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
+                formData.append('paymentMethodId', selectedMethod);
+            }
+
+            // Hiển thị loading
+            const submitButton = this.querySelector('.btn-confirm');
+            const originalText = submitButton.innerHTML;
+            submitButton.innerHTML = '<div class="loading"></div> Đang xử lý...';
+            submitButton.disabled = true;
+
+            Swal.fire({
+                title: 'Đang xử lý...',
+                text: 'Vui lòng đợi trong giây lát',
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                didOpen: () => Swal.showLoading()
+            });
+
+            // Gửi request
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+                const data = await response.json();
+
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+
+                if (data.success) {
+                    if (data.paymentUrl) { // Nếu backend trả về URL VNPay
+                        window.location.href = data.paymentUrl;
+                    } else {
+                        Swal.fire({
+                            title: 'Thành công!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonColor: '#153054',
+                            confirmButtonText: 'Đồng ý'
+                        }).then(() => {
+                            window.location.href = '/dsdon-mua';
+                        });
+                    }
+                } else {
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonColor: '#153054',
+                        confirmButtonText: 'Đồng ý'
+                    });
+                }
+            } catch (error) {
+                submitButton.innerHTML = originalText;
+                submitButton.disabled = false;
+                console.error('Lỗi khi gửi yêu cầu:', error);
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Có lỗi xảy ra. Vui lòng kiểm tra console để biết chi tiết.',
+                    icon: 'error',
+                    confirmButtonColor: '#153054',
+                    confirmButtonText: 'Đồng ý'
+                });
+            }
+        });
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
