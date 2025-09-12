@@ -15,8 +15,6 @@ public class QuickAddAttributeController {
     @Autowired private XuatXuService xuatXuService;
     @Autowired private ChatLieuService chatLieuService;
     @Autowired private KieuDangService kieuDangService;
-    @Autowired private TayAoService tayAoService;
-    @Autowired private CoAoService coAoService;
     @Autowired private ThuongHieuService thuongHieuService;
 
     @PostMapping("/save-auto-origin")
@@ -46,23 +44,6 @@ public class QuickAddAttributeController {
         return ResponseEntity.ok(Map.of("id", entity.getId(), "name", entity.getTenKieuDang()));
     }
 
-    @PostMapping("/save-auto-sleeve")
-    public ResponseEntity<Map<String, Object>> saveSleeve(@RequestBody Map<String, String> payload) {
-        String name = payload.get("name");
-        TayAo entity = new TayAo();
-        entity.setTenTayAo(name);
-        tayAoService.saveTayAo(entity);
-        return ResponseEntity.ok(Map.of("id", entity.getId(), "name", entity.getTenTayAo()));
-    }
-
-    @PostMapping("/save-auto-collar")
-    public ResponseEntity<Map<String, Object>> saveCollar(@RequestBody Map<String, String> payload) {
-        String name = payload.get("name");
-        CoAo entity = new CoAo();
-        entity.setTenCoAo(name);
-        coAoService.saveCoAo(entity);
-        return ResponseEntity.ok(Map.of("id", entity.getId(), "name", entity.getTenCoAo()));
-    }
 
     @PostMapping("/save-auto-brand")
     public ResponseEntity<Map<String, Object>> saveBrand(@RequestBody Map<String, String> payload) {

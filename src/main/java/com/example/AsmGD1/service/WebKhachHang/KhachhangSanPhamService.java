@@ -4,7 +4,6 @@ import com.example.AsmGD1.dto.KhachHang.*;
 import com.example.AsmGD1.dto.SanPham.SanPhamDto;
 import com.example.AsmGD1.entity.*;
 import com.example.AsmGD1.repository.WebKhachHang.KhachHangSanPhamRepository;
-import com.example.AsmGD1.repository.WebKhachHang.LichSuTimKiemRepository;
 import com.example.AsmGD1.service.SanPham.SanPhamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,14 +22,10 @@ public class KhachhangSanPhamService {
     @Autowired
     private KhachHangSanPhamRepository khachHangSanPhamRepository;
 
-    @Autowired
-    private LichSuTimKiemRepository lichSuTimKiemRepository;
 
     @Autowired
     private SanPhamService sanPhamService;
 
-    @Autowired
-    private ChienDichGiamGiaService chienDichGiamGiaService; // Inject dependency
 
     private static final Logger logger = LoggerFactory.getLogger(KhachhangSanPhamService.class);
 
@@ -50,11 +44,6 @@ public class KhachhangSanPhamService {
         BigDecimal minPrice = list.stream()
                 .map(chiTiet -> {
                     BigDecimal originalPrice = chiTiet.getGia();
-                    Optional<ChienDichGiamGia> chienDich = chienDichGiamGiaService.getActiveCampaignForProductDetail(chiTiet.getId());
-                    if (chienDich.isPresent()) {
-                        BigDecimal discountRate = chienDich.get().getPhanTramGiam().divide(BigDecimal.valueOf(100));
-                        return originalPrice.subtract(originalPrice.multiply(discountRate));
-                    }
                     return originalPrice;
                 })
                 .filter(Objects::nonNull)
@@ -64,11 +53,7 @@ public class KhachhangSanPhamService {
         BigDecimal maxPrice = list.stream()
                 .map(chiTiet -> {
                     BigDecimal originalPrice = chiTiet.getGia();
-                    Optional<ChienDichGiamGia> chienDich = chienDichGiamGiaService.getActiveCampaignForProductDetail(chiTiet.getId());
-                    if (chienDich.isPresent()) {
-                        BigDecimal discountRate = chienDich.get().getPhanTramGiam().divide(BigDecimal.valueOf(100));
-                        return originalPrice.subtract(originalPrice.multiply(discountRate));
-                    }
+
                     return originalPrice;
                 })
                 .filter(Objects::nonNull)
@@ -137,11 +122,11 @@ public class KhachhangSanPhamService {
         return list.stream().map(this::convertToSanPhamDto).limit(limit).collect(Collectors.toList());
     }
 
-    public List<DanhMuc> getActiveCategories(){
+    public List<DanhMuc> getActiveCategories() {
         return khachHangSanPhamRepository.findCategoriesHavingActiveProducts();
     }
 
-    public List<SanPhamDto> getProductsByCategory(UUID categoryId){
+    public List<SanPhamDto> getProductsByCategory(UUID categoryId) {
         return khachHangSanPhamRepository.findActiveProductsByCategory(categoryId)
                 .stream().map(this::convertToSanPhamDto).toList();
     }
@@ -153,43 +138,6 @@ public class KhachhangSanPhamService {
             return null;
         }
         return convertToChiTietSanPhamDto(details.get(0));
-    }
-
-    // Ưu tiên % KM theo biến thể; nếu biến thể không có thì dùng % theo sản phẩm; nếu vẫn không có thì 0%
-    private BigDecimal getEffectiveDiscountPercent(UUID sanPhamId, ChiTietSanPham ct) {
-        return chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId())
-                .map(ChienDichGiamGia::getPhanTramGiam)
-                .orElseGet(() -> chienDichGiamGiaService.getActiveCampaignForProduct(sanPhamId)
-                        .map(ChienDichGiamGia::getPhanTramGiam)
-                        .orElse(BigDecimal.ZERO));
-    }
-
-    // Min giá đã giảm trên toàn bộ biến thể active
-    private BigDecimal getMinDiscountedPriceForProduct(UUID sanPhamId) {
-        List<ChiTietSanPham> details = khachHangSanPhamRepository.findActiveProductDetailsBySanPhamId(sanPhamId);
-        if (details.isEmpty()) return BigDecimal.ZERO;
-
-        boolean hasDetailDiscount = details.stream()
-                .anyMatch(ct -> chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId()).isPresent());
-
-        BigDecimal productPercent = hasDetailDiscount
-                ? BigDecimal.ZERO
-                : chienDichGiamGiaService.getActiveCampaignForProduct(sanPhamId)
-                .map(ChienDichGiamGia::getPhanTramGiam)
-                .orElse(BigDecimal.ZERO);
-
-        return details.stream()
-                .filter(ChiTietSanPham::getTrangThai)
-                .map(ct -> {
-                    BigDecimal base = ct.getGia();
-                    BigDecimal percent = chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId())
-                            .map(ChienDichGiamGia::getPhanTramGiam)
-                            .orElse(productPercent);
-                    BigDecimal rate = percent.movePointLeft(2);
-                    return base.subtract(base.multiply(rate)).setScale(0, RoundingMode.HALF_UP);
-                })
-                .min(BigDecimal::compareTo)
-                .orElse(BigDecimal.ZERO);
     }
 
 
@@ -210,16 +158,7 @@ public class KhachhangSanPhamService {
         // Thiết lập giá gốc
         BigDecimal originalPrice = chiTiet.getGia();
         dto.setOldPrice(originalPrice); // Giá gốc
-        Optional<ChienDichGiamGia> chienDich = chienDichGiamGiaService.getActiveCampaignForProductDetail(chiTiet.getId());
-        if (chienDich.isPresent()) {
-            BigDecimal discountRate = chienDich.get().getPhanTramGiam().divide(BigDecimal.valueOf(100));
-            BigDecimal discountedPrice = originalPrice.subtract(originalPrice.multiply(discountRate));
-            dto.setGia(discountedPrice); // Giá sau giảm
-            dto.setDiscountCampaignName(chienDich.get().getTen());
-        } else {
-            dto.setGia(originalPrice); // Không có chiến dịch, dùng giá gốc
-            dto.setDiscountCampaignName(null);
-        }
+
 
         // Lấy danh sách màu sắc
         List<MauSacDto> mauSacList = khachHangSanPhamRepository.findActiveProductDetailsBySanPhamId(chiTiet.getSanPham().getId())
@@ -281,15 +220,7 @@ public class KhachhangSanPhamService {
         kieuDangDto.setTenKieuDang(chiTiet.getKieuDang().getTenKieuDang());
         dto.setKieuDang(kieuDangDto);
 
-        TayAoDto tayAoDto = new TayAoDto();
-        tayAoDto.setId(chiTiet.getTayAo().getId());
-        tayAoDto.setTenTayAo(chiTiet.getTayAo().getTenTayAo());
-        dto.setTayAo(tayAoDto);
 
-        CoAoDto coAoDto = new CoAoDto();
-        coAoDto.setId(chiTiet.getCoAo().getId());
-        coAoDto.setTenCoAo(chiTiet.getCoAo().getTenCoAo());
-        dto.setCoAo(coAoDto);
 
         // Lấy ảnh thumbnail của màu sắc hiện tại
         List<String> colorImages = khachHangSanPhamRepository.findProductImagesBySanPhamIdAndMauSacId(
@@ -342,54 +273,6 @@ public class KhachhangSanPhamService {
                 .orElse(BigDecimal.ZERO);
         dto.setOldPrice(minOriginal.toPlainString());
 
-        // --- QUY TẮC GIẢM GIÁ
-        // Nếu có ít nhất 1 chiến dịch theo biến thể -> bỏ qua chiến dịch theo sản phẩm
-        boolean hasDetailDiscount = activeDetails.stream()
-                .anyMatch(ct -> chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId()).isPresent());
-
-        BigDecimal productPercent = hasDetailDiscount
-                ? BigDecimal.ZERO
-                : chienDichGiamGiaService.getActiveCampaignForProduct(sanPham.getId())
-                .map(ChienDichGiamGia::getPhanTramGiam)
-                .orElse(BigDecimal.ZERO);
-
-        // price = min giá đã giảm trên toàn bộ biến thể
-        BigDecimal minDiscounted = activeDetails.stream()
-                .map(ct -> {
-                    BigDecimal base = ct.getGia();
-                    if (base == null) return null;
-                    BigDecimal percent = chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId())
-                            .map(ChienDichGiamGia::getPhanTramGiam)
-                            .orElse(productPercent);
-                    BigDecimal rate = percent.movePointLeft(2); // 30 -> 0.30
-                    return base.subtract(base.multiply(rate)).setScale(0, RoundingMode.HALF_UP);
-                })
-                .filter(Objects::nonNull)
-                .min(BigDecimal::compareTo)
-                .orElse(BigDecimal.ZERO);
-        dto.setPrice(minDiscounted.toPlainString()); // FE hiển thị: "Từ <price>"
-
-        // discount = % giảm lớn nhất đang áp dụng trên các biến thể (hoặc % theo SP nếu không có biến thể giảm)
-        BigDecimal maxPercent = activeDetails.stream()
-                .map(ct -> chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId())
-                        .map(ChienDichGiamGia::getPhanTramGiam)
-                        .orElse(productPercent))
-                .max(BigDecimal::compareTo)
-                .orElse(BigDecimal.ZERO);
-        dto.setDiscount(maxPercent.stripTrailingZeros().toPlainString() + "%");
-
-        // Tên chiến dịch (ưu tiên theo biến thể nếu có)
-        String campaignName = hasDetailDiscount
-                ? activeDetails.stream()
-                .map(ct -> chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId()))
-                .filter(Optional::isPresent)
-                .map(o -> o.get().getTen())
-                .findFirst()
-                .orElse(null)
-                : chienDichGiamGiaService.getActiveCampaignForProduct(sanPham.getId())
-                .map(ChienDichGiamGia::getTen)
-                .orElse(null);
-        dto.setDiscountCampaignName(campaignName);
 
         // (tuỳ bạn dùng)
         dto.setSold("50");
@@ -454,63 +337,10 @@ public class KhachhangSanPhamService {
                 : (minGia != null ? minGia.toPlainString() : "0");
         dto.setOldPrice(oldPrice);
 
-        // --- QUY TẮC GIẢM GIÁ
-        boolean hasDetailDiscount = activeDetails.stream()
-                .anyMatch(ct -> chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId()).isPresent());
-
-        BigDecimal productPercent = hasDetailDiscount
-                ? BigDecimal.ZERO
-                : chienDichGiamGiaService.getActiveCampaignForProduct(p.getId())
-                .map(ChienDichGiamGia::getPhanTramGiam)
-                .orElse(BigDecimal.ZERO);
 
         // price = min đã giảm
-        BigDecimal minDiscounted;
-        if (!activeDetails.isEmpty()) {
-            minDiscounted = activeDetails.stream()
-                    .map(ct -> {
-                        BigDecimal base = ct.getGia();
-                        if (base == null) return null;
-                        BigDecimal percent = chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId())
-                                .map(ChienDichGiamGia::getPhanTramGiam)
-                                .orElse(productPercent);
-                        BigDecimal rate = percent.movePointLeft(2);
-                        return base.subtract(base.multiply(rate)).setScale(0, RoundingMode.HALF_UP);
-                    })
-                    .filter(Objects::nonNull)
-                    .min(BigDecimal::compareTo)
-                    .orElse(minGia != null ? minGia : BigDecimal.ZERO);
-        } else {
-            // Không có biến thể active: giảm trực tiếp trên minGia theo % sản phẩm (nếu có)
-            BigDecimal base = (minGia != null) ? minGia : BigDecimal.ZERO;
-            minDiscounted = base.subtract(base.multiply(productPercent.movePointLeft(2)))
-                    .setScale(0, RoundingMode.HALF_UP);
-        }
-        dto.setPrice(minDiscounted.toPlainString()); // FE hiển thị: "Từ <price>"
 
-        // discount = % lớn nhất đang áp dụng
-        BigDecimal maxPercent = activeDetails.stream()
-                .map(ct -> chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId())
-                        .map(ChienDichGiamGia::getPhanTramGiam)
-                        .orElse(productPercent))
-                .max(BigDecimal::compareTo)
-                .orElse(productPercent); // nếu không có biến thể, dùng % theo SP
-        dto.setDiscount(maxPercent.stripTrailingZeros().toPlainString() + "%");
 
-        // Tên chiến dịch
-        String campaignName = hasDetailDiscount
-                ? activeDetails.stream()
-                .map(ct -> chienDichGiamGiaService.getActiveCampaignForProductDetail(ct.getId()))
-                .filter(Optional::isPresent)
-                .map(o -> o.get().getTen())
-                .findFirst()
-                .orElse(null)
-                : chienDichGiamGiaService.getActiveCampaignForProduct(p.getId())
-                .map(ChienDichGiamGia::getTen)
-                .orElse(null);
-        dto.setDiscountCampaignName(campaignName);
-
-        // Sold
         dto.setSold(String.valueOf(sold != null ? sold : 0L));
 
         return dto;
@@ -527,38 +357,9 @@ public class KhachhangSanPhamService {
                 .collect(Collectors.toList());
     }
 
-    // Lưu lịch sử tìm kiếm
-    @Transactional
-    public void saveSearchHistory(NguoiDung nguoiDung, String keyword) {
-        if (nguoiDung == null || keyword == null || keyword.trim().isEmpty()) {
-            logger.warn("Cannot save search history: user or keyword is null/empty. User: {}, Keyword: {}", nguoiDung, keyword);
-            return;
-        }
-        logger.info("Attempting to save search history for user ID: {}, keyword: {}", nguoiDung.getId(), keyword);
-        boolean exists = lichSuTimKiemRepository.findByNguoiDungIdOrderByThoiGianTimKiemDesc(nguoiDung.getId())
-                .stream()
-                .anyMatch(lichSu -> lichSu.getTuKhoa().equalsIgnoreCase(keyword.trim()));
-        if (!exists) {
-            LichSuTimKiem lichSu = LichSuTimKiem.builder()
-                    .tuKhoa(keyword.trim())
-                    .nguoiDung(nguoiDung)
-                    .thoiGianTimKiem(LocalDateTime.now()) // Gán thời gian rõ ràng
-                    .build();
-            lichSuTimKiemRepository.save(lichSu);
-            logger.info("Saved search history for keyword: {}", keyword);
-        } else {
-            logger.info("Keyword '{}' already exists in search history for user ID: {}", keyword, nguoiDung.getId());
-        }
-    }
 
-    // Lấy lịch sử tìm kiếm
-    public List<String> getSearchHistory(UUID nguoiDungId) {
-        return lichSuTimKiemRepository.findByNguoiDungIdOrderByThoiGianTimKiemDesc(nguoiDungId)
-                .stream()
-                .map(LichSuTimKiem::getTuKhoa)
-                .limit(5)
-                .toList();
-    }
+
+
 
     // Tìm kiếm sản phẩm với gợi ý theo danh mục khi không có kết quả
     public List<SanPhamDto> searchProductsWithHistory(String keyword, NguoiDung nguoiDung) {

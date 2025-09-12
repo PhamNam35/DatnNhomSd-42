@@ -125,19 +125,7 @@ public class CartController {
                     chiTietSanPhamMap.put("xuatXu", xuatXuMap);
                 }
 
-                if (item.getChiTietSanPham().getTayAo() != null) {
-                    Map<String, Object> tayAoMap = new HashMap<>();
-                    tayAoMap.put("id", item.getChiTietSanPham().getTayAo().getId());
-                    tayAoMap.put("tenTayAo", item.getChiTietSanPham().getTayAo().getTenTayAo());
-                    chiTietSanPhamMap.put("tayAo", tayAoMap);
-                }
 
-                if (item.getChiTietSanPham().getCoAo() != null) {
-                    Map<String, Object> coAoMap = new HashMap<>();
-                    coAoMap.put("id", item.getChiTietSanPham().getCoAo().getId());
-                    coAoMap.put("tenCoAo", item.getChiTietSanPham().getCoAo().getTenCoAo());
-                    chiTietSanPhamMap.put("coAo", coAoMap);
-                }
 
                 if (item.getChiTietSanPham().getKieuDang() != null) {
                     Map<String, Object> kieuDangMap = new HashMap<>();

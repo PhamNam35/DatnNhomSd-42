@@ -15,7 +15,6 @@ import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaCuaNguoiDungService;
 import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaService;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
 import com.example.AsmGD1.service.SanPham.ChiTietSanPhamService;
-import com.example.AsmGD1.service.ViThanhToan.ViThanhToanService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,13 +40,11 @@ public class CheckoutService {
     @Autowired private HoaDonService hoaDonService;
     @Autowired private ChiTietGioHangRepository chiTietGioHangRepository;
     @Autowired private GioHangRepository gioHangRepository;
-    @Autowired private ViThanhToanService viThanhToanService;
     @Autowired private DiaChiNguoiDungRepository diaChiNguoiDungRepository;
     @Autowired private EmailService emailService;
     @Autowired private PhieuGiamGiaService phieuGiamGiaService;
     @Autowired private PhieuGiamGiaCuaNguoiDungService phieuGiamGiaCuaNguoiDungService;
     @Autowired private ChiTietSanPhamService chiTietSanPhamService;
-    @Autowired private ChienDichGiamGiaService chienDichGiamGiaService;
 
     @Transactional
     public DonHang createOrder(NguoiDung nguoiDung, CheckoutRequest request, UUID addressId) {
@@ -128,17 +125,8 @@ public class CheckoutService {
             BigDecimal thanhTien = gia.multiply(BigDecimal.valueOf(soLuong));
 
             // Giảm theo chiến dịch (nếu có)
-            Optional<ChienDichGiamGia> activeOpt =
-                    chienDichGiamGiaService.getActiveCampaignForProduct(ctsp.getSanPham().getId());
-            if (activeOpt.isPresent() && "ONGOING".equals(activeOpt.get().getStatus())) {
-                BigDecimal percent = activeOpt.get().getPhanTramGiam();
-                if (percent != null && percent.compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal giamChiTiet = gia
-                            .multiply(percent.divide(BigDecimal.valueOf(100)))
-                            .multiply(BigDecimal.valueOf(soLuong));
-                    thanhTien = thanhTien.subtract(giamChiTiet);
-                }
-            }
+
+
 
             ChiTietDonHang ctdh = new ChiTietDonHang();
             ctdh.setDonHang(donHang);
@@ -275,16 +263,6 @@ public class CheckoutService {
             logger.info("Không có voucher nào được nhập.");
         }
 
-        // ===== Thanh toán bằng ví (nếu chọn) =====
-        UUID VI_PAYMENT_METHOD_ID = UUID.fromString("550e8400-e29b-41d4-a716-446655440019");
-        if (VI_PAYMENT_METHOD_ID.equals(request.getPaymentMethodId())) {
-            boolean ok = viThanhToanService.thanhToanBangVi(
-                    nguoiDung.getId(),
-                    donHang.getId(),
-                    donHang.getTongTien()
-            );
-            if (!ok) throw new RuntimeException("Số dư ví không đủ để thanh toán.");
-        }
 
         // Đánh dấu đã thanh toán & thời gian
         donHang.setTrangThaiThanhToan(true);

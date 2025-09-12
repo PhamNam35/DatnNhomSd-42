@@ -7,14 +7,11 @@ import com.example.AsmGD1.repository.BanHang.DonHangRepository;
 import com.example.AsmGD1.repository.BanHang.PhuongThucThanhToanRepository;
 import com.example.AsmGD1.repository.HoaDon.HoaDonRepository;
 import com.example.AsmGD1.repository.HoaDon.LichSuHoaDonRepository;
-import com.example.AsmGD1.repository.HoaDon.LichSuTraHangRepository;
 import com.example.AsmGD1.repository.NguoiDung.NguoiDungRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
 import com.example.AsmGD1.repository.WebKhachHang.DanhGiaRepository;
-import com.example.AsmGD1.repository.WebKhachHang.LichSuDoiSanPhamRepository;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
 import com.example.AsmGD1.service.NguoiDung.NguoiDungService;
-import com.example.AsmGD1.service.ViThanhToan.ViThanhToanService;
 import com.example.AsmGD1.service.WebKhachHang.EmailService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.transaction.Transactional;
@@ -77,14 +74,11 @@ public class KHDonMuaController {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private LichSuTraHangRepository lichSuTraHangRepository;
+
 
     @Autowired
     private ChiTietSanPhamRepository chiTietSanPhamRepository;
 
-    @Autowired
-    private LichSuDoiSanPhamRepository lichSuDoiSanPhamRepository;
 
     @Autowired
     private LichSuHoaDonRepository lichSuHoaDonRepository;
@@ -95,11 +89,8 @@ public class KHDonMuaController {
     private ChiTietDonHangRepository chiTietDonHangRepository;
 
     @Autowired
-    private ChienDichGiamGiaService chienDichGiamGiaService;
-    @Autowired
     private DonHangPhieuGiamGiaRepository donHangPhieuGiamGiaRepository;
-    @Autowired
-    private ViThanhToanService viThanhToanService;
+
     @Autowired
     private PhuongThucThanhToanRepository phuongThucThanhToanRepository;
 
@@ -925,12 +916,6 @@ public class KHDonMuaController {
     /** Đơn giá của sản phẩm thay thế sau khuyến mãi hiện tại (nếu có) */
     private BigDecimal getReplacementUnitPrice(ChiTietSanPham ctsp) {
         BigDecimal p = safeZero(ctsp.getGia());
-        Optional<ChienDichGiamGia> active = chienDichGiamGiaService.getActiveCampaignForProductDetail(ctsp.getId());
-        if (active.isPresent()) {
-            BigDecimal discount = p.multiply(active.get().getPhanTramGiam())
-                    .divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP);
-            p = p.subtract(discount);
-        }
         return p;
     }
 
@@ -971,14 +956,8 @@ public class KHDonMuaController {
             return "WebKhachHang/tra-doi-san-pham";
         }
 
-        // Kiểm tra nếu hóa đơn đã được đổi
-        boolean daDoi = "Đã đổi hàng".equals(hoaDon.getTrangThai()) ||
-                lichSuDoiSanPhamRepository.existsByHoaDonIdAndTrangThai(hoaDon.getId(), "Đã xác nhận");
-        if (daDoi) {
-            model.addAttribute("hoaDon", null);
-            model.addAttribute("message", "Hóa đơn này đã đổi hàng. Không thể tạo yêu cầu đổi thêm.");
-            return "WebKhachHang/tra-doi-san-pham";
-        }
+
+
 
         DecimalFormatSymbols symbols = new DecimalFormatSymbols();
         symbols.setGroupingSeparator('.');
@@ -1069,12 +1048,7 @@ public class KHDonMuaController {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
             }
 
-            if ("Đã đổi hàng".equals(hoaDon.getTrangThai()) ||
-                    lichSuDoiSanPhamRepository.existsByHoaDonIdAndTrangThai(hoaDon.getId(), "Đã xác nhận")) {
-                response.put("success", false);
-                response.put("message", "Hóa đơn này đã đổi hàng. Không thể gửi yêu cầu đổi thêm.");
-                return ResponseEntity.badRequest().body(response);
-            }
+
 
             List<String> allowedStatuses = Arrays.asList("Vận chuyển thành công", "Chờ xử lý đổi hàng", "Hoàn thành");
             if (!allowedStatuses.contains(hoaDon.getTrangThai())) {
@@ -1189,24 +1163,7 @@ public class KHDonMuaController {
                     BigDecimal tongTienMoi  = replaceUnit.multiply(BigDecimal.valueOf(soLuongDoi));
                     BigDecimal chenhLechCap = tongTienMoi.subtract(tongTienHoan);
 
-                    // Lưu lịch sử đổi
-                    LichSuDoiSanPham ls = new LichSuDoiSanPham();
-                    ls.setPhuongThucThanhToan(
-                            (paymentMethodId != null)
-                                    ? phuongThucThanhToanRepository.findById(paymentMethodId).orElse(null)
-                                    : null
-                    );
-                    ls.setChenhLechGia(chenhLechCap);
-                    ls.setChiTietDonHang(ctGoc);
-                    ls.setHoaDon(hoaDon);
-                    ls.setChiTietSanPhamThayThe(ctThayThe);
-                    ls.setSoLuong(soLuongDoi);
-                    ls.setTongTienHoan(tongTienHoan);
-                    ls.setChenhLechGia(chenhLechCap);
-                    ls.setLyDoDoiHang(lyDoDay);
-                    ls.setThoiGianDoi(LocalDateTime.now());
-                    ls.setTrangThai("Chờ xử lý");
-                    lichSuDoiSanPhamRepository.save(ls);
+
 
                     logger.info("Đổi: [{}] (paidUnit={}) -> [{}] (replaceUnit={}), qty={}, hoàn={}, mới={}, chênh={}",
                             ctGoc.getTenSanPham(), paidUnit,
@@ -1239,21 +1196,10 @@ public class KHDonMuaController {
 
             // 8) Xử lý thanh toán nếu priceDifference > 0
             if (chenhLechGiaThucTe.compareTo(BigDecimal.ZERO) > 0) {
-                UUID VI_ID = UUID.fromString("550E8400-E29B-41D4-A716-446655440019");
                 UUID BANK_ID = UUID.fromString("550E8400-E29B-41D4-A716-446655440018");
                 UUID COD_ID = UUID.fromString("550E8400-E29B-41D4-A716-446655440017");
 
-                if (paymentMethodId.equals(VI_ID)) {
-                    // Thanh toán bằng ví
-                    boolean success = viThanhToanService.thanhToanBangVi(nguoiDungId, hoaDon.getDonHang().getId(), chenhLechGiaThucTe);
-                    if (!success) {
-                        response.put("success", false);
-                        response.put("message", "Số dư ví không đủ để thanh toán chênh lệch giá.");
-                        return ResponseEntity.badRequest().body(response);
-                    }
-                    logger.info("Thanh toán chênh lệch bằng ví thành công: userId={}, orderId={}, amount={}",
-                            nguoiDungId, hoaDon.getDonHang().getId(), chenhLechGiaThucTe);
-                } else if (paymentMethodId.equals(BANK_ID)) {
+                 if (paymentMethodId.equals(BANK_ID)) {
                     // Tạo link VNPay
                     String productName = "Thanh toán chênh lệch đổi hàng đơn " + hoaDon.getDonHang().getMaDonHang();
                     String descriptions = "Chênh lệch giá đổi hàng";
@@ -1288,31 +1234,11 @@ public class KHDonMuaController {
             }
 
             if (chenhLechGiaThucTe.compareTo(BigDecimal.ZERO) > 0) {
-                UUID VI_ID   = UUID.fromString("550E8400-E29B-41D4-A716-446655440019");
                 UUID BANK_ID = UUID.fromString("550E8400-E29B-41D4-A716-446655440018");
                 UUID COD_ID  = UUID.fromString("550E8400-E29B-41D4-A716-446655440017");
 
-                if (paymentMethodId.equals(VI_ID)) {
-                    // Sau khi gọi service trừ ví thành công:
-                    lichSuDoiSanPhamRepository
-                            .findByHoaDonAndTrangThai(hoaDon, "Chờ xử lý")
-                            .stream()
-                            .filter(x -> x.getChenhLechGia()!=null && x.getChenhLechGia().compareTo(BigDecimal.ZERO) > 0)
-                            .forEach(x -> {
-                                x.setDaThanhToanChenhLech(true);  // ✅ đã thu tiền chênh lệch
-                                lichSuDoiSanPhamRepository.save(x);
-                            });
-                } else if (paymentMethodId.equals(BANK_ID) || paymentMethodId.equals(COD_ID)) {
-                    // Chỉ ghi nhận PTTT nếu chưa có
-                    lichSuDoiSanPhamRepository
-                            .findByHoaDonAndTrangThai(hoaDon, "Chờ xử lý")
-                            .forEach(x -> {
-                                if (x.getPhuongThucThanhToan() == null) {
-                                    phuongThucThanhToanRepository.findById(paymentMethodId).ifPresent(x::setPhuongThucThanhToan);
-                                    lichSuDoiSanPhamRepository.save(x);
-                                }
-                            });
-                }
+
+
             }
 
 
@@ -1497,17 +1423,6 @@ public class KHDonMuaController {
                 BigDecimal giaGoc = product.getGia();
                 BigDecimal giaSauGiam = giaGoc; // Mặc định bằng giá gốc
 
-                // Kiểm tra và áp dụng chiến dịch giảm giá
-                Optional<ChienDichGiamGia> activeCampaign = chienDichGiamGiaService.getActiveCampaignForProductDetail(product.getId());
-                if (activeCampaign.isPresent()) {
-                    ChienDichGiamGia campaign = activeCampaign.get();
-                    BigDecimal discountAmount = giaGoc.multiply(campaign.getPhanTramGiam()).divide(BigDecimal.valueOf(100), RoundingMode.HALF_UP);
-                    giaSauGiam = giaGoc.subtract(discountAmount);
-
-                    productMap.put("oldPrice", new DecimalFormat("#,### VNĐ").format(giaGoc));
-                    productMap.put("discount", formatter.format(campaign.getPhanTramGiam()) + "%");
-                    productMap.put("campaignName", campaign.getTen());
-                }
 
                 // Chỉ thêm sản phẩm nếu giá sau giảm >= minPriceAfterDiscount
                 if (giaSauGiam.compareTo(minPriceAfterDiscount) >= 0) {

@@ -8,12 +8,9 @@ import com.example.AsmGD1.repository.BanHang.DonHangPhieuGiamGiaRepository;
 import com.example.AsmGD1.repository.BanHang.DonHangRepository;
 import com.example.AsmGD1.repository.HoaDon.HoaDonRepository;
 import com.example.AsmGD1.repository.HoaDon.LichSuHoaDonRepository;
-import com.example.AsmGD1.repository.HoaDon.LichSuTraHangRepository;
 import com.example.AsmGD1.repository.NguoiDung.DiaChiNguoiDungRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
-import com.example.AsmGD1.repository.ViThanhToan.LichSuGiaoDichViRepository;
-import com.example.AsmGD1.repository.ViThanhToan.ViThanhToanRepository;
-import com.example.AsmGD1.repository.WebKhachHang.LichSuDoiSanPhamRepository;
+
 import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaService;
 import com.example.AsmGD1.service.WebKhachHang.EmailService;
 import com.google.zxing.BarcodeFormat;
@@ -51,7 +48,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
-import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class HoaDonService {
@@ -71,14 +67,9 @@ public class HoaDonService {
     @Autowired
     private ChiTietDonHangRepository chiTietDonHangRepository;
 
-    @Autowired
-    private LichSuTraHangRepository lichSuTraHangRepository;
 
-    @Autowired
-    private ViThanhToanRepository viThanhToanRepo;
 
-    @Autowired
-    private LichSuGiaoDichViRepository lichSuRepo;
+
 
     @Autowired
     private EmailService emailService;
@@ -88,8 +79,7 @@ public class HoaDonService {
     @Autowired
     private PhieuGiamGiaService phieuGiamGiaService;
 
-    @Autowired
-    private LichSuDoiSanPhamRepository lichSuDoiSanPhamRepository;
+
 
     @Autowired
     private DonHangPhieuGiamGiaRepository donHangPhieuGiamGiaRepository;
@@ -188,21 +178,10 @@ public class HoaDonService {
 
         if (List.of("Ví Thanh Toán", "Ví", "Chuyển khoản").contains(ptttName)) {
             BigDecimal soTienHoan = chenhLech.abs();
-            ViThanhToan vi = viThanhToanRepo.findByNguoiDung(hoaDonGoc.getNguoiDung())
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy ví của người dùng"));
 
-            vi.setSoDu(vi.getSoDu().add(soTienHoan));
-            vi.setThoiGianCapNhat(LocalDateTime.now());
-            viThanhToanRepo.save(vi);
 
-            LichSuGiaoDichVi ls = new LichSuGiaoDichVi();
-            ls.setIdViThanhToan(vi.getId());
-            ls.setLoaiGiaoDich("Hoàn tiền chênh lệch đổi hàng");
-            ls.setSoTien(soTienHoan);
-            ls.setMoTa(moTa != null ? moTa : ("Hoàn chênh lệch đơn " + hoaDonGoc.getDonHang().getMaDonHang()));
-            ls.setCreatedAt(LocalDateTime.now());
-            ls.setThoiGianGiaoDich(LocalDateTime.now());
-            lichSuRepo.save(ls);
+
+
         }
     }
 
@@ -640,162 +619,7 @@ public class HoaDonService {
         System.out.println("Đã thêm LichSuHoaDon: " + trangThai);
     }
 
-    @Transactional
-    public HoaDon taoHoaDonPhuThuNhieuDong(HoaDon hoaDonGoc, List<LichSuDoiSanPham> items) {
-        if (items == null || items.isEmpty()) return null;
 
-        // Group theo PTTT: nếu item không có PTTT riêng -> fallback PTTT của HĐ gốc
-        Map<UUID, List<LichSuDoiSanPham>> groups = new LinkedHashMap<>();
-        Map<UUID, PhuongThucThanhToan> groupPttt = new HashMap<>();
-
-        for (LichSuDoiSanPham ls : items) {
-            PhuongThucThanhToan pttt = (ls.getPhuongThucThanhToan() != null)
-                    ? ls.getPhuongThucThanhToan()
-                    : hoaDonGoc.getPhuongThucThanhToan();
-            UUID key = (pttt != null && pttt.getId() != null) ? pttt.getId() : UUID.randomUUID(); // tránh null key
-            groups.computeIfAbsent(key, k -> new ArrayList<>()).add(ls);
-            groupPttt.putIfAbsent(key, pttt);
-        }
-
-        HoaDon hoaDonKetQuaCuoi = null;
-
-        // Duyệt từng nhóm theo PTTT
-        for (Map.Entry<UUID, List<LichSuDoiSanPham>> entry : groups.entrySet()) {
-            PhuongThucThanhToan ptttGroup = groupPttt.get(entry.getKey());
-            List<LichSuDoiSanPham> groupItems = entry.getValue();
-
-            // Kiểm tra nhóm đã thanh toán hết chưa (chỉ khi mọi item trong group = true)
-            boolean daThanhToanGroup = groupItems.stream()
-                    .allMatch(ls -> Boolean.TRUE.equals(ls.getDaThanhToanChenhLech()));
-
-            // Gom trước các dòng sẽ ghi vào ĐƠN PHỤ THU (≥ 0) để tránh tạo đơn rỗng
-            class LineSpec {
-                ChiTietSanPham ctThayThe;
-                String ten;
-                int soLuong;
-                BigDecimal unitPrice;
-                BigDecimal thanhTien;
-                String ghiChu;
-            }
-            List<LineSpec> lineSpecs = new ArrayList<>();
-            BigDecimal tongPhuThu = BigDecimal.ZERO;
-
-            // Xử lý từng yêu cầu trong group
-            for (LichSuDoiSanPham ls : groupItems) {
-                ChiTietDonHang ctGoc = ls.getChiTietDonHang();
-                ChiTietSanPham ctThayThe = ls.getChiTietSanPhamThayThe();
-
-                // Tính chênh lệch: ưu tiên giá trị đã lưu trong Lịch sử; nếu null thì tự tính
-                BigDecimal chenhLechItem =
-                        (ls.getChenhLechGia() != null)
-                                ? ls.getChenhLechGia()
-                                : ctThayThe.getGia().multiply(BigDecimal.valueOf(ls.getSoLuong()))
-                                .subtract(
-                                        (ls.getTongTienHoan() != null)
-                                                ? ls.getTongTienHoan()
-                                                : ctGoc.getGia().multiply(BigDecimal.valueOf(ls.getSoLuong()))
-                                );
-
-                if (chenhLechItem.compareTo(BigDecimal.ZERO) >= 0) {
-                    // ✅ Tạo dòng chi tiết cho cả phụ thu (>0) LẪN 0Đ (=0)
-                    BigDecimal unitDiff = chenhLechItem
-                            .divide(BigDecimal.valueOf(ls.getSoLuong()), 0, RoundingMode.HALF_UP);
-                    LineSpec spec = new LineSpec();
-                    spec.ctThayThe = ctThayThe;
-                    spec.ten = ctThayThe.getSanPham().getTenSanPham() +
-                            (chenhLechItem.signum() == 0 ? " (Đổi hàng 0đ)" : " (Phụ thu đổi hàng)");
-                    spec.soLuong = ls.getSoLuong();
-                    spec.unitPrice = unitDiff; // = 0 nếu chênh lệch 0
-                    spec.thanhTien = unitDiff.multiply(BigDecimal.valueOf(ls.getSoLuong())); // = 0 nếu chênh lệch 0
-                    spec.ghiChu = "Đổi từ '" + ctGoc.getTenSanPham() + "' → '" +
-                            ctThayThe.getSanPham().getTenSanPham() + "', SL " + ls.getSoLuong() +
-                            (chenhLechItem.signum() == 0 ? ", chênh lệch 0đ" : "");
-
-                    lineSpecs.add(spec);
-                    tongPhuThu = tongPhuThu.add(spec.thanhTien);
-
-                } else {
-                    // Âm -> hoàn ví (nếu PTTT nhóm là ví/CK)
-                    String ptttName = (ptttGroup != null && ptttGroup.getTenPhuongThuc() != null)
-                            ? ptttGroup.getTenPhuongThuc().trim()
-                            : "";
-                    if (List.of("Ví Thanh Toán", "Ví", "Chuyển khoản").contains(ptttName)) {
-                        BigDecimal soTienHoan = chenhLechItem.abs();
-                        ViThanhToan vi = viThanhToanRepo.findByNguoiDung(hoaDonGoc.getNguoiDung())
-                                .orElseThrow(() -> new RuntimeException("Không tìm thấy ví của người dùng"));
-
-                        vi.setSoDu(vi.getSoDu().add(soTienHoan));
-                        vi.setThoiGianCapNhat(LocalDateTime.now());
-                        viThanhToanRepo.save(vi);
-
-                        LichSuGiaoDichVi lsVi = new LichSuGiaoDichVi();
-                        lsVi.setIdViThanhToan(vi.getId());
-                        lsVi.setLoaiGiaoDich("Hoàn tiền chênh lệch đổi hàng");
-                        lsVi.setSoTien(soTienHoan);
-                        lsVi.setMoTa("Hoàn chênh lệch đơn " + hoaDonGoc.getDonHang().getMaDonHang());
-                        lsVi.setCreatedAt(LocalDateTime.now());
-                        lsVi.setThoiGianGiaoDich(LocalDateTime.now());
-                        lichSuRepo.save(lsVi);
-                    }
-                }
-            }
-
-            // Nếu không có dòng ≥ 0 (chỉ toàn âm → chỉ hoàn ví) thì bỏ qua không tạo đơn/hóa đơn
-            if (lineSpecs.isEmpty()) {
-                continue;
-            }
-
-            // 1) Tạo DonHang mới cho group
-            DonHang newOrder = new DonHang();
-            newOrder.setNguoiDung(hoaDonGoc.getNguoiDung());
-            newOrder.setMaDonHang("EX" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-            newOrder.setTrangThaiThanhToan(false);
-            newOrder.setPhiVanChuyen(BigDecimal.ZERO);
-            newOrder.setPhuongThucThanhToan(ptttGroup);
-            newOrder.setSoTienKhachDua(BigDecimal.ZERO);
-            newOrder.setThoiGianTao(LocalDateTime.now());
-            newOrder.setTienGiam(BigDecimal.ZERO);
-            newOrder.setTongTien(BigDecimal.ZERO);
-            newOrder.setPhuongThucBanHang("Online");
-            newOrder.setDiaChi(hoaDonGoc.getDiaChi());
-            newOrder.setDiaChiGiaoHang(
-                    hoaDonGoc.getDonHang() != null ? hoaDonGoc.getDonHang().getDiaChiGiaoHang() : null
-            );
-            newOrder.setGhiChu("Đơn chênh lệch đổi hàng (gộp) từ " + hoaDonGoc.getDonHang().getMaDonHang());
-            newOrder = donHangRepository.save(newOrder);
-
-            // 2) Ghi các dòng phụ thu/0đ
-            for (LineSpec s : lineSpecs) {
-                ChiTietDonHang line = new ChiTietDonHang();
-                line.setDonHang(newOrder);
-                line.setChiTietSanPham(s.ctThayThe);
-                line.setTenSanPham(s.ten);
-                line.setSoLuong(s.soLuong);
-                line.setGia(s.unitPrice);         // 0 nếu chênh lệch 0
-                line.setThanhTien(s.thanhTien);   // 0 nếu chênh lệch 0
-                line.setTrangThaiHoanTra(false);
-                line.setGhiChu(s.ghiChu);
-                chiTietDonHangRepository.save(line);
-            }
-
-            // 3) Cập nhật tổng tiền + trạng thái đơn theo đã thanh toán
-            newOrder.setTongTien(tongPhuThu);
-            if (daThanhToanGroup) {
-                newOrder.setTrangThaiThanhToan(true);
-                newOrder.setSoTienKhachDua(tongPhuThu);
-                newOrder.setThoiGianThanhToan(LocalDateTime.now());
-            }
-            donHangRepository.save(newOrder);
-
-            // 4) Tạo hóa đơn cho đơn mới
-            createHoaDonFromDonHang(newOrder);
-
-            // 5) Lấy hóa đơn vừa tạo (để trả về)
-            hoaDonKetQuaCuoi = hoaDonRepository.findByDonHang(newOrder).orElse(null);
-        }
-
-        return hoaDonKetQuaCuoi;
-    }
 
 
     public String getCurrentStatus(HoaDon hoaDon) {
@@ -805,18 +629,7 @@ public class HoaDonService {
         }
 
         // Kiểm tra trạng thái đổi hàng dựa trên trạng thái hóa đơn hoặc lịch sử đổi hàng
-        if ("Đã đổi hàng".equals(hoaDon.getTrangThai()) ||
-                hoaDon.getLichSuHoaDons().stream().anyMatch(ls -> "Đã đổi hàng".equals(ls.getTrangThai())) ||
-                lichSuDoiSanPhamRepository.existsByHoaDonIdAndTrangThai(hoaDon.getId(), "Đã xác nhận")) {
-            return "Đã đổi hàng";
-        }
 
-        // Kiểm tra trạng thái chờ xử lý đổi hàng
-        if ("Chờ xử lý đổi hàng".equals(hoaDon.getTrangThai()) ||
-                hoaDon.getLichSuHoaDons().stream().anyMatch(ls -> "Chờ xử lý đổi hàng".equals(ls.getTrangThai())) ||
-                lichSuDoiSanPhamRepository.existsByHoaDonIdAndTrangThai(hoaDon.getId(), "Chờ xử lý")) {
-            return "Chờ xử lý đổi hàng";
-        }
 
         // Kiểm tra trạng thái hoàn thành
         if ("Hoàn thành".equals(hoaDon.getTrangThai()) ||
@@ -863,10 +676,7 @@ public class HoaDonService {
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + hoaDonId));
 
-        if ("Đã đổi hàng".equals(hoaDon.getTrangThai())
-                || lichSuDoiSanPhamRepository.existsByHoaDonIdAndTrangThai(hoaDonId, "Đã xác nhận")) {
-            throw new IllegalStateException("Hóa đơn này đã đổi hàng, không thể tạo yêu cầu đổi thêm.");
-        }
+
 
         // Kiểm tra trạng thái hợp lệ để đổi hàng
         if (!List.of("Hoàn thành", "Vận chuyển thành công", "Đã trả hàng một phần").contains(hoaDon.getTrangThai())) {
@@ -904,15 +714,7 @@ public class HoaDonService {
                 chiTietSanPham.setSoLuongTonKho(chiTietSanPham.getSoLuongTonKho() + soLuongTra);
                 chiTietSanPhamRepository.save(chiTietSanPham);
 
-                LichSuTraHang lichSu = new LichSuTraHang();
-                lichSu.setHoaDon(hoaDon);
-                lichSu.setChiTietDonHang(chiTiet);
-                lichSu.setSoLuong(chiTiet.getSoLuong());
-                lichSu.setTongTienHoan(chiTiet.getThanhTien());
-                lichSu.setLyDoTraHang(lyDoDoiHang);
-                lichSu.setThoiGianTra(LocalDateTime.now());
-                lichSu.setTrangThai("Đã trả");
-                lichSuTraHangRepository.save(lichSu);
+
 
                 tongTienHoan = tongTienHoan.add(chiTiet.getThanhTien());
             }
@@ -961,34 +763,12 @@ public class HoaDonService {
             if (chenhLech.compareTo(BigDecimal.ZERO) != 0 && hoaDon.getPhuongThucThanhToan() != null &&
                     List.of("Ví Thanh Toán", "Ví", "Chuyển khoản").contains(hoaDon.getPhuongThucThanhToan().getTenPhuongThuc().trim())) {
                 NguoiDung nguoiDung = hoaDon.getNguoiDung();
-                ViThanhToan viThanhToan = viThanhToanRepo.findByNguoiDung(nguoiDung)
-                        .orElseThrow(() -> new RuntimeException("Không tìm thấy ví của người dùng"));
+
 
                 String moTaGiaoDich;
-                if (chenhLech.compareTo(BigDecimal.ZERO) > 0) {
-                    // Khách cần trả thêm
-                    if (viThanhToan.getSoDu().compareTo(chenhLech) < 0) {
-                        throw new RuntimeException("Số dư ví không đủ để thanh toán chênh lệch: " + formatCurrency(chenhLech));
-                    }
-                    viThanhToan.setSoDu(viThanhToan.getSoDu().subtract(chenhLech));
-                    moTaGiaoDich = "Thanh toán chênh lệch đổi hàng cho hóa đơn: " + hoaDon.getDonHang().getMaDonHang();
-                } else {
-                    // Hoàn tiền cho khách
-                    viThanhToan.setSoDu(viThanhToan.getSoDu().add(chenhLech.abs()));
-                    moTaGiaoDich = "Hoàn tiền chênh lệch đổi hàng cho hóa đơn: " + hoaDon.getDonHang().getMaDonHang();
-                }
 
-                viThanhToan.setThoiGianCapNhat(LocalDateTime.now());
-                viThanhToanRepo.save(viThanhToan);
 
-                LichSuGiaoDichVi lichSu = new LichSuGiaoDichVi();
-                lichSu.setIdViThanhToan(viThanhToan.getId());
-                lichSu.setLoaiGiaoDich(chenhLech.compareTo(BigDecimal.ZERO) > 0 ? "Thanh toán chênh lệch" : "Hoàn tiền chênh lệch");
-                lichSu.setSoTien(chenhLech.abs());
-                lichSu.setMoTa(moTaGiaoDich);
-                lichSu.setCreatedAt(LocalDateTime.now());
-                lichSu.setThoiGianGiaoDich(LocalDateTime.now());
-                lichSuRepo.save(lichSu);
+
             }
         } catch (Exception e) {
             System.err.println("Lỗi trong processExchange: " + e.getMessage());
@@ -1015,21 +795,10 @@ public class HoaDonService {
                 || "Chuyển khoản".equalsIgnoreCase(pttt)) {
             BigDecimal refundAmount = hoaDon.getTongTien();
             NguoiDung nguoiDung = hoaDon.getNguoiDung();
-            ViThanhToan viThanhToan = viThanhToanRepo.findByNguoiDung(nguoiDung)
-                    .orElseThrow(() -> new RuntimeException("Không tìm thấy ví của người dùng"));
 
-            viThanhToan.setSoDu(viThanhToan.getSoDu().add(refundAmount));
-            viThanhToan.setThoiGianCapNhat(LocalDateTime.now());
-            viThanhToanRepo.save(viThanhToan);
 
-            LichSuGiaoDichVi lichSu = new LichSuGiaoDichVi();
-            lichSu.setIdViThanhToan(viThanhToan.getId());
-            lichSu.setLoaiGiaoDich("Hoàn tiền");
-            lichSu.setSoTien(refundAmount);
-            lichSu.setMoTa("Hoàn tiền do hủy đơn hàng: " + hoaDon.getDonHang().getMaDonHang());
-            lichSu.setCreatedAt(LocalDateTime.now());
-            lichSu.setThoiGianGiaoDich(LocalDateTime.now());
-            lichSuRepo.save(lichSu);
+
+
         }
 
         updateStatus(hoaDonId, "Hủy đơn hàng", ghiChu, true);
@@ -1082,15 +851,7 @@ public class HoaDonService {
                 // Cộng dồn tổng tiền hàng trả
                 tongTienHangTra = tongTienHangTra.add(chiTiet.getThanhTien());
 
-                LichSuTraHang lichSu = new LichSuTraHang();
-                lichSu.setHoaDon(hoaDon);
-                lichSu.setChiTietDonHang(chiTiet);
-                lichSu.setSoLuong(chiTiet.getSoLuong());
-                lichSu.setTongTienHoan(chiTiet.getThanhTien());
-                lichSu.setLyDoTraHang(lyDoTraHang);
-                lichSu.setThoiGianTra(LocalDateTime.now());
-                lichSu.setTrangThai("Đã trả");
-                lichSuTraHangRepository.save(lichSu);
+
             }
 
             // Tính tỷ lệ hoàn trả
@@ -1137,21 +898,10 @@ public class HoaDonService {
                 if (List.of("Ví Thanh Toán", "Ví", "Chuyển khoản").contains(pttt)) {
                     NguoiDung nguoiDung = hoaDon.getNguoiDung();
                     if (nguoiDung != null) {
-                        ViThanhToan viThanhToan = viThanhToanRepo.findByNguoiDung(nguoiDung)
-                                .orElseThrow(() -> new RuntimeException("Không tìm thấy ví của người dùng"));
 
-                        viThanhToan.setSoDu(viThanhToan.getSoDu().add(tongTienHoanThucTe));
-                        viThanhToan.setThoiGianCapNhat(LocalDateTime.now());
-                        viThanhToanRepo.save(viThanhToan);
 
-                        LichSuGiaoDichVi lichSu = new LichSuGiaoDichVi();
-                        lichSu.setIdViThanhToan(viThanhToan.getId());
-                        lichSu.setLoaiGiaoDich("Hoàn tiền");
-                        lichSu.setSoTien(tongTienHoanThucTe);
-                        lichSu.setMoTa("Hoàn tiền trả hàng cho hóa đơn: " + hoaDon.getDonHang().getMaDonHang());
-                        lichSu.setCreatedAt(LocalDateTime.now());
-                        lichSu.setThoiGianGiaoDich(LocalDateTime.now());
-                        lichSuRepo.save(lichSu);
+
+
                     }
                 }
             }
@@ -1201,16 +951,7 @@ public class HoaDonService {
 //                chiTietSanPham.setSoLuongTonKho(chiTietSanPham.getSoLuongTonKho() + soLuongTra);
 //                chiTietSanPhamRepository.save(chiTietSanPham);
 
-                // Tạo yêu cầu trả hàng với trạng thái "Chờ xác nhận"
-                LichSuTraHang lichSu = new LichSuTraHang();
-                lichSu.setHoaDon(hoaDon);
-                lichSu.setChiTietDonHang(chiTiet);
-                lichSu.setSoLuong(chiTiet.getSoLuong());
-                lichSu.setTongTienHoan(chiTiet.getThanhTien());
-                lichSu.setLyDoTraHang(lyDoTraHang);
-                lichSu.setThoiGianTra(LocalDateTime.now());
-                lichSu.setTrangThai("Chờ xác nhận");
-                lichSuTraHangRepository.save(lichSu);
+
 
                 tongTienHangTra = tongTienHangTra.add(chiTiet.getThanhTien());
             }

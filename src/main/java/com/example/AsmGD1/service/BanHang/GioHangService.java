@@ -75,14 +75,7 @@ public class GioHangService {
     // Tính giá sau giảm dựa trên chiến dịch giảm giá
     private BigDecimal tinhGiaSauGiam(ChiTietSanPham chiTiet) {
         BigDecimal gia = chiTiet.getGia();
-        ChienDichGiamGia chienDich = chiTiet.getChienDichGiamGia();
-        if (chienDich != null && "ONGOING".equals(chienDich.getStatus()) && (chienDich.getSoLuong() == null || chienDich.getSoLuong() > 0)) {
-            BigDecimal phanTramGiam = chienDich.getPhanTramGiam();
-            if (phanTramGiam != null) {
-                BigDecimal giamGia = gia.multiply(phanTramGiam).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP);
-                return gia.subtract(giamGia);
-            }
-        }
+
         return gia;
     }
 

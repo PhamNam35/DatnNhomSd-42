@@ -45,22 +45,8 @@ public class ChiTietGioHangService {
 
         // --- LẤY CAMPAIGN THEO CHI TIẾT SẢN PHẨM ---
         BigDecimal perUnitGiam = BigDecimal.ZERO;
-        Optional<ChienDichGiamGia> active = chienDichGiamGiaService
-                .getActiveCampaignForProductDetail(ctp.getId());
-        if (active.isPresent()) {
-            ChienDichGiamGia c = active.get();
-            boolean unlimited = (c.getSoLuong() == null);
-            boolean enough    = unlimited || c.getSoLuong() >= soLuongMoi;
 
-            if (c.getPhanTramGiam() != null && enough) {
-                perUnitGiam = giaGoc.multiply(c.getPhanTramGiam())
-                        .divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP);
-                int delta = soLuongMoi - soLuongCu;
-                if (!unlimited && delta > 0) {
-                    chienDichGiamGiaService.truSoLuong(c.getId(), delta);
-                }
-            }
-        }
+
 
         BigDecimal giaSauGiam   = giaGoc.subtract(perUnitGiam);
         BigDecimal thanhTienCu  = giaCu.multiply(BigDecimal.valueOf(soLuongCu));
