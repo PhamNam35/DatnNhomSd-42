@@ -16,7 +16,6 @@ import com.example.AsmGD1.service.GioHang.ChiTietGioHangService;
 import com.example.AsmGD1.service.GioHang.KhachHangGioHangService;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
 import com.example.AsmGD1.service.NguoiDung.NguoiDungService;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import com.example.AsmGD1.service.ViThanhToan.ViThanhToanService;
 import com.example.AsmGD1.service.WebKhachHang.CheckoutService;
 import org.slf4j.Logger;
@@ -90,9 +89,6 @@ public class KHThanhToanController {
 
     @Autowired
     private DiaChiNguoiDungRepository diaChiNguoiDungRepository;
-
-    @Autowired
-    private ThongBaoService thongBaoService;
 
     @Autowired
     private HoaDonService hoaDonService;

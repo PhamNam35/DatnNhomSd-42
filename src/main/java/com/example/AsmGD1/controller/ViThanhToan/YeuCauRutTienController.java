@@ -5,7 +5,6 @@ import com.example.AsmGD1.entity.ViThanhToan;
 import com.example.AsmGD1.entity.YeuCauRutTien;
 import com.example.AsmGD1.repository.ViThanhToan.ViThanhToanRepository;
 import com.example.AsmGD1.repository.ViThanhToan.YeuCauRutTienRepository;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -26,8 +25,7 @@ public class YeuCauRutTienController {
 
     @Autowired
     private YeuCauRutTienRepository rutTienRepo;
-    @Autowired
-    private ThongBaoService thongBaoService;
+
 
 
     @GetMapping("/rut-tien")
@@ -89,13 +87,6 @@ public class YeuCauRutTienController {
 
         rutTienRepo.save(yeuCau);
 
-        // Gửi thông báo cho admin
-        thongBaoService.taoThongBaoHeThong(
-                "admin",
-                "Khách hàng yêu cầu rút tiền",
-                "Khách hàng " + user.getHoTen() + " (" + user.getEmail() + ") đã gửi yêu cầu rút "
-                        + soTien + " VNĐ từ ví. Mã giao dịch: " + yeuCau.getMaGiaoDich()
-        );
 
         redirectAttributes.addFlashAttribute("success", "Gửi yêu cầu rút tiền thành công. Đang chờ duyệt.");
         return "redirect:/rut-tien";

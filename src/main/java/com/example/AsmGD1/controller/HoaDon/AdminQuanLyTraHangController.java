@@ -14,7 +14,6 @@ import com.example.AsmGD1.repository.ViThanhToan.LichSuGiaoDichViRepository;
 import com.example.AsmGD1.repository.ViThanhToan.ViThanhToanRepository;
 import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,8 +66,7 @@ public class AdminQuanLyTraHangController {
     @Autowired
     private LichSuHoaDonRepository lichSuHoaDonRepository;
 
-    @Autowired
-    private ThongBaoService thongBaoService;
+
 
     @Autowired
     private ChienDichGiamGiaService chienDichGiamGiaService;
@@ -529,19 +527,7 @@ public class AdminQuanLyTraHangController {
                     ". Tổng tiền hoàn: " + formatCurrency(tongTienHoanThucTe));
             lichSuHoaDonRepository.save(lichSuHoaDon);
 
-            // 6. Thông báo
-            try {
-                thongBaoService.taoThongBaoHeThong(
-                        nguoiDung.getTenDangNhap(),
-                        "Yêu cầu trả hàng được xác nhận",
-                        "Yêu cầu trả hàng cho đơn hàng " + hoaDon.getDonHang().getMaDonHang() +
-                                " đã được xác nhận. Tổng tiền hoàn: " + formatCurrency(tongTienHoanThucTe) +
-                                " đã được cộng vào ví của bạn.",
-                        hoaDon.getDonHang()
-                );
-            } catch (Exception e) {
-                logger.error("Lỗi gửi thông báo: {}", e.getMessage());
-            }
+
 
             response.put("success", true);
             response.put("message", "Đã xác nhận trả hàng thành công. Tồn kho và ví khách hàng đã được cập nhật.");
@@ -599,13 +585,7 @@ public class AdminQuanLyTraHangController {
             lichSuHoaDon.setGhiChu("Admin hủy yêu cầu trả hàng: " + request.getOrDefault("ghiChu", "Không có ghi chú"));
             lichSuHoaDonRepository.save(lichSuHoaDon);
 
-            // Thông báo khách hàng
-            thongBaoService.taoThongBaoHeThong(
-                    hoaDon.getDonHang().getNguoiDung().getTenDangNhap(),
-                    "Yêu cầu trả hàng bị hủy",
-                    "Yêu cầu trả hàng cho đơn hàng " + hoaDon.getDonHang().getMaDonHang() + " đã bị hủy bởi admin.",
-                    hoaDon.getDonHang()
-            );
+
 
             response.put("success", true);
             response.put("message", "Đã hủy yêu cầu trả hàng thành công.");

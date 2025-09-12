@@ -5,7 +5,6 @@ import com.example.AsmGD1.repository.HoaDon.HoaDonRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
 import com.example.AsmGD1.repository.WebKhachHang.LichSuDoiSanPhamRepository;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import com.example.AsmGD1.service.WebKhachHang.EmailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,8 +41,6 @@ public class AdminExchangeController {
     @Autowired
     private HoaDonRepository hoaDonRepository;
 
-    @Autowired
-    private ThongBaoService thongBaoService;
 
     @Autowired
     private EmailService emailService;
@@ -212,17 +209,7 @@ public class AdminExchangeController {
 
             // Thông báo + Email
             NguoiDung user = hoaDon.getDonHang().getNguoiDung();
-            thongBaoService.taoThongBaoHeThong(
-                    user.getTenDangNhap(),
-                    "Yêu cầu đổi sản phẩm đã được xác nhận",
-                    "Đơn " + hoaDon.getDonHang().getMaDonHang()
-                            + (chenhLech.compareTo(BigDecimal.ZERO) > 0
-                            ? " phát sinh phụ thu: " + String.format("%,.0f", chenhLech) + " VNĐ."
-                            : (chenhLech.compareTo(BigDecimal.ZERO) < 0
-                            ? " được hoàn chênh lệch: " + String.format("%,.0f", chenhLech.abs()) + " VNĐ."
-                            : " không phát sinh chênh lệch.")),
-                    hoaDon.getDonHang()
-            );
+
 
             String emailContent = "<h2>Xác nhận yêu cầu đổi sản phẩm</h2>"
                     + "<p>Xin chào " + user.getHoTen() + ",</p>"
@@ -334,17 +321,7 @@ public class AdminExchangeController {
 
             // Thông báo + Email
             NguoiDung user = hoaDon.getDonHang().getNguoiDung();
-            thongBaoService.taoThongBaoHeThong(
-                    user.getTenDangNhap(),
-                    "Tất cả yêu cầu đổi sản phẩm đã được xác nhận",
-                    "Đơn " + hoaDon.getDonHang().getMaDonHang()
-                            + (totalChenhLech.compareTo(BigDecimal.ZERO) > 0
-                            ? " phát sinh phụ thu: " + String.format("%,.0f", totalChenhLech) + " VNĐ."
-                            : (totalChenhLech.compareTo(BigDecimal.ZERO) < 0
-                            ? " được hoàn chênh lệch: " + String.format("%,.0f", totalChenhLech.abs()) + " VNĐ."
-                            : " không phát sinh chênh lệch.")),
-                    hoaDon.getDonHang()
-            );
+
 
             String emailContent = "<h2>Xác nhận tất cả yêu cầu đổi sản phẩm</h2>"
                     + "<p>Xin chào " + user.getHoTen() + ",</p>"

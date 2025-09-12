@@ -11,14 +11,11 @@ import com.example.AsmGD1.repository.HoaDon.LichSuHoaDonRepository;
 import com.example.AsmGD1.repository.HoaDon.LichSuTraHangRepository;
 import com.example.AsmGD1.repository.NguoiDung.NguoiDungRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
-import com.example.AsmGD1.repository.ThongBao.ChiTietThongBaoNhomRepository;
-import com.example.AsmGD1.repository.ThongBao.ThongBaoNhomRepository;
 import com.example.AsmGD1.repository.WebKhachHang.DanhGiaRepository;
 import com.example.AsmGD1.repository.WebKhachHang.LichSuDoiSanPhamRepository;
 import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
 import com.example.AsmGD1.service.NguoiDung.NguoiDungService;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import com.example.AsmGD1.service.ViThanhToan.ViThanhToanService;
 import com.example.AsmGD1.service.WebKhachHang.EmailService;
 import jakarta.servlet.http.HttpSession;
@@ -57,11 +54,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/dsdon-mua")
 public class KHDonMuaController {
 
-    @Autowired
-    private ThongBaoNhomRepository thongBaoNhomRepository;
-
-    @Autowired
-    private ChiTietThongBaoNhomRepository chiTietThongBaoNhomRepository;
 
     @Autowired
     private NguoiDungRepository nguoiDungRepository;
@@ -77,8 +69,6 @@ public class KHDonMuaController {
     @Autowired
     private HoaDonRepository hoaDonRepo;
 
-    @Autowired
-    private ThongBaoService thongBaoService;
 
     @Autowired
     private HoaDonService hoaDonService;
@@ -458,12 +448,7 @@ public class KHDonMuaController {
 
         try {
             hoaDonService.cancelOrder(id, ghiChu);
-            thongBaoService.taoThongBaoHeThong(
-                    "admin",
-                    "Khách hàng hủy đơn hàng",
-                    "Đơn hàng mã " + hoaDon.getDonHang().getMaDonHang() + " đã bị khách hàng hủy.",
-                    hoaDon.getDonHang()
-            );
+
 
             String emailContent = "<h2>Thông báo hủy đơn hàng</h2>" +
                     "<p>Xin chào " + nguoiDung.getHoTen() + ",</p>" +
@@ -568,17 +553,7 @@ public class KHDonMuaController {
             // Lưu hóa đơn
             HoaDon savedHoaDon = hoaDonRepo.save(hoaDon);
 
-            // Gửi thông báo (không để lỗi này làm fail transaction)
-            try {
-                thongBaoService.taoThongBaoHeThong(
-                        "admin",
-                        "Đơn hàng đã hoàn thành",
-                        "Đơn hàng mã " + hoaDon.getDonHang().getMaDonHang() + " đã được khách hàng xác nhận hoàn thành.",
-                        hoaDon.getDonHang()
-                );
-            } catch (Exception e) {
-                System.err.println("Lỗi khi gửi thông báo: " + e.getMessage());
-            }
+
 
             // Gửi email (không để lỗi này làm fail transaction)
             try {
@@ -1368,13 +1343,7 @@ public class KHDonMuaController {
             lichSuHoaDon.setGhiChu(ghiChu);
             lichSuHoaDonRepository.save(lichSuHoaDon);
 
-            // 11) Thông báo + Email
-            try {
-                String thongBaoContent = "Khách hàng " + user.getHoTen() + " yêu cầu đổi sản phẩm cho đơn hàng " + hoaDon.getDonHang().getMaDonHang();
-                thongBaoService.taoThongBaoHeThong("admin", "Yêu cầu đổi sản phẩm mới", thongBaoContent, hoaDon.getDonHang());
-            } catch (Exception e) {
-                logger.warn("Không thể tạo thông báo: {}", e.getMessage());
-            }
+
 
             try {
                 String emailContent = "<h2>Xác nhận yêu cầu đổi sản phẩm</h2>" +

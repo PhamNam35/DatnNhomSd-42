@@ -15,7 +15,6 @@ import com.example.AsmGD1.repository.ViThanhToan.LichSuGiaoDichViRepository;
 import com.example.AsmGD1.repository.ViThanhToan.ViThanhToanRepository;
 import com.example.AsmGD1.repository.WebKhachHang.LichSuDoiSanPhamRepository;
 import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaService;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import com.example.AsmGD1.service.WebKhachHang.EmailService;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -84,8 +83,7 @@ public class HoaDonService {
     @Autowired
     private EmailService emailService;
 
-    @Autowired
-    private ThongBaoService thongBaoService;
+
 
     @Autowired
     private PhieuGiamGiaService phieuGiamGiaService;
@@ -1249,13 +1247,6 @@ public class HoaDonService {
             // Cập nhật trạng thái hóa đơn
             updateStatus(hoaDonId, trangThaiTraHang, ghiChu, true);
 
-            // Gửi thông báo cho khách hàng
-            thongBaoService.taoThongBaoHeThong(
-                    hoaDon.getDonHang().getNguoiDung().getTenDangNhap(),
-                    "Yêu cầu trả hàng đã được gửi",
-                    "Yêu cầu trả hàng cho đơn hàng " + hoaDon.getDonHang().getMaDonHang() + " đã được gửi và đang chờ xác nhận.",
-                    hoaDon.getDonHang()
-            );
 
         } catch (Exception e) {
             System.err.println("Lỗi trong processReturn: " + e.getMessage());
@@ -1419,7 +1410,7 @@ public class HoaDonService {
                     noiDung = "Đơn " + ma + " cập nhật: " + newStatus + ". " + (ghiChu != null ? ghiChu : "");
             }
 
-            thongBaoService.thongBaoCapNhatTrangThai(dh.getId(), tieuDe, noiDung);
+
         } catch (Exception ignore) {}
 
         NguoiDung nguoiDung = hd.getNguoiDung();

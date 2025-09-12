@@ -2,7 +2,6 @@ package com.example.AsmGD1.controller.NguoiDung;
 
 import com.example.AsmGD1.entity.NguoiDung;
 import com.example.AsmGD1.service.NguoiDung.NguoiDungService;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -20,8 +19,6 @@ public class EmployeeController {
 
     @Autowired
     private NguoiDungService nguoiDungService;
-    @Autowired
-    private ThongBaoService thongBaoService;
 
     @GetMapping
     public String listEmployees(@RequestParam(defaultValue = "0") int page,
@@ -74,11 +71,7 @@ public class EmployeeController {
 
             nguoiDungService.save(employee);
 
-            thongBaoService.taoThongBaoHeThong(
-                    "admin",
-                    "Thêm nhân viên",
-                    "Nhân viên " + hoTenNhanVienMoi + " đã được thêm bởi " + hoTenNguoiThem
-            );
+
 
             redirectAttributes.addFlashAttribute("message", "Thêm nhân viên thành công!");
             redirectAttributes.addFlashAttribute("messageType", "success");
@@ -108,11 +101,7 @@ public class EmployeeController {
 
             nguoiDungService.save(employee);
 
-            thongBaoService.taoThongBaoHeThong(
-                    "admin",
-                    "Cập nhật nhân viên",
-                    "Thông tin nhân viên **" + employee.getHoTen() + "** đã được cập nhật bởi **" + currentUser.getHoTen() + "**"
-            );
+
 
             redirectAttributes.addFlashAttribute("message", "Sửa nhân viên thành công!");
             redirectAttributes.addFlashAttribute("messageType", "success");
@@ -138,11 +127,6 @@ public class EmployeeController {
             NguoiDung deletedUser = nguoiDungService.findById(id);
             nguoiDungService.deleteById(id);
 
-            thongBaoService.taoThongBaoHeThong(
-                    "admin",
-                    "Xóa nhân viên",
-                    "Nhân viên **" + deletedUser.getHoTen() + "** đã bị xóa bởi **" + currentUser.getHoTen() + "**"
-            );
 
             redirectAttributes.addFlashAttribute("message", "Xóa nhân viên thành công!");
             redirectAttributes.addFlashAttribute("messageType", "success");
