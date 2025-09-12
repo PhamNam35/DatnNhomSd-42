@@ -1,6 +1,5 @@
 package com.example.AsmGD1.controller.WebKhachHang;
 
-import com.example.AsmGD1.dto.KhachHang.ChiTietSanPhamDto;
 import com.example.AsmGD1.entity.*;
 import com.example.AsmGD1.repository.BanHang.ChiTietDonHangRepository;
 import com.example.AsmGD1.repository.BanHang.DonHangPhieuGiamGiaRepository;
@@ -13,7 +12,6 @@ import com.example.AsmGD1.repository.NguoiDung.NguoiDungRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
 import com.example.AsmGD1.repository.WebKhachHang.DanhGiaRepository;
 import com.example.AsmGD1.repository.WebKhachHang.LichSuDoiSanPhamRepository;
-import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
 import com.example.AsmGD1.service.NguoiDung.NguoiDungService;
 import com.example.AsmGD1.service.ViThanhToan.ViThanhToanService;

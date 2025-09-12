@@ -5,7 +5,6 @@ import com.example.AsmGD1.dto.SanPham.SanPhamDto;
 import com.example.AsmGD1.entity.*;
 import com.example.AsmGD1.repository.WebKhachHang.KhachHangSanPhamRepository;
 import com.example.AsmGD1.repository.WebKhachHang.LichSuTimKiemRepository;
-import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
 import com.example.AsmGD1.service.SanPham.SanPhamService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

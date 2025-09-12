@@ -1,6 +1,5 @@
     package com.example.AsmGD1.controller.BanHang;
     
-    import com.example.AsmGD1.config.VNPayConfig;
     import com.example.AsmGD1.dto.BanHang.*;
     import com.example.AsmGD1.entity.*;
     import com.example.AsmGD1.repository.BanHang.DonHangTamRepository;
@@ -11,7 +10,6 @@
     import com.example.AsmGD1.service.BanHang.GioHangService;
     import com.example.AsmGD1.service.BanHang.QRCodeService;
     import com.example.AsmGD1.service.BanHang.VNPayService;
-    import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
     import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaCuaNguoiDungService;
     import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaService;
     import com.example.AsmGD1.service.HoaDon.HoaDonService;
@@ -29,16 +27,10 @@
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
     import org.springframework.web.bind.annotation.*;
-    
-    import javax.crypto.Mac;
-    import javax.crypto.spec.SecretKeySpec;
+
     import java.math.BigDecimal;
     import java.math.RoundingMode;
-    import java.net.URLEncoder;
-    import java.nio.charset.StandardCharsets;
-    import java.security.Principal;
     import java.time.LocalDateTime;
-    import java.time.format.DateTimeFormatter;
     import java.util.*;
     import java.util.stream.Collectors;
     

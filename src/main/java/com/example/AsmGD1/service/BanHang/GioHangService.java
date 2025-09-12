@@ -3,7 +3,6 @@ package com.example.AsmGD1.service.BanHang;
 import com.example.AsmGD1.dto.BanHang.GioHangDTO;
 import com.example.AsmGD1.dto.BanHang.GioHangItemDTO;
 import com.example.AsmGD1.entity.ChiTietSanPham;
-import com.example.AsmGD1.entity.ChienDichGiamGia;
 import com.example.AsmGD1.entity.DonHangTam;
 import com.example.AsmGD1.entity.PhieuGiamGia;
 import com.example.AsmGD1.repository.BanHang.DonHangTamRepository;

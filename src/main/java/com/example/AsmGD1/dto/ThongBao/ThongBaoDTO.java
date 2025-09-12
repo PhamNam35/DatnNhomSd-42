@@ -1,6 +1,5 @@
 package com.example.AsmGD1.dto.ThongBao;
 
-import com.example.AsmGD1.entity.ChiTietThongBaoNhom;
 import lombok.Data;
 
 import java.time.format.DateTimeFormatter;

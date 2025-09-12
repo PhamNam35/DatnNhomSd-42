@@ -1,7 +1,6 @@
 package com.example.AsmGD1.controller.HoaDon;
 
 import com.example.AsmGD1.dto.HoaDonTraHangDTO;
-import com.example.AsmGD1.dto.LichSuTraHangDTO;
 import com.example.AsmGD1.entity.*;
 import com.example.AsmGD1.repository.BanHang.DonHangPhieuGiamGiaRepository;
 import com.example.AsmGD1.repository.BanHang.DonHangRepository;
@@ -12,7 +11,6 @@ import com.example.AsmGD1.repository.NguoiDung.NguoiDungRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
 import com.example.AsmGD1.repository.ViThanhToan.LichSuGiaoDichViRepository;
 import com.example.AsmGD1.repository.ViThanhToan.ViThanhToanRepository;
-import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;

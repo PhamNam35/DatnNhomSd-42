@@ -1,7 +1,5 @@
 package com.example.AsmGD1.service;
 
-import com.example.AsmGD1.entity.ChienDichGiamGia;
-import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
