@@ -6,9 +6,6 @@ import com.example.AsmGD1.entity.*;
 import com.example.AsmGD1.repository.BanHang.KHDonHangRepository;
 import com.example.AsmGD1.repository.GiamGia.KHPhieuGiamGiaRepository;
 import com.example.AsmGD1.repository.NguoiDung.KHNguoiDungRepository;
-import com.example.AsmGD1.repository.NguoiDung.NguoiDungRepository;
-import com.example.AsmGD1.repository.ThongBao.ChiTietThongBaoNhomRepository;
-import com.example.AsmGD1.repository.ThongBao.ThongBaoNhomRepository;
 import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaCuaNguoiDungService;
 import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaService;
 import com.example.AsmGD1.service.GioHang.ChiTietGioHangService;
@@ -44,8 +41,7 @@ public class KHCheckoutController {
     @Autowired private ChiTietGioHangService chiTietGioHangService;
     @Autowired private PhieuGiamGiaService phieuGiamGiaService;
     @Autowired private PhieuGiamGiaCuaNguoiDungService phieuGiamGiaCuaNguoiDungService;
-    @Autowired private ThongBaoNhomRepository thongBaoNhomRepository;
-    @Autowired private ChiTietThongBaoNhomRepository chiTietThongBaoNhomRepository;
+
 
     // ===== DTOs & Helpers =====
     public static class CheckoutItem {
@@ -174,16 +170,7 @@ public class KHCheckoutController {
             DonHang donHang = checkoutService.createOrder(nguoiDung, request, request.getAddressId());
             logger.info("Order submitted successfully: {}", donHang.getMaDonHang());
 
-            // ===== Tạo thông báo gốc (ghi 1 role hợp lệ để pass CHECK) =====
-            ThongBaoNhom thongBao = new ThongBaoNhom();
-            thongBao.setId(UUID.randomUUID());
-            thongBao.setDonHang(donHang);
-            thongBao.setVaiTroNhan("admin"); // ✅ không ghi "admin,employee" để tránh vi phạm CHECK
-            thongBao.setTieuDe("Khách hàng đặt đơn hàng");
-            thongBao.setNoiDung("Mã đơn: " + donHang.getMaDonHang());
-            thongBao.setThoiGianTao(LocalDateTime.now());
-            thongBao.setTrangThai("Mới");
-            thongBaoNhomRepository.save(thongBao);
+
 
             // ===== Gom tất cả admin + employee, loại trùng theo ID =====
             List<NguoiDung> danhSachAdmin    = nguoiDungRepository.findByVaiTro("admin");
@@ -193,15 +180,7 @@ public class KHCheckoutController {
             for (NguoiDung u : danhSachAdmin)    recipients.put(u.getId(), u);
             for (NguoiDung u : danhSachEmployee) recipients.put(u.getId(), u);
 
-            // ===== Tạo chi tiết thông báo cho mọi người nhận =====
-            for (NguoiDung nd : recipients.values()) {
-                ChiTietThongBaoNhom chiTiet = new ChiTietThongBaoNhom();
-                chiTiet.setId(UUID.randomUUID());
-                chiTiet.setNguoiDung(nd);
-                chiTiet.setThongBaoNhom(thongBao);
-                chiTiet.setDaXem(false);
-                chiTietThongBaoNhomRepository.save(chiTiet);
-            }
+
 
             return ResponseEntity.ok(new APIResponse("Đặt hàng thành công", donHang.getMaDonHang()));
 

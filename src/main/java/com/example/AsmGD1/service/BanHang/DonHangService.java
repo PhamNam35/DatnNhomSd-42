@@ -12,7 +12,6 @@ import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaService;
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
 import com.example.AsmGD1.service.NguoiDung.NguoiDungService;
 import com.example.AsmGD1.service.SanPham.ChiTietSanPhamService;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.LockModeType;
 import jakarta.servlet.http.HttpSession;
@@ -71,8 +70,7 @@ public class DonHangService {
     @Autowired
     private ThongKeRepository thongKeRepository;
 
-    @Autowired
-    private ThongBaoService thongBaoService;
+
 
     @Autowired
     private ChiTietSanPhamService chiTietSanPhamService;
@@ -315,12 +313,7 @@ public class DonHangService {
         donHang = donHangRepository.save(donHang);
 
         // Thông báo ngắn cho đơn giao hàng (nếu cần)
-        if (isDeliveryFinal) {
-            try {
-                thongBaoService.taoThongBaoHeThong("admin", "Đơn giao hàng",
-                        "Mã đơn: " + donHang.getMaDonHang());
-            } catch (Exception ignore) {}
-        }
+
 
         // Trừ lượt/số lượng voucher
         java.util.function.Consumer<PhieuGiamGia> deductUsage = (v) -> {
@@ -347,13 +340,7 @@ public class DonHangService {
 
         // Nếu đã thanh toán -> ghi thống kê & thông báo
         if (donHang.getTrangThaiThanhToan()) {
-            thongBaoService.taoThongBaoHeThong(
-                    "admin,employee",
-                    "Thanh toán tại quầy",
-                    "Khách hàng " + khachHang.getHoTen()
-                            + " đã thanh toán tại quầy. Mã đơn: " + donHang.getMaDonHang()
-                            + ". Tổng tiền: " + dinhDangTien(donHang.getTongTien())
-            );
+
 
             for (ChiTietDonHang ctdh : donHang.getChiTietDonHangs()) {
                 ChiTietSanPham ct = ctdh.getChiTietSanPham();

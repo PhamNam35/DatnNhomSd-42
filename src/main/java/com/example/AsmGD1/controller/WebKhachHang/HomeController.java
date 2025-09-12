@@ -7,7 +7,6 @@ import com.example.AsmGD1.repository.NguoiDung.NguoiDungRepository;
 import com.example.AsmGD1.repository.SanPham.DanhMucRepository;
 import com.example.AsmGD1.repository.WebKhachHang.DanhGiaRepository;
 import com.example.AsmGD1.repository.WebKhachHang.KhachHangSanPhamRepository;
-import com.example.AsmGD1.repository.WebKhachHang.LichSuTimKiemRepository;
 import com.example.AsmGD1.service.GioHang.KhachHangGioHangService;
 import com.example.AsmGD1.service.WebKhachHang.KhachhangSanPhamService;
 import org.slf4j.Logger;
@@ -22,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -37,8 +35,6 @@ public class HomeController {
     @Autowired
     private NguoiDungRepository nguoiDungRepository; // Thêm repository
 
-    @Autowired
-    private LichSuTimKiemRepository lichSuTimKiemRepository;
 
     @Autowired
     private DanhGiaRepository danhGiaRepository;
@@ -418,27 +414,7 @@ public class HomeController {
         }
     }
 
-    // Phương thức mới: Lấy lịch sử tìm kiếm
-    @GetMapping("/api/search-history")
-    @ResponseBody
-    public ResponseEntity<List<String>> getSearchHistory(Authentication authentication) {
-        try {
-            if (authentication == null || !authentication.isAuthenticated()) {
-                return ResponseEntity.ok(Collections.emptyList());
-            }
-            String email = extractEmailFromAuthentication(authentication);
-            if (email == null) {
-                return ResponseEntity.ok(Collections.emptyList());
-            }
-            NguoiDung nguoiDung = nguoiDungRepository.findByEmail(email)
-                    .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
-            List<String> history = khachhangSanPhamService.getSearchHistory(nguoiDung.getId());
-            return ResponseEntity.ok(history);
-        } catch (Exception e) {
-            logger.error("Lỗi khi lấy lịch sử tìm kiếm: {}", e.getMessage());
-            return ResponseEntity.badRequest().body(Collections.emptyList());
-        }
-    }
+
 
     @GetMapping("/search")
     public String searchProducts(@RequestParam("keyword") String keyword, Model model, Authentication authentication) {
@@ -481,7 +457,6 @@ public class HomeController {
             }
             NguoiDung nguoiDung = nguoiDungRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
-            lichSuTimKiemRepository.deleteByNguoiDungId(nguoiDung.getId());
             return ResponseEntity.ok("Đã xóa lịch sử tìm kiếm!");
         } catch (Exception e) {
             logger.error("Lỗi khi xóa lịch sử tìm kiếm: {}", e.getMessage());
@@ -503,7 +478,6 @@ public class HomeController {
             }
             NguoiDung nguoiDung = nguoiDungRepository.findByEmail(email)
                     .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
-            lichSuTimKiemRepository.deleteByTuKhoaAndNguoiDungId(keyword, nguoiDung.getId());
             return ResponseEntity.ok("Đã xóa mục lịch sử tìm kiếm!");
         } catch (Exception e) {
             logger.error("Lỗi khi xóa mục lịch sử tìm kiếm: {}", e.getMessage());
@@ -530,7 +504,6 @@ public class HomeController {
                 logger.warn("User not found for email: {}", email);
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Người dùng không tồn tại!");
             }
-            khachhangSanPhamService.saveSearchHistory(nguoiDung, keyword);
             return ResponseEntity.ok("Đã lưu lịch sử tìm kiếm!");
         } catch (Exception e) {
             logger.error("Lỗi khi lưu lịch sử tìm kiếm cho từ khóa '{}': {}", keyword, e.getMessage(), e);

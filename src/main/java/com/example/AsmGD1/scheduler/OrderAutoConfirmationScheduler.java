@@ -8,7 +8,6 @@ import com.example.AsmGD1.repository.HoaDon.HoaDonRepository;
 import com.example.AsmGD1.repository.HoaDon.LichSuHoaDonRepository;
 import com.example.AsmGD1.repository.BanHang.DonHangRepository; // <- thêm nếu muốn save DonHang tường minh
 import com.example.AsmGD1.service.HoaDon.HoaDonService;
-import com.example.AsmGD1.service.ThongBao.ThongBaoService;
 import com.example.AsmGD1.service.WebKhachHang.EmailService;
 import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
@@ -35,7 +34,6 @@ public class OrderAutoConfirmationScheduler {
     private final LichSuHoaDonRepository lichSuHoaDonRepository;
     private final DonHangRepository donHangRepository;
     private final HoaDonService hoaDonService;
-    private final ThongBaoService thongBaoService;
     private final EmailService emailService;
 
     // Đọc từ cấu hình: mặc định 30 giây
@@ -45,14 +43,12 @@ public class OrderAutoConfirmationScheduler {
                                           LichSuHoaDonRepository lichSuHoaDonRepository,
                                           DonHangRepository donHangRepository,
                                           HoaDonService hoaDonService,
-                                          ThongBaoService thongBaoService,
                                           EmailService emailService,
                                           @Value("${order.auto-complete-seconds:30}") long autoConfirmSeconds) {
         this.hoaDonRepository = hoaDonRepository;
         this.lichSuHoaDonRepository = lichSuHoaDonRepository;
         this.donHangRepository = donHangRepository;
         this.hoaDonService = hoaDonService;
-        this.thongBaoService = thongBaoService;
         this.emailService = emailService;
         this.autoConfirmSeconds = autoConfirmSeconds;
     }
@@ -113,13 +109,6 @@ public class OrderAutoConfirmationScheduler {
 
                 // Thông báo + email (không làm fail job)
                 try {
-                    thongBaoService.taoThongBaoHeThong(
-                            "admin",
-                            "Đơn hàng đã hoàn thành (tự động)",
-                            "Đơn hàng mã " + (dh != null ? dh.getMaDonHang() : "N/A") + " đã được hệ thống tự động xác nhận sau " + autoConfirmSeconds + " giây.",
-                            dh
-                    );
-
                     if (dh != null && dh.getNguoiDung() != null && dh.getNguoiDung().getEmail() != null) {
                         NguoiDung nguoiDung = dh.getNguoiDung();
                         String emailContent = "<h2>Hoàn thành đơn hàng</h2>" +

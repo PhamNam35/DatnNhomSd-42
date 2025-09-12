@@ -38,13 +38,7 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_xuat_xu", nullable = false)
     private XuatXu xuatXu;
 
-    @ManyToOne
-    @JoinColumn(name = "id_tay_ao", nullable = false)
-    private TayAo tayAo;
 
-    @ManyToOne
-    @JoinColumn(name = "id_co_ao", nullable = false)
-    private CoAo coAo;
 
     @ManyToOne
     @JoinColumn(name = "id_kieu_dang", nullable = false)
@@ -54,10 +48,6 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_thuong_hieu", nullable = false)
     private ThuongHieu thuongHieu;
 
-    @ManyToOne
-    @JoinColumn(name = "id_chien_dich_giam_gia") // Thêm khóa ngoại đến chien_dich_giam_gia
-    @JsonIgnore
-    private ChienDichGiamGia chienDichGiamGia; // Mối quan hệ một-nhiều
 
     @Column(name = "gia", nullable = false, precision = 10, scale = 2)
     private BigDecimal gia;

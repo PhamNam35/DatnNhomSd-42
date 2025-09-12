@@ -73,8 +73,6 @@ ORDER BY p.thoiGianTao DESC
             "JOIN c.mauSac m " +
             "JOIN c.chatLieu cl " +
             "JOIN c.xuatXu x " +
-            "JOIN c.tayAo ta " +
-            "JOIN c.coAo ca " +
             "JOIN c.kieuDang kd " +
             "JOIN c.thuongHieu th " +
             "WHERE c.trangThai = true")
@@ -88,8 +86,7 @@ ORDER BY p.thoiGianTao DESC
             "JOIN c.mauSac m " +
             "JOIN c.chatLieu cl " +
             "JOIN c.xuatXu x " +
-            "JOIN c.tayAo ta " +
-            "JOIN c.coAo ca " +
+
             "JOIN c.kieuDang kd " +
             "JOIN c.thuongHieu th " +
             "WHERE p.id = :sanPhamId AND c.trangThai = true")

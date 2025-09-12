@@ -39,8 +39,7 @@ public class ChiTietSanPhamController {
     @Autowired private KichCoService kichCoService;
     @Autowired private ChatLieuService chatLieuService;
     @Autowired private XuatXuService xuatXuService;
-    @Autowired private TayAoService tayAoService;
-    @Autowired private CoAoService coAoService;
+
     @Autowired private KieuDangService kieuDangService;
     @Autowired private ThuongHieuService thuongHieuService;
     @Autowired private DanhMucService danhMucService;
@@ -136,8 +135,7 @@ public class ChiTietSanPhamController {
             model.addAttribute("kichCos", chiTietSanPhamService.findSizesByProductId(productId));
             model.addAttribute("xuatXus", xuatXuService.getAllXuatXu());
             model.addAttribute("chatLieus", chatLieuService.getAllChatLieu());
-            model.addAttribute("tayAos", tayAoService.getAllTayAo());
-            model.addAttribute("coAos", coAoService.getAllCoAo());
+
             model.addAttribute("kieuDangs", kieuDangService.getAllKieuDang());
             model.addAttribute("thuongHieus", thuongHieuService.getAllThuongHieu());
 
@@ -207,8 +205,7 @@ public class ChiTietSanPhamController {
             model.addAttribute("kichCos", kichCoService.getAllKichCo());
             model.addAttribute("chatLieus", chatLieuService.getAllChatLieu());
             model.addAttribute("xuatXus", xuatXuService.getAllXuatXu());
-            model.addAttribute("tayAos", tayAoService.getAllTayAo());
-            model.addAttribute("coAos", coAoService.getAllCoAo());
+
             model.addAttribute("kieuDangs", kieuDangService.getAllKieuDang());
             model.addAttribute("thuongHieus", thuongHieuService.getAllThuongHieu());
 
@@ -243,8 +240,7 @@ public class ChiTietSanPhamController {
                 response.put("originId", firstDetail.getXuatXu() != null ? firstDetail.getXuatXu().getId() : null);
                 response.put("materialId", firstDetail.getChatLieu() != null ? firstDetail.getChatLieu().getId() : null);
                 response.put("styleId", firstDetail.getKieuDang() != null ? firstDetail.getKieuDang().getId() : null);
-                response.put("sleeveId", firstDetail.getTayAo() != null ? firstDetail.getTayAo().getId() : null);
-                response.put("collarId", firstDetail.getCoAo() != null ? firstDetail.getCoAo().getId() : null);
+
                 response.put("brandId", firstDetail.getThuongHieu() != null ? firstDetail.getThuongHieu().getId() : null);
                 response.put("gender", firstDetail.getGioiTinh());
             }
@@ -385,8 +381,6 @@ public class ChiTietSanPhamController {
             response.put("originId", chiTiet.getXuatXu() != null ? chiTiet.getXuatXu().getId() : null);
             response.put("materialId", chiTiet.getChatLieu() != null ? chiTiet.getChatLieu().getId() : null);
             response.put("styleId", chiTiet.getKieuDang() != null ? chiTiet.getKieuDang().getId() : null);
-            response.put("sleeveId", chiTiet.getTayAo() != null ? chiTiet.getTayAo().getId() : null);
-            response.put("collarId", chiTiet.getCoAo() != null ? chiTiet.getCoAo().getId() : null);
             response.put("brandId", chiTiet.getThuongHieu() != null ? chiTiet.getThuongHieu().getId() : null);
 
             // Ảnh

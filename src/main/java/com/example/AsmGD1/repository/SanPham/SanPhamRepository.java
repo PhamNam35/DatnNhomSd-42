@@ -33,9 +33,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, UUID> {
             "AND (:thuongHieuId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.thuongHieu.id = :thuongHieuId)) " +
             "AND (:kieuDangId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.kieuDang.id = :kieuDangId)) " +
             "AND (:chatLieuId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.chatLieu.id = :chatLieuId)) " +
-            "AND (:xuatXuId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.xuatXu.id = :xuatXuId)) " +
-            "AND (:tayAoId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.tayAo.id = :tayAoId)) " +
-            "AND (:coAoId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.coAo.id = :coAoId))")
+            "AND (:xuatXuId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.xuatXu.id = :xuatXuId)) ")
     Page<SanPham> findByAdvancedFilters(
             @Param("searchName") String searchName,
             @Param("trangThai") Boolean trangThai,
@@ -85,9 +83,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, UUID> {
         WHERE sp.trangThai = true
           AND EXISTS (
              SELECT 1 FROM ChiTietSanPham ct
-             LEFT JOIN ct.chienDichGiamGia cdg
              WHERE ct.sanPham.id = sp.id
-               AND (cdg IS NULL OR cdg.ngayKetThuc <= :now)
           )
         """)
     Page<SanPham> findAvailableProducts(@Param("now") LocalDateTime now, Pageable pageable);
@@ -101,9 +97,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, UUID> {
           )
           AND EXISTS (
              SELECT 1 FROM ChiTietSanPham ct
-             LEFT JOIN ct.chienDichGiamGia cdg
              WHERE ct.sanPham.id = sp.id
-               AND (cdg IS NULL OR cdg.ngayKetThuc <= :now)
           )
         """)
     Page<SanPham> searchAvailableByTenOrMa(@Param("keyword") String keyword,

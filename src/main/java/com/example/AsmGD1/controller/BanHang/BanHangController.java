@@ -1,6 +1,5 @@
     package com.example.AsmGD1.controller.BanHang;
     
-    import com.example.AsmGD1.config.VNPayConfig;
     import com.example.AsmGD1.dto.BanHang.*;
     import com.example.AsmGD1.entity.*;
     import com.example.AsmGD1.repository.BanHang.DonHangTamRepository;
@@ -11,7 +10,6 @@
     import com.example.AsmGD1.service.BanHang.GioHangService;
     import com.example.AsmGD1.service.BanHang.QRCodeService;
     import com.example.AsmGD1.service.BanHang.VNPayService;
-    import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
     import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaCuaNguoiDungService;
     import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaService;
     import com.example.AsmGD1.service.HoaDon.HoaDonService;
@@ -29,16 +27,10 @@
     import org.springframework.stereotype.Controller;
     import org.springframework.ui.Model;
     import org.springframework.web.bind.annotation.*;
-    
-    import javax.crypto.Mac;
-    import javax.crypto.spec.SecretKeySpec;
+
     import java.math.BigDecimal;
     import java.math.RoundingMode;
-    import java.net.URLEncoder;
-    import java.nio.charset.StandardCharsets;
-    import java.security.Principal;
     import java.time.LocalDateTime;
-    import java.time.format.DateTimeFormatter;
     import java.util.*;
     import java.util.stream.Collectors;
     
@@ -91,8 +83,7 @@
         @Autowired
         private PhieuGiamGiaRepository phieuGiamGiaRepository;
     
-        @Autowired
-        private ChienDichGiamGiaService chienDichGiamGiaService;
+
     
         @Autowired
         private DiaChiNguoiDungRepository diaChiNguoiDungRepository;
@@ -297,12 +288,6 @@
                 // Cập nhật số lượng chiến dịch nếu có
                 for (GioHangItemDTO item : donHangDTO.getDanhSachSanPham()) {
                     ChiTietSanPham chiTiet = chiTietSanPhamService.findById(item.getIdChiTietSanPham());
-                    if (chiTiet != null) {
-                        ChienDichGiamGia cdgg = chiTiet.getChienDichGiamGia();
-                        if (cdgg != null && "ONGOING".equals(cdgg.getStatus())) {
-                            chienDichGiamGiaService.truSoLuong(cdgg.getId(), item.getSoLuong());
-                        }
-                    }
                 }
 
                 // Xóa tab hiện tại + giỏ hàng tạm
@@ -879,8 +864,7 @@
                     BigDecimal giaSauGiam = tinhGiaSauGiam(variant); // Tính giá sau giảm
                     variantMap.put("price", variant.getGia());
                     variantMap.put("discountedPrice", giaSauGiam); // Giá sau giảm
-                    variantMap.put("phanTramGiam", variant.getChienDichGiamGia() != null && "ONGOING".equals(variant.getChienDichGiamGia().getStatus())
-                            ? variant.getChienDichGiamGia().getPhanTramGiam() : BigDecimal.ZERO);
+
                     variantMap.put("stockQuantity", variant.getSoLuongTonKho());
                     return variantMap;
                 }).collect(Collectors.toList());
@@ -929,8 +913,6 @@
                     result.put("availableStock", actualStock);
                     result.put("price", variant.getGia());
                     result.put("discountedPrice", giaSauGiam); // Giá sau giảm
-                    result.put("phanTramGiam", variant.getChienDichGiamGia() != null && "ONGOING".equals(variant.getChienDichGiamGia().getStatus())
-                            ? variant.getChienDichGiamGia().getPhanTramGiam() : BigDecimal.ZERO);
                     result.put("productDetailId", variant.getId());
                     result.put("tenSanPham", variant.getSanPham().getTenSanPham());
                     result.put("mauSac", variant.getMauSac().getTenMau());
@@ -952,14 +934,7 @@
     
         private BigDecimal tinhGiaSauGiam(ChiTietSanPham chiTiet) {
             BigDecimal gia = chiTiet.getGia();
-            ChienDichGiamGia chienDich = chiTiet.getChienDichGiamGia();
-            if (chienDich != null && "ONGOING".equals(chienDich.getStatus()) && (chienDich.getSoLuong() == null || chienDich.getSoLuong() > 0)) {
-                BigDecimal phanTramGiam = chienDich.getPhanTramGiam();
-                if (phanTramGiam != null) {
-                    BigDecimal giamGia = gia.multiply(phanTramGiam).divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP);
-                    return gia.subtract(giamGia);
-                }
-            }
+
             return gia;
         }
     

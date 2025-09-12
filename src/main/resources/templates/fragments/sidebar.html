@@ -81,32 +81,7 @@
                 </a>
             </li>
 
-            <!-- Quản lý đơn hàng - ONLY for ADMIN -->
-            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                <a class="nav-link d-flex justify-content-between align-items-center collapsed" data-bs-toggle="collapse" href="#donhangSubmenu" role="button" aria-expanded="false" aria-controls="donhangSubmenu">
-                    <span class="d-flex align-items-center">
-                        <i class="fa-solid fa-clipboard-list"></i>
-                        <span class="nav-text">Quản lý đơn hàng</span>
-                    </span>
-                    <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </a>
-                <div class="collapse" id="donhangSubmenu">
-                    <ul class="nav flex-column ms-3">
-                        <li class="nav-item">
-                            <a th:href="@{/acvstore/quan-ly-tra-hang}" class="nav-link">
-                                <i class="fa-solid fa-undo-alt"></i>
-                                <span class="nav-text">Quản lý trả hàng</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a th:href="@{/acvstore/exchange-requests}" class="nav-link">
-                                <i class="fa-solid fa-exchange-alt"></i>
-                                <span class="nav-text">Quản lý đổi hàng</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
+
 
             <!-- Sản phẩm - Available for both ADMIN and EMPLOYEE -->
             <li class="nav-item">
@@ -207,12 +182,7 @@
                                 <span class="nav-text">Phiếu giảm giá</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a th:href="@{/acvstore/chien-dich-giam-gia}" class="nav-link">
-                                <i class="fa-solid fa-percent"></i>
-                                <span class="nav-text">Đợt Giảm Giá</span>
-                            </a>
-                        </li>
+
                     </ul>
                 </div>
             </li>
@@ -233,32 +203,6 @@
                 </a>
             </li>
 
-            <!-- Ví điện tử ACV - ONLY for ADMIN -->
-            <li class="nav-item" sec:authorize="hasRole('ADMIN')">
-                <a class="nav-link d-flex justify-content-between align-items-center collapsed" data-bs-toggle="collapse" href="#viSubmenu" role="button" aria-expanded="false" aria-controls="viSubmenu">
-        <span class="d-flex align-items-center">
-            <i class="fa-solid fa-wallet"></i>
-            <span class="nav-text">Ví điện tử ACV</span>
-        </span>
-                    <i class="fa-solid fa-chevron-down toggle-icon"></i>
-                </a>
-                <div class="collapse" id="viSubmenu">
-                    <ul class="nav flex-column ms-3">
-                        <li class="nav-item">
-                            <a th:href="@{/acvstore/vi/tong-hop}" class="nav-link">
-                                <i class="fa-solid fa-layer-group"></i>
-                                <span class="nav-text">Tổng hợp ví</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a th:href="@{/acvstore/vi/yeu-cau-rut-tien}" class="nav-link">
-                                <i class="fa-solid fa-money-bill-transfer"></i>
-                                <span class="nav-text">Yêu cầu rút tiền</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </li>
 
 
 

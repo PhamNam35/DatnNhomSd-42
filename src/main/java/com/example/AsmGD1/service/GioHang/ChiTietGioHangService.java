@@ -2,12 +2,10 @@ package com.example.AsmGD1.service.GioHang;
 
 import com.example.AsmGD1.entity.ChiTietGioHang;
 import com.example.AsmGD1.entity.ChiTietSanPham;
-import com.example.AsmGD1.entity.ChienDichGiamGia;
 import com.example.AsmGD1.entity.GioHang;
 import com.example.AsmGD1.repository.GioHang.ChiTietGioHangRepository;
 import com.example.AsmGD1.repository.GioHang.GioHangRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
-import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,8 +28,7 @@ public class ChiTietGioHangService {
     @Autowired
     private ChiTietSanPhamRepository chiTietSanPhamRepository;
 
-    @Autowired
-    private ChienDichGiamGiaService chienDichGiamGiaService;
+
 
     public ChiTietGioHang updateSoLuong(UUID chiTietGioHangId, Integer soLuongMoi) {
         ChiTietGioHang chiTiet = chiTietGioHangRepository.findById(chiTietGioHangId)
@@ -48,22 +45,8 @@ public class ChiTietGioHangService {
 
         // --- LẤY CAMPAIGN THEO CHI TIẾT SẢN PHẨM ---
         BigDecimal perUnitGiam = BigDecimal.ZERO;
-        Optional<ChienDichGiamGia> active = chienDichGiamGiaService
-                .getActiveCampaignForProductDetail(ctp.getId());
-        if (active.isPresent()) {
-            ChienDichGiamGia c = active.get();
-            boolean unlimited = (c.getSoLuong() == null);
-            boolean enough    = unlimited || c.getSoLuong() >= soLuongMoi;
 
-            if (c.getPhanTramGiam() != null && enough) {
-                perUnitGiam = giaGoc.multiply(c.getPhanTramGiam())
-                        .divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP);
-                int delta = soLuongMoi - soLuongCu;
-                if (!unlimited && delta > 0) {
-                    chienDichGiamGiaService.truSoLuong(c.getId(), delta);
-                }
-            }
-        }
+
 
         BigDecimal giaSauGiam   = giaGoc.subtract(perUnitGiam);
         BigDecimal thanhTienCu  = giaCu.multiply(BigDecimal.valueOf(soLuongCu));

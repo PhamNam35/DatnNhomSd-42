@@ -51,8 +51,7 @@ public class SanPhamController {
     @Autowired private KieuDangService kieuDangService;
     @Autowired private ChatLieuService chatLieuService;
     @Autowired private XuatXuService xuatXuService;
-    @Autowired private TayAoService tayAoService;
-    @Autowired private CoAoService coAoService;
+
 
     // Helper method to check if current user is admin
     private boolean isCurrentUserAdmin() {
@@ -133,8 +132,7 @@ public class SanPhamController {
         model.addAttribute("kieuDangList", kieuDangService.getAllKieuDang());
         model.addAttribute("chatLieuList", chatLieuService.getAllChatLieu());
         model.addAttribute("xuatXuList", xuatXuService.getAllXuatXu());
-        model.addAttribute("tayAoList", tayAoService.getAllTayAo());
-        model.addAttribute("coAoList", coAoService.getAllCoAo());
+
         model.addAttribute("selectedDanhMucId", danhMucId);
         model.addAttribute("selectedThuongHieuId", thuongHieuId);
         model.addAttribute("selectedKieuDangId", kieuDangId);

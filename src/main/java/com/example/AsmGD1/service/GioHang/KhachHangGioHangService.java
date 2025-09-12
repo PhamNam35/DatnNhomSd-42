@@ -5,7 +5,6 @@ import com.example.AsmGD1.repository.GioHang.GioHangRepository;
 import com.example.AsmGD1.repository.GioHang.ChiTietGioHangRepository;
 import com.example.AsmGD1.repository.NguoiDung.NguoiDungRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
-import com.example.AsmGD1.service.GiamGia.ChienDichGiamGiaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,8 +31,7 @@ public class KhachHangGioHangService {
     @Autowired
     private NguoiDungRepository nguoiDungRepository;
 
-    @Autowired
-    private ChienDichGiamGiaService chienDichGiamGiaService;
+
 
     public GioHang getOrCreateGioHang(UUID nguoiDungId) {
         GioHang gioHang = gioHangRepository.findByNguoiDungId(nguoiDungId);
@@ -77,23 +75,6 @@ public class KhachHangGioHangService {
         BigDecimal giaGoc = chiTietSanPham.getGia();
         BigDecimal perUnitGiam = BigDecimal.ZERO;
 
-        Optional<ChienDichGiamGia> active = chienDichGiamGiaService
-                .getActiveCampaignForProductDetail(chiTietSanPhamId);
-
-        if (active.isPresent()) {
-            ChienDichGiamGia c = active.get();
-            boolean unlimited = (c.getSoLuong() == null);
-            boolean enough    = unlimited || c.getSoLuong() >= soLuong;
-
-            if (c.getPhanTramGiam() != null && enough) {
-                perUnitGiam = giaGoc.multiply(c.getPhanTramGiam())
-                        .divide(BigDecimal.valueOf(100), 0, RoundingMode.HALF_UP); // làm tròn VND
-                if (!unlimited) {
-                    // chỉ trừ quota khi có giới hạn
-                    chienDichGiamGiaService.truSoLuong(c.getId(), soLuong);
-                }
-            }
-        }
 
         BigDecimal giaSauGiam = giaGoc.subtract(perUnitGiam);
 

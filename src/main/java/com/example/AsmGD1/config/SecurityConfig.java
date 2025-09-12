@@ -143,7 +143,7 @@ public class SecurityConfig implements ApplicationContextAware {
                                 "/acvstore/chat-lieu/**", "/acvstore/kieu-dang/**", "/acvstore/co-ao/**",
                                 "/acvstore/tay-ao/**", "/acvstore/danh-muc/**", "/acvstore/thuong-hieu/**").hasRole("ADMIN")
                         .requestMatchers("/acvstore/employees/**").hasRole("ADMIN")
-                        .requestMatchers("/acvstore/admin-dashboard").hasRole("ADMIN")
+                        .requestMatchers("/acvstore/thong-ke").hasRole("ADMIN")
                         .requestMatchers("/acvstore/employee-dashboard").hasRole("EMPLOYEE")
                         .requestMatchers("/acvstore/thong-ke").hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers("/acvstore/ban-hang/**", "/acvstore/hoa-don/**").hasAnyRole("ADMIN", "EMPLOYEE")
@@ -164,7 +164,7 @@ public class SecurityConfig implements ApplicationContextAware {
                                     response.sendRedirect("/acvstore/employee-dashboard");
                                 } else if ("ADMIN".equalsIgnoreCase(vaiTro)) {
                                     // ĐÃ BỎ yêu cầu đăng ký/xác thực khuôn mặt, chuyển thẳng vào trang admin
-                                    response.sendRedirect("/acvstore/admin-dashboard");
+                                    response.sendRedirect("/acvstore/thong-ke");
                                 } else {
                                     response.sendRedirect("/acvstore/login?error=unauthorizedRole");
                                 }
@@ -273,7 +273,8 @@ public class SecurityConfig implements ApplicationContextAware {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/chitietsanpham", "/new", "/all", "/bestsellers", "/category/**",
-                                "/search/**", "/acvstore/login", "/acvstore/verify-face", "/customers/login",
+                                "/search/**", "/acvstore/login", // <- đã bỏ "/acvstore/verify-face"
+                                "/customers/login",
                                 "/customers/oauth2/register", "/api/cart/check-auth", "/api/cart/get-user",
                                 "/css/**", "/js/**", "/image/**", "/images/**", "/vi/**", "/uploads/**",
                                 "/ws/**"
@@ -319,6 +320,7 @@ public class SecurityConfig implements ApplicationContextAware {
                 .csrf(csrf -> csrf.disable());
         return http.build();
     }
+
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider(CustomUserDetailsService userDetailsService,
