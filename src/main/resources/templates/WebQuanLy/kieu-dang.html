@@ -804,36 +804,36 @@
 
             <!-- Modal Thêm/Sửa Kiểu dáng -->
             <div class="modal fade" id="kieuDangModal" tabindex="-1" aria-labelledby="kieuDangModalLabel" aria-hidden="true" th:if="${isAdmin}">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="kieuDangModalLabel">
-                                <i class="fas fa-plus"></i> Thêm kiểu dáng mới
-                            </h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <form id="kieuDangForm" th:action="@{/acvstore/kieu-dang/save}" method="post">
-                            <div class="modal-body">
-                                <input type="hidden" name="id" id="kieuDangId">
-                                <div class="floating-label">
-                                    <label for="kieuDangName">Tên kiểu dáng</label>
-                                    <input type="text" name="tenKieuDang" id="kieuDangName" class="form-control" placeholder="VD: Casual, Formal, Vintage" required>
-                                    <div class="form-text">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Ví dụ: Casual, Formal, Vintage, Bohemian, Minimalist, Street Style, Classic...
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="shoeStyleModalLabel">
+                                    <i class="fas fa-shoe-prints"></i> Thêm kiểu dáng giày mới
+                                </h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form id="shoeStyleForm" th:action="@{/acvstore/kieu-dang/save}" method="post">
+                                <div class="modal-body">
+                                    <input type="hidden" name="id" id="shoeStyleId">
+                                    <div class="floating-label">
+                                        <label for="shoeStyleName">Tên kiểu dáng giày</label>
+                                        <input type="text" name="tenKieuDang" id="shoeStyleName" class="form-control" placeholder="VD: Cổ cao, Cổ thấp, Slip-on" required>
+                                        <div class="form-text">
+                                            <i class="fas fa-info-circle me-1"></i>
+                                            Ví dụ: Cổ cao, Cổ thấp, Slip-on, Sneaker, Boots, Sandal, Loafer, Running...
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    <i class="fas fa-times me-2"></i>Hủy bỏ
-                                </button>
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save me-2"></i>Lưu thay đổi
-                                </button>
-                            </div>
-                        </form>
-                    </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                        <i class="fas fa-times me-2"></i>Hủy bỏ
+                                    </button>
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-save me-2"></i>Lưu thay đổi
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                 </div>
             </div>
         </div>
