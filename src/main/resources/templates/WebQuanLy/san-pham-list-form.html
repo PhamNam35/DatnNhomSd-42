@@ -1635,7 +1635,7 @@
                 maSanPhamInput.value = '';
                 tenSanPhamInput.value = '';
                 moTaInput.value = '';
-                danhMucSelect.value = '';
+                // Không đặt trực tiếp danhMucSelect.value ở đây
                 trangThaiInput.checked = false;
                 imageFileInput.value = '';
                 updateTrangThaiLabel();
@@ -1646,13 +1646,20 @@
                     .then(data => {
                         console.log('Received product data:', data);
                         maSanPhamInput.value = data.maSanPham || '';
-                        maSanPhamInput.setAttribute('readonly', 'readonly'); // Đảm bảo readonly
+                        maSanPhamInput.setAttribute('readonly', 'readonly');
                         tenSanPhamInput.value = data.tenSanPham || '';
                         moTaInput.value = data.moTa || '';
-                        danhMucSelect.value = data.danhMucId || '';
                         trangThaiInput.checked = data.trangThai != null ? data.trangThai : false;
                         updateTrangThaiLabel();
                         updateImagePreview(data.urlHinhAnh || '');
+
+                        // Sử dụng TomSelect API để đặt giá trị
+                        const tomSelect = danhMucSelect.tomselect; // Lấy instance của TomSelect
+                        if (tomSelect && data.danhMucId) {
+                            tomSelect.setValue(data.danhMucId); // Đặt giá trị cho combobox
+                        } else {
+                            tomSelect.clear(); // Xóa giá trị nếu không có danhMucId
+                        }
                     })
                     .catch(error => {
                         console.error('Error fetching san pham data:', error);
