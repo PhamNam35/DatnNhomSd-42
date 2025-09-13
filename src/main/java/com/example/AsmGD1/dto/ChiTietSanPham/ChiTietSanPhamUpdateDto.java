@@ -15,8 +15,7 @@ public class ChiTietSanPhamUpdateDto {
     private UUID originId;
     private UUID materialId;
     private UUID styleId;
-    private UUID sleeveId;
-    private UUID collarId;
+    private UUID dayGiayId;
     private UUID brandId;
     private BigDecimal price;
     private Integer stockQuantity;

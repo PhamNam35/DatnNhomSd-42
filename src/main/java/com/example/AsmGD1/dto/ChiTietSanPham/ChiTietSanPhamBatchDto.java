@@ -13,8 +13,7 @@ public class ChiTietSanPhamBatchDto {
     private UUID originId;
     private UUID materialId;
     private UUID styleId;
-    private UUID sleeveId;
-    private UUID collarId;
+    private UUID dayGiayId;
     private UUID brandId;
     private String gender;
     private List<ChiTietSanPhamVariationDto> variations;
