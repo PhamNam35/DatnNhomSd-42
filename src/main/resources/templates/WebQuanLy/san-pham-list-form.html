@@ -874,10 +874,20 @@
                         </div>
                         <div class="col-md-3">
                             <div class="floating-label">
-                                <label for="coAoFilter">Cổ áo</label>
-                                <select class="form-select" id="coAoFilter" name="coAoId">
-                                    <option value="">-- Tất cả cổ áo --</option>
-                                    <option th:each="ca : ${coAoList}" th:value="${ca.id}" th:text="${ca.tenCoAo}" th:selected="${selectedCoAoId == ca.id}"></option>
+                                <label for="xuatXuFilter">Xuất xứ</label>
+                                <select class="form-select" id="xuatXuFilter" name="xuatXuId">
+                                    <option value="">-- Tất cả xuất xứ --</option>
+                                    <option th:each="xx : ${xuatXuList}" th:value="${xx.id}" th:text="${xx.tenXuatXu}" th:selected="${selectedXuatXuId == xx.id}"></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                            <div class="floating-label">
+                                <label for="dayGiayFilter">Dây giày</label>
+                                <select class="form-select" id="dayGiayFilter" name="dayGiayId">
+                                    <option value="">-- Tất cả dây giày --</option>
+                                    <option th:each="dg : ${dayGiayList}" th:value="${dg.id}" th:text="${dg.tenDayGiay}" th:selected="${selectedDayGiayId == dg.id}"></option>
                                 </select>
                             </div>
                         </div>
@@ -915,24 +925,6 @@
                                 <select class="form-select" id="chatLieuFilter" name="chatLieuId">
                                     <option value="">-- Tất cả chất liệu --</option>
                                     <option th:each="cl : ${chatLieuList}" th:value="${cl.id}" th:text="${cl.tenChatLieu}" th:selected="${selectedChatLieuId == cl.id}"></option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="floating-label">
-                                <label for="xuatXuFilter">Xuất xứ</label>
-                                <select class="form-select" id="xuatXuFilter" name="xuatXuId">
-                                    <option value="">-- Tất cả xuất xứ --</option>
-                                    <option th:each="xx : ${xuatXuList}" th:value="${xx.id}" th:text="${xx.tenXuatXu}" th:selected="${selectedXuatXuId == xx.id}"></option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <div class="floating-label">
-                                <label for="tayAoFilter">Tay áo</label>
-                                <select class="form-select" id="tayAoFilter" name="tayAoId">
-                                    <option value="">-- Tất cả tay áo --</option>
-                                    <option th:each="ta : ${tayAoList}" th:value="${ta.id}" th:text="${ta.tenTayAo}" th:selected="${selectedTayAoId == ta.id}"></option>
                                 </select>
                             </div>
                         </div>
@@ -1547,16 +1539,8 @@
             }
         });
 
-        new TomSelect('#tayAoFilter', {
-            placeholder: "-- Tất cả tay áo --",
-            allowClear: true,
-            onChange: function(value) {
-                this.input.form.submit();
-            }
-        });
-
-        new TomSelect('#coAoFilter', {
-            placeholder: "-- Tất cả cổ áo --",
+        new TomSelect('#dayGiayFilter', {
+            placeholder: "-- Tất cả dây giày --",
             allowClear: true,
             onChange: function(value) {
                 this.input.form.submit();

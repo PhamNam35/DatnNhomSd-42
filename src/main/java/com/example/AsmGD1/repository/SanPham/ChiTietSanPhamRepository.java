@@ -142,4 +142,5 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
     boolean existsByKieuDangId(UUID kieuDangId);
     boolean existsByKichCoId(UUID kichCoId);
     boolean existsByChatLieuId(UUID chatLieuId);
+    boolean existsByDayGiayId(UUID dayGiayId);
 }

@@ -38,7 +38,9 @@ public class ChiTietSanPham {
     @JoinColumn(name = "id_xuat_xu", nullable = false)
     private XuatXu xuatXu;
 
-
+    @ManyToOne
+    @JoinColumn(name = "id_day_giay", nullable = false)
+    private DayGiay dayGiay;
 
     @ManyToOne
     @JoinColumn(name = "id_kieu_dang", nullable = false)

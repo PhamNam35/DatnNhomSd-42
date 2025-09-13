@@ -33,7 +33,8 @@ public interface SanPhamRepository extends JpaRepository<SanPham, UUID> {
             "AND (:thuongHieuId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.thuongHieu.id = :thuongHieuId)) " +
             "AND (:kieuDangId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.kieuDang.id = :kieuDangId)) " +
             "AND (:chatLieuId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.chatLieu.id = :chatLieuId)) " +
-            "AND (:xuatXuId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.xuatXu.id = :xuatXuId)) ")
+            "AND (:xuatXuId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.xuatXu.id = :xuatXuId)) " +
+            "AND (:dayGiayId IS NULL OR EXISTS (SELECT 1 FROM ChiTietSanPham ct WHERE ct.sanPham = sp AND ct.dayGiay.id = :dayGiayId)) ")
     Page<SanPham> findByAdvancedFilters(
             @Param("searchName") String searchName,
             @Param("trangThai") Boolean trangThai,
@@ -42,8 +43,7 @@ public interface SanPhamRepository extends JpaRepository<SanPham, UUID> {
             @Param("kieuDangId") UUID kieuDangId,
             @Param("chatLieuId") UUID chatLieuId,
             @Param("xuatXuId") UUID xuatXuId,
-            @Param("tayAoId") UUID tayAoId,
-            @Param("coAoId") UUID coAoId,
+            @Param("dayGiayId") UUID dayGiayId,
             Pageable pageable);
 
     Page<SanPham> findByTenSanPhamContainingIgnoreCaseOrMaSanPhamContainingIgnoreCase(String ten, String ma, Pageable pageable);
