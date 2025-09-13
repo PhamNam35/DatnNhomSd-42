@@ -1109,13 +1109,6 @@
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
-                                    <label for="editProduct">Sản phẩm</label>
-                                    <input type="text" class="form-control lockable" id="editProduct" th:value="${sanPhamDaChon?.tenSanPham}" disabled/>
-                                    <input type="hidden" id="editProductHidden" name="productId" class="lockable" th:value="${selectedProductId}"/>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="floating-label">
                                     <label for="editOrigin">Xuất xứ</label>
                                     <select class="form-select lockable" id="editOrigin" name="originId" required>
                                         <option value="">Chọn xuất xứ...</option>
@@ -1123,8 +1116,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label for="editSize">Kích cỡ</label>
@@ -1134,6 +1125,9 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label for="editColor">Màu sắc</label>
@@ -1143,8 +1137,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label for="editMaterial">Chất liệu</label>
@@ -1154,6 +1146,9 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label for="editStyle">Kiểu dáng</label>
@@ -1163,20 +1158,17 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4">
-                            <div class="row g-4">
-                                <div class="col-md-6">
-                                    <div class="floating-label">
-                                        <label for="editDayGiay">Dây giày</label>
-                                        <select class="form-select lockable" id="editDayGiay" name="dayGiayId" required>  <!-- Thay id/name từ sleeveId -->
-                                            <option value="">Chọn dây giày...</option>
-                                            <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>  <!-- Giả sử tenDayGiay -->
-                                        </select>
-                                    </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label for="editDayGiay">Dây giày</label>
+                                    <select class="form-select lockable" id="editDayGiay" name="dayGiayId" required>
+                                        <option value="">Chọn dây giày...</option>
+                                        <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
+
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
@@ -1295,9 +1287,8 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" id="bulkIds" name="ids"/>
-                        <!-- Reuse các block select giống modal edit, NHƯNG không gắn class lockable -->
-                        <!-- LƯU Ý: Modal này KHÔNG xử lý ảnh (mỗi biến thể ảnh khác nhau). -->
-                        <!-- Sản phẩm -->
+
+                        <!-- Hàng 1: Xuất xứ + Chất liệu -->
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
@@ -1318,6 +1309,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Hàng 2: Kiểu dáng + Dây giày -->
                         <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
@@ -1328,20 +1321,19 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="row g-4 mt-1">
-                                <div class="col-md-6">
-                                    <div class="floating-label">
-                                        <label>Dây giày</label>
-                                        <select class="form-select" name="dayGiayId" required>
-                                            <option value="">Chọn dây giày...</option>
-                                            <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>  <!-- Giả sử tenDayGiay -->
-                                        </select>
-                                    </div>
+                            <div class="col-md-6">
+                                <div class="floating-label">
+                                    <label>Dây giày</label>
+                                    <select class="form-select" name="dayGiayId" required>
+                                        <option value="">Chọn dây giày...</option>
+                                        <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="row g-4 mt-1">
 
+                        <!-- Hàng 3: Thương hiệu + Giới tính -->
+                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Thương hiệu</label>
@@ -1351,8 +1343,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Giới tính</label>
@@ -1364,6 +1354,10 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Hàng 4: Giá bán + Số lượng tồn -->
+                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Giá bán</label>
@@ -1373,17 +1367,19 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Số lượng tồn</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-boxes"></i></span>
-                                        <input type="text" class="form-control" name="stockQuantity" required>
+                                        <input type="number" class="form-control" name="stockQuantity" min="0" required>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Hàng 5: Trạng thái -->
+                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark mb-2">Trạng thái</label>
                                 <div class="form-check form-switch d-flex align-items-center">
@@ -1392,6 +1388,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="alert alert-info mt-4">
                             <i class="fas fa-info-circle me-2"></i>
                             Thao tác này áp dụng cho <strong>tất cả biến thể được chọn</strong>. Ảnh chi tiết không chỉnh hàng loạt.
@@ -1408,8 +1405,6 @@
     </div>
 
 </div>
-</div>
-
 <div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
