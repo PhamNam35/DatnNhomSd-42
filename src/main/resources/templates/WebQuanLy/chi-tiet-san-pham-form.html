@@ -1165,22 +1165,15 @@
                             </div>
                         </div>
                         <div class="row g-4">
-                            <div class="col-md-6">
-                                <div class="floating-label">
-                                    <label for="editSleeve">Tay áo</label>
-                                    <select class="form-select lockable" id="editSleeve" name="sleeveId" required>
-                                        <option value="">Chọn tay áo...</option>
-                                        <option th:each="sa : ${tayAos}" th:value="${sa.id}" th:text="${sa.tenTayAo}"></option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="floating-label">
-                                    <label for="editCollar">Cổ áo</label>
-                                    <select class="form-select lockable" id="editCollar" name="collarId" required>
-                                        <option value="">Chọn cổ áo...</option>
-                                        <option th:each="ca : ${coAos}" th:value="${ca.id}" th:text="${ca.tenCoAo}"></option>
-                                    </select>
+                            <div class="row g-4">
+                                <div class="col-md-6">
+                                    <div class="floating-label">
+                                        <label for="editDayGiay">Dây giày</label>
+                                        <select class="form-select lockable" id="editDayGiay" name="dayGiayId" required>  <!-- Thay id/name từ sleeveId -->
+                                            <option value="">Chọn dây giày...</option>
+                                            <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>  <!-- Giả sử tenDayGiay -->
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1335,26 +1328,20 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-6">
-                                <div class="floating-label">
-                                    <label>Tay áo</label>
-                                    <select class="form-select" name="sleeveId" required>
-                                        <option value="">Chọn tay áo...</option>
-                                        <option th:each="sa : ${tayAos}" th:value="${sa.id}" th:text="${sa.tenTayAo}"></option>
-                                    </select>
+                            <div class="row g-4 mt-1">
+                                <div class="col-md-6">
+                                    <div class="floating-label">
+                                        <label>Dây giày</label>
+                                        <select class="form-select" name="dayGiayId" required>
+                                            <option value="">Chọn dây giày...</option>
+                                            <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>  <!-- Giả sử tenDayGiay -->
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="row g-4 mt-1">
-                            <div class="col-md-6">
-                                <div class="floating-label">
-                                    <label>Cổ áo</label>
-                                    <select class="form-select" name="collarId" required>
-                                        <option value="">Chọn cổ áo...</option>
-                                        <option th:each="ca : ${coAos}" th:value="${ca.id}" th:text="${ca.tenCoAo}"></option>
-                                    </select>
-                                </div>
-                            </div>
+
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Thương hiệu</label>
@@ -1689,8 +1676,7 @@
                     $('#editOrigin').val(response.originId).trigger('change');
                     $('#editMaterial').val(response.materialId).trigger('change');
                     $('#editStyle').val(response.styleId).trigger('change');
-                    $('#editSleeve').val(response.sleeveId).trigger('change');
-                    $('#editCollar').val(response.collarId).trigger('change');
+                    $('#editDayGiay').val(response.dayGiayId).trigger('change');
                     $('#editBrand').val(response.brandId).trigger('change');
                     $('#editGender').val(response.gender).trigger('change');
                     $('#editPrice').val(formatNumber(response.price || 0));
@@ -1846,8 +1832,7 @@
                     $('#editOrigin').val(response.originId).trigger('change');
                     $('#editMaterial').val(response.materialId).trigger('change');
                     $('#editStyle').val(response.styleId).trigger('change');
-                    $('#editSleeve').val(response.sleeveId).trigger('change');
-                    $('#editCollar').val(response.collarId).trigger('change');
+                    $('#editDayGiay').val(response.dayGiayId).trigger('change');
                     $('#editBrand').val(response.brandId).trigger('change');
                     $('#editGender').val(response.gender).trigger('change');
                     $('#editPrice').val(formatNumber(response.price || 0));
@@ -2044,8 +2029,7 @@
                     originId: null,
                     materialId: null,
                     styleId: null,
-                    sleeveId: null,
-                    collarId: null,
+                    dayGiayId: null,
                     brandId: null,
                     gender: null,
                     price: null,
@@ -2074,8 +2058,7 @@
                                 commonAttributes.originId = response.originId;
                                 commonAttributes.materialId = response.materialId;
                                 commonAttributes.styleId = response.styleId;
-                                commonAttributes.sleeveId = response.sleeveId;
-                                commonAttributes.collarId = response.collarId;
+                                commonAttributes.dayGiayId = response.dayGiayId;
                                 commonAttributes.brandId = response.brandId;
                                 commonAttributes.gender = response.gender;
                                 commonAttributes.price = response.price;
@@ -2087,8 +2070,7 @@
                                 if (commonAttributes.originId !== response.originId) commonAttributes.originId = null;
                                 if (commonAttributes.materialId !== response.materialId) commonAttributes.materialId = null;
                                 if (commonAttributes.styleId !== response.styleId) commonAttributes.styleId = null;
-                                if (commonAttributes.sleeveId !== response.sleeveId) commonAttributes.sleeveId = null;
-                                if (commonAttributes.collarId !== response.collarId) commonAttributes.collarId = null;
+                                if (commonAttributes.dayGiayId !== response.dayGiayId) commonAttributes.dayGiayId = null;
                                 if (commonAttributes.brandId !== response.brandId) commonAttributes.brandId = null;
                                 if (commonAttributes.gender !== response.gender) commonAttributes.gender = null;
                                 if (commonAttributes.price !== response.price) commonAttributes.price = null;
@@ -2108,8 +2090,7 @@
                     $('#bulkFullEditForm select[name="originId"]').val(commonAttributes.originId || '').trigger('change');
                     $('#bulkFullEditForm select[name="materialId"]').val(commonAttributes.materialId || '').trigger('change');
                     $('#bulkFullEditForm select[name="styleId"]').val(commonAttributes.styleId || '').trigger('change');
-                    $('#bulkFullEditForm select[name="sleeveId"]').val(commonAttributes.sleeveId || '').trigger('change');
-                    $('#bulkFullEditForm select[name="collarId"]').val(commonAttributes.collarId || '').trigger('change');
+                    $('#bulkFullEditForm select[name="dayGiayId"]').val(commonAttributes.dayGiayId || '').trigger('change');
                     $('#bulkFullEditForm select[name="brandId"]').val(commonAttributes.brandId || '').trigger('change');
                     $('#bulkFullEditForm select[name="gender"]').val(commonAttributes.gender || '').trigger('change');
                     $('#bulkFullEditForm input[name="price"]').val(commonAttributes.price ? formatNumber(commonAttributes.price) : '');

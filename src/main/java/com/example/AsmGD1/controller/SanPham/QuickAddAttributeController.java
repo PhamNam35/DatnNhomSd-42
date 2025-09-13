@@ -16,6 +16,7 @@ public class QuickAddAttributeController {
     @Autowired private ChatLieuService chatLieuService;
     @Autowired private KieuDangService kieuDangService;
     @Autowired private ThuongHieuService thuongHieuService;
+    @Autowired private DayGiayService dayGiayService;
 
     @PostMapping("/save-auto-origin")
     public ResponseEntity<Map<String, Object>> saveOrigin(@RequestBody Map<String, String> payload) {
@@ -52,5 +53,14 @@ public class QuickAddAttributeController {
         entity.setTenThuongHieu(name);
         thuongHieuService.saveThuongHieu(entity);
         return ResponseEntity.ok(Map.of("id", entity.getId(), "name", entity.getTenThuongHieu()));
+    }
+
+    @PostMapping("/save-auto-dayGiay")
+    public ResponseEntity<Map<String, Object>> saveDayGiay(@RequestBody Map<String, String> payload) {
+        String name = payload.get("name");
+        DayGiay entity = new DayGiay();
+        entity.setTenDayGiay(name);
+        dayGiayService.saveDayGiay(entity);
+        return ResponseEntity.ok(Map.of("id", entity.getId(), "name", entity.getTenDayGiay()));
     }
 }
