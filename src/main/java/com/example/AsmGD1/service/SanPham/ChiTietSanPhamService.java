@@ -123,7 +123,10 @@ public class ChiTietSanPhamService {
     }
 
     public List<ChiTietSanPham> findAllByTrangThaiAndKeyword(String keyword) {
-        return chiTietSanPhamRepo.findAllByTrangThaiAndKeyword(keyword);
+        return chiTietSanPhamRepo.findAllByTrangThaiAndKeyword(keyword)
+                .stream()
+                .filter(ct -> ct.getSanPham() != null && Boolean.TRUE.equals(ct.getSanPham().getTrangThai()))
+                .collect(Collectors.toList());
     }
 
     public List<ChiTietSanPham> findByFilters(UUID productId, UUID colorId, UUID sizeId, UUID originId, UUID materialId,
