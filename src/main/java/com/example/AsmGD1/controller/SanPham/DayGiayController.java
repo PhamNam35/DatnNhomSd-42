@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore")
+@RequestMapping("/polyshoe")
 public class DayGiayController {
 
     @Autowired
@@ -73,7 +73,7 @@ public class DayGiayController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/day-giay";
+            return "redirect:/polyshoe/day-giay";
         }
 
         try {
@@ -87,7 +87,7 @@ public class DayGiayController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/day-giay";
+        return "redirect:/polyshoe/day-giay";
     }
 
     @GetMapping("/day-giay/delete/{id}")
@@ -96,7 +96,7 @@ public class DayGiayController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/day-giay";
+            return "redirect:/polyshoe/day-giay";
         }
 
         try {
@@ -108,7 +108,7 @@ public class DayGiayController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/day-giay";
+        return "redirect:/polyshoe/day-giay";
     }
 
     // Helper methods

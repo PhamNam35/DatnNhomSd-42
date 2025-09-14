@@ -56,7 +56,7 @@ public class SecurityConfig implements ApplicationContextAware {
     @Bean
     public AccessDeniedHandler accessDeniedHandlerEmployees() {
         AccessDeniedHandlerImpl handler = new AccessDeniedHandlerImpl();
-        handler.setErrorPage("/acvstore/login?error=accessDenied");
+        handler.setErrorPage("/polyshoe/login?error=accessDenied");
         return handler;
     }
 
@@ -70,9 +70,9 @@ public class SecurityConfig implements ApplicationContextAware {
     @Bean
     public AuthenticationEntryPoint employeeAuthEntryPoint() {
         return (request, response, authException) -> {
-            System.out.println("Đang chuyển hướng đến /acvstore/login do: " + authException.getMessage());
+            System.out.println("Đang chuyển hướng đến /polyshoe/login do: " + authException.getMessage());
             response.setStatus(HttpServletResponse.SC_FOUND);
-            response.sendRedirect("/acvstore/login");
+            response.sendRedirect("/polyshoe/login");
         };
     }
 
@@ -128,32 +128,32 @@ public class SecurityConfig implements ApplicationContextAware {
         NguoiDungService nguoiDungService = applicationContext.getBean(NguoiDungService.class);
 
         http
-                .securityMatcher("/acvstore/**")
+                .securityMatcher("/polyshoe/**")
                 // VẪN chặn khách hàng lạc vào khu vực nhân sự
                 .addFilterBefore(blockFilter, UsernamePasswordAuthenticationFilter.class)
                 // ĐÃ BỎ: .addFilterBefore(faceVerificationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(auth -> auth
                         // Không còn cần permitAll cho các trang face, nhưng giữ cũng không sao.
-                        .requestMatchers("/acvstore/login").permitAll()
-                        .requestMatchers("/acvstore/vi/**").hasRole("ADMIN")
-                        .requestMatchers("/acvstore/verify-success").authenticated()
-                        .requestMatchers("/acvstore/san-pham", "/acvstore/san-pham/get/**").hasAnyRole("ADMIN", "EMPLOYEE")
-                        .requestMatchers("/acvstore/san-pham/save", "/acvstore/san-pham/update-status", "/acvstore/san-pham/upload-image").hasRole("ADMIN")
-                        .requestMatchers("/acvstore/xuat-xu/**", "/acvstore/mau-sac/**", "/acvstore/kich-co/**",
-                                "/acvstore/chat-lieu/**", "/acvstore/kieu-dang/**", "/acvstore/co-ao/**",
-                                "/acvstore/tay-ao/**", "/acvstore/danh-muc/**", "/acvstore/thuong-hieu/**").hasRole("ADMIN")
-                        .requestMatchers("/acvstore/employees/**").hasRole("ADMIN")
-                        .requestMatchers("/acvstore/thong-ke").hasRole("ADMIN")
-                        .requestMatchers("/acvstore/employee-dashboard").hasRole("EMPLOYEE")
-                        .requestMatchers("/acvstore/thong-ke").hasAnyRole("ADMIN", "EMPLOYEE")
-                        .requestMatchers("/acvstore/ban-hang/**", "/acvstore/hoa-don/**").hasAnyRole("ADMIN", "EMPLOYEE")
-                        .requestMatchers("/acvstore/phieu-giam-gia/**", "/acvstore/chien-dich-giam-gia/**").hasAnyRole("ADMIN", "EMPLOYEE")
-                        .requestMatchers("/acvstore/customers/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/polyshoe/login").permitAll()
+                        .requestMatchers("/polyshoe/vi/**").hasRole("ADMIN")
+                        .requestMatchers("/polyshoe/verify-success").authenticated()
+                        .requestMatchers("/polyshoe/san-pham", "/polyshoe/san-pham/get/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/polyshoe/san-pham/save", "/polyshoe/san-pham/update-status", "/polyshoe/san-pham/upload-image").hasRole("ADMIN")
+                        .requestMatchers("/polyshoe/xuat-xu/**", "/polyshoe/mau-sac/**", "/polyshoe/kich-co/**",
+                                "/polyshoe/chat-lieu/**", "/polyshoe/kieu-dang/**", "/polyshoe/co-ao/**",
+                                "/polyshoe/tay-ao/**", "/polyshoe/danh-muc/**", "/polyshoe/thuong-hieu/**").hasRole("ADMIN")
+                        .requestMatchers("/polyshoe/employees/**").hasRole("ADMIN")
+                        .requestMatchers("/polyshoe/thong-ke").hasRole("ADMIN")
+                        .requestMatchers("/polyshoe/employee-dashboard").hasRole("EMPLOYEE")
+                        .requestMatchers("/polyshoe/thong-ke").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/polyshoe/ban-hang/**", "/polyshoe/hoa-don/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/polyshoe/phieu-giam-gia/**", "/polyshoe/chien-dich-giam-gia/**").hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/polyshoe/customers/**").hasAnyRole("ADMIN", "EMPLOYEE")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
-                        .loginPage("/acvstore/login")
-                        .loginProcessingUrl("/acvstore/login")
+                        .loginPage("/polyshoe/login")
+                        .loginProcessingUrl("/polyshoe/login")
                         .successHandler((request, response, authentication) -> {
                             String tenDangNhap = authentication.getName();
                             NguoiDung nguoiDung = nguoiDungService.findByTenDangNhap(tenDangNhap);
@@ -161,35 +161,35 @@ public class SecurityConfig implements ApplicationContextAware {
                             if (nguoiDung != null) {
                                 String vaiTro = nguoiDung.getVaiTro();
                                 if ("EMPLOYEE".equalsIgnoreCase(vaiTro)) {
-                                    response.sendRedirect("/acvstore/employee-dashboard");
+                                    response.sendRedirect("/polyshoe/employee-dashboard");
                                 } else if ("ADMIN".equalsIgnoreCase(vaiTro)) {
                                     // ĐÃ BỎ yêu cầu đăng ký/xác thực khuôn mặt, chuyển thẳng vào trang admin
-                                    response.sendRedirect("/acvstore/thong-ke");
+                                    response.sendRedirect("/polyshoe/thong-ke");
                                 } else {
-                                    response.sendRedirect("/acvstore/login?error=unauthorizedRole");
+                                    response.sendRedirect("/polyshoe/login?error=unauthorizedRole");
                                 }
                             } else {
-                                response.sendRedirect("/acvstore/login?error=notfound");
+                                response.sendRedirect("/polyshoe/login?error=notfound");
                             }
                         })
-                        .failureUrl("/acvstore/login?error=invalidCredentials")
+                        .failureUrl("/polyshoe/login?error=invalidCredentials")
                         .usernameParameter("tenDangNhap")
                         .passwordParameter("matKhau")
                         .permitAll()
                 )
                 .logout(logout -> logout
-                        .logoutUrl("/acvstore/logout")
-                        .logoutSuccessUrl("/acvstore/login?logout")
+                        .logoutUrl("/polyshoe/logout")
+                        .logoutSuccessUrl("/polyshoe/login?logout")
                         .invalidateHttpSession(true)
                         .clearAuthentication(true)
                         .deleteCookies("JSESSIONID")
                         .permitAll()
                 )
                 .exceptionHandling(exception -> exception
-                        // ĐÃ BỎ entryPoint riêng cho /acvstore/verify-success (nếu muốn)
+                        // ĐÃ BỎ entryPoint riêng cho /polyshoe/verify-success (nếu muốn)
                         .defaultAuthenticationEntryPointFor(
                                 employeeAuthEntryPoint(),
-                                new AntPathRequestMatcher("/acvstore/**")
+                                new AntPathRequestMatcher("/polyshoe/**")
                         )
                         .accessDeniedHandler(accessDeniedHandlerEmployees())
                 )
@@ -197,9 +197,9 @@ public class SecurityConfig implements ApplicationContextAware {
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                         .sessionConcurrency(concurrency -> concurrency
                                 .maximumSessions(1)
-                                .expiredUrl("/acvstore/login?expired")
+                                .expiredUrl("/polyshoe/login?expired")
                         )
-                        .invalidSessionUrl("/acvstore/login?invalid")
+                        .invalidSessionUrl("/polyshoe/login?invalid")
                 )
                 .csrf(csrf -> csrf.disable());
 
@@ -273,7 +273,7 @@ public class SecurityConfig implements ApplicationContextAware {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/", "/chitietsanpham", "/new", "/all", "/bestsellers", "/category/**",
-                                "/search/**", "/acvstore/login", // <- đã bỏ "/acvstore/verify-face"
+                                "/search/**", "/polyshoe/login", // <- đã bỏ "/polyshoe/verify-face"
                                 "/customers/login",
                                 "/customers/oauth2/register", "/api/cart/check-auth", "/api/cart/get-user",
                                 "/css/**", "/js/**", "/image/**", "/images/**", "/vi/**", "/uploads/**",

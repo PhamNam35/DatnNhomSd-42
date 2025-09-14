@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore/san-pham")
+@RequestMapping("/polyshoe/san-pham")
 public class SanPhamController {
 
     private static final Logger logger = LoggerFactory.getLogger(SanPhamController.class);
@@ -151,7 +151,7 @@ public class SanPhamController {
     @GetMapping("/edit/{id}")
     public String editSanPham(@PathVariable("id") UUID id, Model model) {
         if (!isCurrentUserAdmin()) {
-            return "redirect:/acvstore/san-pham?error=Bạn không có quyền truy cập chức năng này";
+            return "redirect:/polyshoe/san-pham?error=Bạn không có quyền truy cập chức năng này";
         }
 
         addUserInfoToModel(model);

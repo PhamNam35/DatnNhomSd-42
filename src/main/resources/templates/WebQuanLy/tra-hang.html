@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trả Hàng - ACV Store</title>
+    <title>Trả Hàng - Poly Store Store</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -564,7 +564,7 @@
                     <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
                     Xác nhận trả hàng
                 </button>
-                <a class="btn-link" th:href="@{/acvstore/hoa-don/detail/{id}(id=${hoaDon.id})}">
+                <a class="btn-link" th:href="@{/polyshoe/hoa-don/detail/{id}(id=${hoaDon.id})}">
                     <i class="fas fa-arrow-left" style="margin-right: 0.5rem;"></i>
                     Quay lại
                 </a>
@@ -724,7 +724,7 @@
                 const chiTietDonHangIds = Array.from(checkboxes).map(cb => cb.value);
 
                 $.ajax({
-                    url: '/acvstore/tra-hang/confirm/' + hoaDonId,
+                    url: '/polyshoe/tra-hang/confirm/' + hoaDonId,
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
@@ -742,7 +742,7 @@
                                 confirmButtonColor: '#153054',
                                 confirmButtonText: 'OK'
                             }).then(() => {
-                                window.location.href = '/acvstore/hoa-don/detail/' + hoaDonId;
+                                window.location.href = '/polyshoe/hoa-don/detail/' + hoaDonId;
                             });
                         } else {
                             Swal.fire({

@@ -35,7 +35,7 @@
     import java.util.stream.Collectors;
     
     @Controller
-    @RequestMapping("/acvstore/ban-hang")
+    @RequestMapping("/polyshoe/ban-hang")
     public class BanHangController {
     
         @Autowired
@@ -1236,13 +1236,13 @@
                 nguoiDung.setTrangThai(true);
                 nguoiDung.setThoiGianTao(LocalDateTime.now());
                 if (nguoiDungService.existsByPhone(khachHangDTO.getSoDienThoai())) {
-                    return "redirect:/acvstore/ban-hang?error=Số điện thoại đã tồn tại";
+                    return "redirect:/polyshoe/ban-hang?error=Số điện thoại đã tồn tại";
                 }
                 nguoiDungService.save(nguoiDung);
-                return "redirect:/acvstore/ban-hang";
+                return "redirect:/polyshoe/ban-hang";
             } catch (Exception e) {
                 System.err.println("Lỗi khi thêm khách hàng: " + e.getMessage());
-                return "redirect:/acvstore/ban-hang?error=Lỗi hệ thống";
+                return "redirect:/polyshoe/ban-hang?error=Lỗi hệ thống";
             }
         }
     

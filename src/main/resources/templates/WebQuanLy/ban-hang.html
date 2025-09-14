@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ACV Store - Bán Hàng</title>
+  <title>Poly Store Store - Bán Hàng</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -1505,7 +1505,7 @@
   // Chuyển 12345 -> "12.345"
   const formatCurrency = (n) => (Number(n) || 0).toLocaleString('vi-VN');
 
-  const BASE_URL = '/acvstore/ban-hang';
+  const BASE_URL = '/polyshoe/ban-hang';
   let tabs = [];
   let currentTabId = null;
   const MAX_TABS = 5;
@@ -3348,13 +3348,13 @@
     let personalVouchers = [];
     if (tab.customerPhone && tab.customerPhone !== '0999999999') {
       try {
-        const customerRes = await fetch(`/acvstore/customers/by-phone/${tab.customerPhone}`);
+        const customerRes = await fetch(`/polyshoe/customers/by-phone/${tab.customerPhone}`);
         if (customerRes.ok) {
           const customerData = await customerRes.json();
           if (customerData.id) {
             tab.customerId = customerData.id;
             qsBase += `&customerId=${tab.customerId}`;
-            const pvRes = await fetch(`/acvstore/customers/vouchers/${tab.customerPhone}`);
+            const pvRes = await fetch(`/polyshoe/customers/vouchers/${tab.customerPhone}`);
             if (pvRes.ok) {
               const pv = await pvRes.json();
               personalVouchers = Array.isArray(pv) ? pv : (pv?.vouchers || []);

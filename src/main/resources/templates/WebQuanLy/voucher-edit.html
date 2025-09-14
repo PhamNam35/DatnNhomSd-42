@@ -114,7 +114,7 @@
         <!-- Form chỉnh sửa -->
         <div class="bg-white p-4 rounded shadow-sm">
             <form id="editVoucherForm"
-                  th:action="@{'/acvstore/phieu-giam-gia/edit/' + ${voucher.id}}"
+                  th:action="@{'/polyshoe/phieu-giam-gia/edit/' + ${voucher.id}}"
                   th:object="${voucher}"
                   method="post" novalidate>
 
@@ -383,19 +383,19 @@
                                         <ul class="pagination pagination-sm mb-0">
                                             <li class="page-item" th:classappend="${currentCustomerPage == 0} ? 'disabled'">
                                                 <a class="page-link"
-                                                   th:href="@{'/acvstore/phieu-giam-gia/edit/' + ${voucher.id} + '?page=' + ${currentCustomerPage - 1} + '&search=' + ${search}}"
+                                                   th:href="@{'/polyshoe/phieu-giam-gia/edit/' + ${voucher.id} + '?page=' + ${currentCustomerPage - 1} + '&search=' + ${search}}"
                                                    aria-label="Previous"><i class="fas fa-chevron-left"></i></a>
                                             </li>
                                             <li class="page-item"
                                                 th:each="i : ${#numbers.sequence(0, totalCustomerPages - 1)}"
                                                 th:classappend="${i == currentCustomerPage} ? 'active'">
                                                 <a class="page-link"
-                                                   th:href="@{'/acvstore/phieu-giam-gia/edit/' + ${voucher.id} + '?page=' + ${i} + '&search=' + ${search}}"
+                                                   th:href="@{'/polyshoe/phieu-giam-gia/edit/' + ${voucher.id} + '?page=' + ${i} + '&search=' + ${search}}"
                                                    th:text="${i + 1}"></a>
                                             </li>
                                             <li class="page-item" th:classappend="${currentCustomerPage + 1 >= totalCustomerPages} ? 'disabled'">
                                                 <a class="page-link"
-                                                   th:href="@{'/acvstore/phieu-giam-gia/edit/' + ${voucher.id} + '?page=' + ${currentCustomerPage + 1} + '&search=' + ${search}}"
+                                                   th:href="@{'/polyshoe/phieu-giam-gia/edit/' + ${voucher.id} + '?page=' + ${currentCustomerPage + 1} + '&search=' + ${search}}"
                                                    aria-label="Next"><i class="fas fa-chevron-right"></i></a>
                                             </li>
                                         </ul>
@@ -417,7 +417,7 @@
                     <button type="button" class="btn btn-primary me-2" th:if="${st == 'Sắp diễn ra'}" onclick="validateForm()">
                         <i class="fas fa-save me-2"></i>Lưu thay đổi
                     </button>
-                    <a th:href="@{/acvstore/phieu-giam-gia}" class="btn btn-secondary"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
+                    <a th:href="@{/polyshoe/phieu-giam-gia}" class="btn btn-secondary"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
                 </div>
             </form>
         </div>

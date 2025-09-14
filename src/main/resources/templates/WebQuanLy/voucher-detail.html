@@ -281,19 +281,19 @@
                                         <ul class="pagination pagination-sm mb-0">
                                             <li class="page-item" th:classappend="${currentCustomerPage == 0} ? 'disabled'">
                                                 <a class="page-link"
-                                                   th:href="@{'/acvstore/phieu-giam-gia/view/' + ${voucher.id} + '?page=' + ${currentCustomerPage - 1} + '&search=' + ${search}}"
+                                                   th:href="@{'/polyshoe/phieu-giam-gia/view/' + ${voucher.id} + '?page=' + ${currentCustomerPage - 1} + '&search=' + ${search}}"
                                                    aria-label="Previous"><i class="fas fa-chevron-left"></i></a>
                                             </li>
                                             <li class="page-item"
                                                 th:each="i : ${#numbers.sequence(0, totalCustomerPages - 1)}"
                                                 th:classappend="${i == currentCustomerPage} ? 'active'">
                                                 <a class="page-link"
-                                                   th:href="@{'/acvstore/phieu-giam-gia/view/' + ${voucher.id} + '?page=' + ${i} + '&search=' + ${search}}"
+                                                   th:href="@{'/polyshoe/phieu-giam-gia/view/' + ${voucher.id} + '?page=' + ${i} + '&search=' + ${search}}"
                                                    th:text="${i + 1}"></a>
                                             </li>
                                             <li class="page-item" th:classappend="${currentCustomerPage + 1 >= totalCustomerPages} ? 'disabled'">
                                                 <a class="page-link"
-                                                   th:href="@{'/acvstore/phieu-giam-gia/view/' + ${voucher.id} + '?page=' + ${currentCustomerPage + 1} + '&search=' + ${search}}"
+                                                   th:href="@{'/polyshoe/phieu-giam-gia/view/' + ${voucher.id} + '?page=' + ${currentCustomerPage + 1} + '&search=' + ${search}}"
                                                    aria-label="Next"><i class="fas fa-chevron-right"></i></a>
                                             </li>
                                         </ul>
@@ -307,7 +307,7 @@
 
                 <!-- Actions -->
                 <div class="d-flex justify-content-end mt-4">
-                    <a th:href="@{/acvstore/phieu-giam-gia}" class="btn btn-secondary">
+                    <a th:href="@{/polyshoe/phieu-giam-gia}" class="btn btn-secondary">
                         <i class="fas fa-arrow-left me-2"></i>Quay lại
                     </a>
                 </div>

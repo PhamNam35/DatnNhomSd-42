@@ -128,23 +128,9 @@
   <nav class="navbar navbar-expand-lg sticky-top shadow-sm" style="background: linear-gradient(135deg, #153054 0%, #1e4066 100%);">
     <div class="container d-flex align-items-center py-2">
       <!-- Logo -->
-      <a class="navbar-brand text-white fw-bold fs-4 navbar-logo d-flex align-items-center" href="/">
-        <img src="/image/ACV.png" alt="ACV Store" class="me-2" style="height: 40px; width: auto;">
-<!--        <span class="d-none d-sm-inline"></span>-->
-      </a>
 
-      <!-- Tìm kiếm (hiển thị trên desktop) -->
-      <form class="navbar-search mx-8 position-relative d-none d-lg-flex" style="max-width: 900px;" action="/search" method="get">
-        <div class="input-group">
-          <input type="text" class="form-control rounded-start-pill border-0"
-                 placeholder="Tìm kiếm sản phẩm..."
-                 name="keyword" id="searchInput" th:value="${keyword}" autocomplete="off">
-          <button class="btn btn-light rounded-end-pill px-4" type="submit">
-            <i class="fas fa-search text-blue-800"></i>
-          </button>
-        </div>
-        <div id="searchSuggestions" class="search-suggestions"></div>
-      </form>
+
+
 
       <!-- Nút tìm kiếm (hiển thị trên mobile) -->
       <button class="btn text-white fs-5 navbar-search-btn d-lg-none mx-2" data-bs-toggle="modal" data-bs-target="#searchModal" aria-label="Tìm kiếm">

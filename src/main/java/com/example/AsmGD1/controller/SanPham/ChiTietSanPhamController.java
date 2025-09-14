@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/acvstore/chi-tiet-san-pham")
+@RequestMapping("/polyshoe/chi-tiet-san-pham")
 public class ChiTietSanPhamController {
 
     private static final Logger logger = LoggerFactory.getLogger(ChiTietSanPhamController.class);
@@ -123,7 +123,7 @@ public class ChiTietSanPhamController {
                            @RequestParam(value = "status", required = false) Boolean status) {
         try {
             if (!canCurrentUserView()) {
-                return "redirect:/acvstore/login?error=Bạn không có quyền truy cập trang này";
+                return "redirect:/polyshoe/login?error=Bạn không có quyền truy cập trang này";
             }
 
             addUserInfoToModel(model);
@@ -192,7 +192,7 @@ public class ChiTietSanPhamController {
     public String hienThiFormThem(Model model, @RequestParam(value = "productId", required = false) UUID productId) {
         try {
             if (!canCurrentUserEdit()) {
-                return "redirect:/acvstore/chi-tiet-san-pham?error=Bạn không có quyền truy cập chức năng này";
+                return "redirect:/polyshoe/chi-tiet-san-pham?error=Bạn không có quyền truy cập chức năng này";
             }
 
             addUserInfoToModel(model);
@@ -301,7 +301,7 @@ public class ChiTietSanPhamController {
                                        Model model) {
         try {
             if (!canCurrentUserEdit()) {
-                return "redirect:/acvstore/chi-tiet-san-pham?error=Bạn không có quyền thực hiện chức năng này";
+                return "redirect:/polyshoe/chi-tiet-san-pham?error=Bạn không có quyền thực hiện chức năng này";
             }
 
             chiTietSanPhamService.saveSingleChiTietSanPham(dto, imageFiles);
@@ -309,7 +309,7 @@ public class ChiTietSanPhamController {
             // Gửi thông báo WebSocket đến topic của sản phẩm
             messagingTemplate.convertAndSend("/topic/product/" + dto.getProductId(), Map.of("action", "refresh"));
 
-            return "redirect:/acvstore/chi-tiet-san-pham?productId=" + dto.getProductId() + "&success=Thêm thành công";
+            return "redirect:/polyshoe/chi-tiet-san-pham?productId=" + dto.getProductId() + "&success=Thêm thành công";
         } catch (Exception e) {
             logger.error("Lỗi khi lưu chi tiết sản phẩm: ", e);
             model.addAttribute("error", "Lỗi khi lưu chi tiết sản phẩm: " + e.getMessage());
@@ -321,7 +321,7 @@ public class ChiTietSanPhamController {
     public String luuChiTietSanPhamBatch(@ModelAttribute ChiTietSanPhamBatchDto batchDto, Model model) {
         try {
             if (!canCurrentUserEdit()) {
-                return "redirect:/acvstore/chi-tiet-san-pham?error=Bạn không có quyền thực hiện chức năng này";
+                return "redirect:/polyshoe/chi-tiet-san-pham?error=Bạn không có quyền thực hiện chức năng này";
             }
 
             chiTietSanPhamService.saveChiTietSanPhamVariationsDto(batchDto);
@@ -329,7 +329,7 @@ public class ChiTietSanPhamController {
             // Gửi thông báo WebSocket đến topic của sản phẩm
             messagingTemplate.convertAndSend("/topic/product/" + batchDto.getProductId(), Map.of("action", "refresh"));
 
-            return "redirect:/acvstore/chi-tiet-san-pham?productId=" + batchDto.getProductId() + "&success=Thêm thành công";
+            return "redirect:/polyshoe/chi-tiet-san-pham?productId=" + batchDto.getProductId() + "&success=Thêm thành công";
         } catch (Exception e) {
             logger.error("Lỗi khi lưu batch chi tiết sản phẩm: ", e);
             model.addAttribute("error", "Lỗi khi lưu chi tiết sản phẩm: " + e.getMessage());

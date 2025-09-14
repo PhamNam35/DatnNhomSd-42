@@ -76,7 +76,7 @@
 
         <!-- Form -->
         <div class="bg-white p-4 rounded shadow-sm">
-            <form id="createVoucherForm" th:action="@{/acvstore/phieu-giam-gia/create}" th:object="${voucher}" method="post" novalidate>
+            <form id="createVoucherForm" th:action="@{/polyshoe/phieu-giam-gia/create}" th:object="${voucher}" method="post" novalidate>
 
                 <div class="row g-4">
                     <!-- 1) THÔNG TIN CƠ BẢN -->
@@ -294,7 +294,7 @@
                 <!-- Actions -->
                 <div class="d-flex justify-content-end mt-4">
                     <button type="button" class="btn btn-primary me-2" onclick="validateForm()"><i class="fas fa-save me-2"></i>Lưu</button>
-                    <a th:href="@{/acvstore/phieu-giam-gia}" class="btn btn-secondary"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
+                    <a th:href="@{/polyshoe/phieu-giam-gia}" class="btn btn-secondary"><i class="fas fa-arrow-left me-2"></i>Quay lại</a>
                 </div>
             </form>
         </div>

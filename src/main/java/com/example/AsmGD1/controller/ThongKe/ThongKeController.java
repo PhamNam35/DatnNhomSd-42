@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/acvstore/thong-ke")
+@RequestMapping("/polyshoe/thong-ke")
 public class ThongKeController {
 
     @Autowired

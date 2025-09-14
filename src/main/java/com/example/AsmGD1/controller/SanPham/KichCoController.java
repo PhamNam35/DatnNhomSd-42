@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore")
+@RequestMapping("/polyshoe")
 public class KichCoController {
 
     @Autowired
@@ -73,7 +73,7 @@ public class KichCoController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/kich-co";
+            return "redirect:/polyshoe/kich-co";
         }
 
         try {
@@ -88,7 +88,7 @@ public class KichCoController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/kich-co";
+        return "redirect:/polyshoe/kich-co";
     }
 
     @GetMapping("/kich-co/delete/{id}")
@@ -97,7 +97,7 @@ public class KichCoController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/kich-co";
+            return "redirect:/polyshoe/kich-co";
         }
 
         try {
@@ -109,7 +109,7 @@ public class KichCoController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/kich-co";
+        return "redirect:/polyshoe/kich-co";
     }
 
     // Helper methods

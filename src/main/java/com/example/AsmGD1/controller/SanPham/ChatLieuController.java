@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore")
+@RequestMapping("/polyshoe")
 public class ChatLieuController {
 
     @Autowired
@@ -73,7 +73,7 @@ public class ChatLieuController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/chat-lieu";
+            return "redirect:/polyshoe/chat-lieu";
         }
 
         try {
@@ -88,7 +88,7 @@ public class ChatLieuController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/chat-lieu";
+        return "redirect:/polyshoe/chat-lieu";
     }
 
     @GetMapping("/chat-lieu/delete/{id}")
@@ -97,7 +97,7 @@ public class ChatLieuController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/chat-lieu";
+            return "redirect:/polyshoe/chat-lieu";
         }
 
         try {
@@ -109,7 +109,7 @@ public class ChatLieuController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/chat-lieu";
+        return "redirect:/polyshoe/chat-lieu";
     }
 
     // Helper methods

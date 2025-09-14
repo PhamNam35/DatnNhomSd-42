@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title th:text="${pageTitle} + ' - ACV Store'">All Products</title>
-  <link rel="icon" href="/image/ACV.png" type="image/png" sizes="32x32"/>
+  <title th:text="${pageTitle} + ' - Poly Store Store'">All Products</title>
+  <link rel="icon" href="/image/Poly Store.png" type="image/png" sizes="32x32"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
@@ -273,11 +273,7 @@
   </style>
 </head>
 <body class="bg-gray-100">
-<div class="ticker py-1 overflow-hidden" style="height: 40px;">
-  <marquee behavior="scroll" direction="left" scrollamount="5">
-    🎉 Khuyến mãi đặc biệt: Giảm giá lên đến 50% cho tất cả sản phẩm hôm nay! 🎉 - Miễn phí vận chuyển cho đơn từ 500k!
-  </marquee>
-</div>
+
 
 <div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
 
@@ -373,72 +369,13 @@
   </div>
 </section>
 
-<!-- Floating Chatbot Icon -->
-<div id="chatbot-toggle" style="position: fixed; bottom: 20px; right: 20px; background-color: #153054; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; z-index: 10000; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-  <i class="fas fa-robot fa-lg text-white"></i>
-</div>
-
-<!-- Messenger shortcut -->
-<a id="messenger-launch"
-   class="messenger-fab"
-   href="https://m.me/820646527788683"
-   target="_blank" rel="noopener"
-   title="Mở trong Messenger" aria-label="Mở chat trong Messenger">
-  <i class="fa-brands fa-facebook-messenger"></i>
-</a>
 
 
-<!-- Chatbot Box -->
-<div id="chatbot-box" style="
-    position: fixed;
-    bottom: 100px;
-    right: 30px;
-    width: 420px;
-    max-height: 620px;
-    background: #fff;
-    border-radius: 7px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 10000;
-    font-family: 'Segoe UI', sans-serif;
-  ">
-  <!-- Header -->
-  <div style="background-color: #153054; color: white; padding: 12px 16px; display: flex; align-items: center; gap: 10px;">
-    <img src="https://img.icons8.com/emoji/48/robot-emoji.png" style="width: 32px; height: 32px;">
-    <div style="font-weight: bold;">ACV Bot</div>
-    <span id="chatbot-close" style="margin-left: auto; cursor: pointer;">×</span>
-  </div>
-
-  <!-- Messages -->
-  <div id="chat-messages" style="padding: 12px; height: 300px; overflow-y: auto; font-size: 14px; line-height: 1.4; background: #f9fafb;"></div>
-
-  <!-- Quick Replies -->
-  <div id="quick-replies" class="flex flex-wrap gap-2 p-4">
-    <button class="quick-reply px-3 py-1 bg-blue-100 rounded-full text-sm">Sản phẩm mới nhất</button>
-    <button class="quick-reply px-3 py-1 bg-blue-100 rounded-full text-sm">Kiểm tra đơn hàng</button>
-    <button class="quick-reply px-3 py-1 bg-blue-100 rounded-full text-sm">Chính sách đổi trả</button>
-  </div>
-
-  <!-- Input -->
-  <div style="padding: 10px; border-top: 1px solid #eee;">
-    <input id="chat-input" type="text" placeholder="Nhập câu hỏi..." style="
-        width: 100%;
-        padding: 12px 16px;
-        border: 1px solid #ccc;
-        border-radius: 24px;
-        font-size: 15px;
-        outline: none;
-        transition: border 0.2s ease-in-out;
-      ">
-  </div>
-</div>
 
 <footer style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
   <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
     <div>
-      <h3 class="text-lg font-bold mb-4">ACV Store</h3>
+      <h3 class="text-lg font-bold mb-4">Poly Store Store</h3>
       <p class="text-sm">Cửa hàng thời trang hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
     </div>
     <div>
@@ -452,7 +389,7 @@
     <div>
       <h3 class="text-lg font-bold mb-4">Liên hệ</h3>
       <p class="text-sm">Địa chỉ: Chung Cư Le Capitole, Hà Nội, Việt Nam</p>
-      <p class="text-sm">Email: datn.acv@gmail.com</p>
+      <p class="text-sm">Email: phamnam@gmail.com</p>
       <p class="text-sm">Hotline: 1900 8686</p>
       <div class="flex space-x-4 mt-4">
         <a href="#" class="text-white hover:text-blue-300" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
@@ -467,7 +404,7 @@
     </div>
     <p class="text-center text-sm mt-2 text-gray-300">* Bản đồ hiển thị vị trí chi nhánh chính tại Chung Cư Le Capitole, Hà Nội. Vui lòng liên hệ để xác nhận giờ mở cửa.</p>
   </div>
-  <div class="text-center mt-8 text-sm">© 2025 ACV Store. All rights reserved.</div>
+  <div class="text-center mt-8 text-sm">© 2025 Poly Store Store. All rights reserved.</div>
   <!-- Hiệu ứng nền -->
   <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10"></div>
 </footer>
@@ -556,73 +493,7 @@
     }
   });
 
-  async function showSearchHistory(filterKeyword = '') {
-    try {
-      const response = await fetch('/api/search-history', { credentials: 'include' });
-      if (!response.ok) {
-        throw new Error(response.status === 401 ? 'Vui lòng đăng nhập để xem lịch sử tìm kiếm' : 'Lỗi khi tải lịch sử tìm kiếm');
-      }
-      const history = await response.json();
-      searchSuggestions.innerHTML = '';
-      const filteredHistory = filterKeyword
-              ? history.filter(kw => kw.toLowerCase().includes(filterKeyword.toLowerCase()))
-              : history;
-      if (filteredHistory.length === 0) {
-        searchSuggestions.innerHTML = '<div class="history-item">Không có lịch sử tìm kiếm</div>';
-      } else {
-        filteredHistory.forEach(keyword => {
-          const historyItem = document.createElement('div');
-          historyItem.className = 'history-item';
-          historyItem.innerHTML = `
-                    <span class="keyword">${
-                  filterKeyword
-                          ? keyword.replace(new RegExp(filterKeyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'), match => `<span class="highlight">${match}</span>`)
-                          : keyword
-          }</span>
-                    <i class="fas fa-times delete-btn" title="Xóa mục này"></i>
-                `;
-          // Sự kiện click vào từ khóa để tìm kiếm
-          historyItem.querySelector('.keyword').addEventListener('click', () => {
-            searchInput.value = keyword;
-            searchInput.dispatchEvent(new Event('input'));
-          });
-          // Sự kiện click vào nút xóa
-          historyItem.querySelector('.delete-btn').addEventListener('click', async () => {
-            try {
-              const response = await fetch(`/api/search-history/delete?keyword=${encodeURIComponent(keyword)}`, {
-                method: 'DELETE',
-                credentials: 'include'
-              });
-              if (response.ok) {
-                // Cập nhật lại danh sách lịch sử sau khi xóa
-                showSearchHistory(filterKeyword);
-              } else {
-                searchSuggestions.innerHTML = '<div class="history-item">Lỗi khi xóa mục lịch sử</div>';
-                searchSuggestions.classList.add('active');
-              }
-            } catch (error) {
-              console.error('Error deleting search history item:', error);
-              searchSuggestions.innerHTML = '<div class="history-item">Lỗi khi xóa mục lịch sử tìm kiếm</div>';
-              searchSuggestions.classList.add('active');
-            }
-          });
-          searchSuggestions.appendChild(historyItem);
-        });
-      }
-      searchSuggestions.classList.add('active');
-    } catch (error) {
-      console.error('Error fetching search history:', error);
-      searchSuggestions.innerHTML = `<div class="history-item">${error.message}</div>`;
-      searchSuggestions.classList.add('active');
-    }
-  }
 
-  // Toggle chatbot
-  const toggleBtn = document.getElementById('chatbot-toggle');
-  const chatBox = document.getElementById('chatbot-box');
-  const closeBtn = document.getElementById('chatbot-close');
-  const chatInput = document.getElementById('chat-input');
-  const chatMessages = document.getElementById('chat-messages');
 
   toggleBtn.onclick = () => {
     chatBox.style.display = "flex";
@@ -819,7 +690,7 @@
         modalError.classList.add('hidden');
         confirmButton.classList.add('loading');
 
-        const response = await fetch(`/acvstore/chi-tiet-san-pham/api?sanPhamId=${button.dataset.productId}&sizeId=${selectedSize.dataset.sizeId}&colorId=${selectedColor.dataset.colorId}`);
+        const response = await fetch(`/polyshoe/chi-tiet-san-pham/api?sanPhamId=${button.dataset.productId}&sizeId=${selectedSize.dataset.sizeId}&colorId=${selectedColor.dataset.colorId}`);
         const chiTietSanPham = await response.json();
         if (!chiTietSanPham.id) {
           alert('Sản phẩm với kích cỡ và màu sắc này không tồn tại!');

@@ -910,7 +910,7 @@
         </div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb justify-content-center">
-                <li class="breadcrumb-item"><a th:href="@{/acvstore/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/polyshoe/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
                 <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-list me-1"></i>Chi Tiết Sản Phẩm</li>
             </ol>
         </nav>
@@ -927,7 +927,7 @@
                     <i class="fas fa-filter section-icon"></i>
                     <h3 class="fs-4 fw-bold text-dark mb-0">Bộ lọc chi tiết sản phẩm</h3>
                 </div>
-                <form th:action="@{/acvstore/chi-tiet-san-pham}" method="get">
+                <form th:action="@{/polyshoe/chi-tiet-san-pham}" method="get">
                     <input type="hidden" name="productId" th:value="${selectedProductId}"/>
                     <div class="row g-4 align-items-end">
 
@@ -976,7 +976,7 @@
 
                         <!-- Removed align-top class and simplified alignment -->
                         <div class="col-md-3" style="margin-bottom: 35px">
-                            <a th:href="@{/acvstore/chi-tiet-san-pham(productId=${selectedProductId})}"
+                            <a th:href="@{/polyshoe/chi-tiet-san-pham(productId=${selectedProductId})}"
                                class="btn btn-secondary d-flex align-items-center justify-content-center" style="height: 65px">
                                 <i class="fas fa-filter me-2"></i> Xóa bộ lọc
                             </a>
@@ -1659,7 +1659,7 @@
 
         function openRestrictedEdit(productDetailId) {
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/edit/' + productDetailId,
+                url: '/polyshoe/chi-tiet-san-pham/edit/' + productDetailId,
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
@@ -1790,7 +1790,7 @@
             fd.set('stockQuantity', parseNumber($stockInput.val()));
 
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/update-bulk',
+                url: '/polyshoe/chi-tiet-san-pham/update-bulk',
                 type: 'POST',
                 data: fd,
                 processData: false,
@@ -1801,8 +1801,8 @@
                         const pidRaw = $('#editProductHidden').val() || $('[name="productId"]').val();
                         const pid = (pidRaw && pidRaw !== 'undefined' && pidRaw !== 'null' && pidRaw.trim() !== '') ? pidRaw : '';
                         const href = pid
-                            ? `/acvstore/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
-                            : `/acvstore/chi-tiet-san-pham?success=Cập nhật thành công`;
+                            ? `/polyshoe/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
+                            : `/polyshoe/chi-tiet-san-pham?success=Cập nhật thành công`;
                         window.location.href = href;
                     }, 800);
                 },
@@ -1816,7 +1816,7 @@
         $(document).on('click', '.edit-btn', function () {
             const productDetailId = $(this).data('id');
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/edit/' + productDetailId,
+                url: '/polyshoe/chi-tiet-san-pham/edit/' + productDetailId,
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
@@ -1972,7 +1972,7 @@
             formData.set('stockQuantity', parseNumber($('#editStockQuantity').val()));
 
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/update/' + id,
+                url: '/polyshoe/chi-tiet-san-pham/update/' + id,
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -1984,8 +1984,8 @@
                         const pid = (response.productId && response.productId !== 'undefined' && response.productId !== 'null')
                             ? response.productId : '';
                         const href = pid
-                            ? `/acvstore/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
-                            : `/acvstore/chi-tiet-san-pham?success=Cập nhật thành công`;
+                            ? `/polyshoe/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
+                            : `/polyshoe/chi-tiet-san-pham?success=Cập nhật thành công`;
                         window.location.href = href;
                     }, 1000);
                 },
@@ -2043,7 +2043,7 @@
 
                     // Lấy dữ liệu từ API hoặc trực tiếp từ DOM
                     $.ajax({
-                        url: '/acvstore/chi-tiet-san-pham/edit/' + id,
+                        url: '/polyshoe/chi-tiet-san-pham/edit/' + id,
                         type: 'GET',
                         dataType: 'json',
                         async: false, // Đảm bảo đồng bộ để thu thập dữ liệu trước khi mở modal
@@ -2168,7 +2168,7 @@
                     // Người dùng xác nhận, tiếp tục cập nhật
                     statusLabel.text(newStatus ? 'Đang Bán' : 'Ngừng Bán');
                     $.ajax({
-                        url: '/acvstore/chi-tiet-san-pham/update-status',
+                        url: '/polyshoe/chi-tiet-san-pham/update-status',
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({

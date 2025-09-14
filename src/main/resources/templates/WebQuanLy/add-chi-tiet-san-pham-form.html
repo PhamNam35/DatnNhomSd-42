@@ -714,7 +714,7 @@
             </div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a th:href="@{/acvstore/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/polyshoe/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
                     <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-plus-circle me-1"></i>Thêm chi tiết</li>
                 </ol>
             </nav>
@@ -724,7 +724,7 @@
                     <span><i class="fas fa-box-open me-2"></i>Thông Tin Chi Tiết Sản Phẩm</span>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/acvstore/chi-tiet-san-pham/save-batch}" method="post" enctype="multipart/form-data" id="batchForm">
+                    <form th:action="@{/polyshoe/chi-tiet-san-pham/save-batch}" method="post" enctype="multipart/form-data" id="batchForm">
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label for="productSelect" class="form-label">Sản phẩm</label>
@@ -1130,7 +1130,7 @@
 
         function fetchProductDetails(productId) {
             $.ajax({
-                url: `/acvstore/chi-tiet-san-pham/api/product-details/${productId}`,
+                url: `/polyshoe/chi-tiet-san-pham/api/product-details/${productId}`,
                 type: 'GET',
                 success: function(response) {
                     if (response.hasDetails) {
@@ -1327,7 +1327,7 @@
                             $('#successNotificationDetail').css('display', 'block');
                             setTimeout(() => {
                                 $('#successNotificationDetail').css('display', 'none');
-                                window.location.href = '/acvstore/chi-tiet-san-pham?productId=' + $('#productSelect').val() + '&success=Thêm thành công';
+                                window.location.href = '/polyshoe/chi-tiet-san-pham?productId=' + $('#productSelect').val() + '&success=Thêm thành công';
                             }, 2000);
                         },
                         error: function(xhr) {
@@ -1389,7 +1389,7 @@
             formData.set('tenSanPham', tenSanPham);
 
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/save-auto-product',
+                url: '/polyshoe/chi-tiet-san-pham/save-auto-product',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -1625,7 +1625,7 @@
 
     function fetchExistingImages(productId) {
         $.ajax({
-            url: `/acvstore/chi-tiet-san-pham/api/product-images/${productId}`,
+            url: `/polyshoe/chi-tiet-san-pham/api/product-images/${productId}`,
             type: 'GET',
             success: function(response) {
                 if (response && response.images) {
@@ -1656,7 +1656,7 @@
 
     function removeExistingImage(imageId, colorId) {
         $.ajax({
-            url: `/acvstore/chi-tiet-san-pham/api/delete-image/${imageId}`,
+            url: `/polyshoe/chi-tiet-san-pham/api/delete-image/${imageId}`,
             type: 'DELETE',
             success: function() {
                 const previewContainer = document.getElementById(`preview-${colorId}`);
@@ -1716,7 +1716,7 @@
 
         const data = { name: name };
         $.ajax({
-            url: '/acvstore/chi-tiet-san-pham/save-auto-' + entity,
+            url: '/polyshoe/chi-tiet-san-pham/save-auto-' + entity,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),

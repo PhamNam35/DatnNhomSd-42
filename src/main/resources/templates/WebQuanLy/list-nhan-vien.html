@@ -708,7 +708,7 @@
         <!-- Form tìm kiếm -->
         <div class="card mb-4">
             <div class="card-body">
-                <form th:action="@{/acvstore/employees}" method="get">
+                <form th:action="@{/polyshoe/employees}" method="get">
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="input-group">
@@ -799,16 +799,16 @@
         <nav aria-label="Phân trang" class="mt-4">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                    <a class="page-link" th:href="@{/acvstore/employees(page=${currentPage - 1}, keyword=${keyword}, vaiTro=${vaiTro})}">
+                    <a class="page-link" th:href="@{/polyshoe/employees(page=${currentPage - 1}, keyword=${keyword}, vaiTro=${vaiTro})}">
                         <i class="fa-solid fa-chevron-left me-1"></i>Trước
                     </a>
                 </li>
                 <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                     th:classappend="${i == currentPage} ? 'active'">
-                    <a class="page-link" th:href="@{/acvstore/employees(page=${i}, keyword=${keyword}, vaiTro=${vaiTro})}" th:text="${i + 1}"></a>
+                    <a class="page-link" th:href="@{/polyshoe/employees(page=${i}, keyword=${keyword}, vaiTro=${vaiTro})}" th:text="${i + 1}"></a>
                 </li>
                 <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/acvstore/employees(page=${currentPage + 1}, keyword=${keyword}, vaiTro=${vaiTro})}">
+                    <a class="page-link" th:href="@{/polyshoe/employees(page=${currentPage + 1}, keyword=${keyword}, vaiTro=${vaiTro})}">
                         Sau<i class="fa-solid fa-chevron-right ms-1"></i>
                     </a>
                 </li>
@@ -826,7 +826,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form th:action="@{/acvstore/employees/add}" th:object="${employee}" method="post" onsubmit="return validateForm(event)" novalidate>
+                        <form th:action="@{/polyshoe/employees/add}" th:object="${employee}" method="post" onsubmit="return validateForm(event)" novalidate>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -946,7 +946,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form th:action="@{/acvstore/employees/edit}" method="post" onsubmit="return validateEditForm(event, this)" novalidate>
+                            <form th:action="@{/polyshoe/employees/edit}" method="post" onsubmit="return validateEditForm(event, this)" novalidate>
                                 <input type="hidden" name="id" th:value="${employee.id}">
                                 <div class="row">
                                     <div class="col-md-6">

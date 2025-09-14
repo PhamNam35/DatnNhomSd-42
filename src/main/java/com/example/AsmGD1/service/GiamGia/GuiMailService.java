@@ -23,13 +23,13 @@ public class GuiMailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${app.brand.name:ACV Store}")
+    @Value("${app.brand.name:Poly Store Store}")
     private String brandName;
 
-    @Value("${spring.mail.username:no-reply@acvstore.local}")
+    @Value("${spring.mail.username:no-reply@polyshoe.local}")
     private String defaultFrom;
 
-    @Value("${app.web.base-url:https://acvstore.site}")
+    @Value("${app.web.base-url:https://polyshoe.site}")
     private String baseUrl;
 
     private static final Locale VI_VN = new Locale("vi", "VN");
@@ -98,7 +98,7 @@ public class GuiMailService {
         <body>
           <div class="container">
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
-              <div style="width:38px;height:38px;border-radius:10px;background:#eaf2ff;display:flex;align-items:center;justify-content:center;font-weight:800;color:%s">ACV</div>
+              <div style="width:38px;height:38px;border-radius:10px;background:#eaf2ff;display:flex;align-items:center;justify-content:center;font-weight:800;color:%s">Poly Store</div>
             </div>
             <h1>Chúc mừng %s!</h1>
             <p class="lead">Bạn vừa nhận được một <b>phiếu giảm giá</b> từ <b>%s</b>. Chi tiết như dưới đây:</p>
@@ -130,7 +130,7 @@ public class GuiMailService {
                 CARD_BG, CARD_BD, TEXT_MAIN, BLUE,
                 BLUE, BLUE_DARK, CARD_BD, TEXT_MUTE,
 
-                BLUE,                               // màu chữ trong ô logo "ACV"
+                BLUE,                               // màu chữ trong ô logo "Poly Store"
 
                 escape(tenKh), escape(brandName),
 

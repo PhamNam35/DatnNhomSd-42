@@ -214,10 +214,7 @@ public class HoaDonService {
             Font fontFooter = new Font(bf, 10, Font.ITALIC, BaseColor.GRAY);
 
             try {
-                Image logo = Image.getInstance("src/main/resources/static/image/acv-logo.png");
-                logo.scaleToFit(100, 100);
-                logo.setAlignment(Element.ALIGN_CENTER);
-                document.add(logo);
+
                 document.add(Chunk.NEWLINE);
             } catch (Exception e) {
                 System.err.println("Không thể tải logo: " + e.getMessage());
@@ -225,9 +222,9 @@ public class HoaDonService {
 
             Paragraph storeInfo = new Paragraph();
             storeInfo.setAlignment(Element.ALIGN_CENTER);
-            storeInfo.add(new Phrase("CỬA HÀNG ACV STORE\n", fontHeader));
-            storeInfo.add(new Phrase("Địa chỉ: Thanh Oai, TP. Hà Nội\n", fontNormal));
-            storeInfo.add(new Phrase("Hotline: 0866 716 384 | Email: datn.acv@gmail.com\n", fontNormal));
+            storeInfo.add(new Phrase("CỬA HÀNG Poly Shoe STORE\n", fontHeader));
+            storeInfo.add(new Phrase("Địa chỉ: Hoàng Mai, TP. Hà Nội\n", fontNormal));
+            storeInfo.add(new Phrase("Hotline: 0947 252 781 | Email: phamnam@gmail.com\n", fontNormal));
             document.add(storeInfo);
             document.add(Chunk.NEWLINE);
 
@@ -362,11 +359,11 @@ public class HoaDonService {
             Paragraph footer = new Paragraph();
             footer.setAlignment(Element.ALIGN_CENTER);
             footer.setSpacingBefore(20f);
-            footer.add(new Phrase("Cảm ơn quý khách đã mua sắm tại ACV Store!\nVui lòng kiểm tra kỹ thông tin hóa đơn.\n", fontFooter));
+            footer.add(new Phrase("Cảm ơn quý khách đã mua sắm tại Poly Shoe Store!\nVui lòng kiểm tra kỹ thông tin hóa đơn.\n", fontFooter));
             footer.add(new Phrase("Quét mã QR dưới đây để thực hiện trả hàng:", fontNormal));
             document.add(footer);
 
-            String returnUrl = "http://localhost:8080/acvstore/tra-hang/" + id;
+            String returnUrl = "http://localhost:8080/polyshoe/tra-hang/" + id;
             try {
                 QRCodeWriter qrCodeWriter = new QRCodeWriter();
                 BitMatrix bitMatrix = qrCodeWriter.encode(returnUrl, BarcodeFormat.QR_CODE, 150, 150);
@@ -1156,17 +1153,17 @@ public class HoaDonService {
 
         NguoiDung nguoiDung = hd.getNguoiDung();
         if (nguoiDung != null && nguoiDung.getEmail() != null && !nguoiDung.getEmail().isEmpty()) {
-            String emailSubject = "Cập nhật trạng thái đơn hàng - ACV Store";
+            String emailSubject = "Cập nhật trạng thái đơn hàng - Poly Shoe Store";
             String emailContent = "<html>" +
                     "<body style='font-family: Arial, sans-serif; color: #333; background-color: #f4f4f4; margin: 0; padding: 0;'>" +
                     "<div style='max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px; background-color: #fff;'>" +
-                    "<h2 style='color: #0000FF; text-align: center;'>ACV Store Xin Chào</h2>" +
+                    "<h2 style='color: #0000FF; text-align: center;'>Poly Shoe Xin Chào</h2>" +
                     "<h2 style='color: #153054; text-align: center;'>Cập nhật trạng thái đơn hàng</h2>" +
                     "<p style='text-align: center;'>Xin chào " + (hd.getDiaChi() != null ? hd.getDiaChi().getNguoiNhan() : nguoiDung.getHoTen()) + ",</p>" +
                     "<p style='text-align: center;'>Đơn hàng của bạn với mã <strong>" + hd.getDonHang().getMaDonHang() + "</strong> đã được cập nhật sang trạng thái: <strong>" + newStatus + "</strong>.</p>" +
                     "<p style='text-align: center;'><strong>Chi tiết:</strong> " + ghiChu + "</p>" +
-                    "<p style='text-align: center; margin-top: 20px;'>Cảm ơn bạn đã mua sắm tại ACV Store!</p>" +
-                    "<p style='text-align: center; margin-top: 20px;'>Trân trọng,<br>Đội ngũ ACV Store</p>" +
+                    "<p style='text-align: center; margin-top: 20px;'>Cảm ơn bạn đã mua sắm tại Poly Shoe Store!</p>" +
+                    "<p style='text-align: center; margin-top: 20px;'>Trân trọng,<br>Đội ngũ Poly Shoe Store</p>" +
                     "<a href='http://localhost:8080/dsdon-mua/chi-tiet/" + hd.getId() + "' style='display: block; padding: 10px 20px; background: #153054; color: white; text-decoration: none; text-align: center; border-radius: 5px; margin-top: 20px; margin-left: auto; margin-right: auto; width: fit-content;'>Xem chi tiết đơn hàng</a>" +
                     "</div>" +
                     "</body>" +

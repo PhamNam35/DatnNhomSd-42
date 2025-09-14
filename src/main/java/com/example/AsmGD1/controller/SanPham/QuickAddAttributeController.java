@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/acvstore/chi-tiet-san-pham")
+@RequestMapping("/polyshoe/chi-tiet-san-pham")
 public class QuickAddAttributeController {
 
     @Autowired private XuatXuService xuatXuService;

@@ -29,7 +29,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/acvstore/hoa-don")
+@RequestMapping("/polyshoe/hoa-don")
 public class HoaDonController {
 
     @Autowired

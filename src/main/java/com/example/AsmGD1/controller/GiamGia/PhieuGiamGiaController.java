@@ -28,7 +28,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Controller
-@RequestMapping("/acvstore/phieu-giam-gia")
+@RequestMapping("/polyshoe/phieu-giam-gia")
 public class PhieuGiamGiaController {
 
     @Autowired
@@ -176,7 +176,7 @@ public class PhieuGiamGiaController {
     public String createForm(Model model, RedirectAttributes redirectAttributes) {
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập chức năng này!");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         PhieuGiamGia voucher = new PhieuGiamGia();
@@ -204,7 +204,7 @@ public class PhieuGiamGiaController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập chức năng này!");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         List<String> errors = new ArrayList<>();
@@ -472,11 +472,11 @@ public class PhieuGiamGiaController {
             }
 
             redirectAttributes.addFlashAttribute("successMessage", "Tạo phiếu giảm giá thành công!");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi lưu phiếu giảm giá: " + e.getMessage());
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
     }
 
@@ -491,7 +491,7 @@ public class PhieuGiamGiaController {
 
         if (!isCurrentUserAdmin() && !isCurrentUserEmployee()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập chức năng này!");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         PhieuGiamGia voucher = phieuGiamGiaRepository.findById(id)
@@ -566,13 +566,13 @@ public class PhieuGiamGiaController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập chức năng này!");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         String status = getTrangThai(voucher);
         if (!"Sắp diễn ra".equals(status)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Chỉ có thể chỉnh sửa phiếu giảm giá ở trạng thái 'Sắp diễn ra'.");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         model.addAttribute("viewMode", false);
@@ -642,7 +642,7 @@ public class PhieuGiamGiaController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập chức năng này!");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         // load existing
@@ -653,7 +653,7 @@ public class PhieuGiamGiaController {
         String status = getTrangThai(existing);
         if (!"Sắp diễn ra".equals(status)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Chỉ có thể chỉnh sửa phiếu giảm giá ở trạng thái 'Sắp diễn ra'.");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         // giữ nguyên thuộc tính không cho đổi
@@ -911,11 +911,11 @@ public class PhieuGiamGiaController {
             }
 
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật phiếu giảm giá thành công!");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         } catch (Exception e) {
             e.printStackTrace();
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi cập nhật phiếu giảm giá: " + e.getMessage());
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
     }
 
@@ -937,7 +937,7 @@ public class PhieuGiamGiaController {
     private String doDelete(UUID id, RedirectAttributes redirectAttributes) {
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền truy cập chức năng này!");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         PhieuGiamGia voucher = phieuGiamGiaRepository.findById(id)
@@ -947,7 +947,7 @@ public class PhieuGiamGiaController {
         if (!"Sắp diễn ra".equals(status)) {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "Chỉ có thể xóa phiếu giảm giá ở trạng thái 'Sắp diễn ra'.");
-            return "redirect:/acvstore/phieu-giam-gia";
+            return "redirect:/polyshoe/phieu-giam-gia";
         }
 
         try {
@@ -961,7 +961,7 @@ public class PhieuGiamGiaController {
             redirectAttributes.addFlashAttribute("errorMessage", "Lỗi khi xóa: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/phieu-giam-gia";
+        return "redirect:/polyshoe/phieu-giam-gia";
     }
 
     // ===== API summary =====
