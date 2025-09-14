@@ -10,7 +10,6 @@ import com.example.AsmGD1.repository.HoaDon.HoaDonRepository;
 import com.example.AsmGD1.repository.HoaDon.LichSuHoaDonRepository;
 import com.example.AsmGD1.repository.NguoiDung.DiaChiNguoiDungRepository;
 import com.example.AsmGD1.repository.SanPham.ChiTietSanPhamRepository;
-
 import com.example.AsmGD1.service.GiamGia.PhieuGiamGiaService;
 import com.example.AsmGD1.service.WebKhachHang.EmailService;
 import com.google.zxing.BarcodeFormat;
@@ -48,6 +47,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import org.springframework.beans.factory.annotation.Value;
 
 @Service
 public class HoaDonService {
@@ -67,123 +67,16 @@ public class HoaDonService {
     @Autowired
     private ChiTietDonHangRepository chiTietDonHangRepository;
 
-
-
-
-
     @Autowired
     private EmailService emailService;
 
-
-
     @Autowired
     private PhieuGiamGiaService phieuGiamGiaService;
-
-
 
     @Autowired
     private DonHangPhieuGiamGiaRepository donHangPhieuGiamGiaRepository;
     @Autowired
     private DiaChiNguoiDungRepository diaChiNguoiDungRepository;
-
-    @Transactional
-    public DonHang taoDonChenhLechDoiHang(HoaDon hoaDonGoc,
-                                          BigDecimal chenhLech,
-                                          int soLuongThayThe,
-                                          UUID chiTietSanPhamThayTheId,
-                                          String ghiChuThem,
-                                          PhuongThucThanhToan pttt,      // ✅ mới
-                                          boolean daThanhToan) {          // ✅ mới
-        if (chenhLech == null || chenhLech.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Chênh lệch phải >= 0 để tạo đơn phụ thu/0đ.");
-        }
-        if (soLuongThayThe <= 0) {
-            throw new IllegalArgumentException("Số lượng thay thế phải > 0.");
-        }
-
-        ChiTietSanPham ctspThayThe = chiTietSanPhamRepository.findById(chiTietSanPhamThayTheId)
-                .orElseThrow(() -> new RuntimeException("Chi tiết sản phẩm thay thế không tồn tại."));
-
-        // 1) Đơn chênh lệch (ship 0, copy info)
-        DonHang newOrder = new DonHang();
-        newOrder.setNguoiDung(hoaDonGoc.getNguoiDung());
-        newOrder.setMaDonHang("EX" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-        newOrder.setTrangThaiThanhToan(daThanhToan);                  // ✅ theo cờ
-        newOrder.setPhiVanChuyen(BigDecimal.ZERO);
-        newOrder.setPhuongThucThanhToan(
-                pttt != null ? pttt : hoaDonGoc.getPhuongThucThanhToan()   // ✅ PTTT ưu tiên từ yêu cầu đổi
-        );
-        newOrder.setSoTienKhachDua(daThanhToan ? chenhLech : BigDecimal.ZERO); // ✅ nếu đã thu, ghi nhận số tiền
-        newOrder.setThoiGianThanhToan(daThanhToan ? LocalDateTime.now() : null);
-        newOrder.setThoiGianTao(LocalDateTime.now());
-        newOrder.setTienGiam(BigDecimal.ZERO);
-        newOrder.setTongTien(chenhLech);                   // có thể = 0
-        newOrder.setPhuongThucBanHang("Online");
-        newOrder.setDiaChi(hoaDonGoc.getDiaChi());
-        newOrder.setDiaChiGiaoHang(
-                hoaDonGoc.getDonHang() != null ? hoaDonGoc.getDonHang().getDiaChiGiaoHang() : null
-        );
-        newOrder.setGhiChu("Đơn chênh lệch đổi hàng từ " + hoaDonGoc.getDonHang().getMaDonHang()
-                + (ghiChuThem != null && !ghiChuThem.isBlank() ? (" - " + ghiChuThem) : ""));
-        newOrder = donHangRepository.save(newOrder);
-
-        // 2) Dòng hàng = phần chênh lệch/SL (VND làm tròn)
-        BigDecimal unitPrice = (soLuongThayThe > 0)
-                ? chenhLech.divide(new BigDecimal(soLuongThayThe), 2, RoundingMode.HALF_UP)
-                : BigDecimal.ZERO;
-
-        ChiTietDonHang line = new ChiTietDonHang();
-        line.setDonHang(newOrder);
-        line.setChiTietSanPham(ctspThayThe);
-        line.setTenSanPham(ctspThayThe.getSanPham().getTenSanPham() + " (Phụ thu đổi hàng)");
-        line.setSoLuong(soLuongThayThe);
-        line.setGia(unitPrice);
-        line.setThanhTien(unitPrice.multiply(new BigDecimal(soLuongThayThe)));
-        line.setTrangThaiHoanTra(false);
-        line.setGhiChu("Phụ thu chênh lệch đổi hàng từ " + hoaDonGoc.getDonHang().getMaDonHang());
-        chiTietDonHangRepository.save(line);
-
-        // 3) Hóa đơn
-        createHoaDonFromDonHang(newOrder);
-
-        // Override trạng thái hóa đơn mới theo cờ đã thanh toán
-        if (daThanhToan) {
-            newOrder.setTrangThaiThanhToan(true);
-            newOrder.setThoiGianThanhToan(LocalDateTime.now());
-            donHangRepository.save(newOrder);
-        }
-        return newOrder;
-    }
-
-    @Transactional
-    public void xuLyChenhLechSauDuyet(HoaDon hoaDonGoc,
-                                      BigDecimal chenhLech,
-                                      int soLuongThayThe,
-                                      UUID chiTietSanPhamThayTheId,
-                                      String moTa,
-                                      PhuongThucThanhToan pttt,   // ✅ mới
-                                      boolean daThanhToan) {      // ✅ mới
-        if (chenhLech == null) return;
-
-        if (chenhLech.compareTo(BigDecimal.ZERO) >= 0) {
-            // Phụ thu hoặc 0đ → tạo đơn/hóa đơn mới (ship=0)
-            taoDonChenhLechDoiHang(hoaDonGoc, chenhLech, soLuongThayThe, chiTietSanPhamThayTheId, moTa, pttt, daThanhToan);
-            return;
-        }
-
-        // chênh lệch âm → hoàn ví nếu phù hợp
-        String ptttName = (pttt != null && pttt.getTenPhuongThuc() != null)
-                ? pttt.getTenPhuongThuc().trim()
-                : (hoaDonGoc.getPhuongThucThanhToan() != null ? hoaDonGoc.getPhuongThucThanhToan().getTenPhuongThuc().trim() : "");
-
-        if (List.of("Ví Thanh Toán", "Ví", "Chuyển khoản").contains(ptttName)) {
-            BigDecimal soTienHoan = chenhLech.abs();
-
-
-
-
-        }
-    }
 
     public byte[] generateHoaDonPDF(String id) {
         try {
@@ -620,15 +513,11 @@ public class HoaDonService {
     }
 
 
-
-
     public String getCurrentStatus(HoaDon hoaDon) {
         // Kiểm tra trạng thái hủy đơn hàng
         if ("Hủy đơn hàng".equals(hoaDon.getTrangThai())) {
             return "Hủy đơn hàng";
         }
-
-        // Kiểm tra trạng thái đổi hàng dựa trên trạng thái hóa đơn hoặc lịch sử đổi hàng
 
 
         // Kiểm tra trạng thái hoàn thành
@@ -676,8 +565,6 @@ public class HoaDonService {
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + hoaDonId));
 
-
-
         // Kiểm tra trạng thái hợp lệ để đổi hàng
         if (!List.of("Hoàn thành", "Vận chuyển thành công", "Đã trả hàng một phần").contains(hoaDon.getTrangThai())) {
             throw new IllegalStateException("Hóa đơn phải ở trạng thái 'Hoàn thành', 'Vận chuyển thành công' hoặc 'Đã trả hàng một phần' để thực hiện đổi hàng.");
@@ -713,8 +600,6 @@ public class HoaDonService {
                 int soLuongTra = chiTiet.getSoLuong();
                 chiTietSanPham.setSoLuongTonKho(chiTietSanPham.getSoLuongTonKho() + soLuongTra);
                 chiTietSanPhamRepository.save(chiTietSanPham);
-
-
 
                 tongTienHoan = tongTienHoan.add(chiTiet.getThanhTien());
             }
@@ -758,18 +643,6 @@ public class HoaDonService {
             // Cập nhật trạng thái hóa đơn
             updateStatus(hoaDonId, trangThaiMoi, ghiChu, true);
 
-            // Nếu có chênh lệch giá, xử lý hoàn tiền hoặc thu thêm
-            BigDecimal chenhLech = tongTienMoi.subtract(tongTienHoan);
-            if (chenhLech.compareTo(BigDecimal.ZERO) != 0 && hoaDon.getPhuongThucThanhToan() != null &&
-                    List.of("Ví Thanh Toán", "Ví", "Chuyển khoản").contains(hoaDon.getPhuongThucThanhToan().getTenPhuongThuc().trim())) {
-                NguoiDung nguoiDung = hoaDon.getNguoiDung();
-
-
-                String moTaGiaoDich;
-
-
-
-            }
         } catch (Exception e) {
             System.err.println("Lỗi trong processExchange: " + e.getMessage());
             throw e;
@@ -789,17 +662,6 @@ public class HoaDonService {
         String pttt = hoaDon.getPhuongThucThanhToan() != null
                 ? hoaDon.getPhuongThucThanhToan().getTenPhuongThuc().trim()
                 : "";
-
-        if ("Ví Thanh Toán".equalsIgnoreCase(pttt)
-                || "Ví".equalsIgnoreCase(pttt)
-                || "Chuyển khoản".equalsIgnoreCase(pttt)) {
-            BigDecimal refundAmount = hoaDon.getTongTien();
-            NguoiDung nguoiDung = hoaDon.getNguoiDung();
-
-
-
-
-        }
 
         updateStatus(hoaDonId, "Hủy đơn hàng", ghiChu, true);
 
@@ -850,8 +712,6 @@ public class HoaDonService {
 
                 // Cộng dồn tổng tiền hàng trả
                 tongTienHangTra = tongTienHangTra.add(chiTiet.getThanhTien());
-
-
             }
 
             // Tính tỷ lệ hoàn trả
@@ -894,16 +754,6 @@ public class HoaDonService {
                 String pttt = hoaDon.getPhuongThucThanhToan() != null
                         ? hoaDon.getPhuongThucThanhToan().getTenPhuongThuc().trim()
                         : "";
-
-                if (List.of("Ví Thanh Toán", "Ví", "Chuyển khoản").contains(pttt)) {
-                    NguoiDung nguoiDung = hoaDon.getNguoiDung();
-                    if (nguoiDung != null) {
-
-
-
-
-                    }
-                }
             }
 
         } catch (Exception e) {
@@ -950,7 +800,6 @@ public class HoaDonService {
 //                int soLuongTra = chiTiet.getSoLuong();
 //                chiTietSanPham.setSoLuongTonKho(chiTietSanPham.getSoLuongTonKho() + soLuongTra);
 //                chiTietSanPhamRepository.save(chiTietSanPham);
-
 
 
                 tongTienHangTra = tongTienHangTra.add(chiTiet.getThanhTien());
@@ -1150,7 +999,6 @@ public class HoaDonService {
                     tieuDe = "Cập nhật đơn hàng";
                     noiDung = "Đơn " + ma + " cập nhật: " + newStatus + ". " + (ghiChu != null ? ghiChu : "");
             }
-
 
         } catch (Exception ignore) {}
 
