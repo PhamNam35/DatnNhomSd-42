@@ -194,7 +194,6 @@
         .cb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:#fff;border:0;cursor:pointer}
         #chat-messages{padding:12px 12px 6px;height:420px;overflow-y:auto;background:#fff}
         .chatbot-msg-bot{position:relative;background:#f3f4f6;color:#111827;padding:10px 12px;border-radius:14px 14px 14px 4px;max-width:82%;margin:0 56px 10px 40px;font-size:15px;line-height:1.45}
-        .chatbot-msg-bot::before{content:"";position:absolute;left:-40px;top:4px;width:36px;height:36px;border-radius:50%;background-image:url('/image/Poly Store.jpg');background-size:cover;background-position:center}
         .chatbot-msg-user{background:#153054;color:#fff;padding:10px 12px;border-radius:14px 14px 4px 14px;max-width:82%;margin:0 0 10px auto;font-size:15px;line-height:1.45}
         .cb-quick{padding:6px 12px 10px;display:flex;flex-wrap:wrap;gap:8px;background:#fff}
         .cb-pill{border:1px solid #e5e7eb;background:#fff;color:#111827;padding:8px 12px;border-radius:18px;font-size:14px;cursor:pointer}
@@ -238,11 +237,7 @@
 <body class="bg-gray-100">
 
 <!-- Ticker -->
-<div class="ticker py-1 overflow-hidden">
-    <marquee behavior="scroll" direction="left" scrollamount="5">
-        🎉 Khuyến mãi đặc biệt:  đến 50% cho tất cả sản phẩm hôm nay! 🎉 - Miễn phí vận chuyển cho đơn từ 500k!
-    </marquee>
-</div>
+>
 
 <!-- Navbar -->
 <div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
@@ -354,18 +349,8 @@
                 <div class="product-body">
                     <h4 class="product-title" th:text="${product.tenSanPham}">Tên sản phẩm</h4>
 
-                    <div class="price text-blue-800 font-bold mt-2" th:attr="data-price=${product.price}">
-                        <span th:text="${product.price}"></span> VNĐ
-                    </div>
-                    <div th:if="${product.oldPrice != null and product.discount != '0%'}"
-                         class="text-sm text-red-600 line-through">
-                        <span class="formatted-old-price" th:text="${product.oldPrice}">Giá gốc</span>
-                    </div>
-
-                    <div class="rating text-yellow-400 text-sm mt-1"
-                         th:attr="data-product-id=${product.id}">
-                        <span class="stars"></span>
-                        <span class="avg-rating">0</span> (<span class="total-reviews">0</span> đánh giá)
+                    <div class="price text-blue-800 font-bold mt-2" th:attr="data-price=${product.oldPrice}">
+                        <span th:text="${product.oldPrice}"></span> VNĐ
                     </div>
                 </div>
             </a>
@@ -414,12 +399,7 @@
     </div>
 
   </div>
-  <div class="container mx-auto mt-8">
-    <div class="map-container relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7142835949912!2d105.85287637508011!3d21.004087180639065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ad002fc50fd1%3A0x9a7962d208d20498!2sPoly Store%20Store!5e0!3m2!1sen!2s!4v1755701406991!5m2!1sen!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <p class="text-center text-sm mt-2 text-gray-300">* Bản đồ hiển thị vị trí chi nhánh chính tại Poly Store Store tại 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội. Vui lòng liên hệ để xác nhận giờ mở cửa.</p>
-  </div>
+
   <div class="text-center mt-8 text-sm">© 2025 Poly Store Store. All rights reserved.</div>
 
   <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10"></div>
@@ -473,29 +453,7 @@
     window.addEventListener('scroll',()=>{backToTop.classList.toggle('hidden',window.scrollY<200)});
     backToTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
 
-    /* ----------------- Rating --------------------- */
-    document.addEventListener('DOMContentLoaded',function(){
-        document.querySelectorAll('.rating').forEach(container=>{
-            const sanPhamId=container.dataset.productId;if(!sanPhamId) return;
-            fetch(`/api/product/${sanPhamId}/ratings`,{credentials:'include'})
-                .then(res=>res.ok?res.json():Promise.reject(res.status))
-                .then(data=>{
-                    const starsContainer=container.querySelector('.stars');
-                    const avgEl=container.querySelector('.avg-rating');
-                    const totalEl=container.querySelector('.total-reviews');
-                    const all=[...(data.myReviews||[]),...(data.otherReviews||[])];
-                    if(all.length===0){starsContainer.innerHTML='Chưa có đánh giá';avgEl.textContent='0';totalEl.textContent='0';return}
-                    const avg=all.reduce((s,r)=>s+r.rating,0)/all.length;const r=Math.round(avg*2)/2;
-                    avgEl.textContent=r.toFixed(1);totalEl.textContent=all.length;
-                    let html='';const full=Math.floor(r);const half=r%1>=0.5;
-                    for(let i=0;i<full;i++) html+='<i class="fas fa-star text-yellow-400"></i>';
-                    if(half&&full<5) html+='<i class="fas fa-star-half-alt text-yellow-400"></i>';
-                    for(let i=0;i<5-full-(half?1:0);i++) html+='<i class="far fa-star text-yellow-400"></i>';
-                    starsContainer.innerHTML=html;
-                })
-                .catch(()=>{container.innerHTML='<span class="text-gray-600">Lỗi tải đánh giá</span>'});
-        });
-    });
+
 
     /* -------- Cart + Quick view (biến thể) ------- */
     document.querySelectorAll('.cart-icon').forEach((button)=>{
