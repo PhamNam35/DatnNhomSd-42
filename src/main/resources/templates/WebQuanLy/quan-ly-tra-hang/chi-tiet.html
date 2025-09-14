@@ -368,7 +368,7 @@
       <div th:if="${danhSachLichSuTraHang == null}" class="error-state fade-in">
         <div class="error-icon">❌</div>
         <p class="error-message">Không tìm thấy yêu cầu trả hàng.</p>
-        <a href="/acvstore/quan-ly-tra-hang" class="btn btn-secondary">Quay lại danh sách</a>
+        <a href="/polyshoe/quan-ly-tra-hang" class="btn btn-secondary">Quay lại danh sách</a>
       </div>
 
       <div th:if="${danhSachLichSuTraHang != null && !danhSachLichSuTraHang.isEmpty()}">
@@ -455,7 +455,7 @@
         </div>
 
         <div class="back-button-container">
-          <a href="/acvstore/quan-ly-tra-hang" class="btn btn-secondary">Quay lại danh sách</a>
+          <a href="/polyshoe/quan-ly-tra-hang" class="btn btn-secondary">Quay lại danh sách</a>
         </div>
       </div>
     </div>
@@ -477,7 +477,7 @@
       confirmButtonText: 'OK',
       confirmButtonColor: '#153054'
     }).then(() => {
-      window.location.href = '/acvstore/quan-ly-tra-hang';
+      window.location.href = '/polyshoe/quan-ly-tra-hang';
     });
   }
 
@@ -515,7 +515,7 @@
           }
         });
 
-        fetch(`/acvstore/quan-ly-tra-hang/api/xac-nhan/${lichSuId}`, {
+        fetch(`/polyshoe/quan-ly-tra-hang/api/xac-nhan/${lichSuId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

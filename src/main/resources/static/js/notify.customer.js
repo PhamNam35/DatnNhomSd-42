@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
     modalMarkAll?.addEventListener('click', markAllRead);
 
     function syncUnread(){
-        fetch('/acvstore/thong-bao/count',{cache:'no-store'})
+        fetch('/polyshoe/thong-bao/count',{cache:'no-store'})
             .then(r => r.ok ? r.json() : {unreadCount:0})
             .then(d => updateBadge(+d.unreadCount || 0))
             .catch(()=>{});
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function fetchPanel(){
         showLoading(true);
-        fetch('/acvstore/thong-bao/load?unread=false&_=' + Date.now(), {cache:'no-store'})
+        fetch('/polyshoe/thong-bao/load?unread=false&_=' + Date.now(), {cache:'no-store'})
             .then(r => r.ok ? r.json() : Promise.reject())
             .then(data => {
                 cache = (data.notifications || []).slice(0, 10);
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
         modalEmpty.classList.add('d-none');
         modalMarkAll.classList.add('d-none');
 
-        fetch('/acvstore/thong-bao/load?unread=false&_=' + Date.now(), {cache:'no-store'})
+        fetch('/polyshoe/thong-bao/load?unread=false&_=' + Date.now(), {cache:'no-store'})
             .then(r => r.ok ? r.json() : Promise.reject())
             .then(data => {
                 const items = data.notifications || [];
@@ -137,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function markOneRead(id, refreshModal=false){
         if (!id) return;
-        fetch('/acvstore/thong-bao/danh-dau-da-xem', {
+        fetch('/polyshoe/thong-bao/danh-dau-da-xem', {
             method:'POST',
             headers:{'Content-Type':'application/x-www-form-urlencoded'},
             body:'idChiTietThongBao=' + encodeURIComponent(id)
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function markAllRead(){
-        fetch('/acvstore/thong-bao/danh-dau-tat-ca', {method:'POST'})
+        fetch('/polyshoe/thong-bao/danh-dau-tat-ca', {method:'POST'})
             .then(r => r.ok ? r.json() : Promise.reject())
             .then(d => {
                 unreadCount = +d.unreadCount || 0;

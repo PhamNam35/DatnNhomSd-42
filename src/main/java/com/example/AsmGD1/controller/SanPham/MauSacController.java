@@ -18,7 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore")
+@RequestMapping("/polyshoe")
 public class MauSacController {
 
     @Autowired
@@ -72,7 +72,7 @@ public class MauSacController {
                              RedirectAttributes redirectAttributes) {
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/mau-sac";
+            return "redirect:/polyshoe/mau-sac";
         }
 
         try {
@@ -87,7 +87,7 @@ public class MauSacController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/mau-sac";
+        return "redirect:/polyshoe/mau-sac";
     }
 
     @GetMapping("/mau-sac/delete/{id}")
@@ -96,7 +96,7 @@ public class MauSacController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/mau-sac";
+            return "redirect:/polyshoe/mau-sac";
         }
 
         try {
@@ -108,7 +108,7 @@ public class MauSacController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/mau-sac";
+        return "redirect:/polyshoe/mau-sac";
     }
 
     // Helper methods

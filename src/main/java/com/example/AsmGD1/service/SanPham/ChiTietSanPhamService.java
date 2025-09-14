@@ -36,7 +36,7 @@ public class ChiTietSanPhamService {
     @Autowired private KichCoRepository kichCoRepo;
     @Autowired private ChatLieuRepository chatLieuRepo;
     @Autowired private XuatXuRepository xuatXuRepo;
-
+    @Autowired private DayGiayRepository dayGiayRepo;
     @Autowired private KieuDangRepository kieuDangRepo;
     @Autowired private ThuongHieuRepository thuongHieuRepo;
     @Autowired private SimpMessagingTemplate messagingTemplate; // Thêm để gửi message WebSocket
@@ -127,7 +127,7 @@ public class ChiTietSanPhamService {
     }
 
     public List<ChiTietSanPham> findByFilters(UUID productId, UUID colorId, UUID sizeId, UUID originId, UUID materialId,
-                                              UUID styleId, UUID sleeveId, UUID collarId, UUID brandId, String gender, Boolean status) {
+                                              UUID styleId, UUID dayGiayId, UUID brandId, String gender, Boolean status) {  // Thay sleeve/collar bằng dayGiay
         StringBuilder query = new StringBuilder("SELECT ct FROM ChiTietSanPham ct " +
                 "JOIN FETCH ct.sanPham sp " +
                 "JOIN FETCH ct.kichCo kc " +
@@ -156,13 +156,9 @@ public class ChiTietSanPhamService {
             query.append(" AND ct.kieuDang.id = :styleId");
             params.put("styleId", styleId);
         }
-        if (sleeveId != null) {
-            query.append(" AND ct.tayAo.id = :sleeveId");
-            params.put("sleeveId", sleeveId);
-        }
-        if (collarId != null) {
-            query.append(" AND ct.coAo.id = :collarId");
-            params.put("collarId", collarId);
+        if (dayGiayId != null) {
+            query.append(" AND ct.dayGiay.id = :dayGiayId");
+            params.put("dayGiayId", dayGiayId);
         }
         if (brandId != null) {
             query.append(" AND ct.thuongHieu.id = :brandId");
@@ -190,7 +186,8 @@ public class ChiTietSanPhamService {
                 .orElseThrow(() -> new RuntimeException("Chất liệu không tồn tại ID: " + batchDto.getMaterialId()));
         KieuDang kieuDang = kieuDangRepo.findById(batchDto.getStyleId())
                 .orElseThrow(() -> new RuntimeException("Kiểu dáng không tồn tại ID: " + batchDto.getStyleId()));
-
+        DayGiay dayGiay = dayGiayRepo.findById(batchDto.getDayGiayId())  // Thêm: Giả sử DTO có getDayGiayId()
+                .orElseThrow(() -> new RuntimeException("Dây giày không tồn tại ID: " + batchDto.getDayGiayId()));
         ThuongHieu thuongHieu = thuongHieuRepo.findById(batchDto.getBrandId())
                 .orElseThrow(() -> new RuntimeException("Thương hiệu không tồn tại ID: " + batchDto.getBrandId()));
 
@@ -218,7 +215,7 @@ public class ChiTietSanPhamService {
             pd.setXuatXu(xuatXu);
             pd.setChatLieu(chatLieu);
             pd.setKieuDang(kieuDang);
-
+            pd.setDayGiay(dayGiay);
             pd.setThuongHieu(thuongHieu);
             pd.setMauSac(mauSac);
             pd.setKichCo(kichCo);
@@ -316,7 +313,8 @@ public class ChiTietSanPhamService {
                 .orElseThrow(() -> new RuntimeException("Chất liệu không tồn tại")));
         existingDetail.setKieuDang(kieuDangRepo.findById(updateDto.getStyleId())
                 .orElseThrow(() -> new RuntimeException("Kiểu dáng không tồn tại")));
-
+        existingDetail.setDayGiay(dayGiayRepo.findById(updateDto.getDayGiayId())  // Thêm
+                .orElseThrow(() -> new RuntimeException("Dây giày không tồn tại")));
         existingDetail.setThuongHieu(thuongHieuRepo.findById(updateDto.getBrandId())
                 .orElseThrow(() -> new RuntimeException("Thương hiệu không tồn tại")));
         existingDetail.setGia(updateDto.getPrice());
@@ -417,6 +415,8 @@ public class ChiTietSanPhamService {
                     .orElseThrow(() -> new RuntimeException("Chất liệu không tồn tại")));
             existing.setKieuDang(kieuDangRepo.findById(dto.getStyleId())
                     .orElseThrow(() -> new RuntimeException("Kiểu dáng không tồn tại")));
+            existing.setDayGiay(dayGiayRepo.findById(dto.getDayGiayId())
+                    .orElseThrow(() -> new RuntimeException("Dây giày không tồn tại")));
             existing.setThuongHieu(thuongHieuRepo.findById(dto.getBrandId())
                     .orElseThrow(() -> new RuntimeException("Thương hiệu không tồn tại")));
             existing.setGioiTinh(dto.getGender());

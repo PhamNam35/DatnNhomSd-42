@@ -20,9 +20,9 @@ public class KieuDangService {
     @Autowired
     private ChiTietSanPhamRepository sanPhamChiTietRepository;
 
-    // Regex: cho phép chữ cái (bao gồm dấu tiếng Việt) và khoảng trắng giữa các từ,
-    // không cho phép số, ký tự đặc biệt hoặc khoảng trắng đầu/cuối
-    private static final Pattern NAME_PATTERN = Pattern.compile("^(\\p{L}{2,})(\\s\\p{L}{2,})*$");
+    // Regex: cho phép chữ cái (bao gồm dấu tiếng Việt), khoảng trắng, và các ký tự -, (, )
+    // không cho phép số, ký tự đặc biệt khác, hoặc khoảng trắng đầu/cuối
+    private static final Pattern NAME_PATTERN = Pattern.compile("^[\\p{L}\\s\\-()]+$");
 
     // Lấy danh sách kiểu dáng với phân trang
     public Page<KieuDang> getAllKieuDang(Pageable pageable) {
@@ -67,8 +67,8 @@ public class KieuDangService {
         // Kiểm tra định dạng tên
         if (!NAME_PATTERN.matcher(trimmedTenKieuDang).matches()) {
             throw new IllegalArgumentException(
-                    "Tên kiểu dáng chỉ được chứa chữ cái và khoảng trắng giữa các từ, " +
-                            "không được chứa số, ký tự đặc biệt hoặc khoảng trắng ở cuối"
+                    "Tên kiểu dáng chỉ được chứa chữ cái, khoảng trắng, và các ký tự -, (, ), " +
+                            "không được chứa số, ký tự đặc biệt khác hoặc khoảng trắng ở cuối"
             );
         }
 

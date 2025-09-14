@@ -23,7 +23,7 @@ public class CustomerAccessBlockFilter extends OncePerRequestFilter {
         String uri = request.getRequestURI();
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-        if (uri.startsWith("/acvstore") && auth != null && auth.isAuthenticated()) {
+        if (uri.startsWith("/polyshoe") && auth != null && auth.isAuthenticated()) {
             boolean isCustomer = auth.getAuthorities().stream()
                     .map(GrantedAuthority::getAuthority)
                     .anyMatch(role -> role.equals("CUSTOMER"));

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Danh Mục - Poly Store Store</title>
+    <title>Quản Lý Dây Giày - Poly Store Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap&subset=latin-ext" rel="stylesheet">
@@ -14,6 +14,7 @@
     <script th:src="@{/js/sidebar.js}" defer></script>
     <style>
         :root {
+            /* Màu chính */
             --primary-color: #153054;
             --primary-hover: #102C47;
             --secondary-color: #9FD5F7;
@@ -21,22 +22,32 @@
             --accent-color: #479BD3;
             --accent-hover: #CAEAFB;
             --border-active: #62B2E7;
+
+            /* Màu nền */
             --main-background: #F4F9FC;
             --content-background: #ffffff;
             --header-background: #153054;
+
+            /* Màu văn bản */
             --text-primary: #153054;
             --text-content: #333333;
             --text-secondary: #6B7280;
             --text-link: #479BD3;
             --text-white: #ffffff;
+
+            /* Màu nút */
             --btn-danger: #F44336;
             --btn-danger-hover: #D32F2F;
+
+            /* Màu trạng thái */
             --success-bg: #D1FADF;
             --success-text: #027A48;
             --warning-bg: #FEF3C7;
             --warning-text: #B45309;
             --error-bg: #FECACA;
             --error-text: #991B1B;
+
+            /* Màu khác */
             --border-color: #dee2e6;
             --light-gray: #f8f9fa;
             --shadow-light: 0 8px 32px rgba(21, 48, 84, 0.1);
@@ -203,6 +214,7 @@
             left: 100%;
         }
 
+        /* Nút Primary (Thêm) */
         .btn-primary {
             background: var(--primary-color);
             border-color: var(--primary-color);
@@ -218,6 +230,7 @@
             box-shadow: 0 8px 25px rgba(21, 48, 84, 0.3);
         }
 
+        /* Nút Secondary (Sửa) */
         .btn-warning {
             background: var(--secondary-color);
             border-color: var(--secondary-color);
@@ -233,6 +246,7 @@
             box-shadow: 0 8px 25px rgba(159, 213, 247, 0.4);
         }
 
+        /* Nút Success (Xem) */
         .btn-success {
             background: var(--accent-color);
             border-color: var(--accent-color);
@@ -248,6 +262,7 @@
             box-shadow: 0 8px 25px rgba(71, 155, 211, 0.4);
         }
 
+        /* Nút Danger (Xóa) */
         .btn-danger {
             background: var(--btn-danger);
             border-color: var(--btn-danger);
@@ -334,6 +349,20 @@
             box-shadow: 0 4px 20px rgba(71, 155, 211, 0.1);
         }
 
+        .product-image {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.2);
+        }
+
         .action-buttons {
             display: flex;
             justify-content: center;
@@ -341,6 +370,47 @@
             gap: 8px;
             height: 100%;
             width: 100%;
+        }
+
+        .action-buttons .btn {
+            margin: 0;
+        }
+
+        .form-switch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .form-check-input {
+            cursor: pointer;
+            width: 3em;
+            height: 1.5em;
+            border-radius: 2em;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--success-text);
+            border-color: var(--success-text);
+            box-shadow: 0 0 0 4px rgba(2, 122, 72, 0.2);
+        }
+
+        .form-check-input:not(:checked) {
+            background-color: var(--btn-danger);
+            border-color: var(--btn-danger);
+            box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.2);
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            transition: all 0.3s ease;
+            color: var(--text-content);
         }
 
         .pagination-custom {
@@ -547,6 +617,7 @@
             margin-bottom: 0;
         }
 
+        /* Role Badge Styles */
         .role-badge {
             position: fixed;
             top: 20px;
@@ -583,6 +654,7 @@
             color: var(--text-content);
         }
 
+        /* Badge trạng thái */
         .badge {
             padding: 0.5rem 1rem;
             border-radius: 20px;
@@ -639,6 +711,11 @@
                 padding: 1rem 0.5rem;
             }
 
+            .product-image {
+                max-width: 40px;
+                max-height: 40px;
+            }
+
             .action-buttons {
                 flex-direction: row;
                 gap: 4px;
@@ -650,6 +727,11 @@
                 height: 36px;
                 padding: 6px 8px;
                 font-size: 0.75rem;
+            }
+
+            .form-check-input {
+                width: 2.5em;
+                height: 1.25em;
             }
 
             .role-badge {
@@ -684,7 +766,7 @@
     </nav>
     <div class="content" id="content">
         <div class="text-center mb-2 mt-3">
-            <h2 class="page-title">QUẢN LÝ DANH MỤC</h2>
+            <h2 class="page-title">QUẢN LÝ DÂY GIÀY</h2>
         </div>
         <div th:fragment="content">
             <!-- Hiển thị thông báo lỗi -->
@@ -704,21 +786,21 @@
                     <i class="fas fa-search section-icon"></i>
                     <h3 class="fs-4 fw-bold text-dark mb-0">Tìm kiếm</h3>
                 </div>
-                <form th:action="@{/polyshoe/danh-muc}" method="get">
+                <form th:action="@{/polyshoe/day-giay}" method="get">
                     <div class="search-form-row">
                         <div class="col-md-4">
                             <div class="floating-label">
-                                <label for="searchInput">Tìm kiếm danh mục</label>
+                                <label for="searchInput">Tìm kiếm dây giày</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                    <input type="text" class="form-control" id="searchInput" name="search" th:value="${search}" placeholder="Nhập tên danh mục...">
+                                    <input type="text" class="form-control" id="searchInput" name="search" th:value="${search}" placeholder="Nhập tên dây giày...">
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
-                            <button type="button" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#danhMucModal" onclick="resetModal()" style="height: 58px;" th:if="${isAdmin}">
+                            <button type="button" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#dayGiayModal" onclick="resetModal()" style="height: 58px;">
                                 <i class="fas fa-plus"></i>
-                                <span class="">Thêm danh mục mới</span>
+                                <span class="">Thêm dây giày mới</span>
                             </button>
                         </div>
                     </div>
@@ -729,36 +811,36 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center gap-3">
                         <i class="fas fa-list fs-4"></i>
-                        <span class="fs-5 fw-bold">Danh sách danh mục</span>
+                        <span class="fs-5 fw-bold">Danh sách dây giày</span>
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover mb-0" id="danhMucTable">
+                    <table class="table table-hover mb-0" id="dayGiayTable">
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Tên danh mục</th>
-                            <th th:if="${isAdmin}">Thao tác</th>
+                            <th>Tên dây giày</th>
+                            <th>Thao tác</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr th:each="danhMuc, stat : ${danhMucList}" th:data-id="${danhMuc.id}">
+                        <tr th:each="dayGiay, stat : ${dayGiayList}" th:data-id="${dayGiay.id}">
                             <td>
                                 <span class="fw-bold" th:text="${stat.count + (currentPage * 5)}"></span>
                             </td>
                             <td>
-                                <div class="fw-semibold text-dark" th:text="${danhMuc.tenDanhMuc} ?: 'Chưa có tên'"></div>
+                                <div class="fw-semibold text-dark" th:text="${dayGiay.tenDayGiay}"></div>
                             </td>
-                            <td class="action-buttons" th:if="${isAdmin}">
+                            <td class="action-buttons">
                                 <button class="btn btn-warning btn-sm"
                                         data-bs-toggle="modal"
-                                        data-bs-target="#danhMucModal"
-                                        th:attr="data-id=${danhMuc.id},data-name=${danhMuc.tenDanhMuc}"
+                                        data-bs-target="#dayGiayModal"
+                                        th:attr="data-id=${dayGiay.id},data-name=${dayGiay.tenDayGiay}"
                                         onclick="fillModal(this)"
                                         title="Chỉnh sửa">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <a th:href="@{/polyshoe/danh-muc/delete/{id}(id=${danhMuc.id})}"
+                                <a th:href="@{/polyshoe/day-giay/delete/{id}(id=${dayGiay.id})}"
                                    class="btn btn-danger btn-sm"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');"
                                    title="Xóa">
@@ -770,31 +852,20 @@
                     </table>
                 </div>
 
-                <!-- Hiển thị khi không có dữ liệu -->
-                <div th:if="${#lists.isEmpty(danhMucList)}" class="no-data">
-                    <i class="fas fa-folder-open fa-3x mb-3 text-muted"></i>
-                    <h5 class="text-muted">Không có dữ liệu danh mục</h5>
-                    <p class="text-muted mb-0">
-                        <span th:if="${search}">Không tìm thấy kết quả cho từ khóa "<strong th:text="${search}"></strong>"</span>
-                        <span th:unless="${search}">Chưa có danh mục nào được thêm vào hệ thống</span>
-                    </p>
-                </div>
-
-                <!-- Phân trang -->
-                <nav aria-label="Page navigation" class="mt-4" th:unless="${#lists.isEmpty(danhMucList)}">
+                <nav aria-label="Page navigation" class="mt-4">
                     <ul class="pagination pagination-custom">
                         <li class="page-item" th:class="${currentPage == 0 ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/polyshoe/danh-muc(page=${currentPage - 1}, search=${search})}" aria-label="Previous">
+                            <a class="page-link" th:href="@{/polyshoe/day-giay(page=${currentPage - 1}, search=${search})}" aria-label="Previous">
                                 <i class="fas fa-chevron-left me-1"></i>Trước
                             </a>
                         </li>
                         <li class="page-item" th:each="p : ${#numbers.sequence(0, totalPages - 1)}"
                             th:class="${p == currentPage ? 'active' : ''}">
-                            <a class="page-link" th:href="@{/polyshoe/danh-muc(page=${p}, search=${search})}"
+                            <a class="page-link" th:href="@{/polyshoe/day-giay(page=${p}, search=${search})}"
                                th:text="${p + 1}">1</a>
                         </li>
                         <li class="page-item" th:class="${currentPage == totalPages - 1 ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/polyshoe/danh-muc(page=${currentPage + 1}, search=${search})}" aria-label="Next">
+                            <a class="page-link" th:href="@{/polyshoe/day-giay(page=${currentPage + 1}, search=${search})}" aria-label="Next">
                                 Sau<i class="fas fa-chevron-right ms-1"></i>
                             </a>
                         </li>
@@ -802,26 +873,21 @@
                 </nav>
             </div>
 
-            <!-- Modal Thêm/Sửa Danh mục -->
-            <div class="modal fade" id="danhMucModal" tabindex="-1" aria-labelledby="danhMucModalLabel" aria-hidden="true" th:if="${isAdmin}">
+            <div class="modal fade" id="dayGiayModal" tabindex="-1" aria-labelledby="dayGiayModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="danhMucModalLabel">
-                                <i class="fas fa-plus"></i> Thêm danh mục mới
+                            <h5 class="modal-title" id="dayGiayModalLabel">
+                                <i class="fas fa-plus"></i> Thêm dây giày mới
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form id="danhMucForm" th:action="@{/polyshoe/danh-muc/save}" method="post">
+                        <form id="dayGiayForm" th:action="@{/polyshoe/day-giay/save}" method="post">
                             <div class="modal-body">
-                                <input type="hidden" name="id" id="danhMucId">
+                                <input type="hidden" name="id" id="dayGiayId">
                                 <div class="floating-label">
-                                    <label for="danhMucName">Tên danh mục</label>
-                                    <input type="text" name="tenDanhMuc" id="danhMucName" class="form-control" placeholder="VD: Sneaker, Boots, Sandals" required>
-                                    <div class="form-text">
-                                        <i class="fas fa-info-circle me-1"></i>
-                                        Ví dụ: Sneaker, Boots, Sandals, Loafers, Running Shoes, High Heels...
-                                    </div>
+                                    <label for="dayGiayName">Tên dây giày</label>
+                                    <input type="text" name="tenDayGiay" id="dayGiayName" class="form-control" required>
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -887,31 +953,18 @@
     }
 
     function resetModal() {
-        document.getElementById('danhMucModalLabel').innerHTML = '<i class="fas fa-plus"></i> Thêm danh mục mới';
-        document.getElementById('danhMucId').value = '';
-        document.getElementById('danhMucName').value = '';
-        document.getElementById('danhMucName').focus();
+        document.getElementById('dayGiayModalLabel').innerHTML = '<i class="fas fa-plus"></i> Thêm dây giày mới';
+        document.getElementById('dayGiayId').value = '';
+        document.getElementById('dayGiayName').value = '';
     }
 
     function fillModal(button) {
-        document.getElementById('danhMucModalLabel').innerHTML = '<i class="fas fa-edit"></i> Sửa danh mục';
+        document.getElementById('dayGiayModalLabel').innerHTML = '<i class="fas fa-edit"></i> Sửa dây giày';
         const id = button.getAttribute('data-id');
         const name = button.getAttribute('data-name');
-        document.getElementById('danhMucId').value = id;
-        document.getElementById('danhMucName').value = name;
-        document.getElementById('danhMucName').focus();
+        document.getElementById('dayGiayId').value = id;
+        document.getElementById('dayGiayName').value = name;
     }
-
-    // Auto dismiss alerts after 5 seconds
-    document.addEventListener('DOMContentLoaded', function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(alert => {
-            setTimeout(() => {
-                const bsAlert = new bootstrap.Alert(alert);
-                bsAlert.close();
-            }, 5000);
-        });
-    });
 </script>
 <script th:src="@{/js/notification.js}"></script>
 </body>

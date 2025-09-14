@@ -84,7 +84,7 @@ public class SanPhamService {
 
     public Page<SanPham> findByAdvancedFilters(String searchName, Boolean trangThai,
                                                UUID danhMucId, UUID thuongHieuId, UUID kieuDangId,
-                                               UUID chatLieuId, UUID xuatXuId, UUID tayAoId, UUID coAoId,
+                                               UUID chatLieuId, UUID xuatXuId, UUID dayGiayId,
                                                Pageable pageable) {
         // Pageable sẽ tự áp dụng sort từ controller
         Page<SanPham> sanPhamPage = sanPhamRepository.findByAdvancedFilters(
@@ -95,8 +95,7 @@ public class SanPhamService {
                 kieuDangId,
                 chatLieuId,
                 xuatXuId,
-                tayAoId,
-                coAoId,
+                dayGiayId,
                 pageable
         );
         sanPhamPage.getContent().forEach(this::setTongSoLuong);

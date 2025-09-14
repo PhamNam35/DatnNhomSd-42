@@ -714,7 +714,7 @@
             </div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a th:href="@{/acvstore/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{/polyshoe/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
                     <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-plus-circle me-1"></i>Thêm chi tiết</li>
                 </ol>
             </nav>
@@ -724,7 +724,7 @@
                     <span><i class="fas fa-box-open me-2"></i>Thông Tin Chi Tiết Sản Phẩm</span>
                 </div>
                 <div class="card-body">
-                    <form th:action="@{/acvstore/chi-tiet-san-pham/save-batch}" method="post" enctype="multipart/form-data" id="batchForm">
+                    <form th:action="@{/polyshoe/chi-tiet-san-pham/save-batch}" method="post" enctype="multipart/form-data" id="batchForm">
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <label for="productSelect" class="form-label">Sản phẩm</label>
@@ -746,6 +746,18 @@
                                         <option th:each="o : ${xuatXus}" th:value="${o.id}" th:text="${o.tenXuatXu}"></option>
                                     </select>
                                     <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="origin" title="Thêm nhanh xuất xứ">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="dayGiaySelect" class="form-label">Dây giày</label>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="dayGiaySelect" name="dayGiayId" required>
+                                        <option value="">Chọn dây giày...</option>
+                                        <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>
+                                    </select>
+                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="dayGiay" title="Thêm nhanh dây giày">
                                         <i class="fas fa-plus"></i>
                                     </button>
                                 </div>
@@ -775,30 +787,6 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="sleeveSelect" class="form-label">Tay áo</label>
-                                <div class="d-flex align-items-center">
-                                    <select class="form-select" id="sleeveSelect" name="sleeveId" required>
-                                        <option value="">Chọn tay áo...</option>
-                                        <option th:each="sa : ${tayAos}" th:value="${sa.id}" th:text="${sa.tenTayAo}"></option>
-                                    </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="sleeve" title="Thêm nhanh tay áo">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="collarSelect" class="form-label">Cổ áo</label>
-                                <div class="d-flex align-items-center">
-                                    <select class="form-select" id="collarSelect" name="collarId" required>
-                                        <option value="">Chọn cổ áo...</option>
-                                        <option th:each="ca : ${coAos}" th:value="${ca.id}" th:text="${ca.tenCoAo}"></option>
-                                    </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="collar" title="Thêm nhanh cổ áo">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
                                 <label for="brandSelect" class="form-label">Thương hiệu</label>
                                 <div class="d-flex align-items-center">
                                     <select class="form-select" id="brandSelect" name="brandId" required>
@@ -810,14 +798,18 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="col-md-12">
+                            <div class="col-md-6">
                                 <label for="genderSelect" class="form-label">Giới tính</label>
-                                <select class="form-select" id="genderSelect" name="gender" required>
-                                    <option value="">Chọn giới tính...</option>
-                                    <option value="Nam">Nam</option>
-                                    <option value="Nữ">Nữ</option>
-                                    <option value="Unisex">Unisex</option>
-                                </select>
+                                <div class="d-flex align-items-center">
+                                    <select class="form-select" id="genderSelect" name="gender" required>
+                                        <option value="">Chọn giới tính...</option>
+                                        <option value="Nam">Nam</option>
+                                        <option value="Nữ">Nữ</option>
+                                        <option value="Unisex">Unisex</option>
+                                    </select>
+                                    <!-- Dummy div giữ khoảng trống bằng nút ở trên -->
+                                    <div class="ms-2" style="width:60px; height:40px;"></div>
+                                </div>
                             </div>
                             <!-- Biến thể sản phẩm -->
                             <div class="col-md-12">
@@ -1076,16 +1068,9 @@
             allowClear: true,
         });
 
-        const sleeveTomSelect = new TomSelect('#sleeveSelect', {
+        const dayGiayTomSelect = new TomSelect('#dayGiaySelect', {
             create: false,
-            placeholder: 'Chọn tay áo...',
-            maxOptions: 200,
-            allowClear: true,
-        });
-
-        const collarTomSelect = new TomSelect('#collarSelect', {
-            create: false,
-            placeholder: 'Chọn cổ áo...',
+            placeholder: 'Chọn dây giày...',
             maxOptions: 200,
             allowClear: true,
         });
@@ -1145,7 +1130,7 @@
 
         function fetchProductDetails(productId) {
             $.ajax({
-                url: `/acvstore/chi-tiet-san-pham/api/product-details/${productId}`,
+                url: `/polyshoe/chi-tiet-san-pham/api/product-details/${productId}`,
                 type: 'GET',
                 success: function(response) {
                     if (response.hasDetails) {
@@ -1167,39 +1152,38 @@
             originTomSelect.setValue(data.originId || '');
             materialTomSelect.setValue(data.materialId || '');
             styleTomSelect.setValue(data.styleId || '');
-            sleeveTomSelect.setValue(data.sleeveId || '');
-            collarTomSelect.setValue(data.collarId || '');
+            dayGiayTomSelect.setValue(data.dayGiayId || '');
             brandTomSelect.setValue(data.brandId || '');
             genderTomSelect.setValue(data.gender || '');
         }
 
         function disableAttributes() {
-            [originTomSelect, materialTomSelect, styleTomSelect, sleeveTomSelect, collarTomSelect, brandTomSelect, genderTomSelect]
+            [originTomSelect, materialTomSelect, styleTomSelect, dayGiayTomSelect, brandTomSelect, genderTomSelect]
                 .forEach(ts => {
                     ts.lock();
                     ts.wrapper.classList.add('ts-readonly');
                 });
 
             $('.quick-add-btn[data-entity="origin"], .quick-add-btn[data-entity="material"], .quick-add-btn[data-entity="style"], ' +
-                '.quick-add-btn[data-entity="sleeve"], .quick-add-btn[data-entity="collar"], .quick-add-btn[data-entity="brand"]').prop('disabled', true);
+                '.quick-add-btn[data-entity="dayGiay"], .quick-add-btn[data-entity="brand"]').prop('disabled', true);
         }
 
         function enableAllAttributes() {
-            [originTomSelect, materialTomSelect, styleTomSelect, sleeveTomSelect, collarTomSelect, brandTomSelect, genderTomSelect]
+            [originTomSelect, materialTomSelect, styleTomSelect, dayGiayTomSelect, brandTomSelect, genderTomSelect]
                 .forEach(ts => {
                     ts.unlock();
                     ts.wrapper.classList.remove('ts-readonly');
                 });
 
-            $('.quick-add-btn:not([data-entity="product"])').prop('disabled', false);
+            $('.quick-add-btn[data-entity="origin"], .quick-add-btn[data-entity="material"], .quick-add-btn[data-entity="style"], ' +
+                '.quick-add-btn[data-entity="dayGiay"], .quick-add-btn[data-entity="brand"]').prop('disabled', false);
         }
 
         function resetAttributeValues() {
             originTomSelect.clear();
             materialTomSelect.clear();
             styleTomSelect.clear();
-            sleeveTomSelect.clear();
-            collarTomSelect.clear();
+            dayGiayTomSelect.clear();
             brandTomSelect.clear();
             genderTomSelect.clear();
         }
@@ -1234,15 +1218,8 @@
                 isValid = false;
             }
 
-            // Validate sleeveId
-            if (!$('#sleeveSelect').val()) {
-                showError('sleeveSelect', 'Vui lòng chọn tay áo.');
-                isValid = false;
-            }
-
-            // Validate collarId
-            if (!$('#collarSelect').val()) {
-                showError('collarSelect', 'Vui lòng chọn cổ áo.');
+            if (!$('#dayGiaySelect').val()) {
+                showError('dayGiaySelect', 'Vui lòng chọn dây giày.');  // Thay
                 isValid = false;
             }
 
@@ -1350,7 +1327,7 @@
                             $('#successNotificationDetail').css('display', 'block');
                             setTimeout(() => {
                                 $('#successNotificationDetail').css('display', 'none');
-                                window.location.href = '/acvstore/chi-tiet-san-pham?productId=' + $('#productSelect').val() + '&success=Thêm thành công';
+                                window.location.href = '/polyshoe/chi-tiet-san-pham?productId=' + $('#productSelect').val() + '&success=Thêm thành công';
                             }, 2000);
                         },
                         error: function(xhr) {
@@ -1412,7 +1389,7 @@
             formData.set('tenSanPham', tenSanPham);
 
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/save-auto-product',
+                url: '/polyshoe/chi-tiet-san-pham/save-auto-product',
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -1648,7 +1625,7 @@
 
     function fetchExistingImages(productId) {
         $.ajax({
-            url: `/acvstore/chi-tiet-san-pham/api/product-images/${productId}`,
+            url: `/polyshoe/chi-tiet-san-pham/api/product-images/${productId}`,
             type: 'GET',
             success: function(response) {
                 if (response && response.images) {
@@ -1679,7 +1656,7 @@
 
     function removeExistingImage(imageId, colorId) {
         $.ajax({
-            url: `/acvstore/chi-tiet-san-pham/api/delete-image/${imageId}`,
+            url: `/polyshoe/chi-tiet-san-pham/api/delete-image/${imageId}`,
             type: 'DELETE',
             success: function() {
                 const previewContainer = document.getElementById(`preview-${colorId}`);
@@ -1739,7 +1716,7 @@
 
         const data = { name: name };
         $.ajax({
-            url: '/acvstore/chi-tiet-san-pham/save-auto-' + entity,
+            url: '/polyshoe/chi-tiet-san-pham/save-auto-' + entity,
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(data),

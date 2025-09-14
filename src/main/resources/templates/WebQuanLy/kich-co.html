@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quản Lý Kích Cỡ - ACV Store</title>
+    <title>Quản Lý Kích Cỡ Giày - Poly Store Store</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap&subset=latin-ext" rel="stylesheet">
@@ -684,7 +684,7 @@
     </nav>
     <div class="content" id="content">
         <div class="text-center mb-2 mt-3">
-            <h2 class="page-title">QUẢN LÝ KÍCH CỠ</h2>
+            <h2 class="page-title">QUẢN LÝ KÍCH CỠ GIÀY</h2>
         </div>
         <div th:fragment="content">
             <!-- Hiển thị thông báo lỗi -->
@@ -704,21 +704,21 @@
                     <i class="fas fa-search section-icon"></i>
                     <h3 class="fs-4 fw-bold text-dark mb-0">Tìm kiếm</h3>
                 </div>
-                <form th:action="@{/acvstore/kich-co}" method="get">
+                <form th:action="@{/polyshoe/kich-co}" method="get">
                     <div class="search-form-row">
                         <div class="col-md-4">
                             <div class="floating-label">
-                                <label for="searchInput">Tìm kiếm kích cỡ</label>
+                                <label for="searchInput">Tìm kiếm kích cỡ giày</label>
                                 <div class="input-group">
                                     <span class="input-group-text"><i class="fas fa-search"></i></span>
-                                    <input type="text" class="form-control" id="searchInput" name="search" th:value="${search}" placeholder="Nhập tên kích cỡ...">
+                                    <input type="text" class="form-control" id="searchInput" name="search" th:value="${search}" placeholder="Nhập kích cỡ giày (VD: 35, 36, 37, ...)">
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <button type="button" class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#kichCoModal" onclick="resetModal()" style="height: 58px;" th:if="${isAdmin}">
                                 <i class="fas fa-plus"></i>
-                                <span class="">Thêm kích cỡ mới</span>
+                                <span class="">Thêm kích cỡ giày mới</span>
                             </button>
                         </div>
                     </div>
@@ -729,7 +729,7 @@
                 <div class="card-header">
                     <div class="d-flex align-items-center gap-3">
                         <i class="fas fa-list fs-4"></i>
-                        <span class="fs-5 fw-bold">Danh sách kích cỡ</span>
+                        <span class="fs-5 fw-bold">Danh sách kích cỡ giày</span>
                     </div>
                 </div>
                 <div class="table-responsive">
@@ -737,7 +737,7 @@
                         <thead>
                         <tr>
                             <th>#</th>
-                            <th>Tên kích cỡ</th>
+                            <th>Kích cỡ giày</th>
                             <th th:if="${isAdmin}">Thao tác</th>
                         </tr>
                         </thead>
@@ -747,7 +747,7 @@
                                 <span class="fw-bold" th:text="${stat.count + (currentPage * 5)}"></span>
                             </td>
                             <td>
-                                <div class="fw-semibold text-dark" th:text="${kichCo.ten} ?: 'Chưa có tên'"></div>
+                                <div class="fw-semibold text-dark" th:text="${kichCo.ten} ?: 'Chưa có kích cỡ'"></div>
                             </td>
                             <td class="action-buttons" th:if="${isAdmin}">
                                 <button class="btn btn-warning btn-sm"
@@ -758,7 +758,7 @@
                                         title="Chỉnh sửa">
                                     <i class="fas fa-edit"></i>
                                 </button>
-                                <a th:href="@{/acvstore/kich-co/delete/{id}(id=${kichCo.id})}"
+                                <a th:href="@{/polyshoe/kich-co/delete/{id}(id=${kichCo.id})}"
                                    class="btn btn-danger btn-sm"
                                    onclick="return confirm('Bạn có chắc chắn muốn xóa?');"
                                    title="Xóa">
@@ -773,10 +773,10 @@
                 <!-- Hiển thị khi không có dữ liệu -->
                 <div th:if="${#lists.isEmpty(kichCoList)}" class="no-data">
                     <i class="fas fa-expand-arrows-alt fa-3x mb-3 text-muted"></i>
-                    <h5 class="text-muted">Không có dữ liệu kích cỡ</h5>
+                    <h5 class="text-muted">Không có dữ liệu kích cỡ giày</h5>
                     <p class="text-muted mb-0">
                         <span th:if="${search}">Không tìm thấy kết quả cho từ khóa "<strong th:text="${search}"></strong>"</span>
-                        <span th:unless="${search}">Chưa có kích cỡ nào được thêm vào hệ thống</span>
+                        <span th:unless="${search}">Chưa có kích cỡ giày nào được thêm vào hệ thống</span>
                     </p>
                 </div>
 
@@ -784,17 +784,17 @@
                 <nav aria-label="Page navigation" class="mt-4" th:unless="${#lists.isEmpty(kichCoList)}">
                     <ul class="pagination pagination-custom">
                         <li class="page-item" th:class="${currentPage == 0 ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/acvstore/kich-co(page=${currentPage - 1}, search=${search})}" aria-label="Previous">
+                            <a class="page-link" th:href="@{/polyshoe/kich-co(page=${currentPage - 1}, search=${search})}" aria-label="Previous">
                                 <i class="fas fa-chevron-left me-1"></i>Trước
                             </a>
                         </li>
                         <li class="page-item" th:each="p : ${#numbers.sequence(0, totalPages - 1)}"
                             th:class="${p == currentPage ? 'active' : ''}">
-                            <a class="page-link" th:href="@{/acvstore/kich-co(page=${p}, search=${search})}"
+                            <a class="page-link" th:href="@{/polyshoe/kich-co(page=${p}, search=${search})}"
                                th:text="${p + 1}">1</a>
                         </li>
                         <li class="page-item" th:class="${currentPage == totalPages - 1 ? 'disabled' : ''}">
-                            <a class="page-link" th:href="@{/acvstore/kich-co(page=${currentPage + 1}, search=${search})}" aria-label="Next">
+                            <a class="page-link" th:href="@{/polyshoe/kich-co(page=${currentPage + 1}, search=${search})}" aria-label="Next">
                                 Sau<i class="fas fa-chevron-right ms-1"></i>
                             </a>
                         </li>
@@ -808,19 +808,19 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="kichCoModalLabel">
-                                <i class="fas fa-plus"></i> Thêm kích cỡ mới
+                                <i class="fas fa-plus"></i> Thêm kích cỡ giày mới
                             </h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form id="kichCoForm" th:action="@{/acvstore/kich-co/save}" method="post">
+                        <form id="kichCoForm" th:action="@{/polyshoe/kich-co/save}" method="post">
                             <div class="modal-body">
                                 <input type="hidden" name="id" id="kichCoId">
                                 <div class="floating-label">
-                                    <label for="kichCoName">Tên kích cỡ</label>
-                                    <input type="text" name="ten" id="kichCoName" class="form-control" placeholder="VD: S, M, L, XL, XXL" required>
+                                    <label for="kichCoName">Kích cỡ giày</label>
+                                    <input type="text" name="ten" id="kichCoName" class="form-control" placeholder="VD: 35, 36, 37, ..." required>
                                     <div class="form-text">
                                         <i class="fas fa-info-circle me-1"></i>
-                                        Ví dụ: XS, S, M, L, XL, XXL, 38, 39, 40, 41, 42...
+                                        Chỉ nhập số từ 35 đến 43 (VD: 35, 36, 37, ..., 43)
                                     </div>
                                 </div>
                             </div>
@@ -887,14 +887,14 @@
     }
 
     function resetModal() {
-        document.getElementById('kichCoModalLabel').innerHTML = '<i class="fas fa-plus"></i> Thêm kích cỡ mới';
+        document.getElementById('kichCoModalLabel').innerHTML = '<i class="fas fa-plus"></i> Thêm kích cỡ giày mới';
         document.getElementById('kichCoId').value = '';
         document.getElementById('kichCoName').value = '';
         document.getElementById('kichCoName').focus();
     }
 
     function fillModal(button) {
-        document.getElementById('kichCoModalLabel').innerHTML = '<i class="fas fa-edit"></i> Sửa kích cỡ';
+        document.getElementById('kichCoModalLabel').innerHTML = '<i class="fas fa-edit"></i> Sửa kích cỡ giày';
         const id = button.getAttribute('data-id');
         const name = button.getAttribute('data-name');
         document.getElementById('kichCoId').value = id;

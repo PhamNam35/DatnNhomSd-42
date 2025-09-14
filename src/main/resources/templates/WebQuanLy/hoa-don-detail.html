@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACV Store - Chi tiết hóa đơn</title>
+    <title>Poly Store Store - Chi tiết hóa đơn</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -655,11 +655,11 @@
                             Điều hướng:
                         </div>
                         <div class="action-buttons">
-                            <a th:href="@{/acvstore/hoa-don}" class="btn-custom btn-back">
+                            <a th:href="@{/polyshoe/hoa-don}" class="btn-custom btn-back">
                                 <i class="fas fa-arrow-left"></i> Quay lại
                             </a>
                             <a id="downloadPdfLink" class="btn-custom btn-primary"
-                               th:href="@{/acvstore/hoa-don/download/{id}(id=${hoaDon.id})}">
+                               th:href="@{/polyshoe/hoa-don/download/{id}(id=${hoaDon.id})}">
                                 <i class="fas fa-download"></i> Tải PDF
                             </a>
                         </div>
@@ -914,7 +914,7 @@
                     <div class="table-header">
                         <h6><i class="fas fa-box"></i> Danh sách sản phẩm</h6>
                         <a th:if="${hoaDon.donHang.phuongThucBanHang.equalsIgnoreCase('Tại quầy') and (hoaDon.trangThai == 'Hoàn thành' or hoaDon.trangThai == 'Vận chuyển thành công' or hoaDon.trangThai == 'Đã trả hàng một phần' or hoaDon.trangThai == 'Vận chuyển thành công')}"
-                           th:href="@{/acvstore/tra-hang/{hoaDonId}(hoaDonId=${hoaDon.id})}"
+                           th:href="@{/polyshoe/tra-hang/{hoaDonId}(hoaDonId=${hoaDon.id})}"
                            class="btn-custom btn-return" style="min-width: 120px;">
                             <i class="fas fa-undo"></i> Trả hàng
                         </a>
@@ -1094,7 +1094,7 @@
     function pollOrderStatus() {
         setInterval(() => {
             $.ajax({
-                url: `/acvstore/hoa-don/status/${hoaDonId}`,
+                url: `/polyshoe/hoa-don/status/${hoaDonId}`,
                 type: "GET",
                 success: function(response) {
                     if (response.currentStatus !== trangThai) {
@@ -1146,7 +1146,7 @@
                 };
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/exchange/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/exchange/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify(formData),
@@ -1201,7 +1201,7 @@
                 const ghiChu = result.value;
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/cancel/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/cancel/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ ghiChu: ghiChu }),
@@ -1239,7 +1239,7 @@
             if (result.isConfirmed) {
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/confirm/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/confirm/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ ghiChu: phuongThucBanHang === "Online" ? "Đã xác nhận đơn hàng Online" : "Đã xác nhận đơn hàng" }),
@@ -1277,7 +1277,7 @@
             if (result.isConfirmed) {
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/confirm-delivery/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/confirm-delivery/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ ghiChu: "Đang vận chuyển đơn hàng" }),
@@ -1315,7 +1315,7 @@
             if (result.isConfirmed) {
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/confirm-delivered/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/confirm-delivered/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ ghiChu: "Vận chuyển thành công" }),
@@ -1353,7 +1353,7 @@
             if (result.isConfirmed) {
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/confirm-online-processing/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/confirm-online-processing/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ ghiChu: "Đang xử lý đơn hàng Online" }),
@@ -1392,7 +1392,7 @@
             if (result.isConfirmed) {
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/confirm-online-shipping/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/confirm-online-shipping/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ ghiChu: "Đang vận chuyển đơn hàng Online" }),
@@ -1430,7 +1430,7 @@
             if (result.isConfirmed) {
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/confirm-online-delivered/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/confirm-online-delivered/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ ghiChu: "Vận chuyển thành công" }),
@@ -1468,7 +1468,7 @@
             if (result.isConfirmed) {
                 $("#invoiceSpinner").show();
                 $.ajax({
-                    url: `/acvstore/hoa-don/complete/${hoaDonId}`,
+                    url: `/polyshoe/hoa-don/complete/${hoaDonId}`,
                     type: "POST",
                     contentType: "application/json",
                     data: JSON.stringify({ ghiChu: "Đơn hàng hoàn thành" }),

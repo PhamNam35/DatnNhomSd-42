@@ -56,12 +56,12 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                 if ("ADMIN".equalsIgnoreCase(vaiTro)) {
                     byte[] descriptor = nguoiDung.getFaceDescriptor();
                     if (descriptor == null || descriptor.length == 0) {
-                        response.sendRedirect("/acvstore/register-face");
+                        response.sendRedirect("/polyshoe/register-face");
                     } else {
-                        response.sendRedirect("/acvstore/verify-face");
+                        response.sendRedirect("/polyshoe/verify-face");
                     }
                 } else if ("EMPLOYEE".equalsIgnoreCase(vaiTro)) {
-                    response.sendRedirect("/acvstore/employee-dashboard");
+                    response.sendRedirect("/polyshoe/employee-dashboard");
                 } else {
                     response.sendRedirect("/");
                 }

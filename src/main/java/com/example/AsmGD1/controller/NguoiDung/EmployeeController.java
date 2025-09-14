@@ -14,7 +14,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore/employees")
+@RequestMapping("/polyshoe/employees")
 public class EmployeeController {
 
     @Autowired
@@ -58,7 +58,7 @@ public class EmployeeController {
             if (!"ADMIN".equalsIgnoreCase(currentUser.getVaiTro())) {
                 redirectAttributes.addFlashAttribute("message", "Bạn không có quyền thêm nhân viên!");
                 redirectAttributes.addFlashAttribute("messageType", "danger");
-                return "redirect:/acvstore/employees";
+                return "redirect:/polyshoe/employees";
             }
 
             if (employee.getTrangThai() == null) {
@@ -80,7 +80,7 @@ public class EmployeeController {
             redirectAttributes.addFlashAttribute("message", "Thêm nhân viên thất bại: " + e.getMessage());
             redirectAttributes.addFlashAttribute("messageType", "danger");
         }
-        return "redirect:/acvstore/employees";
+        return "redirect:/polyshoe/employees";
     }
 
 
@@ -92,7 +92,7 @@ public class EmployeeController {
             if (!"ADMIN".equalsIgnoreCase(currentUser.getVaiTro())) {
                 redirectAttributes.addFlashAttribute("message", "Bạn không có quyền sửa nhân viên!");
                 redirectAttributes.addFlashAttribute("messageType", "danger");
-                return "redirect:/acvstore/employees";
+                return "redirect:/polyshoe/employees";
             }
 
             if (employee.getTrangThai() == null) {
@@ -109,7 +109,7 @@ public class EmployeeController {
             redirectAttributes.addFlashAttribute("message", "Sửa nhân viên thất bại: " + e.getMessage());
             redirectAttributes.addFlashAttribute("messageType", "danger");
         }
-        return "redirect:/acvstore/employees";
+        return "redirect:/polyshoe/employees";
     }
 
 
@@ -121,7 +121,7 @@ public class EmployeeController {
             if (!"ADMIN".equalsIgnoreCase(currentUser.getVaiTro())) {
                 redirectAttributes.addFlashAttribute("message", "Bạn không có quyền xóa nhân viên!");
                 redirectAttributes.addFlashAttribute("messageType", "danger");
-                return "redirect:/acvstore/employees";
+                return "redirect:/polyshoe/employees";
             }
 
             NguoiDung deletedUser = nguoiDungService.findById(id);
@@ -135,7 +135,7 @@ public class EmployeeController {
             redirectAttributes.addFlashAttribute("message", "Xóa nhân viên thất bại: " + e.getMessage());
             redirectAttributes.addFlashAttribute("messageType", "danger");
         }
-        return "redirect:/acvstore/employees";
+        return "redirect:/polyshoe/employees";
     }
 
 

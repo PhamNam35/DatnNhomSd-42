@@ -297,7 +297,7 @@ public class CheckoutService {
                     + ".cta-button a{display:inline-block;padding:10px 18px;background:#2563eb;color:#fff;text-decoration:none;border-radius:6px}"
                     + ".footer{text-align:center;font-size:13px;color:#64748b;margin-top:20px;border-top:1px solid #e2e8f0;padding-top:16px}"
                     + "</style></head><body><div class='container'>"
-                    + "<h1>Cảm ơn bạn đã mua hàng tại ACV Store!</h1>"
+                    + "<h1>Cảm ơn bạn đã mua hàng tại Poly Store Store!</h1>"
                     + "<p>Đơn hàng của bạn đã được đặt thành công. Thông tin chi tiết:</p>"
                     + "<div class='order-details'>"
                     + "<p><strong>Mã đơn hàng:</strong> " + donHang.getMaDonHang() + "</p>"
@@ -314,8 +314,8 @@ public class CheckoutService {
                     ) + " VNĐ</p>"
             ).reduce("", String::concat))
                     + "</div>"
-                    + "<div class='cta-button'><a href='https://acvstore.site/dsdon-mua/chi-tiet/" + donHang.getId() + "'>Xem trạng thái đơn hàng</a></div>"
-                    + "<div class='footer'>ACV Store – Cảm ơn bạn đã tin tưởng!</div>"
+                    + "<div class='cta-button'><a href='https://polyshoe.site/dsdon-mua/chi-tiet/" + donHang.getId() + "'>Xem trạng thái đơn hàng</a></div>"
+                    + "<div class='footer'>Poly Store Store – Cảm ơn bạn đã tin tưởng!</div>"
                     + "</div></body></html>";
 
             emailService.sendEmail(nguoiDung.getEmail(), subject, text);

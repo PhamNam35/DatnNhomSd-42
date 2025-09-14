@@ -33,7 +33,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore/san-pham")
+@RequestMapping("/polyshoe/san-pham")
 public class SanPhamController {
 
     private static final Logger logger = LoggerFactory.getLogger(SanPhamController.class);
@@ -51,6 +51,7 @@ public class SanPhamController {
     @Autowired private KieuDangService kieuDangService;
     @Autowired private ChatLieuService chatLieuService;
     @Autowired private XuatXuService xuatXuService;
+    @Autowired private DayGiayService dayGiayService;
 
 
     // Helper method to check if current user is admin
@@ -87,8 +88,7 @@ public class SanPhamController {
             @RequestParam(value = "kieuDangId", required = false) UUID kieuDangId,
             @RequestParam(value = "chatLieuId", required = false) UUID chatLieuId,
             @RequestParam(value = "xuatXuId", required = false) UUID xuatXuId,
-            @RequestParam(value = "tayAoId", required = false) UUID tayAoId,
-            @RequestParam(value = "coAoId", required = false) UUID coAoId,
+            @RequestParam(value = "dayGiayId", required = false) UUID dayGiayId,
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "sortField", required = false, defaultValue = "thoiGianTao") String sortField,  // Mặc định sort theo ngày tạo
             @RequestParam(value = "sortDir", required = false, defaultValue = "desc") String sortDir) {  // Mặc định desc (mới nhất đầu)
@@ -114,8 +114,7 @@ public class SanPhamController {
                 kieuDangId,
                 chatLieuId,
                 xuatXuId,
-                tayAoId,
-                coAoId,
+                dayGiayId,
                 pageable
         );
 
@@ -132,14 +131,14 @@ public class SanPhamController {
         model.addAttribute("kieuDangList", kieuDangService.getAllKieuDang());
         model.addAttribute("chatLieuList", chatLieuService.getAllChatLieu());
         model.addAttribute("xuatXuList", xuatXuService.getAllXuatXu());
+        model.addAttribute("dayGiayList", dayGiayService.getAllDayGiay());
 
         model.addAttribute("selectedDanhMucId", danhMucId);
         model.addAttribute("selectedThuongHieuId", thuongHieuId);
         model.addAttribute("selectedKieuDangId", kieuDangId);
         model.addAttribute("selectedChatLieuId", chatLieuId);
         model.addAttribute("selectedXuatXuId", xuatXuId);
-        model.addAttribute("selectedTayAoId", tayAoId);
-        model.addAttribute("selectedCoAoId", coAoId);
+        model.addAttribute("selectedDayGiayId", dayGiayId);
 
         // Thêm param sort vào model để giữ trạng thái sort trong HTML
         model.addAttribute("sortField", validSortField);
@@ -152,7 +151,7 @@ public class SanPhamController {
     @GetMapping("/edit/{id}")
     public String editSanPham(@PathVariable("id") UUID id, Model model) {
         if (!isCurrentUserAdmin()) {
-            return "redirect:/acvstore/san-pham?error=Bạn không có quyền truy cập chức năng này";
+            return "redirect:/polyshoe/san-pham?error=Bạn không có quyền truy cập chức năng này";
         }
 
         addUserInfoToModel(model);

@@ -52,12 +52,19 @@ public class KichCoService {
         }
 
         // Chuẩn hóa tên trước khi validate
-        String tenNormalized = kichCo.getTen().trim().toUpperCase();
+        String tenNormalized = kichCo.getTen().trim();
 
-        // Kiểm tra tên hợp lệ (chỉ cho phép XS, S, M, L, XL, XXL, XXXL)
-        if (!tenNormalized.matches("^(XS|S|M|L|XL|XXL|XXXL)$")) {
+        // Kiểm tra tên hợp lệ (chỉ cho phép số từ 35 đến 43)
+        try {
+            int size = Integer.parseInt(tenNormalized);
+            if (size < 35 || size > 43) {
+                throw new IllegalArgumentException(
+                        "Kích cỡ giày không hợp lệ. Chỉ cho phép số từ 35 đến 43."
+                );
+            }
+        } catch (NumberFormatException e) {
             throw new IllegalArgumentException(
-                    "Tên kích cỡ không hợp lệ. Chỉ cho phép XS, S, M, L, XL, XXL, XXXL (không phân biệt hoa/thường)."
+                    "Kích cỡ giày phải là một số nguyên (ví dụ: 35, 36, 37, ...)."
             );
         }
 
@@ -66,7 +73,7 @@ public class KichCoService {
                 .stream()
                 .anyMatch(k -> !k.getId().equals(kichCo.getId())
                         && k.getTen().equalsIgnoreCase(tenNormalized))) {
-            throw new IllegalArgumentException("Tên kích cỡ đã tồn tại");
+            throw new IllegalArgumentException("Kích cỡ giày đã tồn tại");
         }
 
         // Set lại tên đã chuẩn hóa

@@ -44,7 +44,7 @@
     <div class="content">
         <div class="sticky-header">
             <div class="d-flex align-items-center">
-                <a th:href="@{/acvstore/chien-dich-giam-gia}" class="btn btn-outline-secondary me-3">
+                <a th:href="@{/polyshoe/chien-dich-giam-gia}" class="btn btn-outline-secondary me-3">
                     <i class="fas fa-arrow-left me-2"></i>Quay lại
                 </a>
                 <h2>
@@ -78,7 +78,7 @@
         </div>
 
         <!-- FORM EDIT -->
-        <form th:action="@{/acvstore/chien-dich-giam-gia/update}"
+        <form th:action="@{/polyshoe/chien-dich-giam-gia/update}"
               th:object="${chienDich}"
               method="post"
               id="updateCampaignForm"
@@ -493,7 +493,7 @@
         }
 
         const idsParam=[...selectedProductIds].join(',');
-        const url=`/acvstore/chien-dich-giam-gia/multiple-product-details?productIds=${idsParam}&currentCampaignId=${currentCampaignId}`;
+        const url=`/polyshoe/chien-dich-giam-gia/multiple-product-details?productIds=${idsParam}&currentCampaignId=${currentCampaignId}`;
         fetch(url)
             .then(res=>res.json())
             .then(data=>{
@@ -569,7 +569,7 @@
         if (!isAdmin) return;
 
         const url =
-            `/acvstore/chien-dich-giam-gia/search-products` +
+            `/polyshoe/chien-dich-giam-gia/search-products` +
             `?keyword=${encodeURIComponent(keyword)}` +
             `&page=${Math.max(0, page)}` +
             `&size=${pageSize}`; // pageSize = 5

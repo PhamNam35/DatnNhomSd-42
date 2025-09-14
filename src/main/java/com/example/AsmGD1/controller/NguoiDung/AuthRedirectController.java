@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class AuthRedirectController {
 
-    @GetMapping("/acvstore/redirect")
+    @GetMapping("/polyshoe/redirect")
     public String redirectAfterLogin(Authentication auth) {
         if (auth == null || auth.getAuthorities().isEmpty()) {
-            return "redirect:/acvstore/login?error=unauthorized";
+            return "redirect:/polyshoe/login?error=unauthorized";
         }
 
         NguoiDung nguoiDung = (NguoiDung) auth.getPrincipal();
@@ -20,21 +20,21 @@ public class AuthRedirectController {
 
         if ("CUSTOMER".equalsIgnoreCase(vaiTro)) {
             SecurityContextHolder.clearContext();
-            return "redirect:/acvstore/login?error=accessDenied";
+            return "redirect:/polyshoe/login?error=accessDenied";
         } else if ("ADMIN".equalsIgnoreCase(vaiTro)) {
             byte[] descriptor = nguoiDung.getFaceDescriptor();
             if (descriptor == null || descriptor.length == 0) {
-                return "redirect:/acvstore/register-face";
+                return "redirect:/polyshoe/register-face";
             }
-            return "redirect:/acvstore/verify-face";
+            return "redirect:/polyshoe/verify-face";
         } else if ("EMPLOYEE".equalsIgnoreCase(vaiTro)) {
-            return "redirect:/acvstore/employee-dashboard";
+            return "redirect:/polyshoe/employee-dashboard";
         } else {
-            return "redirect:/acvstore/login?error=unauthorizedRole";
+            return "redirect:/polyshoe/login?error=unauthorizedRole";
         }
     }
 
-    @GetMapping("/acvstore/login")
+    @GetMapping("/polyshoe/login")
     public String showLoginForm() {
         return "WebQuanLy/employee-login";
     }

@@ -22,7 +22,7 @@
       console.log('orderData before sending to /create-order:', JSON.stringify(orderData, null, 2));
 
       try {
-        const res = await fetch("http://localhost:8080/acvstore/ban-hang/create-order", {
+        const res = await fetch("http://localhost:8080/polyshoe/ban-hang/create-order", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -80,7 +80,7 @@
 
         // Chuyển hướng sau 2 giây
         setTimeout(() => {
-          window.location.href = "/acvstore/ban-hang";
+          window.location.href = "/polyshoe/ban-hang";
         }, 2000);
 
       } catch (err) {
@@ -127,7 +127,7 @@
   <h2 class="success-title">✅ Thanh toán thành công!</h2>
   <p>Mã đơn hàng: <strong id="orderCode">Đang xử lý...</strong></p>
   <p>Đang quay lại trang bán hàng...</p>
-  <a href="/acvstore/ban-hang" class="btn">Quay lại ngay</a>
+  <a href="/polyshoe/ban-hang" class="btn">Quay lại ngay</a>
 </div>
 </body>
 </html>

@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore")
+@RequestMapping("/polyshoe")
 public class XuatXuController {
 
     @Autowired
@@ -75,7 +75,7 @@ public class XuatXuController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/xuat-xu";
+            return "redirect:/polyshoe/xuat-xu";
         }
 
         try {
@@ -89,7 +89,7 @@ public class XuatXuController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/xuat-xu";
+        return "redirect:/polyshoe/xuat-xu";
     }
 
     @GetMapping("/xuat-xu/delete/{id}")
@@ -98,7 +98,7 @@ public class XuatXuController {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/acvstore/xuat-xu";
+            return "redirect:/polyshoe/xuat-xu";
         }
 
         try {
@@ -110,7 +110,7 @@ public class XuatXuController {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/acvstore/xuat-xu";
+        return "redirect:/polyshoe/xuat-xu";
     }
 
     // Helper methods

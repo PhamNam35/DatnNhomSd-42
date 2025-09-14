@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore/customers")
+@RequestMapping("/polyshoe/customers")
 public class CustomerController {
 
     @Autowired
@@ -79,7 +79,7 @@ public class CustomerController {
         if (!isCurrentUserAdminOrEmployee()) {
             redirectAttributes.addFlashAttribute("message", "Bạn không có quyền truy cập chức năng này!");
             redirectAttributes.addFlashAttribute("messageType", "danger");
-            return "redirect:/acvstore/thong-ke";
+            return "redirect:/polyshoe/thong-ke";
         }
 
         addUserInfoToModel(model);
@@ -109,7 +109,7 @@ public class CustomerController {
         if (!isCurrentUserAdminOrEmployee()) {
             redirectAttributes.addFlashAttribute("message", "Bạn không có quyền thêm khách hàng!");
             redirectAttributes.addFlashAttribute("messageType", "danger");
-            return "redirect:/acvstore/customers";
+            return "redirect:/polyshoe/customers";
         }
 
         try {
@@ -157,7 +157,7 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("message", "Thêm khách hàng thất bại: Lỗi hệ thống");
             redirectAttributes.addFlashAttribute("messageType", "danger");
         }
-        return "redirect:/acvstore/customers";
+        return "redirect:/polyshoe/customers";
     }
 
     @PostMapping("/edit")
@@ -170,7 +170,7 @@ public class CustomerController {
         if (!isCurrentUserAdminOrEmployee()) {
             redirectAttributes.addFlashAttribute("message", "Bạn không có quyền sửa khách hàng!");
             redirectAttributes.addFlashAttribute("messageType", "danger");
-            return "redirect:/acvstore/customers";
+            return "redirect:/polyshoe/customers";
         }
 
         try {
@@ -213,7 +213,7 @@ public class CustomerController {
             redirectAttributes.addFlashAttribute("message", "Sửa thất bại: " + e.getMessage());
             redirectAttributes.addFlashAttribute("messageType", "danger");
         }
-        return "redirect:/acvstore/customers";
+        return "redirect:/polyshoe/customers";
     }
 
 

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ACV Store - Trang chủ</title>
-  <link rel="icon" href="/image/ACV.png" type="image/png" sizes="32x32"/>
+  <title>Poly Store Store - Trang chủ</title>
+  <link rel="icon" href="/image/Poly Store.png" type="image/png" sizes="32x32"/>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw==" crossorigin="anonymous"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
@@ -91,170 +91,7 @@
     .user-info { display: none; color: white; }
     .user-info.active { display: inline; }
     /* Ẩn mặc định bằng opacity + transform (để transition mượt) */
-    #chatbot-box{
-      position: fixed; bottom: 100px; right: 30px;
-      width: 420px;
-      height: clamp(520px, 70vh, 640px); /* <-- thêm */
-      max-height: none;                  /* <-- bỏ giới hạn cũ */
-      display: flex;
-      flex-direction: column;
-      background:#fff; border-radius:14px;
-      box-shadow: 0 12px 32px rgba(0,0,0,.18);
-      overflow: hidden; z-index:10000;
-      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
 
-      /* trạng thái ẩn */
-      opacity: 0;
-      transform: translateY(12px) scale(.98);
-      pointer-events: none;
-      visibility: hidden;
-      transform-origin: bottom right;
-
-      transition: opacity .25s ease, transform .25s ease, visibility .25s;
-      will-change: opacity, transform;
-    }
-
-    #chat-messages{
-      padding:12px 12px 6px;
-      flex: 1;           /* <-- thêm */
-      min-height: 0;     /* <-- rất quan trọng để phần này cuộn được trong flex */
-      overflow-y: auto;
-      background:#fff;
-    }
-
-
-    /* trạng thái hiện */
-    #chatbot-box.is-open{
-      opacity: 1;
-      transform: translateY(0) scale(1);
-      pointer-events: auto;
-      visibility: visible;
-    }
-
-    /* tôn trọng giảm chuyển động */
-    @media (prefers-reduced-motion: reduce){
-      #chatbot-box{ transition: none; }
-    }
-
-
-    /* Header tối, icon tròn */
-    .cb-header{ background:#153054; color:#fff; padding:10px 12px; display:flex; align-items:center; gap:10px; }
-    .brand-logo{ width:45px; height:45px; border-radius:30px; object-fit:cover; }
-
-    .cb-header .brand{
-      display:flex; align-items:center; gap:8px; font-weight:700;
-    }
-    .cb-header .brand .dot{
-      width:28px;height:28px;border-radius:50%;
-      background:#9FD5F7; display:inline-block;
-    }
-    /* QR combobox bên trái input */
-    .qr-wrap{ position:relative; }
-    .qr-btn{
-      width:44px;height:44px;border-radius:12px;border:1px solid #e5e7eb;background:#fff;color:#111827;
-      display:flex;align-items:center;justify-content:center; cursor:pointer;
-    }
-    .qr-btn:focus{ outline:none; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
-    .qr-menu{
-      position:absolute; left:0; bottom:52px; /* nổi phía trên input */
-      width:260px; max-height:260px; overflow:auto;
-      background:#fff; border:1px solid #e5e7eb; border-radius:12px;
-      box-shadow:0 12px 28px rgba(0,0,0,.12);
-      padding:8px; display:none; z-index:10001;
-    }
-    .qr-menu.show{ display:block; }
-    .qr-item{
-      width:100%; text-align:left; border:0; background:#fff; color:#111827;
-      padding:10px 12px; border-radius:10px; font-size:14px; cursor:pointer;
-    }
-    .qr-item:hover{ background:#f3f4f6; }
-
-    .cb-actions{ margin-left:auto; display:flex; gap:8px; }
-    .cb-icon{
-      width:32px;height:32px;border-radius:8px;
-      display:flex;align-items:center;justify-content:center;
-      background:rgba(255,255,255,.08); color:#fff; cursor:pointer; border:0;
-    }
-    .cb-icon:hover{ background:rgba(255,255,255,.16); }
-
-    /* Vùng tin nhắn */
-    #chat-messages{
-      padding:12px 12px 6px;
-      height:420px; overflow-y:auto; background:#fff;
-    }
-
-    /* Bong bóng bot + avatar bằng ::before */
-    .chatbot-msg-bot{
-      position:relative;
-      background:#f3f4f6; color:#111827;
-      padding:10px 12px; border-radius:14px 14px 14px 4px;
-      max-width:82%; margin:0 56px 10px 40px; /* chừa chỗ avatar trái */
-      font-size:15px; line-height:1.45; word-wrap:break-word;
-    }
-    .chatbot-msg-bot::before {
-      content: "";
-      position: absolute;
-      left: -40px;
-      top: 4px;
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background-image: url('/image/ACV.jpg');
-      background-size: cover;
-      background-position: center;
-    }
-
-
-    .chatbot-msg-user{
-      background:#153054; color:#fff;
-      padding:10px 12px; border-radius:14px 14px 4px 14px;
-      max-width:82%; margin:0 0 10px auto;
-      font-size:15px; line-height:1.45; word-wrap:break-word;
-    }
-
-    /* Typing indicator giả lập */
-    #typing-indicator{ opacity:.8; font-style:italic; }
-
-    /* Quick reply dạng pill dưới vùng chat */
-    .cb-quick{
-      padding:6px 12px 10px; background:#fff;
-      display:flex; flex-wrap:wrap; gap:8px;
-    }
-    .cb-pill{
-      border:1px solid #e5e7eb; background:#fff; color:#111827;
-      padding:8px 12px; border-radius:18px; font-size:14px;
-      cursor:pointer; transition:.15s;
-    }
-    .cb-pill:hover{ background:#f3f4f6; }
-
-    /* Thanh nhập + nút gửi */
-    .cb-inputbar{
-      border-top:1px solid #eee;
-      padding:10px; display:flex; gap:8px; align-items:center; background:#fff;
-    }
-    #chat-input{
-      flex:1; padding:12px 14px; border:1px solid #e5e7eb;
-      border-radius:24px; font-size:15px; outline:none;
-    }
-    #chat-input:focus{ border-color:#b6c2ff; box-shadow:0 0 0 3px rgba(59,130,246,.15); }
-    #chat-send{
-      width:44px;height:44px;border-radius:50%;border:0;
-      background:#153054;
-      color:#fff; display:flex;align-items:center;justify-content:center;
-    }
-
-
-    /* Ghi chú nhỏ giống caption “Thông tin chỉ mang tính tham khảo…” */
-    .cb-note{
-      padding:6px 14px 12px; font-size:10px; text-align: center ; color:#6b7280; background:#fff ;
-    }
-    #chat-input {
-      flex: 1;
-      resize: none;              /* không cho kéo thủ công */
-      overflow-y: hidden;        /* ẩn thanh cuộn */
-      line-height: 1.4;
-      max-height: 120px;         /* giới hạn chiều cao tối đa (tầm 5-6 dòng) */
-    }
 
     #confirmAddToCart.loading::after {
       content: '';
@@ -463,11 +300,7 @@
   </style>
 </head>
 <body class="bg-gray-100">
-<div class="ticker py-1 overflow-hidden" style="height: 40px;">
-  <marquee behavior="scroll" direction="left" scrollamount="5">
-    🎉 Khuyến mãi đặc biệt: Giảm giá lên đến 50% cho tất cả sản phẩm hôm nay! 🎉 - Miễn phí vận chuyển cho đơn từ 500k!
-  </marquee>
-</div>
+
 
 <div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
 
@@ -568,13 +401,13 @@
   <div class="swiper banner-slider">
     <div class="swiper-wrapper">
       <div class="swiper-slide">
-        <img loading="lazy" src="/image/banner1.png" alt="Banner thời trang nam" class="w-full h-full object-cover"/>
+        <img loading="lazy" src="/image/banner1.jpg" alt="Banner thời trang nam" class="w-full h-full object-cover"/>
       </div>
       <div class="swiper-slide">
-        <img loading="lazy" src="/image/banner2.png" alt="Banner khuyến mãi" class="w-full h-full object-cover"/>
+        <img loading="lazy" src="/image/banner2.jpg" alt="Banner khuyến mãi" class="w-full h-full object-cover"/>
       </div>
       <div class="swiper-slide">
-        <img loading="lazy" src="/image/banner3.png" alt="Banner khuyến mãi" class="w-full h-full object-cover"/>
+        <img loading="lazy" src="/image/banner3.jpg" alt="Banner khuyến mãi" class="w-full h-full object-cover"/>
       </div>
     </div>
     <div class="swiper-button-next text-blue-800"></div>
@@ -650,7 +483,7 @@
   <div class="flex items-end justify-between mb-4 border-b border-gray-200 pb-3">
     <div>
       <h2 class="text-2xl font-bold text-gray-800">Tất cả sản phẩm</h2>
-      <p class="text-sm text-gray-500 mt-1">Khám phá toàn bộ danh mục tại ACV Store.</p>
+      <p class="text-sm text-gray-500 mt-1">Khám phá toàn bộ danh mục tại Poly Store Store.</p>
     </div>
     <a href="/all" class="inline-flex items-center gap-2 text-blue-800 font-semibold hover:underline">
       Xem tất cả <span aria-hidden="true">»</span>
@@ -766,85 +599,16 @@
 </section>
 
 
-<div id="chatbot-toggle"
-     style="position: fixed; bottom: 20px; right: 20px; background-color: #9FD5F7;
-            width: 60px; height: 60px; border-radius: 50%; display: flex;
-            align-items: center; justify-content: center; z-index: 10000;
-            cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
-  <img th:src="@{/image/ACV.jpg}" alt="ACV"
-       style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
-</div>
-
-<!-- Messenger shortcut -->
-<a id="messenger-launch"
-   class="messenger-fab"
-   href="https://m.me/820646527788683"
-   target="_blank" rel="noopener"
-   title="Mở trong Messenger" aria-label="Mở chat trong Messenger">
-  <i class="fa-brands fa-facebook-messenger"></i>
-</a>
-
-
-<div id="chatbot-box">
-
-  <div class="cb-header">
-  <span class="brand">
-    <img th:src="@{/image/ACV.jpg}" alt="ACV" class="brand-logo" />
-    ACV Store
-  </span>
-    <div class="cb-actions">
-      <button id="chat-reload" class="cb-icon" title="Xoá lịch sử chat">
-        <i class="fas fa-rotate-right"></i>
-      </button>
-      <button id="chatbot-close" class="cb-icon" title="Đóng">
-        <i class="fas fa-minus"></i>
-      </button>
-    </div>
-  </div>
 
 
 
-  <div id="chat-messages"></div>
 
-
-  <div id="quick-row" class="cb-quick" style="display:none">
-    <button class="cb-pill quick-reply">Sản phẩm mới nhất</button>
-    <button class="cb-pill quick-reply">Thông tin liên hệ</button>
-    <button class="cb-pill quick-reply">Địa chỉ cửa hàng</button>
-  </div>
-
-
-  <div class="cb-inputbar">
-
-    <div class="qr-wrap">
-      <button id="qr-trigger" class="qr-btn" aria-haspopup="true" aria-expanded="false" title="Quick reply">
-        <i class="fas fa-bars"></i>
-      </button>
-      <div id="qr-menu" class="qr-menu" role="menu" aria-hidden="true">
-        <button class="qr-item quick-reply" role="menuitem">Sản phẩm mới nhất</button>
-        <button class="qr-item quick-reply" role="menuitem">Thông tin liên hệ</button>
-        <button class="qr-item quick-reply" role="menuitem">Địa chỉ cửa hàng</button>
-      </div>
-    </div>
-
-    <textarea id="chat-input" placeholder="Nhập tin nhắn..." rows="1"></textarea>
-    <button id="chat-send" aria-label="Gửi" title="Gửi (Enter)">
-      <i class="fas fa-paper-plane"></i>
-    </button>
-  </div>
-
-
-
-  <div class="cb-note">
-    Thông tin chỉ mang tính tham khảo, được tư vấn bởi Trợ lý Trí tuệ Nhân Tạo.
-  </div>
-</div>
 
 <footer style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
   <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
     <div>
-      <h3 class="text-lg font-bold mb-4">ACV Store</h3>
-      <p class="text-sm">Cửa hàng thời trang hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
+      <h3 class="text-lg font-bold mb-4">Poly Shoe Store</h3>
+      <p class="text-sm">Cửa hàng giày hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
     </div>
     <div>
       <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
@@ -855,25 +619,10 @@
         <li><a href="/chinh-sach" class="hover:text-blue-300">Chính sách</a></li>
       </ul>
     </div>
-    <div>
-      <h3 class="text-lg font-bold mb-4">Liên hệ</h3>
-      <p class="text-sm">Địa chỉ: 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội, Việt Nam</p>
-      <p class="text-sm">Email: datn.acv@gmail.com</p>
-      <p class="text-sm">Hotline: 0911 006 045</p>
-      <div class="flex space-x-4 mt-4">
-        <a href="https://www.facebook.com" class="text-white hover:text-blue-300" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://www.instagram.com" class="text-white hover:text-blue-300" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://twitter.com" class="text-white hover:text-blue-300" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-      </div>
-    </div>
+
   </div>
-  <div class="container mx-auto mt-8">
-    <div class="map-container relative overflow-hidden rounded-lg shadow-md transition-all duration-300 hover:shadow-lg">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3724.7142835949912!2d105.85287637508011!3d21.004087180639065!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3135ad002fc50fd1%3A0x9a7962d208d20498!2sACV%20Store!5e0!3m2!1sen!2s!4v1755701406991!5m2!1sen!2s" width="100%" height="300" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-    <p class="text-center text-sm mt-2 text-gray-300">* Bản đồ hiển thị vị trí chi nhánh chính tại ACV Store tại 330 Phố Nam Dư, Trần Phú, Hai Bà Trưng, Hà Nội. Vui lòng liên hệ để xác nhận giờ mở cửa.</p>
-  </div>
-  <div class="text-center mt-8 text-sm">© 2025 ACV Store. All rights reserved.</div>
+
+  <div class="text-center mt-8 text-sm">© 2025 Poly Shoe Store. All rights reserved.</div>
 
   <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10"></div>
 </footer>
@@ -1011,9 +760,6 @@
 
 
 
-  const reloadBtn  = document.getElementById('chat-reload');
-  const quickCombo = document.getElementById('quick-combobox');
-  const sendBtn    = document.getElementById('chat-send');
 
 
   reloadBtn?.addEventListener('click', () => {
@@ -1048,7 +794,7 @@
     const items = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
     if (items.length > 0) return;
 
-    const greet1 = 'Xin chào Bạn! Mình là trợ lý AI của ACV Store';
+    const greet1 = 'Xin chào Bạn! Mình là trợ lý AI của Poly Store Store';
     const greet2 = 'Mình rất sẵn lòng hỗ trợ Bạn 😊';
 
     const g1 = document.createElement('div');
@@ -1226,12 +972,6 @@
     sendBtn.style.cursor  = hasText ? 'pointer' : 'not-allowed';
   }
 
-
-  const toggleBtn = document.getElementById('chatbot-toggle');
-  const chatBox = document.getElementById('chatbot-box');
-  const closeBtn = document.getElementById('chatbot-close');
-  const chatInput = document.getElementById('chat-input');
-  const chatMessages = document.getElementById('chat-messages');
 
   chatInput.addEventListener('input', () => {
     chatInput.style.height = 'auto';
@@ -1420,7 +1160,7 @@
 
     return message
             .replace(
-                    /(https?:\/\/[^\s<]+|acvstore\.site\/[^\s<]+)/g,
+                    /(https?:\/\/[^\s<]+|polyshoe\.site\/[^\s<]+)/g,
                     (raw) => {
                       const url = raw.startsWith('http') ? raw : 'https://' + raw;
                       if (isImageUrl(url)) {

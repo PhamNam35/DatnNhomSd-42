@@ -249,7 +249,7 @@
             <ul class="pagination justify-content-center">
               <li class="page-item" th:classappend="${lowStockProducts.first} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -259,7 +259,7 @@
               </li>
               <li class="page-item" th:classappend="${lowStockProducts.first} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -271,7 +271,7 @@
                   class="page-item" th:classappend="${i == lowStockProducts.number} ? 'active'">
                 <a class="page-link"
                    th:text="${i + 1}"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -281,7 +281,7 @@
               </li>
               <li class="page-item" th:classappend="${lowStockProducts.last} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -291,7 +291,7 @@
               </li>
               <li class="page-item" th:classappend="${lowStockProducts.last} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -339,7 +339,7 @@
             <ul class="pagination justify-content-center">
               <li class="page-item" th:classappend="${topSellingProducts.first} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -349,7 +349,7 @@
               </li>
               <li class="page-item" th:classappend="${topSellingProducts.first} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -361,7 +361,7 @@
                   class="page-item" th:classappend="${i == topSellingProducts.number} ? 'active'">
                 <a class="page-link"
                    th:text="${i + 1}"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -371,7 +371,7 @@
               </li>
               <li class="page-item" th:classappend="${topSellingProducts.last} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -381,7 +381,7 @@
               </li>
               <li class="page-item" th:classappend="${topSellingProducts.last} ? 'disabled'">
                 <a class="page-link"
-                   th:href="@{/acvstore/thong-ke(
+                   th:href="@{/polyshoe/thong-ke(
                      boLoc=${boLoc},
                      ngayBatDau=${ngayBatDau},
                      ngayKetThuc=${ngayKetThuc},
@@ -507,7 +507,7 @@
   });
 </script>
 
-<form id="filterForm" method="get" th:action="@{/acvstore/thong-ke}" style="display: none;">
+<form id="filterForm" method="get" th:action="@{/polyshoe/thong-ke}" style="display: none;">
   <input type="hidden" name="boLoc" id="filterInput">
   <input type="hidden" name="ngayBatDau" id="startDateInput">
   <input type="hidden" name="ngayKetThuc" id="endDateInput">
@@ -592,7 +592,7 @@
   }
 
   function exportExcel() {
-    window.location.href = '/acvstore/thong-ke/export?' + new URLSearchParams(new FormData(document.getElementById('filterForm'))).toString();
+    window.location.href = '/polyshoe/thong-ke/export?' + new URLSearchParams(new FormData(document.getElementById('filterForm'))).toString();
   }
 </script>
 

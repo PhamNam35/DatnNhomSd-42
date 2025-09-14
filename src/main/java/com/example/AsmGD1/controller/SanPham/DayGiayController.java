@@ -1,9 +1,9 @@
 package com.example.AsmGD1.controller.SanPham;
 
-import com.example.AsmGD1.entity.KieuDang;
+import com.example.AsmGD1.entity.DayGiay;
 import com.example.AsmGD1.entity.NguoiDung;
 import com.example.AsmGD1.service.NguoiDung.NguoiDungService;
-import com.example.AsmGD1.service.SanPham.KieuDangService;
+import com.example.AsmGD1.service.SanPham.DayGiayService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,40 +19,40 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("/polyshoe")
-public class KieuDangController {
+public class DayGiayController {
 
     @Autowired
-    private KieuDangService kieuDangService;
+    private DayGiayService dayGiayService;
 
     @Autowired
     private NguoiDungService nguoiDungService;
 
-    @GetMapping("/kieu-dang")
-    public String listKieuDang(@RequestParam(value = "search", required = false) String search,
-                               @RequestParam(value = "error", required = false) String errorMessage,
-                               @RequestParam(value = "page", defaultValue = "0") int page,
-                               Model model) {
+    @GetMapping("/day-giay")
+    public String listDayGiay(@RequestParam(value = "search", required = false) String search,
+                             @RequestParam(value = "error", required = false) String errorMessage,
+                             @RequestParam(value = "page", defaultValue = "0") int page,
+                             Model model) {
 
-        Pageable pageable = PageRequest.of(page, 5); // 5 items per page
-        Page<KieuDang> kieuDangPage;
+        Pageable pageable = PageRequest.of(page, 5);
+        Page<DayGiay> dayGiayPage;
 
         try {
-            kieuDangPage = search != null && !search.trim().isEmpty()
-                    ? kieuDangService.searchKieuDang(search, pageable)
-                    : kieuDangService.getAllKieuDang(pageable);
+            dayGiayPage = search != null && !search.trim().isEmpty()
+                    ? dayGiayService.searchDayGiay(search, pageable)
+                    : dayGiayService.getAllDayGiay(pageable);
 
-            if (kieuDangPage == null) {
-                kieuDangPage = Page.empty(pageable);
+            if (dayGiayPage == null) {
+                dayGiayPage = Page.empty(pageable);
             }
 
         } catch (Exception e) {
-            model.addAttribute("errorMessage", "Lỗi khi tải danh sách kiểu dáng: " + e.getMessage());
-            kieuDangPage = Page.empty(pageable);
+            model.addAttribute("errorMessage", "Lỗi khi tải danh sách dây giày: " + e.getMessage());
+            dayGiayPage = Page.empty(pageable);
         }
 
-        model.addAttribute("kieuDangList", kieuDangPage.getContent());
+        model.addAttribute("dayGiayList", dayGiayPage.getContent());
         model.addAttribute("currentPage", page);
-        model.addAttribute("totalPages", kieuDangPage.getTotalPages());
+        model.addAttribute("totalPages", dayGiayPage.getTotalPages());
         model.addAttribute("search", search);
 
         // Lấy thông tin user hiện tại và phân quyền
@@ -64,52 +64,51 @@ public class KieuDangController {
             model.addAttribute("errorMessage", errorMessage);
         }
 
-        return "WebQuanLy/kieu-dang";
+        return "WebQuanLy/day-giay";
     }
 
-    @PostMapping("/kieu-dang/save")
-    public String saveKieuDang(@ModelAttribute KieuDang kieuDang,
+    @PostMapping("/day-giay/save")
+    public String saveDayGiay(@ModelAttribute DayGiay dayGiay,
+                             RedirectAttributes redirectAttributes) {
+
+        if (!isCurrentUserAdmin()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
+            return "redirect:/polyshoe/day-giay";
+        }
+
+        try {
+            boolean isUpdate = dayGiay.getId() != null;
+            dayGiayService.saveDayGiay(dayGiay);
+            String message = isUpdate ? "Cập nhật dây giày thành công!" : "Thêm dây giầy thành công!";
+            redirectAttributes.addFlashAttribute("successMessage", message);
+        } catch (IllegalArgumentException e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Lưu dây giầy thất bại: " + e.getMessage());
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
+        }
+
+        return "redirect:/polyshoe/day-giay";
+    }
+
+    @GetMapping("/day-giay/delete/{id}")
+    public String deleteDayGiay(@PathVariable UUID id,
                                RedirectAttributes redirectAttributes) {
 
         if (!isCurrentUserAdmin()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/polyshoe/kieu-dang";
+            return "redirect:/polyshoe/day-giay";
         }
 
         try {
-            // Kiểm tra id trước khi lưu để xác định là thêm mới hay cập nhật
-            boolean isUpdate = kieuDang.getId() != null;
-            kieuDangService.saveKieuDang(kieuDang);
-            String message = isUpdate ? "Cập nhật kiểu dáng thành công!" : "Thêm kiểu dáng thành công!";
-            redirectAttributes.addFlashAttribute("successMessage", message);
-        } catch (IllegalArgumentException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Lưu kiểu dáng thất bại: " + e.getMessage());
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
-        }
-
-        return "redirect:/polyshoe/kieu-dang";
-    }
-
-    @GetMapping("/kieu-dang/delete/{id}")
-    public String deleteKieuDang(@PathVariable UUID id,
-                                 RedirectAttributes redirectAttributes) {
-
-        if (!isCurrentUserAdmin()) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Bạn không có quyền thực hiện thao tác này!");
-            return "redirect:/polyshoe/kieu-dang";
-        }
-
-        try {
-            kieuDangService.deleteKieuDang(id);
-            redirectAttributes.addFlashAttribute("successMessage", "Xóa kiểu dáng thành công!");
+            dayGiayService.deleteDayGiay(id);
+            redirectAttributes.addFlashAttribute("successMessage", "Xóa dây giầy thành công!");
         } catch (IllegalStateException e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Xóa kiểu dáng thất bại: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "Xóa dây giầy thất bại: " + e.getMessage());
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errorMessage", "Có lỗi xảy ra: " + e.getMessage());
         }
 
-        return "redirect:/polyshoe/kieu-dang";
+        return "redirect:/polyshoe/day-giay";
     }
 
     // Helper methods

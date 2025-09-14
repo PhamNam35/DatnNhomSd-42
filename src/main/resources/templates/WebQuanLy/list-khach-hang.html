@@ -523,7 +523,7 @@
 
         <div class="card search-card mb-4">
             <div class="card-body">
-                <form th:action="@{/acvstore/customers}" method="get">
+                <form th:action="@{/polyshoe/customers}" method="get">
                     <div class="row align-items-end">
                         <div class="col-md-10">
                             <label class="form-label">Tìm kiếm khách hàng</label>
@@ -625,16 +625,16 @@
         <nav aria-label="Phân trang" class="mt-5">
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
-                    <a class="page-link" th:href="@{/acvstore/customers(page=${currentPage - 1}, keyword=${keyword})}">
+                    <a class="page-link" th:href="@{/polyshoe/customers(page=${currentPage - 1}, keyword=${keyword})}">
                         <i class="fa-solid fa-chevron-left me-1"></i> Trước
                     </a>
                 </li>
                 <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                     th:classappend="${i == currentPage} ? 'active'">
-                    <a class="page-link" th:href="@{/acvstore/customers(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
+                    <a class="page-link" th:href="@{/polyshoe/customers(page=${i}, keyword=${keyword})}" th:text="${i + 1}"></a>
                 </li>
                 <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
-                    <a class="page-link" th:href="@{/acvstore/customers(page=${currentPage + 1}, keyword=${keyword})}">
+                    <a class="page-link" th:href="@{/polyshoe/customers(page=${currentPage + 1}, keyword=${keyword})}">
                         Sau <i class="fa-solid fa-chevron-right ms-1"></i>
                     </a>
                 </li>
@@ -651,7 +651,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="addCustomerForm" th:action="@{/acvstore/customers/add}" th:object="${customer}" method="post" novalidate>
+                        <form id="addCustomerForm" th:action="@{/polyshoe/customers/add}" th:object="${customer}" method="post" novalidate>
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="mb-3">
@@ -782,7 +782,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form th:action="@{/acvstore/customers/edit}" method="post" novalidate>
+                            <form th:action="@{/polyshoe/customers/edit}" method="post" novalidate>
                                 <input type="hidden" name="id" th:value="${customer.id}">
 
                                 <div class="row">
@@ -1197,7 +1197,7 @@
         }
 
         // Gắn sự kiện submit cho các form chỉnh sửa
-        const editCustomerForms = document.querySelectorAll('form[action="/acvstore/customers/edit"]');
+        const editCustomerForms = document.querySelectorAll('form[action="/polyshoe/customers/edit"]');
         editCustomerForms.forEach(form => {
             form.addEventListener('submit', function (event) {
                 if (!validateEditCustomerForm(form)) {

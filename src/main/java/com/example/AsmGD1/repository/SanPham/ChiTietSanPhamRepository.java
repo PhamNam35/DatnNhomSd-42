@@ -89,7 +89,7 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
            JOIN FETCH ct.xuatXu xx
            JOIN FETCH ct.chatLieu cl
            JOIN FETCH ct.kieuDang kd
-      
+           JOIN FETCH ct.dayGiay dg
            JOIN FETCH ct.thuongHieu th
            WHERE 1=1
              AND (:queryParams IS NULL OR (
@@ -99,7 +99,7 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
                 AND (:originId IS NULL OR ct.xuatXu.id = :originId)
                 AND (:materialId IS NULL OR ct.chatLieu.id = :materialId)
                 AND (:styleId IS NULL OR ct.kieuDang.id = :styleId)
-              
+                AND (:dayGiayId IS NULL OR ct.dayGiay.id = :dayGiayId)
                 AND (:brandId IS NULL OR ct.thuongHieu.id = :brandId)
                 AND (:gender  IS NULL OR ct.gioiTinh = :gender)
                 AND (:status  IS NULL OR ct.trangThai = :status)
@@ -112,8 +112,7 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
                                             @Param("originId") UUID originId,
                                             @Param("materialId") UUID materialId,
                                             @Param("styleId") UUID styleId,
-                                            @Param("sleeveId") UUID sleeveId,
-                                            @Param("collarId") UUID collarId,
+                                            @Param("dayGiayId") UUID dayGiayId,
                                             @Param("brandId") UUID brandId,
                                             @Param("gender") String gender,
                                             @Param("status") Boolean status);
@@ -127,8 +126,7 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
                 (UUID) params.get("originId"),
                 (UUID) params.get("materialId"),
                 (UUID) params.get("styleId"),
-                (UUID) params.get("sleeveId"),
-                (UUID) params.get("collarId"),
+                (UUID) params.get("dayGiayId"),
                 (UUID) params.get("brandId"),
                 (String) params.get("gender"),
                 (Boolean) params.get("status")
@@ -142,4 +140,5 @@ public interface ChiTietSanPhamRepository extends JpaRepository<ChiTietSanPham, 
     boolean existsByKieuDangId(UUID kieuDangId);
     boolean existsByKichCoId(UUID kichCoId);
     boolean existsByChatLieuId(UUID chatLieuId);
+    boolean existsByDayGiayId(UUID dayGiayId);
 }

@@ -27,7 +27,7 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/acvstore")
+@RequestMapping("/polyshoe")
 public class ProductQRCodeController {
 
     @Autowired

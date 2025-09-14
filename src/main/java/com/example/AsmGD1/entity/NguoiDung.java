@@ -81,7 +81,12 @@ public class NguoiDung implements UserDetails { // Thêm "implements UserDetails
     @Column(name = "otp_expiry")
     private LocalDateTime otpExpiry;
 
-    // --- Các phương thức của UserDetails (BẮT BUỘC) ---
+    @Column(name = "id_qr_gioi_thieu", length = 50)
+    private String idQrGioiThieu;
+
+    @Column(name = "thoi_gian_bat_han_otp")
+    private LocalDateTime thoiGianBatHanOtp;
+
 
     /**
      * Trả về danh sách quyền hạn (roles) của người dùng.

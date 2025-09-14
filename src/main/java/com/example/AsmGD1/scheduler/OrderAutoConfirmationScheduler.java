@@ -114,8 +114,8 @@ public class OrderAutoConfirmationScheduler {
                         String emailContent = "<h2>Hoàn thành đơn hàng</h2>" +
                                 "<p>Xin chào " + nguoiDung.getHoTen() + ",</p>" +
                                 "<p>Đơn hàng <strong>" + dh.getMaDonHang() + "</strong> đã được hệ thống tự động xác nhận hoàn thành sau " + autoConfirmSeconds + " giây kể từ khi giao thành công.</p>" +
-                                "<p>Nếu có vấn đề, vui lòng liên hệ ACV Store.</p>";
-                        emailService.sendEmail(nguoiDung.getEmail(), "Hoàn thành đơn hàng - ACV Store", emailContent);
+                                "<p>Nếu có vấn đề, vui lòng liên hệ Poly Store Store.</p>";
+                        emailService.sendEmail(nguoiDung.getEmail(), "Hoàn thành đơn hàng - Poly Shoe Store", emailContent);
                     }
                 } catch (Exception e) {
                     log.warn("Gửi thông báo/email lỗi: {}", e.getMessage());

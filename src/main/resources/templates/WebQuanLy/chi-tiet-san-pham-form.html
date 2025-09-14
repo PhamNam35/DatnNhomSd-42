@@ -910,7 +910,7 @@
         </div>
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb justify-content-center">
-                <li class="breadcrumb-item"><a th:href="@{/acvstore/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/polyshoe/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
                 <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-list me-1"></i>Chi Tiết Sản Phẩm</li>
             </ol>
         </nav>
@@ -927,7 +927,7 @@
                     <i class="fas fa-filter section-icon"></i>
                     <h3 class="fs-4 fw-bold text-dark mb-0">Bộ lọc chi tiết sản phẩm</h3>
                 </div>
-                <form th:action="@{/acvstore/chi-tiet-san-pham}" method="get">
+                <form th:action="@{/polyshoe/chi-tiet-san-pham}" method="get">
                     <input type="hidden" name="productId" th:value="${selectedProductId}"/>
                     <div class="row g-4 align-items-end">
 
@@ -976,7 +976,7 @@
 
                         <!-- Removed align-top class and simplified alignment -->
                         <div class="col-md-3" style="margin-bottom: 35px">
-                            <a th:href="@{/acvstore/chi-tiet-san-pham(productId=${selectedProductId})}"
+                            <a th:href="@{/polyshoe/chi-tiet-san-pham(productId=${selectedProductId})}"
                                class="btn btn-secondary d-flex align-items-center justify-content-center" style="height: 65px">
                                 <i class="fas fa-filter me-2"></i> Xóa bộ lọc
                             </a>
@@ -1109,13 +1109,6 @@
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
-                                    <label for="editProduct">Sản phẩm</label>
-                                    <input type="text" class="form-control lockable" id="editProduct" th:value="${sanPhamDaChon?.tenSanPham}" disabled/>
-                                    <input type="hidden" id="editProductHidden" name="productId" class="lockable" th:value="${selectedProductId}"/>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="floating-label">
                                     <label for="editOrigin">Xuất xứ</label>
                                     <select class="form-select lockable" id="editOrigin" name="originId" required>
                                         <option value="">Chọn xuất xứ...</option>
@@ -1123,8 +1116,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label for="editSize">Kích cỡ</label>
@@ -1134,6 +1125,9 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label for="editColor">Màu sắc</label>
@@ -1143,8 +1137,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label for="editMaterial">Chất liệu</label>
@@ -1154,6 +1146,9 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label for="editStyle">Kiểu dáng</label>
@@ -1163,27 +1158,17 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
-                                    <label for="editSleeve">Tay áo</label>
-                                    <select class="form-select lockable" id="editSleeve" name="sleeveId" required>
-                                        <option value="">Chọn tay áo...</option>
-                                        <option th:each="sa : ${tayAos}" th:value="${sa.id}" th:text="${sa.tenTayAo}"></option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="floating-label">
-                                    <label for="editCollar">Cổ áo</label>
-                                    <select class="form-select lockable" id="editCollar" name="collarId" required>
-                                        <option value="">Chọn cổ áo...</option>
-                                        <option th:each="ca : ${coAos}" th:value="${ca.id}" th:text="${ca.tenCoAo}"></option>
+                                    <label for="editDayGiay">Dây giày</label>
+                                    <select class="form-select lockable" id="editDayGiay" name="dayGiayId" required>
+                                        <option value="">Chọn dây giày...</option>
+                                        <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>
                                     </select>
                                 </div>
                             </div>
                         </div>
+
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
@@ -1302,9 +1287,8 @@
                     </div>
                     <div class="modal-body">
                         <input type="hidden" id="bulkIds" name="ids"/>
-                        <!-- Reuse các block select giống modal edit, NHƯNG không gắn class lockable -->
-                        <!-- LƯU Ý: Modal này KHÔNG xử lý ảnh (mỗi biến thể ảnh khác nhau). -->
-                        <!-- Sản phẩm -->
+
+                        <!-- Hàng 1: Xuất xứ + Chất liệu -->
                         <div class="row g-4">
                             <div class="col-md-6">
                                 <div class="floating-label">
@@ -1325,6 +1309,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Hàng 2: Kiểu dáng + Dây giày -->
                         <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
@@ -1337,24 +1323,17 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="floating-label">
-                                    <label>Tay áo</label>
-                                    <select class="form-select" name="sleeveId" required>
-                                        <option value="">Chọn tay áo...</option>
-                                        <option th:each="sa : ${tayAos}" th:value="${sa.id}" th:text="${sa.tenTayAo}"></option>
+                                    <label>Dây giày</label>
+                                    <select class="form-select" name="dayGiayId" required>
+                                        <option value="">Chọn dây giày...</option>
+                                        <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>
                                     </select>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Hàng 3: Thương hiệu + Giới tính -->
                         <div class="row g-4 mt-1">
-                            <div class="col-md-6">
-                                <div class="floating-label">
-                                    <label>Cổ áo</label>
-                                    <select class="form-select" name="collarId" required>
-                                        <option value="">Chọn cổ áo...</option>
-                                        <option th:each="ca : ${coAos}" th:value="${ca.id}" th:text="${ca.tenCoAo}"></option>
-                                    </select>
-                                </div>
-                            </div>
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Thương hiệu</label>
@@ -1364,8 +1343,6 @@
                                     </select>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Giới tính</label>
@@ -1377,6 +1354,10 @@
                                     </select>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Hàng 4: Giá bán + Số lượng tồn -->
+                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Giá bán</label>
@@ -1386,17 +1367,19 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <div class="floating-label">
                                     <label>Số lượng tồn</label>
                                     <div class="input-group">
                                         <span class="input-group-text"><i class="fas fa-boxes"></i></span>
-                                        <input type="text" class="form-control" name="stockQuantity" required>
+                                        <input type="number" class="form-control" name="stockQuantity" min="0" required>
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <!-- Hàng 5: Trạng thái -->
+                        <div class="row g-4 mt-1">
                             <div class="col-md-6">
                                 <label class="form-label fw-semibold text-dark mb-2">Trạng thái</label>
                                 <div class="form-check form-switch d-flex align-items-center">
@@ -1405,6 +1388,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="alert alert-info mt-4">
                             <i class="fas fa-info-circle me-2"></i>
                             Thao tác này áp dụng cho <strong>tất cả biến thể được chọn</strong>. Ảnh chi tiết không chỉnh hàng loạt.
@@ -1421,8 +1405,6 @@
     </div>
 
 </div>
-</div>
-
 <div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -1677,7 +1659,7 @@
 
         function openRestrictedEdit(productDetailId) {
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/edit/' + productDetailId,
+                url: '/polyshoe/chi-tiet-san-pham/edit/' + productDetailId,
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
@@ -1689,8 +1671,7 @@
                     $('#editOrigin').val(response.originId).trigger('change');
                     $('#editMaterial').val(response.materialId).trigger('change');
                     $('#editStyle').val(response.styleId).trigger('change');
-                    $('#editSleeve').val(response.sleeveId).trigger('change');
-                    $('#editCollar').val(response.collarId).trigger('change');
+                    $('#editDayGiay').val(response.dayGiayId).trigger('change');
                     $('#editBrand').val(response.brandId).trigger('change');
                     $('#editGender').val(response.gender).trigger('change');
                     $('#editPrice').val(formatNumber(response.price || 0));
@@ -1809,7 +1790,7 @@
             fd.set('stockQuantity', parseNumber($stockInput.val()));
 
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/update-bulk',
+                url: '/polyshoe/chi-tiet-san-pham/update-bulk',
                 type: 'POST',
                 data: fd,
                 processData: false,
@@ -1820,8 +1801,8 @@
                         const pidRaw = $('#editProductHidden').val() || $('[name="productId"]').val();
                         const pid = (pidRaw && pidRaw !== 'undefined' && pidRaw !== 'null' && pidRaw.trim() !== '') ? pidRaw : '';
                         const href = pid
-                            ? `/acvstore/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
-                            : `/acvstore/chi-tiet-san-pham?success=Cập nhật thành công`;
+                            ? `/polyshoe/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
+                            : `/polyshoe/chi-tiet-san-pham?success=Cập nhật thành công`;
                         window.location.href = href;
                     }, 800);
                 },
@@ -1835,7 +1816,7 @@
         $(document).on('click', '.edit-btn', function () {
             const productDetailId = $(this).data('id');
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/edit/' + productDetailId,
+                url: '/polyshoe/chi-tiet-san-pham/edit/' + productDetailId,
                 type: 'GET',
                 dataType: 'json',
                 success: function (response) {
@@ -1846,8 +1827,7 @@
                     $('#editOrigin').val(response.originId).trigger('change');
                     $('#editMaterial').val(response.materialId).trigger('change');
                     $('#editStyle').val(response.styleId).trigger('change');
-                    $('#editSleeve').val(response.sleeveId).trigger('change');
-                    $('#editCollar').val(response.collarId).trigger('change');
+                    $('#editDayGiay').val(response.dayGiayId).trigger('change');
                     $('#editBrand').val(response.brandId).trigger('change');
                     $('#editGender').val(response.gender).trigger('change');
                     $('#editPrice').val(formatNumber(response.price || 0));
@@ -1992,7 +1972,7 @@
             formData.set('stockQuantity', parseNumber($('#editStockQuantity').val()));
 
             $.ajax({
-                url: '/acvstore/chi-tiet-san-pham/update/' + id,
+                url: '/polyshoe/chi-tiet-san-pham/update/' + id,
                 type: 'POST',
                 data: formData,
                 processData: false,
@@ -2004,8 +1984,8 @@
                         const pid = (response.productId && response.productId !== 'undefined' && response.productId !== 'null')
                             ? response.productId : '';
                         const href = pid
-                            ? `/acvstore/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
-                            : `/acvstore/chi-tiet-san-pham?success=Cập nhật thành công`;
+                            ? `/polyshoe/chi-tiet-san-pham?productId=${pid}&success=Cập nhật thành công`
+                            : `/polyshoe/chi-tiet-san-pham?success=Cập nhật thành công`;
                         window.location.href = href;
                     }, 1000);
                 },
@@ -2044,8 +2024,7 @@
                     originId: null,
                     materialId: null,
                     styleId: null,
-                    sleeveId: null,
-                    collarId: null,
+                    dayGiayId: null,
                     brandId: null,
                     gender: null,
                     price: null,
@@ -2064,7 +2043,7 @@
 
                     // Lấy dữ liệu từ API hoặc trực tiếp từ DOM
                     $.ajax({
-                        url: '/acvstore/chi-tiet-san-pham/edit/' + id,
+                        url: '/polyshoe/chi-tiet-san-pham/edit/' + id,
                         type: 'GET',
                         dataType: 'json',
                         async: false, // Đảm bảo đồng bộ để thu thập dữ liệu trước khi mở modal
@@ -2074,8 +2053,7 @@
                                 commonAttributes.originId = response.originId;
                                 commonAttributes.materialId = response.materialId;
                                 commonAttributes.styleId = response.styleId;
-                                commonAttributes.sleeveId = response.sleeveId;
-                                commonAttributes.collarId = response.collarId;
+                                commonAttributes.dayGiayId = response.dayGiayId;
                                 commonAttributes.brandId = response.brandId;
                                 commonAttributes.gender = response.gender;
                                 commonAttributes.price = response.price;
@@ -2087,8 +2065,7 @@
                                 if (commonAttributes.originId !== response.originId) commonAttributes.originId = null;
                                 if (commonAttributes.materialId !== response.materialId) commonAttributes.materialId = null;
                                 if (commonAttributes.styleId !== response.styleId) commonAttributes.styleId = null;
-                                if (commonAttributes.sleeveId !== response.sleeveId) commonAttributes.sleeveId = null;
-                                if (commonAttributes.collarId !== response.collarId) commonAttributes.collarId = null;
+                                if (commonAttributes.dayGiayId !== response.dayGiayId) commonAttributes.dayGiayId = null;
                                 if (commonAttributes.brandId !== response.brandId) commonAttributes.brandId = null;
                                 if (commonAttributes.gender !== response.gender) commonAttributes.gender = null;
                                 if (commonAttributes.price !== response.price) commonAttributes.price = null;
@@ -2108,8 +2085,7 @@
                     $('#bulkFullEditForm select[name="originId"]').val(commonAttributes.originId || '').trigger('change');
                     $('#bulkFullEditForm select[name="materialId"]').val(commonAttributes.materialId || '').trigger('change');
                     $('#bulkFullEditForm select[name="styleId"]').val(commonAttributes.styleId || '').trigger('change');
-                    $('#bulkFullEditForm select[name="sleeveId"]').val(commonAttributes.sleeveId || '').trigger('change');
-                    $('#bulkFullEditForm select[name="collarId"]').val(commonAttributes.collarId || '').trigger('change');
+                    $('#bulkFullEditForm select[name="dayGiayId"]').val(commonAttributes.dayGiayId || '').trigger('change');
                     $('#bulkFullEditForm select[name="brandId"]').val(commonAttributes.brandId || '').trigger('change');
                     $('#bulkFullEditForm select[name="gender"]').val(commonAttributes.gender || '').trigger('change');
                     $('#bulkFullEditForm input[name="price"]').val(commonAttributes.price ? formatNumber(commonAttributes.price) : '');
@@ -2192,7 +2168,7 @@
                     // Người dùng xác nhận, tiếp tục cập nhật
                     statusLabel.text(newStatus ? 'Đang Bán' : 'Ngừng Bán');
                     $.ajax({
-                        url: '/acvstore/chi-tiet-san-pham/update-status',
+                        url: '/polyshoe/chi-tiet-san-pham/update-status',
                         type: 'POST',
                         contentType: 'application/json',
                         data: JSON.stringify({

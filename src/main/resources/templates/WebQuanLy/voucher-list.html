@@ -254,7 +254,7 @@
         </div>
 
         <!-- Filter -->
-        <form method="get" th:action="@{/acvstore/phieu-giam-gia}" id="filterForm" class="row g-3 search-card">
+        <form method="get" th:action="@{/polyshoe/phieu-giam-gia}" id="filterForm" class="row g-3 search-card">
             <div class="col-md-3">
                 <label class="form-label">Tìm kiếm</label>
                 <input type="text" name="search" class="form-control" placeholder="Tìm theo mã hoặc tên..." th:value="${search}">
@@ -291,7 +291,7 @@
 
         <!-- Add -->
         <div class="d-flex justify-content-end align-items-center mb-3" th:if="${isAdmin}">
-            <a href="/acvstore/phieu-giam-gia/create" class="btn btn-primary">
+            <a href="/polyshoe/phieu-giam-gia/create" class="btn btn-primary">
                 <i class="fas fa-plus me-2"></i>Tạo Mới
             </a>
         </div>
@@ -357,7 +357,7 @@
                     <td class="text-center">
                         <div class="action-buttons">
                             <!-- View -->
-                            <a th:href="@{'/acvstore/phieu-giam-gia/view/' + ${v.id}}"
+                            <a th:href="@{'/polyshoe/phieu-giam-gia/view/' + ${v.id}}"
                                class="btn btn-sm btn-outline-success"
                                title="Xem chi tiết phiếu giảm giá">
                                 <i class="fas fa-eye"></i>
@@ -365,7 +365,7 @@
 
                             <!-- Edit (chỉ khi Sắp diễn ra) -->
                             <a th:if="${isAdmin and getStatus.apply(v) == 'Sắp diễn ra'}"
-                               th:href="@{'/acvstore/phieu-giam-gia/edit/' + ${v.id}}"
+                               th:href="@{'/polyshoe/phieu-giam-gia/edit/' + ${v.id}}"
                                class="btn btn-sm btn-outline-info"
                                title="Chỉnh sửa phiếu giảm giá">
                                 <i class="fas fa-edit"></i>
@@ -394,7 +394,7 @@
             <ul class="pagination justify-content-center">
                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/acvstore/phieu-giam-gia(page=${currentPage - 1}, size=${pageSize}, search=${search}, fromDate=${fromDate}, toDate=${toDate}, type=${type}, status=${status})}">
+                       th:href="@{/polyshoe/phieu-giam-gia(page=${currentPage - 1}, size=${pageSize}, search=${search}, fromDate=${fromDate}, toDate=${toDate}, type=${type}, status=${status})}">
                         <i class="fa-solid fa-chevron-left me-1"></i> Trước
                     </a>
                 </li>
@@ -402,12 +402,12 @@
                     th:each="i : ${#numbers.sequence(0, totalPages - 1)}"
                     th:classappend="${i == currentPage} ? 'active'">
                     <a class="page-link"
-                       th:href="@{/acvstore/phieu-giam-gia(page=${i}, size=${pageSize}, search=${search}, fromDate=${fromDate}, toDate=${toDate}, type=${type}, status=${status})}"
+                       th:href="@{/polyshoe/phieu-giam-gia(page=${i}, size=${pageSize}, search=${search}, fromDate=${fromDate}, toDate=${toDate}, type=${type}, status=${status})}"
                        th:text="${i + 1}">1</a>
                 </li>
                 <li class="page-item" th:classappend="${currentPage + 1 >= totalPages} ? 'disabled'">
                     <a class="page-link"
-                       th:href="@{/acvstore/phieu-giam-gia(page=${currentPage + 1}, size=${pageSize}, search=${search}, fromDate=${fromDate}, toDate=${toDate}, type=${type}, status=${status})}">
+                       th:href="@{/polyshoe/phieu-giam-gia(page=${currentPage + 1}, size=${pageSize}, search=${search}, fromDate=${fromDate}, toDate=${toDate}, type=${type}, status=${status})}">
                         Sau <i class="fa-solid fa-chevron-right ms-1"></i>
                     </a>
                 </li>
@@ -445,7 +445,7 @@
 <!--                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">-->
 <!--                    <i class="fas fa-times me-2"></i>Hủy-->
 <!--                </button>-->
-<!--                <form id="deleteForm" method="post" action="/acvstore/phieu-giam-gia/delete" style="display: inline;">-->
+<!--                <form id="deleteForm" method="post" action="/polyshoe/phieu-giam-gia/delete" style="display: inline;">-->
 <!--                    <input type="hidden" name="id" id="deleteIdInput">-->
 <!--                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" th:if="${_csrf}"/>-->
 <!--                    <button type="submit" class="btn btn-danger" id="confirmDelete">-->
@@ -624,7 +624,7 @@
                                 params.append('id', id);
                                 if (csrfToken) params.append(csrfParam, csrfToken);
 
-                                const res = await fetch('/acvstore/phieu-giam-gia/delete', {
+                                const res = await fetch('/polyshoe/phieu-giam-gia/delete', {
                                     method: 'POST',
                                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                                     body: params.toString(),
@@ -683,7 +683,7 @@
             const ids = collectVisibleVoucherIds();
             if (!ids.length) return;
 
-            const url = `/acvstore/phieu-giam-gia/api/summary?ids=${encodeURIComponent(ids.join(','))}&ts=${Date.now()}`;
+            const url = `/polyshoe/phieu-giam-gia/api/summary?ids=${encodeURIComponent(ids.join(','))}&ts=${Date.now()}`;
             try{
                 const res = await fetch(url, { method: 'GET', headers: { 'Accept': 'application/json' }});
                 if(!res.ok) throw new Error('HTTP ' + res.status);
