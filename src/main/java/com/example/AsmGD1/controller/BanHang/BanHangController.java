@@ -842,7 +842,58 @@
                 return ResponseEntity.badRequest().body(Map.of("success", "false", "error", "Lỗi khi lưu tab: " + e.getMessage()));
             }
         }
-    
+
+        @GetMapping("/product/{productId}/details")
+        @ResponseBody
+        public ResponseEntity<Map<String, Object>> getProductDetails(
+                @PathVariable UUID productId,
+                @RequestParam(defaultValue = "false") boolean includeOutOfStock
+        ) {
+            try {
+                List<ChiTietSanPham> variants = chiTietSanPhamService.findByProductId(productId)
+                        .stream()
+                        .filter(v -> Boolean.TRUE.equals(v.getTrangThai()))
+                        .collect(Collectors.toList());
+
+                if (variants.isEmpty()) {
+                    return ResponseEntity.badRequest().body(Map.of("error", "Không tìm thấy biến thể hợp lệ cho sản phẩm."));
+                }
+
+                SanPham sp = variants.get(0).getSanPham();
+
+                List<Map<String, Object>> variantList = variants.stream()
+                        .filter(v -> includeOutOfStock || v.getSoLuongTonKho() > 0)
+                        .map(v -> {
+                            Map<String, Object> m = new HashMap<>();
+                            m.put("productDetailId", v.getId());
+                            m.put("mauSac", v.getMauSac().getTenMau());
+                            m.put("kichCo", v.getKichCo().getTen());
+                            m.put("colorId", v.getMauSac().getId());
+                            m.put("sizeId", v.getKichCo().getId());
+                            m.put("price", v.getGia());
+                            m.put("discountedPrice", tinhGiaSauGiam(v));
+
+                            int stock = v.getSoLuongTonKho();
+                            m.put("stockQuantity", stock);
+                            m.put("availableStock", getAvailableStock(v.getId(), stock));
+
+                            m.put("hinhAnh", chiTietSanPhamService.layAnhDauTien(v));
+                            return m;
+                        })
+                        .collect(Collectors.toList());
+
+                Map<String, Object> productMap = new HashMap<>();
+                productMap.put("productId", sp.getId());
+                productMap.put("tenSanPham", sp.getTenSanPham());
+                productMap.put("anhDaiDien", chiTietSanPhamService.layAnhDauTien(variants.get(0)));
+                productMap.put("variants", variantList);
+
+                return ResponseEntity.ok(productMap);
+            } catch (Exception e) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Lỗi khi lấy chi tiết sản phẩm: " + e.getMessage()));
+            }
+        }
+
         @GetMapping("/product/{productId}/variants")
         @ResponseBody
         public ResponseEntity<Map<String, Object>> getProductVariants(@PathVariable UUID productId) {
@@ -937,7 +988,7 @@
 
             return gia;
         }
-    
+
         @GetMapping("/products")
         @ResponseBody
         public ResponseEntity<Map<String, Object>> getAllProducts(@RequestParam(required = false, defaultValue = "") String keyword) {
@@ -948,7 +999,7 @@
                 } else {
                     products = chiTietSanPhamService.findAllByTrangThaiAndKeyword(keyword);
                 }
-    
+
                 List<Map<String, Object>> productList = products.stream().map(product -> {
                     Map<String, Object> productMap = new HashMap<>();
                     productMap.put("idChiTietSanPham", product.getId());
@@ -957,9 +1008,10 @@
                     productMap.put("kichSanPham", product.getKichCo());
                     productMap.put("price", product.getGia());
                     productMap.put("availableStock", getAvailableStock(product.getId(), product.getSoLuongTonKho()));
+                    productMap.put("hinhAnh", chiTietSanPhamService.layAnhDauTien(product));
                     return productMap;
                 }).collect(Collectors.toList());
-    
+
                 return ResponseEntity.ok(Map.of("products", productList));
             } catch (Exception e) {
                 return ResponseEntity.badRequest().body(Map.of("error", "Lỗi khi lấy danh sách sản phẩm: " + e.getMessage()));

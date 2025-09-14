@@ -12,18 +12,27 @@
   <script th:src="@{/js/sidebar.js}" defer></script>
   <style>
     :root {
-      --primary-color: #153054;
-      --primary-hover: #0e2239;
-      --secondary-color: #153054;
-      --success-color: #153054;
-      --danger-color: #153054;
-      --warning-color: #153054;
+      /* ===== THEME TRẮNG–ĐEN–ĐỎ ===== */
+      --primary-color: #D32F2F;   /* ĐỎ nhấn */
+      --primary-hover: #B71C1C;   /* ĐỎ đậm */
+      --secondary-color: #111111; /* ĐEN chính */
+      --success-color: #111111;   /* dùng ĐEN cho success */
+      --danger-color: #D32F2F;    /* ĐỎ cho hành động xóa/nguy hiểm */
+      --warning-color: #E53935;   /* ĐỎ cảnh báo */
+
       --light-gray: #f8f9fa;
-      --border-color: #dee2e6;
-      --text-color: #9FD5F7;
-      --dark-blue: #153054;
-      --light-blue: #ffffff;
+      --border-color: #e5e7eb;
+      --text-color: #ffffff;
+      --dark-blue: #111111;       /* giữ tên biến cũ, giá trị = ĐEN */
+      --light-blue: #ffffff;      /* giữ tên biến cũ, giá trị = TRẮNG */
       --neutral-gray: #6B7280;
+
+      /* Đồng bộ màu Bootstrap tiện dùng các class .text-primary/.bg-primary... */
+      --bs-primary: #D32F2F;
+      --bs-danger:  #D32F2F;
+      --bs-success: #111111;
+      --bs-warning: #E53935;
+      --bs-link-color: #D32F2F;
     }
 
     body {
@@ -76,8 +85,8 @@
       position: absolute;
       width: 100%;
       height: 2px;
-      background: #00ff88;
-      box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+      background: #FF3B30;               /* Đỏ thay cho xanh */
+      box-shadow: 0 0 10px #FF3B30, 0 0 20px #FF3B30;
       animation: scan 2s linear infinite;
     }
 
@@ -117,14 +126,14 @@
     /* Stack toasts (newest on top) */
     #toastContainer{
       position: fixed; top: 1rem; right: 1rem;
-      display: flex; flex-direction: column; /* xếp dọc */
+      display: flex; flex-direction: column;
       align-items: stretch; gap: .5rem;
       z-index: 9999;
       width: min(360px, calc(100vw - 2rem));
     }
 
     .toast{
-      position: relative; /* không còn fixed từng cái */
+      position: relative;
       top: auto; right: auto; margin: 0;
       width: 100%;
       opacity: 0; transform: translateY(-6px);
@@ -170,12 +179,12 @@
     }
 
     .tab.active {
-      background: linear-gradient(135deg, #153054, #0e2239);
+      background: linear-gradient(135deg, #D32F2F, #7F0E0E); /* đỏ đậm */
       color: var(--light-blue);
       font-weight: 600;
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      border-color: #153054;
+      border-color: #B71C1C;
     }
 
     .tab .btn {
@@ -273,11 +282,11 @@
     }
 
     .modal-content .text-primary {
-      color: var(--dark-blue) !important;
+      color: var(--primary-color) !important; /* dùng đỏ */
     }
 
     .modal-content .text-success {
-      color: var(--dark-blue) !important;
+      color: var(--dark-blue) !important;     /* chữ success chuyển về đen */
     }
 
     .form-control {
@@ -291,7 +300,7 @@
 
     .form-control:focus {
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 4px rgba(21, 48, 84, 0.1);
+      box-shadow: 0 0 0 4px rgba(211, 47, 47, 0.15);
       outline: none;
       transform: translateY(-1px);
     }
@@ -321,13 +330,11 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(159, 213, 247, 0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(211, 47, 47, 0.2), transparent);
       transition: left 0.5s;
     }
 
-    .btn-primary:hover::before {
-      left: 100%;
-    }
+    .btn-primary:hover::before { left: 100%; }
 
     .btn-primary:hover {
       background: var(--primary-hover);
@@ -338,8 +345,8 @@
     }
 
     .btn-secondary {
-      background: var(--neutral-gray);
-      border-color: var(--neutral-gray);
+      background: var(--secondary-color);
+      border-color: var(--secondary-color);
       color: white;
       transition: all 0.3s ease;
       border-radius: 12px;
@@ -348,15 +355,15 @@
     }
 
     .btn-secondary:hover {
-      background: #4b5563;
-      border-color: #4b5563;
+      background: #000000;
+      border-color: #000000;
       color: white;
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
     }
 
     .btn-success {
-      background: var(--success-color);
+      background: var(--success-color);  /* đen */
       border-color: var(--success-color);
       color: var(--light-blue);
       transition: all 0.3s ease;
@@ -366,8 +373,8 @@
     }
 
     .btn-success:hover {
-      background: var(--primary-hover);
-      border-color: var(--primary-hover);
+      background: #000000;
+      border-color: #000000;
       color: var(--light-blue);
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
@@ -402,10 +409,7 @@
       margin: 0 auto;
     }
 
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
     .cart-table {
       border-radius: 16px;
@@ -428,14 +432,8 @@
       color: var(--dark-blue);
     }
 
-    .cart-table .fw-semibold {
-      color: var(--dark-blue);
-    }
-
-    .cart-table .quantity {
-      color: var(--dark-blue);
-      font-weight: bold;
-    }
+    .cart-table .fw-semibold { color: var(--dark-blue); }
+    .cart-table .quantity { color: var(--dark-blue); font-weight: bold; }
 
     .cart-table tr:hover {
       background: var(--light-gray);
@@ -448,13 +446,8 @@
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    .cart-table .text-muted {
-      color: var(--neutral-gray) !important;
-    }
-
-    .cart-table .text-success {
-      color: var(--dark-blue) !important;
-    }
+    .cart-table .text-muted { color: var(--neutral-gray) !important; }
+    .cart-table .text-success { color: var(--dark-blue) !important; } /* success → đen */
 
     .quantity-controls {
       display: flex;
@@ -477,10 +470,10 @@
       margin: 0;
     }
     .quantity-controls input[type="number"]{
-      -moz-appearance: textfield;     /* Firefox */
+      -moz-appearance: textfield;
       text-align: center;
-      padding-right: .25rem;           /* đỡ đụng vào mép */
-      width: 7ch;                      /* đủ 3–4 chữ số */
+      padding-right: .25rem;
+      width: 7ch;
       min-width: 70px;
     }
 
@@ -531,16 +524,12 @@
     .summary-card::before {
       content: '';
       position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
+      top: 0; left: 0; right: 0;
       height: 4px;
       background: linear-gradient(90deg, var(--primary-color), var(--success-color), var(--warning-color));
     }
 
-    .summary-card .fw-medium {
-      color: var(--dark-blue);
-    }
+    .summary-card .fw-medium { color: var(--dark-blue); }
 
     .summary-card #subTotal,
     .summary-card #shippingFeeDisplay,
@@ -549,13 +538,8 @@
       color: var(--dark-blue);
     }
 
-    .summary-card #total {
-      color: var(--dark-blue);
-    }
-
-    .summary-card .bg-light #total {
-      color: var(--dark-blue);
-    }
+    .summary-card #total { color: var(--primary-color); }             /* tổng = ĐỎ */
+    .summary-card .bg-light #total { color: var(--primary-color); }
 
     .section-header {
       display: flex;
@@ -566,14 +550,12 @@
       border-bottom: 2px solid var(--border-color);
     }
 
-    .section-header h3 {
-      color: var(--dark-blue);
-    }
+    .section-header h3 { color: var(--dark-blue); }
 
     .section-icon {
       width: 24px;
       height: 24px;
-      color: var(--primary-color);
+      color: var(--primary-color);       /* icon đỏ */
     }
 
     .customer-info-grid {
@@ -589,9 +571,7 @@
       gap: 1.5rem;
     }
 
-    .floating-label {
-      position: relative;
-    }
+    .floating-label { position: relative; }
 
     .floating-label input,
     .floating-label select {
@@ -629,37 +609,16 @@
     }
 
     @media (max-width: 768px) {
-      .content {
-        padding: 1rem;
-      }
-
-      .cart-table th,
-      .cart-table td {
-        font-size: 0.875rem;
-        padding: 1rem 0.5rem;
-      }
-
-      .cart-table img {
-        max-width: 40px;
-        max-height: 40px;
-      }
-
-      .quantity-controls {
-        flex-direction: column;
-        gap: 0.25rem;
-      }
-
-      .customer-info-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
+      .content { padding: 1rem; }
+      .cart-table th, .cart-table td { font-size: 0.875rem; padding: 1rem 0.5rem; }
+      .cart-table img { max-width: 40px; max-height: 40px; }
+      .quantity-controls { flex-direction: column; gap: 0.25rem; }
+      .customer-info-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
     }
 
     .header-gradient {
-      background: linear-gradient(135deg, #153054, #0e2239);
+      background: linear-gradient(135deg, #D32F2F, #111111); /* đỏ → đen */
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -671,6 +630,7 @@
       gap: 1rem;
       margin-bottom: 2rem;
     }
+
     /* Overlay trung tâm cho .modal custom */
     .modal {
       position: fixed; inset: 0; display: none;
@@ -688,22 +648,218 @@
       opacity: .85;
       pointer-events: none;
     }
+
     /* Tinh chỉnh nhỏ cho nút-giả-select */
     #voucherBtn.form-select{
       cursor: pointer;
       display: flex;
-      padding-right: 2.25rem; /* dư chút cho icon mũi tên */
+      padding-right: 2.25rem;
     }
     #voucherBtn .fa-chevron-down{ pointer-events: none; }
+
+    /* (đổi sang đỏ) */
     .btn-primary {
-      background-color: #143C6A;  /* chỉnh theo màu bạn dùng */
-      border-color: #143C6A;
+      background-color: var(--primary-color);
+      border-color: var(--primary-color);
     }
     .btn-primary:hover,
     .btn-primary:focus {
-      background-color: #0F3158;
-      border-color: #0F3158;
+      background-color: var(--primary-hover);
+      border-color: var(--primary-hover);
     }
+
+    .layout-grid{
+      display: grid;
+      grid-template-columns: 1.8fr 1fr;
+      gap: 1.25rem;
+      align-items: start;
+    }
+    @media (max-width: 1200px){
+      .layout-grid{ grid-template-columns: 1.6fr 1fr; }
+    }
+    @media (max-width: 992px){
+      .layout-grid{ grid-template-columns: 1fr; }
+    }
+
+    /* Panel phải luôn hiện trong tầm mắt */
+    .sticky-summary{
+      position: sticky;
+      top: 84px;
+      z-index: 1;
+    }
+    .sticky-summary .summary-card{
+      max-height: calc(100vh - 140px);
+      overflow: auto;
+    }
+
+    /* Nhẹ nhàng hơn ở mobile */
+    @media (max-width: 576px){
+      .action-buttons{ grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Nhóm thẻ tiện ích nhỏ gọn hơn trong 2 cột */
+    .panel-card{
+      border-radius: 16px;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 32px rgba(0,0,0,.06);
+    }
+    .panel-card .section-header{ margin-bottom: 1rem; }
+
+    /* --- SUMMARY: bố cục gọn gàng, dễ đọc --- */
+    .summary-card { padding: 1.25rem 1.25rem 1rem; }
+
+    .summary-list .summary-row{
+      display:flex; align-items:center; justify-content:space-between;
+      gap: .75rem; padding: .5rem 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+    .summary-list .summary-row:last-child{ border-bottom: none; }
+
+    .summary-list .label{ font-weight: 600; color: var(--dark-blue); }
+    .summary-list .value{ font-weight: 700; }
+
+    .summary-total{
+      margin-top: .75rem; border: 2px solid var(--border-color);
+      border-radius: 14px; padding: .75rem .9rem; background: #f9fafb;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .summary-total .label{ font-weight: 800; font-size: 1.05rem; }
+    .summary-total .value{ font-weight: 900; font-size: 1.35rem; color: var(--primary-color); } /* đỏ */
+
+    .summary-change{
+      display:flex; align-items:center; justify-content:space-between;
+      padding-top: .5rem; border-top: 1px dashed var(--border-color);
+      margin-top: .5rem;
+    }
+
+    /* khiến panel phải luôn nằm trong tầm mắt & không quá cao */
+    .sticky-summary{ position: sticky; top: 84px; }
+    .sticky-summary .summary-card{ max-height: calc(100vh - 140px); overflow: auto; }
+
+    /* mobile thu nhỏ cỡ chữ một chút */
+    @media (max-width: 576px){
+      .summary-total .value{ font-size: 1.2rem; }
+    }
+
+    /* Footer tổng kết đơn hàng cố định đáy */
+    .checkout-footer{
+      position: fixed; bottom: 0; left: 256px; right: 0;
+      background: rgba(255,255,255,.96);
+      backdrop-filter: blur(10px);
+      border-top: 1px solid var(--border-color);
+      box-shadow: 0 -6px 24px rgba(21,48,84,.08);
+      z-index: 1030;
+      padding: .75rem 1rem;
+    }
+    @media (max-width: 992px){
+      .checkout-footer{ left: 0; }
+    }
+
+    /* Tóm tắt inline gọn tại footer */
+    .summary-inline > div{
+      display: inline-flex; align-items: center;
+      gap: .35rem; padding: .25rem .5rem;
+      background: #f8fafc; border: 1px dashed var(--border-color);
+      border-radius: 10px; font-weight: 600;
+    }
+
+    /* Chừa không gian phía dưới để nội dung không bị footer che khuất */
+    #mainContent{ padding-bottom: 110px; }
+    @media (max-width: 576px){ #mainContent{ padding-bottom: 140px; } }
+
+    /* Đừng để bảng tự chia đều gây bó cột tên */
+    .cart-table{ table-layout:auto; }
+
+    /* Tên sản phẩm phải được rộng + xuống dòng đẹp */
+    .cart-table th:nth-child(2),
+    .cart-table td:nth-child(2){
+      min-width: 260px;
+      width: 28%;
+      white-space: normal;
+      word-break: break-word;
+    }
+
+    /* Các cột số liệu giữ gọn, không bành ra */
+    .cart-table th:nth-child(1),
+    .cart-table td:nth-child(1){ width: 92px; white-space: nowrap; }
+    .cart-table th:nth-child(3),
+    .cart-table td:nth-child(3),
+    .cart-table th:nth-child(4),
+    .cart-table td:nth-child(4){ white-space: nowrap; }
+    .cart-table th:nth-child(5),
+    .cart-table td:nth-child(5),
+    .cart-table th:nth-child(7),
+    .cart-table td:nth-child(7){ white-space: nowrap; }
+
+    /* Luôn cho phép cuộn ngang nếu thiếu chỗ */
+    .table-responsive{ overflow-x:auto; }
+
+    /* Mobile: đổi sang dạng “thẻ” gọn gàng, tránh vỡ layout */
+    @media (max-width: 992px){
+      .cart-table{ display:block; }
+      .cart-table thead{ display:none; }
+      .cart-table tbody tr{
+        display:grid;
+        grid-template-columns: 80px 1fr;
+        gap: 12px;
+        border:1px solid var(--border-color);
+        border-radius:12px;
+        padding:12px;
+        margin-bottom:12px;
+      }
+      .cart-table td{ border:0; padding:.25rem .5rem; }
+      .cart-table td:nth-child(6){ grid-column: 1 / -1; }
+      .cart-table td:nth-child(7){ justify-self:end; }
+    }
+
+    /* FIX input SĐT bị bó hẹp + label chồng chữ */
+    .customer-info-grid{
+      display: flex;
+      gap: 12px;
+      align-items: end;
+    }
+    .customer-info-grid .floating-label{
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+    .customer-info-grid .form-control{ width: 100%; }
+
+    /* Nút "Chọn khách hàng" không chiếm quá rộng */
+    .customer-info-grid > .btn{
+      flex: 0 0 auto;
+      white-space: nowrap;
+      max-width: 220px;
+    }
+
+    @media (max-width: 1400px){
+      .customer-info-grid{
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .customer-info-grid > .btn{
+        width: 100%;
+        max-width: none;
+      }
+    }
+
+    .floating-label label{
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+    }
+
+    /* Thanh nhấn dưới tiêu đề đổi sang đỏ-đen */
+    .text-center > div[aria-hidden="true"]{
+      background: linear-gradient(90deg, var(--secondary-color), var(--primary-color)) !important;
+    }
+
+    /* Toast & nhãn màu theo theme */
+    .bg-primary{ background-color: var(--primary-color) !important; }
+    .text-primary{ color: var(--primary-color) !important; }
+    .bg-success{ background-color: var(--success-color) !important; }
+    .bg-danger{ background-color: var(--danger-color) !important; }
+
   </style>
 </head>
 <body>
@@ -715,20 +871,17 @@
   </nav>
 
   <div class="content mt-16" id="mainContent">
+    <!-- Tiêu đề -->
     <div class="text-center mb-2 mt-3">
       <p class="fs-2 fw-bold header-gradient mb-1">Bán hàng tại quầy</p>
-      <!-- Thanh gạch chân -->
       <div aria-hidden="true"
-           style="
-         width:220px; height:4px; margin:6px auto 0;
-         border-radius:999px;
-         background:linear-gradient(90deg, var(--secondary, #9FD5F7), var(--primary, #153054));
-         box-shadow:0 6px 16px rgba(21,48,84,.18);
-       ">
+           style="width:220px;height:4px;margin:6px auto 0;border-radius:999px;
+              background:linear-gradient(90deg, var(--secondary, #9FD5F7), var(--primary, #153054));
+              box-shadow:0 6px 16px rgba(21,48,84,.18);">
       </div>
     </div>
 
-
+    <!-- Tabs đơn hàng -->
     <div class="glass-card p-4 mb-4">
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
         <div id="orderTabs" class="d-flex flex-wrap"></div>
@@ -739,300 +892,218 @@
       </div>
     </div>
 
-    <div class="glass-card p-4">
-      <div class="action-buttons">
-        <button onclick="showQrScanner()" class="btn btn-success d-flex align-items-center justify-content-center gap-3">
-          <i class="fas fa-qrcode fs-5"></i>
-          <span class="fw-semibold">Quét QR sản phẩm</span>
-        </button>
-        <button onclick="showProductModal()" class="btn btn-primary d-flex align-items-center justify-content-center gap-3">
-          <i class="fas fa-box fs-5"></i>
-          <span class="fw-semibold">Chọn sản phẩm</span>
-        </button>
-      </div>
+    <!-- 2 cột: trái (tác vụ/địa chỉ/giỏ) — phải (khách hàng/cấu hình) -->
+    <div class="row g-4">
+      <!-- Cột trái -->
+      <div class="col-lg-8 d-flex flex-column gap-4">
 
-      <div class="mb-4">
-        <div class="section-header">
-          <i class="fas fa-shopping-cart section-icon"></i>
-          <h3 class="fs-4 fw-bold mb-0">Giỏ hàng</h3>
-        </div>
-
-        <div class="table-responsive">
-          <table class="table cart-table">
-            <thead>
-            <tr>
-              <th>Hình ảnh</th>
-              <th>Tên sản phẩm</th>
-              <th>Màu sắc</th>
-              <th>Kích cỡ</th>
-              <th>Giá</th>
-              <th>Số lượng</th>
-              <th>Thành tiền</th>
-              <th>Hành động</th>
-            </tr>
-            </thead>
-            <tbody id="cartItems"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <div class="section-header">
-          <i class="fas fa-user section-icon"></i>
-          <h3 class="fs-4 fw-bold mb-0">Thông tin khách hàng</h3>
-        </div>
-
-        <div class="customer-info-grid mb-3">
-          <div class="floating-label">
-            <label for="customerPhone">Số điện thoại</label>
-            <input
-                    type="tel"
-                    id="customerPhone"
-                    class="form-control"
-                    inputmode="tel"
-                    autocomplete="tel"
-                    placeholder="Nhập số điện thoại khách hàng"
-                    pattern="^(?:\+?84|0)(?:[35789]\d{8}|2\d{9})$"
-                    title="SĐT VN: di động 10 số (03/05/07/08/09) hoặc cố định 11 số (02...), chấp nhận +84"
-            />
-          </div>
-          <button onclick="showCustomerModal()" class="btn btn-primary d-flex align-items-center gap-2">
-            <i class="fas fa-users"></i>
-            Chọn khách hàng
-          </button>
-        </div>
-
-        <div class="form-grid">
-          <div class="floating-label">
-            <label for="customerName">Tên khách hàng</label>
-            <input type="text" id="customerName" class="form-control" placeholder="Tên khách hàng" disabled>
-          </div>
-          <div class="floating-label">
-            <label for="customerEmail">Email</label>
-            <input type="email" id="customerEmail" class="form-control" placeholder="Email khách hàng" disabled>
-          </div>
-        </div>
-      </div>
-
-      <div id="addressSection" class="mb-4 d-none">
-        <div class="section-header">
-          <i class="fas fa-map-marker-alt section-icon"></i>
-          <h3 class="fs-4 fw-bold mb-0">Địa chỉ giao hàng</h3>
-        </div>
-
-        <div class="mb-3">
-          <div class="floating-label mb-3">
-            <label for="addressSelect">Chọn địa chỉ</label>
-            <select id="addressSelect" class="form-select">
-              <option value="">Chọn địa chỉ</option>
-            </select>
-          </div>
-
-          <button onclick="showAddAddressForm()" class="btn btn-secondary d-flex align-items-center gap-2">
-            <i class="fas fa-plus"></i>
-            Thêm địa chỉ mới
-          </button>
-
-          <div id="addAddressForm" class="d-none bg-light p-4 rounded border-2 border-dashed mt-3">
-            <h4 class="fw-semibold mb-3">Thêm địa chỉ mới</h4>
-            <div class="form-grid">
-              <div class="floating-label">
-                <label for="provinceSelect">Tỉnh/Thành phố</label>
-                <select id="provinceSelect" class="form-select" onchange="fetchDistricts(this.value)">
-                  <option value="">Chọn tỉnh/thành phố</option>
-                </select>
-              </div>
-              <div class="floating-label">
-                <label for="districtSelect">Quận/Huyện</label>
-                <select id="districtSelect" class="form-select" onchange="fetchWards(this.value)">
-                  <option value="">Chọn quận/huyện</option>
-                </select>
-              </div>
-              <div class="floating-label">
-                <label for="wardSelect">Phường/Xã</label>
-                <select id="wardSelect" class="form-select">
-                  <option value="">Chọn phường/xã</option>
-                </select>
-              </div>
-              <div class="floating-label">
-                <label for="addressLine">Địa chỉ cụ thể</label>
-                <input
-                        type="text"
-                        id="addressLine"
-                        class="form-control"
-                        placeholder="Số nhà, đường… (vd: 12/5 Ngõ 8 Phố Huế)"
-                        required
-                        maxlength="120"
-                        autocomplete="address-line1">
-              </div>
-            </div>
-            <div class="d-flex gap-3 mt-3">
-              <button onclick="addNewAddress()" class="btn btn-success d-flex align-items-center gap-2">
-                <i class="fas fa-save"></i>
-                Lưu địa chỉ
-              </button>
-              <button onclick="document.getElementById('addAddressForm').classList.add('d-none')" class="btn btn-secondary">
-                Hủy
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="mb-4">
-        <div class="section-header">
-          <i class="fas fa-cog section-icon"></i>
-          <h3 class="fs-4 fw-bold mb-0">Cấu hình đơn hàng</h3>
-        </div>
-
-        <div class="form-grid">
-          <div class="floating-label">
-            <label for="saleMethod">Phương thức bán hàng</label>
-            <select id="saleMethod" onchange="toggleAddressSection()" class="form-select">
-              <option value="Tại quầy">🏪 Tại quầy</option>
-              <option value="Giao hàng">🚚 Giao hàng</option>
-            </select>
-          </div>
-
-          <div class="floating-label d-none" id="shippingFeeContainer">
-            <label for="shippingFee">Phí vận chuyển</label>
-            <input type="text" id="shippingFee" value="0" class="form-control" inputmode="numeric" disabled>
-            <small id="shippingCalcStatus" class="text-muted d-none" hidden>Đang tính phí GHN…</small>
-          </div>
-
-
-          <!-- GHN: Dịch vụ vận chuyển -->
-          <div class="floating-label d-none" id="shippingMethodContainer" hidden>
-            <label for="shippingMethod">Dịch vụ GHN</label>
-            <select id="shippingMethod" class="form-select"></select>
-          </div>
-
-
-          <!-- Phiếu giảm giá (nút mở modal) -->
-          <!-- Nút mở modal chọn phiếu (kích thước như <select>) -->
-          <!-- Nút chọn phiếu (giống Chọn khách hàng) -->
-          <div class="mb-3" id="voucherGroup">
-            <button type="button"
-                    class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-3 rounded-3 shadow-sm"
-                    onclick="openVoucherModal()">
-              <i class="fas fa-ticket-alt fs-5"></i>
-              <span class="fw-semibold">Chọn phiếu</span>
+        <!-- Tác vụ nhanh -->
+        <div class="glass-card p-4">
+          <div class="action-buttons">
+            <button onclick="showQrScanner()" class="btn btn-success d-flex align-items-center justify-content-center gap-3">
+              <i class="fas fa-qrcode fs-5"></i>
+              <span class="fw-semibold">Quét QR sản phẩm</span>
+            </button>
+            <button onclick="showProductModal()" class="btn btn-primary d-flex align-items-center justify-content-center gap-3">
+              <i class="fas fa-box fs-5"></i>
+              <span class="fw-semibold">Chọn sản phẩm</span>
             </button>
           </div>
+        </div>
 
-
-
-
-
-
-          <div id="voucherModal" class="modal">
-            <div class="modal-content" style="max-width: 720px;">
-              <div class="d-flex justify-content-between align-items-center mb-3">
-                <div class="d-flex align-items-center gap-3">
-                  <i class="fas fa-ticket-alt fs-3 text-primary"></i>
-                  <h3 class="fs-3 fw-bold">Chọn mã giảm giá</h3>
-                </div>
-                <button onclick="closeVoucherModal()" class="btn-close"></button>
-              </div>
-
-              <!-- Freeship -->
-              <div class="mb-4">
-                <h4 class="fs-5 fw-semibold mb-3 d-flex align-items-center gap-2">
-                  <i class="fas fa-truck text-success"></i> Freeship (SHIPPING)
-                </h4>
-                <div id="shipVoucherList" class="d-grid gap-2"></div>
-              </div>
-
-              <!-- Order -->
-              <div class="mb-4">
-                <h4 class="fs-5 fw-semibold mb-3 d-flex align-items-center gap-2">
-                  <i class="fas fa-receipt text-primary"></i> Mã giảm giá đơn hàng (ORDER)
-                </h4>
-                <div id="orderVoucherList" class="d-grid gap-2"></div>
-              </div>
-
-              <div class="d-flex justify-content-between gap-3">
-                <button class="btn btn-outline-secondary" onclick="clearVoucherSelections()">Bỏ chọn tất cả</button>
-                <div class="d-flex gap-3">
-                  <button class="btn btn-secondary" onclick="closeVoucherModal()">Hủy</button>
-                  <button class="btn btn-success" onclick="applySelectedVouchers()">
-                    <i class="fas fa-check-circle me-2"></i>Áp dụng
-                  </button>
-                </div>
-              </div>
-            </div>
+        <!-- Giỏ hàng -->
+        <div class="glass-card p-4">
+          <div class="section-header">
+            <i class="fas fa-shopping-cart section-icon"></i>
+            <h3 class="fs-4 fw-bold mb-0">Giỏ hàng</h3>
           </div>
-
-          <div class="floating-label">
-            <label for="paymentMethod">Phương thức thanh toán</label>
-            <select id="paymentMethod" onchange="toggleCashInput()" class="form-select">
-              <option value="550E8400-E29B-41D4-A716-446655440017">💵 Tiền mặt</option>
-              <option value="550E8400-E29B-41D4-A716-446655440018">🏦 Chuyển khoản</option>
-            </select>
-          </div>
-
-          <div id="cashInput" class="d-none floating-label">
-            <label for="cashAmount">Số tiền khách đưa</label>
-            <input type="text" id="cashAmount" value="0" class="form-control" inputmode="numeric">
+          <div class="table-responsive">
+            <table class="table cart-table">
+              <colgroup>
+                <col style="width:92px">          <!-- Hình -->
+                <col style="width:28%">           <!-- Tên sản phẩm (rộng) -->
+                <col style="width:110px">         <!-- Màu -->
+                <col style="width:90px">          <!-- Kích cỡ -->
+                <col style="width:130px">         <!-- Giá -->
+                <col style="width:180px">         <!-- Số lượng -->
+                <col style="width:140px">         <!-- Thành tiền -->
+                <col style="width:110px">         <!-- Hành động -->
+              </colgroup>
+              <thead>
+              <tr>
+                <th>Hình ảnh</th>
+                <th>Tên sản phẩm</th>
+                <th>Màu sắc</th>
+                <th>Kích cỡ</th>
+                <th>Giá</th>
+                <th>Số lượng</th>
+                <th>Thành tiền</th>
+                <th>Hành động</th>
+              </tr>
+              </thead>
+              <tbody id="cartItems"></tbody>
+            </table>
           </div>
         </div>
       </div>
 
-      <div class="summary-card mb-4">
-        <div class="section-header">
-          <i class="fas fa-calculator section-icon"></i>
-          <h3 class="fs-4 fw-bold mb-0">Tổng kết đơn hàng</h3>
-        </div>
+      <!-- Cột phải -->
+      <div class="col-lg-4">
+        <div class="sticky-summary d-flex flex-column gap-4">
 
-        <div class="row">
-          <div class="col-md-6">
-
-            <!-- Tạm tính (subtotal) -->
-            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-              <span class="fw-medium">Tạm tính:</span>
-              <span id="subTotal" class="fw-bold fs-5">0 VNĐ</span>
+          <!-- Thông tin khách hàng (ĐÃ CHUYỂN SANG PHẢI) -->
+          <div class="glass-card p-4">
+            <div class="section-header">
+              <i class="fas fa-user section-icon"></i>
+              <h3 class="fs-4 fw-bold mb-0">Thông tin khách hàng</h3>
             </div>
 
-            <!-- Phí vận chuyển GỐC -->
-            <div id="shippingBaseRow" class="d-flex justify-content-between align-items-center py-2 border-bottom d-none">
-              <span class="fw-medium">Phí vận chuyển (gốc):</span>
-              <span id="shippingFeeBaseDisplay" class="fw-bold fs-5">0 VNĐ</span>
+            <div class="customer-info-grid mb-3">
+              <div class="floating-label">
+                <label for="customerPhone">Số điện thoại</label>
+                <input type="tel" id="customerPhone" class="form-control" inputmode="tel" autocomplete="tel"
+                       placeholder="Nhập số điện thoại khách hàng"
+                       pattern="^(?:\+?84|0)(?:[35789]\d{8}|2\d{9})$"
+                       title="SĐT VN: di động 10 số (03/05/07/08/09) hoặc cố định 11 số (02...), chấp nhận +84"/>
+              </div>
+              <button onclick="showCustomerModal()" class="btn btn-primary d-flex align-items-center gap-2">
+                <i class="fas fa-users"></i>
+                Chọn khách hàng
+              </button>
             </div>
 
-            <!-- Giảm phí vận chuyển (Freeship) -->
-            <div id="shippingDiscountRow" class="d-flex justify-content-between align-items-center py-2 border-bottom d-none">
-              <span class="fw-medium">Giảm phí vận chuyển:</span>
-              <span id="shippingDiscountDisplay" class="fw-bold fs-6 text-success">- 0 VNĐ</span>
+            <div class="form-grid">
+              <div class="floating-label">
+                <label for="customerName">Tên khách hàng</label>
+                <input type="text" id="customerName" class="form-control" placeholder="Tên khách hàng" disabled>
+              </div>
+              <div class="floating-label">
+                <label for="customerEmail">Email</label>
+                <input type="email" id="customerEmail" class="form-control" placeholder="Email khách hàng" disabled>
+              </div>
             </div>
 
-            <!-- Giảm giá đơn (Order) -->
-            <div id="orderDiscountRow" class="d-flex justify-content-between align-items-center py-2 border-bottom d-none">
-              <span class="fw-medium">Giảm giá đơn:</span>
-              <span id="orderDiscountDisplay" class="fw-bold fs-6 text-success">- 0 VNĐ</span>
-            </div>
+            <!-- Địa chỉ giao hàng -->
+            <div id="addressSection" class="glass-card p-4 d-none mt-3">
+              <div class="section-header">
+                <i class="fas fa-map-marker-alt section-icon"></i>
+                <h3 class="fs-4 fw-bold mb-0">Địa chỉ giao hàng</h3>
+              </div>
 
+              <div class="mb-3">
+                <div class="floating-label mb-3">
+                  <label for="addressSelect">Chọn địa chỉ</label>
+                  <select id="addressSelect" class="form-select">
+                    <option value="">Chọn địa chỉ</option>
+                  </select>
+                </div>
+
+                <button onclick="showAddAddressForm()" class="btn btn-secondary d-flex align-items-center gap-2">
+                  <i class="fas fa-plus"></i>
+                  Thêm địa chỉ mới
+                </button>
+
+                <div id="addAddressForm" class="d-none bg-light p-4 rounded border-2 border-dashed mt-3">
+                  <h4 class="fw-semibold mb-3">Thêm địa chỉ mới</h4>
+                  <div class="form-grid">
+                    <div class="floating-label">
+                      <label for="provinceSelect">Tỉnh/Thành phố</label>
+                      <select id="provinceSelect" class="form-select" onchange="fetchDistricts(this.value)">
+                        <option value="">Chọn tỉnh/thành phố</option>
+                      </select>
+                    </div>
+                    <div class="floating-label">
+                      <label for="districtSelect">Quận/Huyện</label>
+                      <select id="districtSelect" class="form-select" onchange="fetchWards(this.value)">
+                        <option value="">Chọn quận/huyện</option>
+                      </select>
+                    </div>
+                    <div class="floating-label">
+                      <label for="wardSelect">Phường/Xã</label>
+                      <select id="wardSelect" class="form-select">
+                        <option value="">Chọn phường/xã</option>
+                      </select>
+                    </div>
+                    <div class="floating-label">
+                      <label for="addressLine">Địa chỉ cụ thể</label>
+                      <input type="text" id="addressLine" class="form-control"
+                             placeholder="Số nhà, đường… (vd: 12/5 Ngõ 8 Phố Huế)" required maxlength="120"
+                             autocomplete="address-line1">
+                    </div>
+                  </div>
+                  <div class="d-flex gap-3 mt-3">
+                    <button onclick="addNewAddress()" class="btn btn-success d-flex align-items-center gap-2">
+                      <i class="fas fa-save"></i>
+                      Lưu địa chỉ
+                    </button>
+                    <button onclick="document.getElementById('addAddressForm').classList.add('d-none')" class="btn btn-secondary">
+                      Hủy
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <div class="col-md-6">
-            <div class="d-flex justify-content-between align-items-center py-3 bg-light rounded px-3 mb-3">
-              <span class="fw-bold fs-4">Tổng tiền:</span>
-              <span id="total" class="fw-bold fs-3 text-success">0 VNĐ</span>
+          <!-- Cấu hình đơn hàng -->
+          <div class="glass-card p-4">
+            <div class="section-header">
+              <i class="fas fa-cog section-icon"></i>
+              <h3 class="fs-4 fw-bold mb-0">Cấu hình đơn hàng</h3>
             </div>
-            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
-              <span class="fw-medium">Tiền trả lại:</span>
-              <span id="changeAmount" class="fw-bold fs-5">0 VNĐ</span>
+
+            <div class="form-grid">
+              <div class="floating-label">
+                <label for="saleMethod">Phương thức bán hàng</label>
+                <select id="saleMethod" onchange="toggleAddressSection()" class="form-select">
+                  <option value="Tại quầy">🏪 Tại quầy</option>
+                  <option value="Giao hàng">🚚 Giao hàng</option>
+                </select>
+              </div>
+
+              <div class="floating-label d-none" id="shippingFeeContainer">
+                <label for="shippingFee">Phí vận chuyển</label>
+                <input type="text" id="shippingFee" value="0" class="form-control" inputmode="numeric" disabled>
+                <small id="shippingCalcStatus" class="text-muted d-none" hidden>Đang tính phí GHN…</small>
+              </div>
+
+              <!-- GHN: Dịch vụ vận chuyển -->
+              <div class="floating-label d-none" id="shippingMethodContainer" hidden>
+                <label for="shippingMethod">Dịch vụ GHN</label>
+                <select id="shippingMethod" class="form-select"></select>
+              </div>
+
+              <!-- Phiếu giảm giá -->
+              <div class="mb-3" id="voucherGroup">
+                <button type="button"
+                        class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-3 rounded-3 shadow-sm"
+                        onclick="openVoucherModal()">
+                  <i class="fas fa-ticket-alt fs-5"></i>
+                  <span class="fw-semibold">Chọn phiếu</span>
+                </button>
+              </div>
+
+
+
+              <div class="floating-label">
+                <label for="paymentMethod">Phương thức thanh toán</label>
+                <select id="paymentMethod" onchange="toggleCashInput()" class="form-select">
+                  <option value="550E8400-E29B-41D4-A716-446655440017">💵 Tiền mặt</option>
+                  <option value="550E8400-E29B-41D4-A716-446655440018">🏦 Chuyển khoản</option>
+                </select>
+              </div>
+
+              <div id="cashInput" class="d-none floating-label">
+                <label for="cashAmount">Số tiền khách đưa</label>
+                <input type="text" id="cashAmount" value="0" class="form-control" inputmode="numeric">
+              </div>
             </div>
           </div>
         </div>
       </div>
-
-
-      <button onclick="createOrder()" class="btn btn-success w-100 py-3 fs-4 fw-bold d-flex align-items-center justify-content-center gap-3">
-        <i class="fas fa-check-circle fs-3"></i>
-        Tạo đơn hàng
-      </button>
     </div>
 
+    <!-- Modal QR -->
     <div id="qrScannerModal">
       <div class="scanner-container">
         <div id="qr-reader"></div>
@@ -1046,6 +1117,7 @@
       </div>
     </div>
 
+    <!-- Modal khách hàng -->
     <div id="customerModal" class="modal">
       <div class="modal-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
@@ -1068,7 +1140,8 @@
             <i class="fas fa-user text-primary"></i>
             Khách lẻ
           </h4>
-          <div id="retailCustomer" class="p-3 border-2 border-dashed rounded cursor-pointer hover-bg-light" onclick="selectCustomerFromModal('0999999999', 'Khách lẻ', '')">
+          <div id="retailCustomer" class="p-3 border-2 border-dashed rounded cursor-pointer hover-bg-light"
+               onclick="selectCustomerFromModal('0999999999', 'Khách lẻ', '')">
             <div class="d-flex align-items-center gap-3">
               <i class="fas fa-user-circle fs-3 text-muted"></i>
               <span class="fw-medium">Khách lẻ</span>
@@ -1088,6 +1161,7 @@
       </div>
     </div>
 
+    <!-- Modal sản phẩm -->
     <div id="productModal" class="modal">
       <div class="modal-content">
         <div class="d-flex align-items-center gap-3 mb-4">
@@ -1108,6 +1182,7 @@
       </div>
     </div>
 
+    <!-- Modal biến thể -->
     <div id="variantModal" class="modal">
       <div class="modal-content">
         <div class="d-flex align-items-center gap-3 mb-4">
@@ -1159,6 +1234,65 @@
           </button>
           <button onclick="document.getElementById('variantModal').style.display='none'" class="btn btn-secondary">
             Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal voucher -->
+    <div id="voucherModal" class="modal">
+      <div class="modal-content" style="max-width: 720px;">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="d-flex align-items-center gap-3">
+            <i class="fas fa-ticket-alt fs-3 text-primary"></i>
+            <h3 class="fs-3 fw-bold">Chọn mã giảm giá</h3>
+          </div>
+          <button onclick="closeVoucherModal()" class="btn-close"></button>
+        </div>
+
+        <!-- Order -->
+        <div class="mb-4">
+          <div id="orderVoucherList" class="d-grid gap-2"></div>
+        </div>
+
+        <div class="d-flex justify-content-between gap-3">
+          <button class="btn btn-outline-secondary" onclick="clearVoucherSelections()">Bỏ chọn tất cả</button>
+          <div class="d-flex gap-3">
+            <button class="btn btn-secondary" onclick="closeVoucherModal()">Hủy</button>
+            <button class="btn btn-success" onclick="applySelectedVouchers()">
+              <i class="fas fa-check-circle me-2"></i>Áp dụng
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER TỔNG KẾT (CỐ ĐỊNH ĐÁY) -->
+  <div id="checkoutFooter" class="checkout-footer">
+    <div class="container-fluid">
+      <div class="row align-items-center g-3">
+        <div class="col-12 col-md">
+          <div class="d-flex gap-2 flex-wrap summary-inline">
+            <div>Tạm tính: <strong id="subTotal">0 VNĐ</strong></div>
+            <div id="shippingBaseRow" class="d-none">Phí VC (gốc): <strong id="shippingFeeBaseDisplay">0 VNĐ</strong></div>
+            <div id="shippingDiscountRow" class="d-none">Giảm VC: <strong id="shippingDiscountDisplay">- 0 VNĐ</strong></div>
+            <div id="orderDiscountRow">Giảm đơn: <strong id="orderDiscountDisplay">- 0 VNĐ</strong></div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-auto ms-md-auto">
+          <div class="text-end">
+            <div class="small text-muted">Tổng tiền</div>
+            <div id="total" class="fs-4 fw-bold text-success">0 VNĐ</div>
+            <div class="small">Trả lại: <strong id="changeAmount">0 VNĐ</strong></div>
+          </div>
+        </div>
+
+        <div class="col-6 col-md-auto">
+          <button onclick="createOrder()" class="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
+            <i class="fas fa-check-circle"></i>
+            Tạo đơn hàng
           </button>
         </div>
       </div>
@@ -3921,51 +4055,69 @@
 
   async function fetchProducts(keyword = '') {
     const productSpinner = document.getElementById('productSpinner');
-    if (productSpinner) productSpinner.style.display = 'block';
+    productSpinner && (productSpinner.style.display = 'block');
 
     try {
-      const response = await fetch(`${BASE_URL}/products?keyword=${encodeURIComponent(keyword)}`);
-      if (!response.ok) {
-        throw new Error("Lỗi khi tải danh sách sản phẩm.");
-      }
+      const res = await fetch(`${BASE_URL}/products?keyword=${encodeURIComponent(keyword)}`);
+      if (!res.ok) throw new Error('Lỗi khi tải danh sách sản phẩm.');
+      const data = await res.json();
 
-      const data = await response.json();
       const productList = document.getElementById('productList');
-      if (productList) {
-        productList.innerHTML = '';
+      if (!productList) return;
+      productList.innerHTML = '';
 
-        // Nhóm sản phẩm theo tên
-        const productsByName = data.products.reduce((acc, product) => {
-          if (!acc[product.tenSanPham]) {
-            acc[product.tenSanPham] = [];
-          }
-          acc[product.tenSanPham].push(product);
-          return acc;
-        }, {});
+      // data.products = danh sách ChiTietSanPham
+      (data.products || []).forEach(p => {
+        const el = document.createElement('div');
+        el.className = 'p-3 border rounded mb-2 d-flex align-items-center justify-content-between';
 
-        Object.keys(productsByName).forEach(productName => {
-          const div = document.createElement('div');
-          div.className = 'p-3 border rounded cursor-pointer mb-2';
-          div.style.cursor = 'pointer';
-          div.innerHTML = `
-          <div class="d-flex align-items-center gap-3">
-            <i class="fas fa-box fs-3 text-success"></i>
-            <div>
-              <div class="fw-semibold">${productName}</div>
-              <div class="small text-muted">Nhấn để chọn biến thể</div>
+        const giaGoc  = Number(p.gia || p.price || 0);
+        const giaKM   = Number(p.giaKhuyenMai ?? p.discountedPrice ?? giaGoc);
+        const giamPct = Number(p.phanTramGiam || 0);
+        const ton     = Number(p.soLuongTonKho ?? p.availableStock ?? 0);
+
+        el.innerHTML = `
+        <div class="d-flex align-items-center gap-3">
+          <img src="${p.hinhAnh || 'https://via.placeholder.com/56x56?text=No+Image'}"
+               alt="" style="width:56px;height:56px;object-fit:cover" class="rounded"
+               onerror="this.src='https://via.placeholder.com/56x56?text=No+Image'">
+          <div>
+            <div class="fw-semibold">${p.tenSanPham || 'Sản phẩm'}</div>
+            <div class="small text-muted">
+              Màu: ${p.mauSanPham?.tenMau || '-'} • Size: ${p.kichSanPham?.ten || '-'} • Tồn: ${ton}
             </div>
           </div>
-        `;
-          div.onmouseover = () => div.classList.add('bg-light');
-          div.onmouseout = () => div.classList.remove('bg-light');
-          div.onclick = () => showVariantModal(productsByName[productName][0].idChiTietSanPham);
-          productList.appendChild(div);
-        });
+        </div>
+
+        <div class="text-end">
+          ${giamPct > 0
+                ? `<div class="fw-bold text-primary">${giaKM.toLocaleString('vi-VN')} VNĐ</div>
+               <div class="small text-muted text-decoration-line-through">${giaGoc.toLocaleString('vi-VN')} VNĐ</div>
+               <div class="small text-success">Giảm ${giamPct}%</div>`
+                : `<div class="fw-bold text-primary">${giaGoc.toLocaleString('vi-VN')} VNĐ</div>`
+        }
+          <button class="btn btn-success btn-sm mt-2">
+            <i class="fas fa-cart-plus me-1"></i> Chọn
+          </button>
+        </div>
+      `;
+
+        // Bấm "Chọn" → thêm trực tiếp vào giỏ (tận dụng hàm addProductByQr)
+        el.querySelector('button').onclick = async () => {
+          document.getElementById('productModal').style.display = 'none';
+          await addProductByQr(String(p.idChiTietSanPham)); // thêm 1 sp
+        };
+
+        productList.appendChild(el);
+      });
+
+      if (!productList.children.length) {
+        productList.innerHTML = `<div class="text-muted small">Không tìm thấy sản phẩm phù hợp.</div>`;
       }
-    } catch (error) {
-      showToast('Lỗi khi tải danh sách sản phẩm: ' + error.message, 'error');
+    } catch (err) {
+      showToast('Lỗi khi tải danh sách sản phẩm: ' + err.message, 'error');
     } finally {
-      if (productSpinner) productSpinner.style.display = 'none';
+      productSpinner && (productSpinner.style.display = 'none');
     }
   }
 
