@@ -714,8 +714,7 @@
             </div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a th:href="@{/polyshoe/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-plus-circle me-1"></i>Thêm chi tiết</li>
+                    <li class="breadcrumb-item"><a th:href="@{/polyshoe/san-pham}">Quay lại</a></li>
                 </ol>
             </nav>
 
@@ -733,9 +732,7 @@
                                         <option value="">-- Chọn sản phẩm --</option>
                                         <option th:each="p : ${sanPhams}" th:value="${p.id}" th:text="${p.tenSanPham}" th:selected="${selectedProductId != null and p.id == selectedProductId}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn ms-2" data-bs-toggle="modal" data-bs-target="#quickAddProductModal" data-entity="product" title="Thêm nhanh sản phẩm">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -745,9 +742,7 @@
                                         <option value="">Chọn xuất xứ...</option>
                                         <option th:each="o : ${xuatXus}" th:value="${o.id}" th:text="${o.tenXuatXu}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="origin" title="Thêm nhanh xuất xứ">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -757,9 +752,7 @@
                                         <option value="">Chọn dây giày...</option>
                                         <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="dayGiay" title="Thêm nhanh dây giày">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -769,9 +762,7 @@
                                         <option value="">Chọn chất liệu...</option>
                                         <option th:each="m : ${chatLieus}" th:value="${m.id}" th:text="${m.tenChatLieu}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="material" title="Thêm nhanh chất liệu">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -781,9 +772,7 @@
                                         <option value="">Chọn kiểu dáng...</option>
                                         <option th:each="st : ${kieuDangs}" th:value="${st.id}" th:text="${st.tenKieuDang}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="style" title="Thêm nhanh kiểu dáng">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -793,9 +782,7 @@
                                         <option value="">Chọn thương hiệu...</option>
                                         <option th:each="th : ${thuongHieus}" th:value="${th.id}" th:text="${th.tenThuongHieu}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="brand" title="Thêm nhanh thương hiệu">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -831,7 +818,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-primary mt-3" onclick="generateVariations()">Tạo biến thể</button>
                                     <!-- Bulk Edit Section Moved Above Table -->
                                     <!-- Bulk Edit Section -->
                                     <div class="bulk-edit-section">

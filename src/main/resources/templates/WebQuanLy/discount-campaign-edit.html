@@ -568,32 +568,7 @@
     function searchProducts(keyword = "", page = 0, _retry = false) {
         if (!isAdmin) return;
 
-        const url =
-            `/polyshoe/chien-dich-giam-gia/search-products` +
-            `?keyword=${encodeURIComponent(keyword)}` +
-            `&page=${Math.max(0, page)}` +
-            `&size=${pageSize}`; // pageSize = 5
 
-        fetch(url)
-            .then(res => res.json())
-            .then(data => {
-                const list = Array.isArray(data.content) ? data.content : [];
-                const totalPages = Number.isFinite(data.totalPages) ? data.totalPages : 0;
-                const current = Number.isFinite(data.number) ? data.number : 0;
-
-                // Lưu lại để clamp các click sau
-                currentProductTotalPages = totalPages;
-
-                // Fallback: nếu trang vượt quá giới hạn (VD: sau khi lọc), nhảy về trang cuối
-                if (!list.length && totalPages > 0 && current >= totalPages && !_retry) {
-                    return searchProducts(keyword, totalPages - 1, true);
-                }
-
-                renderProductList(list);
-                renderPagination(totalPages, current, keyword);
-            })
-            .catch(console.error);
-    }
 
     function renderProductList(products) {
         const tbody = document.getElementById("productTableBody");
