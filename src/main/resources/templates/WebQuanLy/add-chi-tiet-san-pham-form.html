@@ -18,44 +18,44 @@
     <style>
         :root {
             /* Màu chính - giống như trang sản phẩm */
-            --primary-color: #153054;
-            --primary-hover: #102C47;
-            --secondary-color: #9FD5F7;
-            --secondary-hover: #84C7EA;
-            --accent-color: #479BD3;
-            --accent-hover: #CAEAFB;
-            --border-active: #62B2E7;
+            --primary-color: #DC3545;
+            --primary-hover: #C82333;
+            --secondary-color: #FFFFFF;
+            --secondary-hover: #E9ECEF;
+            --accent-color: #000000;
+            --accent-hover: #6C757D;
+            --border-active: #FF6B6B;
 
             /* Màu nền */
-            --main-background: #F4F9FC;
+            --main-background: #F8F9FA;
             --content-background: #ffffff;
-            --header-background: #153054;
+            --header-background: #DC3545;
 
             /* Màu văn bản */
-            --text-primary: #153054;
+            --text-primary: #000000;
             --text-content: #333333;
-            --text-secondary: #6B7280;
-            --text-link: #479BD3;
+            --text-secondary: #6C757D;
+            --text-link: #DC3545;
             --text-white: #ffffff;
 
             /* Màu nút */
-            --btn-danger: #F44336;
-            --btn-danger-hover: #D32F2F;
+            --btn-danger: #DC3545;
+            --btn-danger-hover: #C82333;
 
             /* Màu trạng thái */
-            --success-bg: #D1FADF;
-            --success-text: #027A48;
-            --warning-bg: #FEF3C7;
-            --warning-text: #B45309;
-            --error-bg: #FECACA;
-            --error-text: #991B1B;
+            --success-bg: #F8D7DA;
+            --success-text: #721C24;
+            --warning-bg: #FFF3CD;
+            --warning-text: #856404;
+            --error-bg: #F8D7DA;
+            --error-text: #721C24;
 
             /* Màu khác */
             --border-color: #dee2e6;
             --light-gray: #f8f9fa;
-            --shadow-light: 0 8px 32px rgba(21, 48, 84, 0.1);
-            --shadow-medium: 0 12px 40px rgba(21, 48, 84, 0.15);
-            --shadow-heavy: 0 20px 60px rgba(21, 48, 84, 0.2);
+            --shadow-light: 0 8px 32px rgba(220, 53, 69, 0.1);
+            --shadow-medium: 0 12px 40px rgba(220, 53, 69, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(220, 53, 69, 0.2);
         }
 
         /* Updated CSS to match exact width of product management page */
@@ -153,7 +153,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(159, 213, 247, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -215,7 +215,7 @@
 
         .custom-file-input-wrapper:focus-within {
             border-color: var(--border-active);
-            box-shadow: 0 0 0 0.25rem rgba(98, 178, 231, 0.1);
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.1);
         }
 
         .custom-file-input-wrapper input[type="file"] {
@@ -325,7 +325,7 @@
 
         .form-control:focus, .form-select:focus {
             border-color: var(--border-active);
-            box-shadow: 0 0 0 0.25rem rgba(98, 178, 231, 0.1);
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.1);
             outline: none;
             transform: translateY(-1px);
         }
@@ -359,7 +359,7 @@
             background: var(--primary-color);
             border-color: var(--primary-color);
             color: var(--text-white) !important;
-            box-shadow: 0 4px 15px rgba(21, 48, 84, 0.2);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
         }
 
         .btn-primary:hover {
@@ -367,14 +367,14 @@
             border-color: var(--primary-hover);
             color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.3);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
         }
 
         .btn-success {
             background: var(--accent-color);
             border-color: var(--accent-color);
             color: var(--text-white);
-            box-shadow: 0 4px 15px rgba(71, 155, 211, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         .btn-success:hover {
@@ -382,29 +382,29 @@
             border-color: var(--primary-color);
             color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(71, 155, 211, 0.4);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
         }
 
         .btn-secondary {
             background: var(--text-secondary);
             border-color: var(--text-secondary);
             color: var(--text-white);
-            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
         }
 
         .btn-secondary:hover {
-            background: #4b5563;
-            border-color: #4b5563;
+            background: #6C757D;
+            border-color: #6C757D;
             color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
         }
 
         .btn-danger {
             background: var(--btn-danger);
             border-color: var(--btn-danger);
             color: var(--text-white);
-            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
         }
 
         .btn-danger:hover {
@@ -412,7 +412,7 @@
             border-color: var(--btn-danger-hover);
             color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
         }
 
         .btn-sm {
@@ -437,13 +437,13 @@
         .form-check-input:checked {
             background-color: var(--success-text);
             border-color: var(--success-text);
-            box-shadow: 0 0 0 4px rgba(2, 122, 72, 0.2);
+            box-shadow: 0 0 0 4px rgba(114, 28, 36, 0.2);
         }
 
         .form-check-input:not(:checked) {
             background-color: var(--btn-danger);
             border-color: var(--btn-danger);
-            box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.2);
+            box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.2);
         }
 
         .form-check-label {
@@ -471,7 +471,7 @@
 
         .ts-wrapper.single .ts-control:focus, .ts-wrapper.multi .ts-control:focus {
             border-color: var(--border-active);
-            box-shadow: 0 0 0 0.25rem rgba(98, 178, 231, 0.1);
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.1);
         }
 
         .ts-dropdown {
@@ -544,7 +544,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(21, 48, 84, 0.7);
+            background: rgba(220, 53, 69, 0.7);
             display: none;
             justify-content: center;
             align-items: center;
@@ -714,8 +714,7 @@
             </div>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb justify-content-center">
-                    <li class="breadcrumb-item"><a th:href="@{/polyshoe/san-pham}"><i class="fas fa-list me-1"></i>Danh sách sản phẩm</a></li>
-                    <li class="breadcrumb-item active" aria-current="page"><i class="fas fa-plus-circle me-1"></i>Thêm chi tiết</li>
+                    <li class="breadcrumb-item"><a th:href="@{/polyshoe/san-pham}">Quay lại</a></li>
                 </ol>
             </nav>
 
@@ -733,9 +732,7 @@
                                         <option value="">-- Chọn sản phẩm --</option>
                                         <option th:each="p : ${sanPhams}" th:value="${p.id}" th:text="${p.tenSanPham}" th:selected="${selectedProductId != null and p.id == selectedProductId}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn ms-2" data-bs-toggle="modal" data-bs-target="#quickAddProductModal" data-entity="product" title="Thêm nhanh sản phẩm">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -745,9 +742,7 @@
                                         <option value="">Chọn xuất xứ...</option>
                                         <option th:each="o : ${xuatXus}" th:value="${o.id}" th:text="${o.tenXuatXu}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="origin" title="Thêm nhanh xuất xứ">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -757,9 +752,7 @@
                                         <option value="">Chọn dây giày...</option>
                                         <option th:each="dg : ${dayGiays}" th:value="${dg.id}" th:text="${dg.tenDayGiay}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="dayGiay" title="Thêm nhanh dây giày">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -769,9 +762,7 @@
                                         <option value="">Chọn chất liệu...</option>
                                         <option th:each="m : ${chatLieus}" th:value="${m.id}" th:text="${m.tenChatLieu}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="material" title="Thêm nhanh chất liệu">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -781,9 +772,7 @@
                                         <option value="">Chọn kiểu dáng...</option>
                                         <option th:each="st : ${kieuDangs}" th:value="${st.id}" th:text="${st.tenKieuDang}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="style" title="Thêm nhanh kiểu dáng">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -793,9 +782,7 @@
                                         <option value="">Chọn thương hiệu...</option>
                                         <option th:each="th : ${thuongHieus}" th:value="${th.id}" th:text="${th.tenThuongHieu}"></option>
                                     </select>
-                                    <button type="button" class="btn btn-success btn-sm quick-add-btn" data-bs-toggle="modal" data-bs-target="#quickAddModal" data-entity="brand" title="Thêm nhanh thương hiệu">
-                                        <i class="fas fa-plus"></i>
-                                    </button>
+
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -831,7 +818,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-primary mt-3" onclick="generateVariations()">Tạo biến thể</button>
                                     <!-- Bulk Edit Section Moved Above Table -->
                                     <!-- Bulk Edit Section -->
                                     <div class="bulk-edit-section">

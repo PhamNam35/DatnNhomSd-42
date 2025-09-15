@@ -164,7 +164,7 @@ public class SecurityConfig implements ApplicationContextAware {
                                     response.sendRedirect("/polyshoe/employee-dashboard");
                                 } else if ("ADMIN".equalsIgnoreCase(vaiTro)) {
                                     // ĐÃ BỎ yêu cầu đăng ký/xác thực khuôn mặt, chuyển thẳng vào trang admin
-                                    response.sendRedirect("/polyshoe/thong-ke");
+                                    response.sendRedirect("/polyshoe/ban-hang");
                                 } else {
                                     response.sendRedirect("/polyshoe/login?error=unauthorizedRole");
                                 }
