@@ -11,141 +11,449 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
     <!-- Style -->
-    <!-- Replace the existing <style> section with this -->
     <style>
         :root {
-            --primary: #DC2626; /* Red */
-            --secondary: #FEE2E2; /* Light red for secondary elements */
-            --text: #1F2937; /* Dark gray-black for text */
-            --line: #D1D5DB; /* Light gray for borders */
+            /* Màu chính */
+            --primary-color: #DC3545;
+            --primary-hover: #C82333;
+            --secondary-color: #FFFFFF;
+            --secondary-hover: #E9ECEF;
+            --accent-color: #000000;
+            --accent-hover: #6C757D;
+            --border-active: #FF6B6B;
+
+            /* Màu nền */
+            --main-background: #F8F9FA;
+            --content-background: #ffffff;
+            --header-background: #DC3545;
+
+            /* Màu văn bản */
+            --text-primary: #000000;
+            --text-content: #333333;
+            --text-secondary: #6C757D;
+            --text-link: #DC3545;
+            --text-white: #ffffff;
+
+            /* Màu nút */
+            --btn-danger: #DC3545;
+            --btn-danger-hover: #C82333;
+
+            /* Màu trạng thái */
+            --success-bg: #F8D7DA;
+            --success-text: #721C24;
+            --warning-bg: #FFF3CD;
+            --warning-text: #856404;
+            --error-bg: #F8D7DA;
+            --error-text: #721C24;
+
+            /* Màu khác */
+            --border-color: #dee2e6;
+            --light-gray: #f8f9fa;
+            --shadow-light: 0 8px 32px rgba(220, 53, 69, 0.1);
+            --shadow-medium: 0 12px 40px rgba(220, 53, 69, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(220, 53, 69, 0.2);
+
+            --nav-h: 56px;      /* cao navbar (fallback) */
+            --header-gap: 0px;  /* sát navbar */
         }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
         body {
-            background: #F9FAFB; /* Light gray background, close to white */
-            color: var(--text);
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            background-color: var(--main-background);
+            color: var(--text-content);
+            margin: 0;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
+
         .content {
-            padding: 2rem;
-            margin-left: 256px;
-            margin-top: 70px;
+            margin-left: 250px;
+            padding: 32px;
+            padding-top: calc(var(--nav-h) + var(--header-gap));
+            min-height: 100vh;
+            background: var(--content-background);
+            transition: all 0.3s ease;
         }
-        .sticky-header {
-            position: sticky;
-            top: 70px;
-            z-index: 1000;
-            background: #FFFFFF; /* White */
+
+        .content.full-width {
+            margin-left: 0;
+            padding-top: calc(var(--nav-h) + var(--header-gap));
+        }
+
+        .navbar {
+            background: var(--content-background);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-light);
             padding: 1rem 2rem;
-            margin: -2rem -2rem 1rem -2rem;
-            border-bottom: 1px solid var(--line);
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: calc(100% - 250px);
+            z-index: 1000;
+        }
+
+        .sticky-header {
             display: flex;
             justify-content: center;
             align-items: center;
+            background: var(--content-background);
+            border: none;
+            border-radius: 20px;
+            padding: 18px 22px;
+            margin: 0 0 20px 0;
+            text-align: center;
+            box-shadow: var(--shadow-light);
         }
+
         .sticky-header h2 {
-            font-weight: 700;
+            position: relative;
             margin: 0;
-            color: var(--primary); /* Red */
-        }
-        .card-section {
-            border: 1px solid var(--line);
-            border-radius: .75rem;
-            background: #FFFFFF; /* White */
-            overflow: hidden;
-        }
-        .card-section .card-header {
-            background: rgba(254, 226, 226, 0.25); /* Light red background */
-            border-bottom: 1px solid var(--line);
-            font-weight: 600;
-            color: var(--primary); /* Red */
             display: flex;
             align-items: center;
-            gap: .5rem;
+            gap: 16px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-        .card-section .card-body {
-            padding: 1rem 1.25rem;
+
+        .sticky-header h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -10px;
+            width: 100px;
+            height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
         }
-        .form-label {
-            font-weight: 600;
-            color: #1F2937; /* Dark gray-black */
+
+        .sticky-header h2 i {
+            color: var(--accent-color);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.25rem;
         }
-        .form-control, .form-select {
-            border-radius: .5rem;
-            border: 1px solid var(--line);
-            transition: border-color .2s, box-shadow .2s;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--secondary); /* Light red */
-            box-shadow: 0 0 0 .25rem rgba(254, 226, 226, 0.45); /* Light red glow */
-        }
-        .input-group-text {
-            background: #F9FAFB; /* Light gray, near white */
-            border-color: var(--line);
-        }
-        .btn-primary {
-            --bs-btn-bg: var(--primary); /* Red */
-            --bs-btn-border-color: var(--primary);
-            --bs-btn-hover-bg: #B91C1C; /* Darker red */
-            --bs-btn-hover-border-color: #B91C1C;
-        }
-        .btn-secondary {
-            --bs-btn-bg: var(--secondary); /* Light red */
-            --bs-btn-border-color: var(--secondary);
-            --bs-btn-color: #1F2937; /* Dark gray-black */
-            --bs-btn-hover-bg: #FECACA; /* Slightly darker light red */
-            --bs-btn-hover-border-color: #FECACA;
-        }
-        .table-responsive {
-            border-radius: .5rem;
+
+        .card-section {
+            background: var(--content-background);
+            border: none;
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
         }
+
+        .card-section:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card-section .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+            font-weight: 600;
+            padding: 16px 24px;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-section .card-body {
+            padding: 24px;
+        }
+
+        .form-label {
+            position: absolute;
+            left: 1rem;
+            top: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--content-background);
+            padding: 0 0.5rem;
+            border-radius: 4px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--content-background);
+            color: var(--text-content);
+            padding-top: 1.75rem;
+            padding-bottom: 0.75rem;
+            height: auto;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .input-group-text {
+            background: var(--content-background);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-content);
+            font-weight: 500;
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-hover);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        }
+
+        .table-responsive {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--content-background);
+            box-shadow: var(--shadow-light);
+            overflow-x: auto;
+        }
+
+        .table {
+            margin-bottom: 0;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: var(--light-gray);
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            padding: 1.5rem 1rem;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .table td {
+            padding: 1.5rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-content);
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .table tbody tr:hover {
+            background: var(--accent-hover);
+            transform: scale(1.01);
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.1);
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            height: 12px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 6px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 6px;
+            border: 2px solid var(--light-gray);
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--accent-hover));
+        }
+
         .invalid-feedback {
             display: none;
-            color: #B91C1C; /* Darker red for errors */
-            font-size: .875rem;
+            color: var(--error-text);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
         }
+
         .is-invalid ~ .invalid-feedback {
             display: block;
         }
 
-        /* Select2 – pills gọn, đẹp */
+        .alert {
+            border-radius: 12px;
+            box-shadow: var(--shadow-light);
+            padding: 16px;
+        }
+
+        .alert-danger {
+            background: var(--error-bg);
+            color: var(--error-text);
+            border: 1px solid var(--error-text);
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: var(--primary-color);
+        }
+
+        /* Select2 styles */
         .select2-container--default .select2-selection--multiple {
-            border: 1px solid var(--line);
-            border-radius: .75rem;
-            min-height: 34px;
-            padding: 6px 8px;
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            min-height: 48px;
+            padding: 8px 12px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
+            background: var(--content-background);
         }
+
         .select2-container--default .select2-selection--multiple .select2-selection__rendered {
             display: flex;
             flex-wrap: wrap;
-            gap: 6px;
+            gap: 8px;
         }
+
         .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background: rgba(254, 226, 226, 0.9) !important; /* Light red */
-            color: #1F2937; /* Dark gray-black */
-            border: 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+            color: var(--text-white) !important;
+            border: none;
             border-radius: 999px;
-            padding: 2px 10px;
+            padding: 4px 12px;
             font-weight: 600;
+            font-size: 0.875rem;
         }
+
         .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-            margin-right: 6px;
-            color: #1F2937; /* Dark gray-black */
+            margin-right: 8px;
+            color: var(--text-white);
             font-weight: 700;
+            cursor: pointer;
         }
+
         .select2-selection--multiple .select2-selection__clear {
             display: none !important;
         }
 
-        input[type="radio"], input[type="checkbox"] {
-            accent-color: var(--primary); /* Red */
+        .select2-container--default .select2-selection--multiple.is-invalid-s2 {
+            border-color: var(--error-text) !important;
+            box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1) !important;
         }
 
-        /* Select2 invalid border */
-        .select2-container--default .select2-selection--multiple.is-invalid-s2 {
-            border-color: #B91C1C !important; /* Darker red */
-            box-shadow: 0 0 0 .25rem rgba(185, 28, 28, 0.25); /* Darker red glow */
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                padding: 18px;
+                padding-top: calc(var(--nav-h) + var(--header-gap));
+            }
+
+            .sticky-header {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            .sticky-header h2 {
+                font-size: 2rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .card-section {
+                border-radius: 14px;
+            }
+
+            .form-control, .form-select {
+                font-size: 0.875rem;
+                padding: 10px 14px;
+            }
+
+            .btn {
+                font-size: 0.875rem;
+                padding: 10px 20px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .sticky-header, .card-section, .table-responsive {
+            animation: fadeIn 0.6s ease-out;
         }
     </style>
 
@@ -156,7 +464,7 @@
     <script th:src="@{/js/sidebar.js}" defer></script>
     <script th:src="@{/js/notification.js}"></script>
 </head>
-<body class="bg-light">
+<body>
 <div class="d-flex">
     <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
     <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
@@ -166,11 +474,11 @@
     <div class="content" id="content">
         <!-- Header -->
         <div class="sticky-header">
-            <h2><i class="fas fa-ticket-alt me-2"></i>Tạo Phiếu Giảm Giá</h2>
+            <h2><i class="fas fa-ticket-alt"></i> Tạo Phiếu Giảm Giá</h2>
         </div>
 
         <!-- Form -->
-        <div class="bg-white p-4 rounded shadow-sm">
+        <div class="card-section">
             <form id="createVoucherForm" th:action="@{/polyshoe/phieu-giam-gia/create}" th:object="${voucher}" method="post" novalidate>
 
                 <div class="row g-4">
@@ -180,23 +488,23 @@
                             <div class="card-header"><i class="fa-regular fa-rectangle-list"></i><span>Thông tin cơ bản</span></div>
                             <div class="card-body">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label"><i class="fas fa-barcode me-2"></i>Mã phiếu:</label>
                                         <input type="text" th:field="*{ma}" id="ma" class="form-control" placeholder="VD: CMV123"/>
                                         <div class="invalid-feedback" id="maError"></div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label"><i class="fas fa-tag me-2"></i>Tên phiếu:</label>
                                         <input type="text" th:field="*{ten}" id="ten" class="form-control" placeholder="Tên phiếu giảm giá"/>
                                         <div class="invalid-feedback" id="tenError"></div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label"><i class="fas fa-calendar-alt me-2"></i>Ngày bắt đầu:</label>
                                         <input type="datetime-local" th:field="*{ngayBatDau}" class="form-control" id="ngayBatDau"
                                                th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"/>
                                         <div class="invalid-feedback" id="ngayBatDauError"></div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label"><i class="fas fa-calendar-alt me-2"></i>Ngày kết thúc:</label>
                                         <input type="datetime-local" th:field="*{ngayKetThuc}" class="form-control" id="ngayKetThuc"
                                                th:attr="min=${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd''T''HH:mm')}"/>
@@ -219,25 +527,9 @@
                                         <label class="form-check-label">
                                             <input type="radio" th:field="*{phamViApDung}" value="ORDER" onchange="toggleScopeFields()"> Giảm giá đơn hàng
                                         </label>
-<!--                                        <label class="form-check-label">-->
-<!--                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING" onchange="toggleScopeFields()"> Giảm phí vận chuyển-->
-<!--                                        </label>-->
                                     </div>
                                     <div class="text-danger small mt-1 d-none" id="phamViError"></div>
                                 </div>
-
-<!--                                &lt;!&ndash; Kiểu freeship (SHIPPING) &ndash;&gt;-->
-<!--                                <div class="mb-3" id="shipTypeGroup" style="display:none;">-->
-<!--                                    <label class="form-label"><i class="fas fa-truck-fast me-2"></i>Kiểu freeship:</label>-->
-<!--                                    <div class="d-flex flex-wrap gap-4">-->
-<!--                                        <label class="form-check-label">-->
-<!--                                            <input type="radio" th:field="*{loai}" value="FREESHIP_FULL" onchange="toggleDiscountFields()"> Miễn phí ship toàn phần-->
-<!--                                        </label>-->
-<!--                                        <label class="form-check-label">-->
-<!--                                            <input type="radio" th:field="*{loai}" value="FREESHIP_CAP" onchange="toggleDiscountFields()"> Miễn phí ship tối đa X VND-->
-<!--                                        </label>-->
-<!--                                    </div>-->
-<!--                                </div>-->
 
                                 <!-- Kiểu giảm (ORDER) -->
                                 <div class="mb-3" id="discountTypeGroup" style="display:none;">
@@ -257,7 +549,7 @@
 
                                 <!-- Giá trị giảm -->
                                 <div class="row g-3">
-                                    <div class="col-md-6 d-none" id="discountValueGroup">
+                                    <div class="col-md-6 position-relative d-none" id="discountValueGroup">
                                         <label class="form-label">Giá trị giảm:</label>
                                         <div class="input-group">
                                             <input type="text" th:field="*{giaTriGiam}" class="form-control" id="giaTriGiam"
@@ -266,7 +558,7 @@
                                         </div>
                                         <div class="invalid-feedback" id="giaTriGiamError"></div>
                                     </div>
-                                    <div class="col-md-6 d-none" id="maxDiscountGroup">
+                                    <div class="col-md-6 position-relative d-none" id="maxDiscountGroup">
                                         <label class="form-label">Giá trị giảm tối đa:</label>
                                         <div class="input-group">
                                             <input type="text" th:field="*{giaTriGiamToiDa}" class="form-control" id="giaTriGiamToiDa"
@@ -275,7 +567,7 @@
                                         </div>
                                         <div class="invalid-feedback" id="giaTriGiamToiDaError"></div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label">Đơn tối thiểu áp dụng:</label>
                                         <div class="input-group">
                                             <input type="text" th:field="*{giaTriGiamToiThieu}" class="form-control" id="giaTriGiamToiThieu"
@@ -307,7 +599,7 @@
                                         </div>
                                         <div class="text-danger small mt-1 d-none" id="kieuPhieuError"></div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-6 position-relative">
                                         <label class="form-label">Lượt sử dụng:</label>
                                         <input type="text" th:field="*{gioiHanSuDung}" class="form-control" id="gioiHanSuDung"
                                                inputmode="numeric" pattern="[0-9]*"
@@ -331,9 +623,8 @@
                                             th:text="${pt.tenPhuongThuc}"
                                             th:selected="${selectedPtttIds != null and selectedPtttIds.contains(pt.id)}"></option>
                                 </select>
-                                <!-- Lỗi PTTT bắt buộc -->
                                 <div id="ptttError" class="text-danger small mt-1 d-none">
-                                    vui lòng chọn ít nhất 1 pttt khi chưa chọn
+                                    Vui lòng chọn ít nhất 1 phương thức thanh toán.
                                 </div>
                             </div>
                         </div>
@@ -345,7 +636,7 @@
                             <div class="card-header"><i class="fa-solid fa-user-check"></i><span>Khách hàng áp dụng & Thông báo</span></div>
                             <div class="card-body">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <input type="text" class="form-control" id="searchCustomerInput" placeholder="Tìm kiếm theo tên, email, SĐT...">
                                     </div>
                                     <div class="col-md-6 d-flex align-items-center">
@@ -357,8 +648,8 @@
                                 </div>
 
                                 <div class="table-responsive mt-3">
-                                    <table class="table table-bordered table-hover align-middle bg-white table-sm">
-                                        <thead class="table-light">
+                                    <table class="table table-bordered table-hover align-middle table-sm">
+                                        <thead>
                                         <tr>
                                             <th style="width:80px">Chọn</th>
                                             <th>Họ tên</th>
@@ -393,23 +684,6 @@
                 </div>
             </form>
         </div>
-
-        <!-- Confirmation Modal -->
-<!--        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">-->
-<!--            <div class="modal-dialog modal-dialog-centered">-->
-<!--                <div class="modal-content">-->
-<!--                    <div class="modal-header">-->
-<!--                        <h5 class="modal-title" id="confirmModalLabel">Xác nhận lưu</h5>-->
-<!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                    </div>-->
-<!--                    <div class="modal-body">Bạn có chắc chắn muốn lưu phiếu giảm giá này không?</div>-->
-<!--                    <div class="modal-footer">-->
-<!--                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>-->
-<!--                        <button type="button" class="btn btn-primary" id="confirmSubmit">Xác nhận</button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
 </div>
 
@@ -523,21 +797,16 @@
     /* ===== Toggles (không auto-check) ===== */
     function toggleScopeFields() {
         const scope = $('input[name="phamViApDung"]:checked').val();
-        const $shipGroup = $('#shipTypeGroup');
         const $discountGroup = $('#discountTypeGroup');
 
         if (!scope){
-            $shipGroup.hide();
             $discountGroup.hide();
             $('#discountValueGroup').addClass('d-none');
             $('#maxDiscountGroup').addClass('d-none');
             return;
         }
 
-        const isShipping = scope === 'SHIPPING';
-        $shipGroup.toggle(isShipping);
-        $discountGroup.toggle(!isShipping);
-
+        $discountGroup.toggle(true);
         toggleDiscountFields();
     }
 
@@ -551,9 +820,7 @@
             return;
         }
 
-        const isPercent      = type === 'PERCENT';
-        const isFreeshipFull = type === 'FREESHIP_FULL';
-        const isFreeshipCap  = type === 'FREESHIP_CAP';
+        const isPercent = type === 'PERCENT';
 
         $('#discountUnit').text(isPercent ? '%' : 'VND');
 
@@ -567,17 +834,7 @@
             $giaTri.attr('placeholder','0');
         }
 
-        if (isFreeshipFull){
-            $('#discountValueGroup').addClass('d-none');
-            $('#giaTriGiam').val('0').prop('readonly', true);
-            $('#maxDiscountGroup').addClass('d-none');
-            $('#giaTriGiamToiDa').val('').prop('readonly', true);
-        } else if (isFreeshipCap){
-            $('#discountValueGroup').addClass('d-none');
-            $('#giaTriGiam').val('0').prop('readonly', true);
-            $('#maxDiscountGroup').removeClass('d-none');
-            $('#giaTriGiamToiDa').prop('readonly', false);
-        } else if (isPercent){
+        if (isPercent){
             $('#discountValueGroup').removeClass('d-none');
             $('#giaTriGiam').prop('readonly', false);
             $('#maxDiscountGroup').removeClass('d-none');
@@ -703,24 +960,6 @@
                     isValid = false;
                 }
             }
-        } else if (scope === 'SHIPPING' && type){
-            if (type === 'FREESHIP_CAP'){
-                if (minOrder <= 0){
-                    $('#giaTriGiamToiThieu').addClass('is-invalid');
-                    $('#giaTriGiamToiThieuError').text('Đơn tối thiểu phải > 0 cho FREESHIP_CAP.').show();
-                    isValid = false;
-                }
-                if (max <= 0){
-                    $('#giaTriGiamToiDa').addClass('is-invalid');
-                    $('#giaTriGiamToiDaError').text('Giảm phí ship tối đa phải > 0.').show();
-                    isValid = false;
-                }
-                if (minOrder > 0 && max >= minOrder){
-                    $('#giaTriGiamToiDa').addClass('is-invalid');
-                    $('#giaTriGiamToiDaError').text('Giảm phí ship tối đa phải nhỏ hơn đơn tối thiểu áp dụng.').show();
-                    isValid = false;
-                }
-            }
         }
 
         // Công khai/cá nhân
@@ -738,7 +977,7 @@
         // PTTT (không tính 'all')
         const ptttChosen = ($('#paymentMethodSelect').val() || []).filter(v => v !== 'all');
         if (ptttChosen.length === 0){
-            $('#ptttError').text('vui lòng chọn ít nhất 1 pttt khi chưa chọn').removeClass('d-none');
+            $('#ptttError').text('Vui lòng chọn ít nhất 1 phương thức thanh toán.').removeClass('d-none');
             $('#paymentMethodSelect').next('.select2').find('.select2-selection').addClass('is-invalid-s2');
             isValid = false;
         }
@@ -751,8 +990,13 @@
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',
                 cancelButtonText: 'Hủy',
-                confirmButtonColor: '#153054', // primary
-                cancelButtonColor: '#9FD5F7'   // secondary
+                buttonsStyling: false,
+                customClass: {
+                    confirmButton: 'btn btn-primary',
+                    cancelButton: 'btn btn-secondary ms-2'
+                },
+                reverseButtons: true,
+                focusCancel: true
             }).then((result) => {
                 if (result.isConfirmed) {
                     doBeforeSubmit();
@@ -760,7 +1004,6 @@
             });
         }
         return isValid;
-
     }
 
     /* ===== Draft Save/Restore (optional) ===== */
@@ -873,22 +1116,6 @@
         toggleScopeFields();
         toggleDiscountFields();
         toggleUsageCount();
-
-        // Submit xác nhận
-        // $('#confirmSubmit').on('click', function(){
-        //     try { sessionStorage.removeItem(STORAGE_KEY); } catch(e){}
-        //     // parse về dạng thô trước khi submit
-        //     ['#giaTriGiam','#giaTriGiamToiDa','#giaTriGiamToiThieu','#gioiHanSuDung']
-        //         .forEach(sel => $(sel).val(parseNumber($(sel).val())));
-        //     const selected = $('#paymentMethodSelect').val();
-        //     if (selected && selected.includes('all')){
-        //         const allOptions = $('#paymentMethodSelect option')
-        //             .map(function(){return $(this).val();}).get().filter(v=>'all'!==v);
-        //         $('#paymentMethodSelect').val(allOptions).trigger('change');
-        //     }
-        //     $('#createVoucherForm').submit();
-        // });
-
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
