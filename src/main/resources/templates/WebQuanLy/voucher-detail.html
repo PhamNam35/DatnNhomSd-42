@@ -122,24 +122,24 @@
                                         <label class="form-check-label">
                                             <input type="radio" th:field="*{phamViApDung}" value="ORDER" disabled> Giảm giá đơn hàng
                                         </label>
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING" disabled> Giảm phí vận chuyển
-                                        </label>
+<!--                                        <label class="form-check-label">-->
+<!--                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING" disabled> Giảm phí vận chuyển-->
+<!--                                        </label>-->
                                     </div>
                                 </div>
 
-                                <!-- Kiểu freeship (SHIPPING) -->
-                                <div class="mb-3" id="shipTypeGroup" th:style="${voucher.phamViApDung == 'SHIPPING' ? 'display:block' : 'display:none'}">
-                                    <label class="form-label"><i class="fas fa-truck-fast me-2"></i>Kiểu freeship:</label>
-                                    <div class="d-flex flex-wrap gap-4">
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{loai}" value="FREESHIP_FULL" disabled> Miễn phí ship toàn phần
-                                        </label>
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{loai}" value="FREESHIP_CAP" disabled> Miễn phí ship tối đa X VND
-                                        </label>
-                                    </div>
-                                </div>
+<!--                                &lt;!&ndash; Kiểu freeship (SHIPPING) &ndash;&gt;-->
+<!--                                <div class="mb-3" id="shipTypeGroup" th:style="${voucher.phamViApDung == 'SHIPPING' ? 'display:block' : 'display:none'}">-->
+<!--                                    <label class="form-label"><i class="fas fa-truck-fast me-2"></i>Kiểu freeship:</label>-->
+<!--                                    <div class="d-flex flex-wrap gap-4">-->
+<!--                                        <label class="form-check-label">-->
+<!--                                            <input type="radio" th:field="*{loai}" value="FREESHIP_FULL" disabled> Miễn phí ship toàn phần-->
+<!--                                        </label>-->
+<!--                                        <label class="form-check-label">-->
+<!--                                            <input type="radio" th:field="*{loai}" value="FREESHIP_CAP" disabled> Miễn phí ship tối đa X VND-->
+<!--                                        </label>-->
+<!--                                    </div>-->
+<!--                                </div>-->
 
                                 <!-- Kiểu giảm (ORDER) -->
                                 <div class="mb-3" id="discountTypeGroup" th:style="${voucher.phamViApDung == 'ORDER' ? 'display:block' : 'display:none'}">

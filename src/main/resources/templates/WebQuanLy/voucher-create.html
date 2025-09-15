@@ -11,46 +11,141 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
     <!-- Style -->
+    <!-- Replace the existing <style> section with this -->
     <style>
-        :root{ --primary:#153054; --secondary:#9FD5F7; --text:#263238; --line:#e9ecef; }
-        body{background:#f6f9fb;color:var(--text)}
-        .content{padding:2rem;margin-left:256px;margin-top:70px}
-        .sticky-header{position:sticky;top:70px;z-index:1000;background:#fff;padding:1rem 2rem;margin:-2rem -2rem 1rem -2rem;border-bottom:1px solid var(--line);display:flex;justify-content:center;align-items:center}
-        .sticky-header h2{font-weight:700;margin:0;color:var(--primary)}
-        .card-section{border:1px solid var(--line);border-radius:.75rem;background:#fff;overflow:hidden}
-        .card-section .card-header{background:rgba(159,213,247,.25);border-bottom:1px solid var(--line);font-weight:600;color:var(--primary);display:flex;align-items:center;gap:.5rem}
-        .card-section .card-body{padding:1rem 1.25rem}
-        .form-label{font-weight:600;color:#334155}
-        .form-control,.form-select{border-radius:.5rem;border:1px solid #dfe3e8;transition:border-color .2s,box-shadow .2s}
-        .form-control:focus,.form-select:focus{border-color:var(--secondary);box-shadow:0 0 0 .25rem rgba(159,213,247,.45)}
-        .input-group-text{background:#f8fbfe;border-color:#dfe3e8}
-        .btn-primary{--bs-btn-bg:var(--primary);--bs-btn-border-color:var(--primary);--bs-btn-hover-bg:#102845;--bs-btn-hover-border-color:#102845}
-        .btn-secondary{--bs-btn-bg:var(--secondary);--bs-btn-border-color:var(--secondary);--bs-btn-color:#0b2a45;--bs-btn-hover-bg:#8bcdf5;--bs-btn-hover-border-color:#8bcdf5}
-        .table-responsive{border-radius:.5rem;overflow:hidden}
-        .invalid-feedback{display:none;color:#dc3545;font-size:.875rem}
-        .is-invalid ~ .invalid-feedback{display:block}
+        :root {
+            --primary: #DC2626; /* Red */
+            --secondary: #FEE2E2; /* Light red for secondary elements */
+            --text: #1F2937; /* Dark gray-black for text */
+            --line: #D1D5DB; /* Light gray for borders */
+        }
+        body {
+            background: #F9FAFB; /* Light gray background, close to white */
+            color: var(--text);
+        }
+        .content {
+            padding: 2rem;
+            margin-left: 256px;
+            margin-top: 70px;
+        }
+        .sticky-header {
+            position: sticky;
+            top: 70px;
+            z-index: 1000;
+            background: #FFFFFF; /* White */
+            padding: 1rem 2rem;
+            margin: -2rem -2rem 1rem -2rem;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .sticky-header h2 {
+            font-weight: 700;
+            margin: 0;
+            color: var(--primary); /* Red */
+        }
+        .card-section {
+            border: 1px solid var(--line);
+            border-radius: .75rem;
+            background: #FFFFFF; /* White */
+            overflow: hidden;
+        }
+        .card-section .card-header {
+            background: rgba(254, 226, 226, 0.25); /* Light red background */
+            border-bottom: 1px solid var(--line);
+            font-weight: 600;
+            color: var(--primary); /* Red */
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+        .card-section .card-body {
+            padding: 1rem 1.25rem;
+        }
+        .form-label {
+            font-weight: 600;
+            color: #1F2937; /* Dark gray-black */
+        }
+        .form-control, .form-select {
+            border-radius: .5rem;
+            border: 1px solid var(--line);
+            transition: border-color .2s, box-shadow .2s;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--secondary); /* Light red */
+            box-shadow: 0 0 0 .25rem rgba(254, 226, 226, 0.45); /* Light red glow */
+        }
+        .input-group-text {
+            background: #F9FAFB; /* Light gray, near white */
+            border-color: var(--line);
+        }
+        .btn-primary {
+            --bs-btn-bg: var(--primary); /* Red */
+            --bs-btn-border-color: var(--primary);
+            --bs-btn-hover-bg: #B91C1C; /* Darker red */
+            --bs-btn-hover-border-color: #B91C1C;
+        }
+        .btn-secondary {
+            --bs-btn-bg: var(--secondary); /* Light red */
+            --bs-btn-border-color: var(--secondary);
+            --bs-btn-color: #1F2937; /* Dark gray-black */
+            --bs-btn-hover-bg: #FECACA; /* Slightly darker light red */
+            --bs-btn-hover-border-color: #FECACA;
+        }
+        .table-responsive {
+            border-radius: .5rem;
+            overflow: hidden;
+        }
+        .invalid-feedback {
+            display: none;
+            color: #B91C1C; /* Darker red for errors */
+            font-size: .875rem;
+        }
+        .is-invalid ~ .invalid-feedback {
+            display: block;
+        }
 
         /* Select2 – pills gọn, đẹp */
-        .select2-container--default .select2-selection--multiple{
-            border:1px solid #dfe3e8;border-radius:.75rem;min-height:34px;padding:6px 8px;display:flex;align-items:center;gap:6px
+        .select2-container--default .select2-selection--multiple {
+            border: 1px solid var(--line);
+            border-radius: .75rem;
+            min-height: 34px;
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .select2-container--default .select2-selection--multiple .select2-selection__rendered{
-            display:flex;flex-wrap:wrap;gap:6px
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
         }
-        .select2-container--default .select2-selection--multiple .select2-selection__choice{
-            background:rgba(159,213,247,.9)!important;color:#0b2a45;border:0;border-radius:999px;padding:2px 10px;font-weight:600
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background: rgba(254, 226, 226, 0.9) !important; /* Light red */
+            color: #1F2937; /* Dark gray-black */
+            border: 0;
+            border-radius: 999px;
+            padding: 2px 10px;
+            font-weight: 600;
         }
-        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove{
-            margin-right:6px;color:#0b2a45;font-weight:700
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            margin-right: 6px;
+            color: #1F2937; /* Dark gray-black */
+            font-weight: 700;
         }
-        .select2-selection--multiple .select2-selection__clear{display:none!important}
+        .select2-selection--multiple .select2-selection__clear {
+            display: none !important;
+        }
 
-        input[type="radio"],input[type="checkbox"]{accent-color:var(--primary)}
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: var(--primary); /* Red */
+        }
 
-        /* ======= Select2 invalid border (PTTT required) ======= */
-        .select2-container--default .select2-selection--multiple.is-invalid-s2{
-            border-color:#dc3545 !important;
-            box-shadow:0 0 0 .25rem rgba(220,53,69,.25);
+        /* Select2 invalid border */
+        .select2-container--default .select2-selection--multiple.is-invalid-s2 {
+            border-color: #B91C1C !important; /* Darker red */
+            box-shadow: 0 0 0 .25rem rgba(185, 28, 28, 0.25); /* Darker red glow */
         }
     </style>
 
@@ -124,25 +219,25 @@
                                         <label class="form-check-label">
                                             <input type="radio" th:field="*{phamViApDung}" value="ORDER" onchange="toggleScopeFields()"> Giảm giá đơn hàng
                                         </label>
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING" onchange="toggleScopeFields()"> Giảm phí vận chuyển
-                                        </label>
+<!--                                        <label class="form-check-label">-->
+<!--                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING" onchange="toggleScopeFields()"> Giảm phí vận chuyển-->
+<!--                                        </label>-->
                                     </div>
                                     <div class="text-danger small mt-1 d-none" id="phamViError"></div>
                                 </div>
 
-                                <!-- Kiểu freeship (SHIPPING) -->
-                                <div class="mb-3" id="shipTypeGroup" style="display:none;">
-                                    <label class="form-label"><i class="fas fa-truck-fast me-2"></i>Kiểu freeship:</label>
-                                    <div class="d-flex flex-wrap gap-4">
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{loai}" value="FREESHIP_FULL" onchange="toggleDiscountFields()"> Miễn phí ship toàn phần
-                                        </label>
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{loai}" value="FREESHIP_CAP" onchange="toggleDiscountFields()"> Miễn phí ship tối đa X VND
-                                        </label>
-                                    </div>
-                                </div>
+<!--                                &lt;!&ndash; Kiểu freeship (SHIPPING) &ndash;&gt;-->
+<!--                                <div class="mb-3" id="shipTypeGroup" style="display:none;">-->
+<!--                                    <label class="form-label"><i class="fas fa-truck-fast me-2"></i>Kiểu freeship:</label>-->
+<!--                                    <div class="d-flex flex-wrap gap-4">-->
+<!--                                        <label class="form-check-label">-->
+<!--                                            <input type="radio" th:field="*{loai}" value="FREESHIP_FULL" onchange="toggleDiscountFields()"> Miễn phí ship toàn phần-->
+<!--                                        </label>-->
+<!--                                        <label class="form-check-label">-->
+<!--                                            <input type="radio" th:field="*{loai}" value="FREESHIP_CAP" onchange="toggleDiscountFields()"> Miễn phí ship tối đa X VND-->
+<!--                                        </label>-->
+<!--                                    </div>-->
+<!--                                </div>-->
 
                                 <!-- Kiểu giảm (ORDER) -->
                                 <div class="mb-3" id="discountTypeGroup" style="display:none;">
