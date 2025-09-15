@@ -745,8 +745,6 @@
                             console.error('[WebSocket] Error parsing voucher update:', e);
                         }
                     });
-
-                    showToast('Kết nối real-time thành công', 'success');
                 };
 
                 stompClient.onStompError = (frame) => {
