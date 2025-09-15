@@ -12,12 +12,12 @@
   <script th:src="@{/js/sidebar.js}" defer></script>
   <style>
     :root {
-      --primary-color: #10b981; /* Thay đổi sang xanh lá */
-      --primary-hover: #00CC00;
-      --success-color: #10b981;
-      --warning-color: #f59e0b;
-      --danger-color: #ef4444;
-      --info-color: #06b6d4;
+      --primary-color: #ff0000; /* Red */
+      --primary-hover: #cc0000;
+      --success-color: #ff0000;
+      --warning-color: #ff0000;
+      --danger-color: #ff0000;
+      --info-color: #000000;
       --gray-50: #f9fafb;
       --gray-100: #f3f4f6;
       --gray-200: #e5e7eb;
@@ -27,7 +27,7 @@
       --gray-600: #4b5563;
       --gray-700: #374151;
       --gray-800: #1f2937;
-      --gray-900: #153054; /* Đổi từ #111827 thành #153054 (xanh than) */
+      --gray-900: #000000; /* Black */
     }
 
     * {
@@ -36,7 +36,7 @@
 
     body {
       background-color: #ffffff;
-      color: var(--gray-900); /* Màu chữ toàn trang là #153054 */
+      color: var(--gray-900); /* Black text */
       font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
       min-height: 100vh;
       line-height: 1.6;
@@ -124,12 +124,12 @@
       font-size: 0.875rem;
       background: #ffffff;
       transition: all 0.2s ease;
-      color: var(--gray-900); /* Màu chữ input là #153054 */
+      color: var(--gray-900); /* Black input text */
     }
 
     .search-bar input:focus {
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.1);
+      box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
       outline: none;
     }
 
@@ -142,18 +142,18 @@
       background: #ffffff;
       transition: all 0.2s ease;
       cursor: pointer;
-      color: var(--gray-900); /* Màu chữ select là #153054 */
+      color: var(--gray-900); /* Black select text */
     }
 
     .search-bar select:focus {
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.1);
+      box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
       outline: none;
     }
 
     .search-bar button {
       padding: 0.75rem 1.5rem;
-      background: #153054;
+      background: #000000; /* Black button */
       color: #fff;
       border: none;
       border-radius: 8px;
@@ -168,7 +168,7 @@
     }
 
     .search-bar button:hover {
-      background: #153054;
+      background: #333333; /* Darker black */
       transform: translateY(-1px);
     }
 
@@ -232,13 +232,13 @@
       border-bottom: 1px solid var(--gray-200);
       vertical-align: middle;
       white-space: nowrap;
-      color: var(--gray-900); /* Màu chữ th và td là #153054 */
+      color: var(--gray-900); /* Black text */
     }
 
     th {
       background: var(--gray-50);
       font-weight: 600;
-      color: var(--gray-900); /* Màu chữ th là #153054 */
+      color: var(--gray-900); /* Black th text */
       position: sticky;
       top: 0;
       z-index: 10;
@@ -308,7 +308,7 @@
     .action-btn {
       padding: 0.5rem;
       background: #ffffff;
-      color: var(--gray-900); /* Đổi màu icon thành #153054 */
+      color: var(--gray-900); /* Black icon */
       border: 1px solid var(--gray-300);
       border-radius: 6px;
       cursor: pointer;
@@ -334,7 +334,7 @@
     }
 
     .dropdown-item {
-      color: var(--gray-900); /* Màu chữ dropdown là #153054 */
+      color: var(--gray-900); /* Black dropdown text */
       padding: 0.5rem 1rem;
       transition: all 0.2s ease;
       font-size: 0.875rem;
@@ -360,7 +360,7 @@
       border: 1px solid var(--gray-300);
       border-radius: 6px;
       text-decoration: none;
-      color: var(--gray-900); /* Màu chữ pagination là #153054 */
+      color: var(--gray-900); /* Black pagination text */
       font-weight: 500;
       font-size: 0.875rem;
       transition: all 0.2s ease;
@@ -392,11 +392,11 @@
       color: var(--success-color);
     }
 
-    #hoa-don-table-online td:nth-child(3) { /* Màu "Tổng tiền" trong tab Online là xanh lá */
+    #hoa-don-table-online td:nth-child(3) { /* Red "Tổng tiền" in Online tab */
       color: var(--primary-color);
     }
 
-    #hoa-don-table-online td:nth-child(4) { /* Màu "Ngày tạo" trong tab Online không in đậm */
+    #hoa-don-table-online td:nth-child(4) { /* Black "Ngày tạo" in Online tab, not bold */
       color: #000000;
       font-weight: normal;
     }
@@ -476,7 +476,7 @@
     }
 
     td:nth-child(3) {
-      color: var(--gray-900); /* Màu chữ cột Tên nhân viên là #153054 */
+      color: var(--gray-900); /* Black "Tên nhân viên" */
       font-weight: 500;
     }
 
@@ -552,7 +552,7 @@
     }
 
     .status-returned {
-      background: #10b981;
+      background: #ff0000;
       color: #ffffff;
       padding: 0.375rem 0.75rem;
       border-radius: 20px;
@@ -563,7 +563,7 @@
     }
 
     .status-partial-returned {
-      background: #f59e0b;
+      background: #ff0000;
       color: #ffffff;
       padding: 0.375rem 0.75rem;
       border-radius: 20px;
@@ -579,7 +579,7 @@
     }
 
     .nav-tabs .nav-link {
-      color: var(--gray-900); /* Màu chữ nav-tabs là #153054 */
+      color: var(--gray-900); /* Black nav text */
       font-weight: 500;
       border: none;
       border-radius: 8px 8px 0 0;
@@ -593,9 +593,9 @@
     }
 
     .nav-tabs .nav-link.active {
-      background: #153054;
+      background: #000000;
       color: #fff;
-      border-bottom: 2px solid #153054;
+      border-bottom: 2px solid #000000;
     }
   </style>
 </head>
@@ -607,170 +607,162 @@
   </nav>
   <div class="content mt-16" id="mainContent">
     <h1>Quản Lý Hóa Đơn</h1>
-    <ul class="nav nav-tabs mb-3" id="salesMethodTabs" role="tablist">
-      <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery" type="button" role="tab" aria-controls="delivery" aria-selected="true" onclick="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), $('#statusFilterDelivery').val(), $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">Giao hàng</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="instore-tab" data-bs-toggle="tab" data-bs-target="#instore" type="button" role="tab" aria-controls="instore" aria-selected="false" onclick="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">Tại quầy</button>
-      </li>
-      <li class="nav-item" role="presentation">
-        <button class="nav-link" id="online-tab" data-bs-toggle="tab" data-bs-target="#online" type="button" role="tab" aria-controls="online" aria-selected="false" onclick="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), $('#paymentMethodFilterOnline').val(), 'Online', 'online')">Online</button>
-      </li>
-    </ul>
-    <div class="tab-content" id="salesMethodTabContent">
-      <div class="tab-pane fade show active" id="delivery" role="tabpanel" aria-labelledby="delivery-tab">
-        <div class="search-bar">
-          <div class="search-row">
-            <input id="searchInputDelivery" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterDelivery').val(), $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
-            <button onclick="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), $('#statusFilterDelivery').val(), $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
-              <i class="fas fa-search"></i> Tìm kiếm
-            </button>
-          </div>
-          <div class="filter-row">
-            <!-- Tab Giao hàng -->
-            <select id="statusFilterDelivery" onchange="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), this.value, $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
-              <option value="">Tất cả trạng thái</option>
-              <option value="Chưa xác nhận">Chưa xác nhận</option>
-              <option value="Đã xác nhận">Đã xác nhận</option>
-              <option value="Đang vận chuyển">Đang vận chuyển</option>
-              <option value="Vận chuyển thành công">Vận chuyển thành công</option>
-              <option value="Hoàn thành">Hoàn thành</option>
-              <option value="Đã trả hàng">Đã trả hàng</option>
-              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
-              <option value="Hủy đơn hàng">Hủy đơn hàng</option>
-            </select>
 
-            <select id="paymentMethodFilterDelivery" onchange="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), $('#statusFilterDelivery').val(), this.value, 'Giao hàng', 'delivery')">
-              <option value="">Tất cả phương thức thanh toán</option>
-              <option value="Tiền mặt">Tiền mặt</option>
-              <option value="Chuyển khoản">Chuyển khoản</option>
-            </select>
-          </div>
+    <!-- Phần Giao hàng -->
+    <div class="mb-5">
+      <h2 class="text-2xl font-bold mb-3">Giao hàng</h2>
+      <div class="search-bar">
+        <div class="search-row">
+          <input id="searchInputDelivery" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterDelivery').val(), $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
+          <button onclick="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), $('#statusFilterDelivery').val(), $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
+            <i class="fas fa-search"></i> Tìm kiếm
+          </button>
         </div>
-        <div class="table-container">
-          <div class="table-scroll-wrapper">
-            <table id="hoa-don-table-delivery">
-              <thead>
-              <tr>
-                <th>Mã đơn hàng</th>
-                <th>Khách hàng</th>
-                <th>Tên nhân viên</th>
-                <th>Tổng tiền</th>
-                <th>Ngày tạo</th>
-                <th>Phương thức thanh toán</th>
-                <th>Phương thức bán hàng</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-              </tr>
-              </thead>
-              <tbody id="invoiceListDelivery"></tbody>
-            </table>
-          </div>
-          <div id="invoiceSpinnerDelivery" class="spinner"></div>
-          <div id="paginationDelivery" class="pagination"></div>
+        <div class="filter-row">
+          <select id="statusFilterDelivery" onchange="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), this.value, $('#paymentMethodFilterDelivery').val(), 'Giao hàng', 'delivery')">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Chưa xác nhận">Chưa xác nhận</option>
+            <option value="Đã xác nhận">Đã xác nhận</option>
+            <option value="Đang vận chuyển">Đang vận chuyển</option>
+            <option value="Vận chuyển thành công">Vận chuyển thành công</option>
+            <option value="Hoàn thành">Hoàn thành</option>
+            <option value="Đã trả hàng">Đã trả hàng</option>
+            <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
+            <option value="Hủy đơn hàng">Hủy đơn hàng</option>
+          </select>
+
+          <select id="paymentMethodFilterDelivery" onchange="loadHoaDonList(0, 5, $('#searchInputDelivery').val(), $('#statusFilterDelivery').val(), this.value, 'Giao hàng', 'delivery')">
+            <option value="">Tất cả phương thức thanh toán</option>
+            <option value="Tiền mặt">Tiền mặt</option>
+            <option value="Chuyển khoản">Chuyển khoản</option>
+          </select>
         </div>
       </div>
-      <div class="tab-pane fade" id="instore" role="tabpanel" aria-labelledby="instore-tab">
-        <div class="search-bar">
-          <div class="search-row">
-            <input id="searchInputInstore" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterInstore').val(), $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
-            <button onclick="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
-              <i class="fas fa-search"></i> Tìm kiếm
-            </button>
-          </div>
-          <div class="filter-row">
-            <!-- Tab Tại quầy -->
-            <select id="statusFilterInstore" onchange="loadHoaDonList(0, 5, $('#searchInputInstore').val(), this.value, $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
-              <option value="">Tất cả trạng thái</option>
-              <option value="Chưa xác nhận">Chưa xác nhận</option>
-              <option value="Đã xác nhận">Đã xác nhận</option>
-              <option value="Hoàn thành">Hoàn thành</option>
-              <option value="Đã trả hàng">Đã trả hàng</option>
-              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
-              <option value="Hủy đơn hàng">Hủy đơn hàng</option>
-            </select>
-            <select id="paymentMethodFilterInstore" onchange="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), this.value, 'Tại quầy', 'instore')">
-              <option value="">Tất cả phương thức thanh toán</option>
-              <option value="Tiền mặt">Tiền mặt</option>
-              <option value="Chuyển khoản">Chuyển khoản</option>
-            </select>
-          </div>
+      <div class="table-container">
+        <div class="table-scroll-wrapper">
+          <table id="hoa-don-table-delivery">
+            <thead>
+            <tr>
+              <th>Mã đơn hàng</th>
+              <th>Khách hàng</th>
+              <th>Tên nhân viên</th>
+              <th>Tổng tiền</th>
+              <th>Ngày tạo</th>
+              <th>Phương thức thanh toán</th>
+              <th>Phương thức bán hàng</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody id="invoiceListDelivery"></tbody>
+          </table>
         </div>
-        <div class="table-container">
-          <div class="table-scroll-wrapper">
-            <table id="hoa-don-table-instore">
-              <thead>
-              <tr>
-                <th>Mã đơn hàng</th>
-                <th>Khách hàng</th>
-                <th>Tên nhân viên</th>
-                <th>Tổng tiền</th>
-                <th>Ngày tạo</th>
-                <th>Phương thức thanh toán</th>
-                <th>Phương thức bán hàng</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-              </tr>
-              </thead>
-              <tbody id="invoiceListInstore"></tbody>
-            </table>
-          </div>
-          <div id="invoiceSpinnerInstore" class="spinner"></div>
-          <div id="paginationInstore" class="pagination"></div>
+        <div id="invoiceSpinnerDelivery" class="spinner"></div>
+        <div id="paginationDelivery" class="pagination"></div>
+      </div>
+    </div>
+
+    <!-- Phần Tại quầy -->
+    <div class="mb-5">
+      <h2 class="text-2xl font-bold mb-3">Tại quầy</h2>
+      <div class="search-bar">
+        <div class="search-row">
+          <input id="searchInputInstore" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterInstore').val(), $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
+          <button onclick="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
+            <i class="fas fa-search"></i> Tìm kiếm
+          </button>
+        </div>
+        <div class="filter-row">
+          <select id="statusFilterInstore" onchange="loadHoaDonList(0, 5, $('#searchInputInstore').val(), this.value, $('#paymentMethodFilterInstore').val(), 'Tại quầy', 'instore')">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Chưa xác nhận">Chưa xác nhận</option>
+            <option value="Đã xác nhận">Đã xác nhận</option>
+            <option value="Hoàn thành">Hoàn thành</option>
+            <option value="Đã trả hàng">Đã trả hàng</option>
+            <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
+            <option value="Hủy đơn hàng">Hủy đơn hàng</option>
+          </select>
+          <select id="paymentMethodFilterInstore" onchange="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), this.value, 'Tại quầy', 'instore')">
+            <option value="">Tất cả phương thức thanh toán</option>
+            <option value="Tiền mặt">Tiền mặt</option>
+            <option value="Chuyển khoản">Chuyển khoản</option>
+          </select>
         </div>
       </div>
+      <div class="table-container">
+        <div class="table-scroll-wrapper">
+          <table id="hoa-don-table-instore">
+            <thead>
+            <tr>
+              <th>Mã đơn hàng</th>
+              <th>Khách hàng</th>
+              <th>Tên nhân viên</th>
+              <th>Tổng tiền</th>
+              <th>Ngày tạo</th>
+              <th>Phương thức thanh toán</th>
+              <th>Phương thức bán hàng</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody id="invoiceListInstore"></tbody>
+          </table>
+        </div>
+        <div id="invoiceSpinnerInstore" class="spinner"></div>
+        <div id="paginationInstore" class="pagination"></div>
+      </div>
+    </div>
 
-      <div class="tab-pane fade" id="online" role="tabpanel" aria-labelledby="online-tab">
-        <div class="search-bar">
-          <div class="search-row">
-            <input id="searchInputOnline" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterOnline').val(), $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
-            <button onclick="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
-              <i class="fas fa-search"></i> Tìm kiếm
-            </button>
-          </div>
-          <div class="filter-row">
-            <!-- Tab Online -->
-            <select id="statusFilterOnline" onchange="loadHoaDonList(0, 5, $('#searchInputOnline').val(), this.value, $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
-              <option value="">Tất cả trạng thái</option>
-              <option value="Chưa xác nhận">Chưa xác nhận</option>
-              <option value="Đã xác nhận Online">Đã xác nhận Online</option>
-              <option value="Đang xử lý Online">Đang xử lý Online</option>
-              <option value="Đang vận chuyển">Đang vận chuyển</option>
-              <option value="Vận chuyển thành công">Vận chuyển thành công</option>
-              <option value="Hoàn thành">Hoàn thành</option>
-              <option value="Đã trả hàng">Đã trả hàng</option>
-              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
-              <option value="Hủy đơn hàng">Hủy đơn hàng</option>
-            </select>
-            <select id="paymentMethodFilterOnline" onchange="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), this.value, 'Online', 'online')">
-              <option value="">Tất cả phương thức thanh toán</option>
-              <option value="Tiền mặt">Tiền mặt</option>
-              <option value="Chuyển khoản">Chuyển khoản</option>
-            </select>
-          </div>
+    <!-- Phần Online -->
+    <div class="mb-5">
+      <h2 class="text-2xl font-bold mb-3">Online</h2>
+      <div class="search-bar">
+        <div class="search-row">
+          <input id="searchInputOnline" type="text" placeholder="🔍 Tìm kiếm hóa đơn (mã, tên, số điện thoại)..." onkeyup="loadHoaDonList(0, 5, this.value, $('#statusFilterOnline').val(), $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
+          <button onclick="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
+            <i class="fas fa-search"></i> Tìm kiếm
+          </button>
         </div>
-        <div class="table-container">
-          <div class="table-scroll-wrapper">
-            <table id="hoa-don-table-online">
-              <thead>
-              <tr>
-                <th>Mã đơn hàng</th>
-                <th>Khách hàng</th>
-                <th>Tổng tiền</th>
-                <th>Ngày tạo</th>
-                <th>Phương thức thanh toán</th>
-                <th>Phương thức bán hàng</th>
-                <th>Trạng thái</th>
-                <th>Hành động</th>
-              </tr>
-              </thead>
-              <tbody id="invoiceListOnline"></tbody>
-            </table>
-          </div>
-          <div id="invoiceSpinnerOnline" class="spinner"></div>
-          <div id="paginationOnline" class="pagination"></div>
+        <div class="filter-row">
+          <select id="statusFilterOnline" onchange="loadHoaDonList(0, 5, $('#searchInputOnline').val(), this.value, $('#paymentMethodFilterOnline').val(), 'Online', 'online')">
+            <option value="">Tất cả trạng thái</option>
+            <option value="Chưa xác nhận">Chưa xác nhận</option>
+            <option value="Đã xác nhận Online">Đã xác nhận Online</option>
+            <option value="Đang xử lý Online">Đang xử lý Online</option>
+            <option value="Đang vận chuyển">Đang vận chuyển</option>
+            <option value="Vận chuyển thành công">Vận chuyển thành công</option>
+            <option value="Hoàn thành">Hoàn thành</option>
+            <option value="Đã trả hàng">Đã trả hàng</option>
+            <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
+            <option value="Hủy đơn hàng">Hủy đơn hàng</option>
+          </select>
+          <select id="paymentMethodFilterOnline" onchange="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), this.value, 'Online', 'online')">
+            <option value="">Tất cả phương thức thanh toán</option>
+            <option value="Tiền mặt">Tiền mặt</option>
+            <option value="Chuyển khoản">Chuyển khoản</option>
+          </select>
         </div>
+      </div>
+      <div class="table-container">
+        <div class="table-scroll-wrapper">
+          <table id="hoa-don-table-online">
+            <thead>
+            <tr>
+              <th>Mã đơn hàng</th>
+              <th>Khách hàng</th>
+              <th>Tổng tiền</th>
+              <th>Ngày tạo</th>
+              <th>Phương thức thanh toán</th>
+              <th>Phương thức bán hàng</th>
+              <th>Trạng thái</th>
+              <th>Hành động</th>
+            </tr>
+            </thead>
+            <tbody id="invoiceListOnline"></tbody>
+          </table>
+        </div>
+        <div id="invoiceSpinnerOnline" class="spinner"></div>
+        <div id="paginationOnline" class="pagination"></div>
       </div>
     </div>
   </div>
@@ -1005,6 +997,8 @@
 
   window.onload = () => {
     loadHoaDonList(0, 5, "", "", "", "Giao hàng", "delivery");
+    loadHoaDonList(0, 5, "", "", "", "Tại quầy", "instore");
+    loadHoaDonList(0, 5, "", "", "", "Online", "online");
   };
 </script>
 <script th:src="@{/js/notification.js}"></script>
