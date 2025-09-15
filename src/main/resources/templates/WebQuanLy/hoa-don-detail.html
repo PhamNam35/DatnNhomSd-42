@@ -913,7 +913,7 @@
                 <div class="table-wrapper">
                     <div class="table-header">
                         <h6><i class="fas fa-box"></i> Danh sách sản phẩm</h6>
-                        <a th:if="${hoaDon.donHang.phuongThucBanHang.equalsIgnoreCase('Tại quầy') and (hoaDon.trangThai == 'Hoàn thành' or hoaDon.trangThai == 'Vận chuyển thành công' or hoaDon.trangThai == 'Đã trả hàng một phần' or hoaDon.trangThai == 'Vận chuyển thành công')}"
+                        <a th:if="${hoaDon.donHang.phuongThucBanHang.equalsIgnoreCase('Tại quầy') and (hoaDon.trangThai == 'Hoàn thành' or hoaDon.trangThai == 'Vận chuyển thành công' or hoaDon.trangThai == 'Vận chuyển thành công')}"
                            th:href="@{/polyshoe/tra-hang/{hoaDonId}(hoaDonId=${hoaDon.id})}"
                            class="btn-custom btn-return" style="min-width: 120px;">
                             <i class="fas fa-undo"></i> Trả hàng
@@ -988,8 +988,7 @@
                       lichSu.trangThai == 'Đã xác nhận' ? 'status-confirmed-bg' :
                       lichSu.trangThai == 'Đang vận chuyển' ? 'status-shipping' :
                       lichSu.trangThai == 'Vận chuyển thành công' ? 'status-delivered' :
-                      lichSu.trangThai == 'Đã trả hàng' ? 'status-returned' :
-                      lichSu.trangThai == 'Đã trả hàng một phần' ? 'status-partial-returned' :
+
                       lichSu.trangThai == 'Đã xác nhận Online' ? 'status-online-confirmed' :
                       lichSu.trangThai == 'Đang xử lý Online' ? 'status-online-processing' :
                       lichSu.trangThai == 'Vận chuyển thành công' ? 'status-online-delivered' :

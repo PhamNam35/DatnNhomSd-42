@@ -624,16 +624,7 @@
       color: #dc2626;
     }
 
-    .timeline-step.completed:not(.cancel)[data-status="Đã trả hàng"] .step-icon,
-    .timeline-step.completed:not(.cancel)[data-status="Đã trả hàng một phần"] .step-icon {
-      background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
-      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.3);
-    }
 
-    .timeline-step.completed:not(.cancel)[data-status="Đã trả hàng"] .step-label,
-    .timeline-step.completed:not(.cancel)[data-status="Đã trả hàng một phần"] .step-label {
-      color: #d97706;
-    }
 
     /* Responsive improvements */
     @media (max-width: 768px) {
@@ -707,24 +698,6 @@
       outline-offset: 2px;
     }
 
-    /* Đã đổi hàng */
-    .timeline-step.completed[data-status="Đã đổi sản phẩm"] .step-icon {
-      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-      box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3);
-    }
-    .timeline-step.completed[data-status="Đã đổi sản phẩm"] .step-label {
-      color: #059669;
-    }
-
-    /* Đã trả hàng */
-    .timeline-step.completed:not(.cancel)[data-status="Đã trả hàng"] .step-icon {
-      background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%);
-      box-shadow: 0 6px 20px rgba(217, 119, 6, 0.3);
-    }
-
-    .timeline-step.completed:not(.cancel)[data-status="Đã trả hàng"] .step-label {
-      color: #d97706;
-    }
     .btn-exchange {
       background: linear-gradient(135deg, #059669 0%, #10b981 100%);
       color: white;
@@ -813,18 +786,7 @@
         <div class="step-icon"><i class="fas fa-user-check"></i></div>
         <div class="step-label">Đã nhận hàng</div>
       </div>
-      <div class="timeline-step" th:classappend="${currentStatus == 'Đã trả hàng' ? 'completed' : ''}" data-status="Đã trả hàng">
-        <div class="step-icon"><i class="fas fa-undo"></i></div>
-        <div class="step-label">Đã trả hàng</div>
-      </div>
-      <div class="timeline-step" th:classappend="${currentStatus == 'Chờ xử lý đổi hàng' ? 'completed' : ''}" data-status="Chờ xử lý đổi hàng">
-        <div class="step-icon"><i class="fas fa-hourglass-half"></i></div>
-        <div class="step-label">Chờ xử lý đổi hàng</div>
-      </div>
-      <div class="timeline-step" th:classappend="${currentStatus == 'Đã đổi hàng' ? 'completed' : ''}" data-status="Đã đổi hàng">
-        <div class="step-icon"><i class="fas fa-exchange-alt"></i></div>
-        <div class="step-label">Đã đổi hàng</div>
-      </div>
+
       <div class="timeline-step" th:classappend="${isCanceled ? 'completed cancel' : ''}">
         <div class="step-icon"><i class="fas fa-times-circle"></i></div>
         <div class="step-label">Hủy đơn hàng</div>
@@ -1030,7 +992,7 @@
   <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
     <div>
       <h3 class="text-lg font-bold mb-4">Poly Store Store</h3>
-      <p class="text-sm">Cửa hàng thời trang hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
+      <p class="text-sm"></p>
     </div>
     <div>
       <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
@@ -1093,8 +1055,6 @@
     function updateTimeline(currentStatus) {
       const timelineSteps = document.querySelectorAll('.timeline-step');
       const isCanceled = currentStatus === 'Hủy đơn hàng';
-      const isReturned = currentStatus === 'Đã trả hàng' || currentStatus === 'Đã trả hàng một phần';
-      const isExchanged = currentStatus === 'Chờ xử lý đổi hàng' || currentStatus === 'Đã đổi hàng';
 
       // Reset all steps
       timelineSteps.forEach(step => {
@@ -1110,10 +1070,6 @@
         { status: 'Đang vận chuyển', step: 3 },
         { status: 'Vận chuyển thành công', step: 4 },
         { status: 'Hoàn thành', step: 5 },
-        { status: 'Đã trả hàng', step: 6 },
-        { status: 'Đã trả hàng một phần', step: 6 },
-        { status: 'Chờ xử lý đổi hàng', step: 7 },
-        { status: 'Đã đổi hàng', step: 8 },
         { status: 'Hủy đơn hàng', step: 9 }
       ];
 
@@ -1125,12 +1081,6 @@
             stepElement.classList.add('completed');
             if (currentStatus === 'Hủy đơn hàng' && i === 9) {
               stepElement.classList.add('cancel');
-            } else if ((currentStatus === 'Đã trả hàng' || currentStatus === 'Đã trả hàng một phần') && i === 6) {
-              stepElement.setAttribute('data-status', 'Đã trả hàng');
-            } else if (currentStatus === 'Chờ xử lý đổi hàng' && i === 7) {
-              stepElement.setAttribute('data-status', 'Chờ xử lý đổi hàng');
-            } else if (currentStatus === 'Đã đổi hàng' && i === 8) {
-              stepElement.setAttribute('data-status', 'Đã đổi hàng');
             }
           }
         }

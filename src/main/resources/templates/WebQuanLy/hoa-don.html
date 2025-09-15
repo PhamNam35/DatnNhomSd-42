@@ -636,8 +636,6 @@
               <option value="Đang vận chuyển">Đang vận chuyển</option>
               <option value="Vận chuyển thành công">Vận chuyển thành công</option>
               <option value="Hoàn thành">Hoàn thành</option>
-              <option value="Đã trả hàng">Đã trả hàng</option>
-              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
               <option value="Hủy đơn hàng">Hủy đơn hàng</option>
             </select>
 
@@ -686,8 +684,7 @@
               <option value="Chưa xác nhận">Chưa xác nhận</option>
               <option value="Đã xác nhận">Đã xác nhận</option>
               <option value="Hoàn thành">Hoàn thành</option>
-              <option value="Đã trả hàng">Đã trả hàng</option>
-              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
+
               <option value="Hủy đơn hàng">Hủy đơn hàng</option>
             </select>
             <select id="paymentMethodFilterInstore" onchange="loadHoaDonList(0, 5, $('#searchInputInstore').val(), $('#statusFilterInstore').val(), this.value, 'Tại quầy', 'instore')">
@@ -739,8 +736,7 @@
               <option value="Đang vận chuyển">Đang vận chuyển</option>
               <option value="Vận chuyển thành công">Vận chuyển thành công</option>
               <option value="Hoàn thành">Hoàn thành</option>
-              <option value="Đã trả hàng">Đã trả hàng</option>
-              <option value="Đã trả hàng một phần">Đã trả hàng một phần</option>
+              <
               <option value="Hủy đơn hàng">Hủy đơn hàng</option>
             </select>
             <select id="paymentMethodFilterOnline" onchange="loadHoaDonList(0, 5, $('#searchInputOnline').val(), $('#statusFilterOnline').val(), this.value, 'Online', 'online')">
@@ -896,8 +892,6 @@
               case 'Vận chuyển thành công': statusClass = 'status-confirmed-bg'; break;
               case 'Đang vận chuyển': statusClass = 'status-shipping'; break;
               case 'Hoàn thành': statusClass = 'status-completed-bg'; break;
-              case 'Đã trả hàng': statusClass = 'status-returned'; break;
-              case 'Đã trả hàng một phần': statusClass = 'status-partial-returned'; break;
               case 'Hủy đơn hàng': statusClass = 'status-cancelled'; break;
               case 'Đã xác nhận Online':
               case 'Đang xử lý Online': statusClass = 'status-pending'; break;
