@@ -1,58 +1,152 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Poly Store Store - Sản phẩm mới</title>
-    <link rel="icon" href="/image/Poly Store.png" type="image/png" sizes="32x32"/>
+    <link rel="icon" href="/image/Poly Store.png" type="image/png" sizes="32x32" />
 
     <!-- Libs -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Styles -->
     <style>
+        /* Swiper slide images */
+        .swiper-slide img {
+            object-fit: cover;
+            height: 500px;
+            width: 100%;
+        }
+
         /* Messenger FAB (nút mở Messenger) */
-        .messenger-fab{
+        .messenger-fab {
             position: fixed;
-            bottom: 92px;            /* = 20px (chatbot) + 60px (nút) + 12px khoảng cách */
+            bottom: 92px;
+            /* = 20px (chatbot) + 60px (nút) + 12px khoảng cách */
             right: 20px;
-            width: 60px; height: 60px;
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            background: #0084FF;     /* màu Messenger */
+            background: #0084FF;
+            /* màu Messenger */
             color: #fff;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 8px 20px rgba(0,0,0,.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .25);
             z-index: 10001;
             cursor: pointer;
             transition: transform .15s ease, box-shadow .15s ease;
         }
-        .messenger-fab:hover{
+
+        .messenger-fab:hover {
             transform: translateY(-2px);
-            box-shadow: 0 12px 24px rgba(0,0,0,.3);
-        }
-        .messenger-fab i{ font-size: 28px; }
-
-        @media (max-width: 640px){
-            .messenger-fab{ bottom: 90px; right: 16px; width: 56px; height: 56px; }
+            box-shadow: 0 12px 24px rgba(0, 0, 0, .3);
         }
 
-        .navbar{background:linear-gradient(to right,#153054,#1e4066);position:fixed;top:40px;left:0;width:100%;z-index:1040}
-        .ticker{background-color:#9FD5F7;color:#153054;font-weight:bold;position:fixed;top:0;left:0;width:100%;z-index:1050;height:40px}
-        body{padding-top:118px}
+        .messenger-fab i {
+            font-size: 28px;
+        }
+
+        @media (max-width: 640px) {
+            .messenger-fab {
+                bottom: 90px;
+                right: 16px;
+                width: 56px;
+                height: 56px;
+            }
+        }
+
+        .navbar {
+            background: linear-gradient(to right, #153054, #1e4066);
+            position: fixed;
+            top: 40px;
+            left: 0;
+            width: 100%;
+            z-index: 1040
+        }
+
+        .ticker {
+            background-color: #9FD5F7;
+            color: #153054;
+            font-weight: bold;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1050;
+            height: 40px
+        }
+
+        body {
+            padding-top: 118px
+        }
 
         /* modal chọn biến thể */
-        .size-option{padding:8px 16px;border:2px solid #ccc;border-radius:8px;cursor:pointer;transition:.3s}
-        .size-option.active{background:#153054;color:#fff;border-color:#153054}
-        .color-option[data-swatch="true"]{width:30px;height:30px;border-radius:50%;border:2px solid #ccc;padding:0;cursor:pointer;transition:.3s}
-        .color-option[data-swatch="true"].active{border-color:#153054}
-        .color-option:not([data-swatch="true"]){padding:8px 16px;border:2px solid #ccc;border-radius:8px;cursor:pointer;transition:.3s}
-        .color-option:not([data-swatch="true"]).active{background:#153054;color:#fff;border-color:#153054}
-        #confirmAddToCart.loading::after{content:'';display:inline-block;width:16px;height:16px;margin-left:8px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite}
-        @keyframes spin{to{transform:rotate(360deg)}}
+        .size-option {
+            padding: 8px 16px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .3s
+        }
+
+        .size-option.active {
+            background: #153054;
+            color: #fff;
+            border-color: #153054
+        }
+
+        .color-option[data-swatch="true"] {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid #ccc;
+            padding: 0;
+            cursor: pointer;
+            transition: .3s
+        }
+
+        .color-option[data-swatch="true"].active {
+            border-color: #153054
+        }
+
+        .color-option:not([data-swatch="true"]) {
+            padding: 8px 16px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: .3s
+        }
+
+        .color-option:not([data-swatch="true"]).active {
+            background: #153054;
+            color: #fff;
+            border-color: #153054
+        }
+
+        #confirmAddToCart.loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-left: 8px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
+        }
 
         .search-suggestions {
             position: absolute;
@@ -62,7 +156,7 @@
             background: white;
             border: 1px solid #ccc;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             max-height: 300px;
             overflow-y: auto;
@@ -70,10 +164,12 @@
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
+
         .search-suggestions.active {
             opacity: 1;
             visibility: visible;
         }
+
         .suggestion-item {
             display: flex;
             align-items: center;
@@ -82,9 +178,11 @@
             cursor: pointer;
             transition: background 0.2s;
         }
+
         .suggestion-item:hover {
             background-color: #f1f5f9;
         }
+
         .suggestion-item img {
             width: 50px;
             height: 50px;
@@ -92,6 +190,7 @@
             margin-right: 10px;
             border-radius: 4px;
         }
+
         .history-item {
             padding: 10px;
             border-bottom: 1px solid #eee;
@@ -102,14 +201,17 @@
             align-items: center;
             justify-content: space-between;
         }
+
         .history-item:hover {
             background-color: #e2e8f0;
         }
+
         .history-item .highlight {
             background-color: #9FD5F7;
             padding: 2px 4px;
             border-radius: 4px;
         }
+
         .history-item .delete-btn {
             color: #ef4444;
             font-size: 14px;
@@ -117,28 +219,33 @@
             padding: 5px;
             transition: color 0.2s;
         }
+
         .history-item .delete-btn:hover {
             color: #b91c1c;
-        }.search-suggestions {
-             position: absolute;
-             top: 100%;
-             left: 0;
-             right: 0;
-             background: white;
-             border: 1px solid #ccc;
-             border-radius: 8px;
-             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-             z-index: 1000;
-             max-height: 300px;
-             overflow-y: auto;
-             opacity: 0;
-             visibility: hidden;
-             transition: opacity 0.3s ease, visibility 0.3s ease;
-         }
+        }
+
+        .search-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-height: 300px;
+            overflow-y: auto;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
         .search-suggestions.active {
             opacity: 1;
             visibility: visible;
         }
+
         .suggestion-item {
             display: flex;
             align-items: center;
@@ -147,9 +254,11 @@
             cursor: pointer;
             transition: background 0.2s;
         }
+
         .suggestion-item:hover {
             background-color: #f1f5f9;
         }
+
         .suggestion-item img {
             width: 50px;
             height: 50px;
@@ -157,6 +266,7 @@
             margin-right: 10px;
             border-radius: 4px;
         }
+
         .history-item {
             padding: 10px;
             border-bottom: 1px solid #eee;
@@ -167,14 +277,17 @@
             align-items: center;
             justify-content: space-between;
         }
+
         .history-item:hover {
             background-color: #e2e8f0;
         }
+
         .history-item .highlight {
             background-color: #9FD5F7;
             padding: 2px 4px;
             border-radius: 4px;
         }
+
         .history-item .delete-btn {
             color: #ef4444;
             font-size: 14px;
@@ -182,170 +295,418 @@
             padding: 5px;
             transition: color 0.2s;
         }
+
         .history-item .delete-btn:hover {
             color: #b91c1c;
         }
+
         /* Chatbot */
-        #chatbot-box{position:fixed;bottom:100px;right:30px;width:420px;height:clamp(520px,70vh,640px);background:#fff;border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.18);overflow:hidden;z-index:10000;opacity:0;transform:translateY(12px) scale(.98);pointer-events:none;visibility:hidden;transform-origin:bottom right;transition:opacity .25s ease,transform .25s ease,visibility .25s;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-        #chatbot-box.is-open{opacity:1;transform:translateY(0) scale(1);pointer-events:auto;visibility:visible}
-        .cb-header{background:#153054;color:#fff;padding:10px 12px;display:flex;align-items:center;gap:10px}
-        .brand-logo{width:45px;height:45px;border-radius:30px;object-fit:cover}
-        .cb-actions{margin-left:auto;display:flex;gap:8px}
-        .cb-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.08);color:#fff;border:0;cursor:pointer}
-        #chat-messages{padding:12px 12px 6px;height:420px;overflow-y:auto;background:#fff}
-        .chatbot-msg-bot{position:relative;background:#f3f4f6;color:#111827;padding:10px 12px;border-radius:14px 14px 14px 4px;max-width:82%;margin:0 56px 10px 40px;font-size:15px;line-height:1.45}
-        .chatbot-msg-bot::before{content:"";position:absolute;left:-40px;top:4px;width:36px;height:36px;border-radius:50%;background-image:url('/image/Poly Store.jpg');background-size:cover;background-position:center}
-        .chatbot-msg-user{background:#153054;color:#fff;padding:10px 12px;border-radius:14px 14px 4px 14px;max-width:82%;margin:0 0 10px auto;font-size:15px;line-height:1.45}
-        .cb-quick{padding:6px 12px 10px;display:flex;flex-wrap:wrap;gap:8px;background:#fff}
-        .cb-pill{border:1px solid #e5e7eb;background:#fff;color:#111827;padding:8px 12px;border-radius:18px;font-size:14px;cursor:pointer}
-        .cb-inputbar{border-top:1px solid #eee;padding:10px;display:flex;gap:8px;align-items:center;background:#fff}
-        #chat-send{width:44px;height:44px;border-radius:50%;border:0;background:#153054;color:#fff;display:flex;align-items:center;justify-content:center}
-        .cb-note{padding:6px 14px 12px;font-size:10px;text-align:center;color:#6b7280;background:#fff}
-        #back-to-top{transition:opacity .3s}
-        #back-to-top.hidden{opacity:0;pointer-events:none}
-        @media (max-width:640px){#chatbot-box{width:92vw;right:4vw;bottom:90px;height:70vh}}
+        #chatbot-box {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 420px;
+            height: clamp(520px, 70vh, 640px);
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .18);
+            overflow: hidden;
+            z-index: 10000;
+            opacity: 0;
+            transform: translateY(12px) scale(.98);
+            pointer-events: none;
+            visibility: hidden;
+            transform-origin: bottom right;
+            transition: opacity .25s ease, transform .25s ease, visibility .25s;
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif
+        }
+
+        #chatbot-box.is-open {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+            visibility: visible
+        }
+
+        .cb-header {
+            background: #153054;
+            color: #fff;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .brand-logo {
+            width: 45px;
+            height: 45px;
+            border-radius: 30px;
+            object-fit: cover
+        }
+
+        .cb-actions {
+            margin-left: auto;
+            display: flex;
+            gap: 8px
+        }
+
+        .cb-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            border: 0;
+            cursor: pointer
+        }
+
+        #chat-messages {
+            padding: 12px 12px 6px;
+            height: 420px;
+            overflow-y: auto;
+            background: #fff
+        }
+
+        .chatbot-msg-bot {
+            position: relative;
+            background: #f3f4f6;
+            color: #111827;
+            padding: 10px 12px;
+            border-radius: 14px 14px 14px 4px;
+            max-width: 82%;
+            margin: 0 56px 10px 40px;
+            font-size: 15px;
+            line-height: 1.45
+        }
+
+        .chatbot-msg-bot::before {
+            content: "";
+            position: absolute;
+            left: -40px;
+            top: 4px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background-image: url('/image/Poly Store.jpg');
+            background-size: cover;
+            background-position: center
+        }
+
+        .chatbot-msg-user {
+            background: #153054;
+            color: #fff;
+            padding: 10px 12px;
+            border-radius: 14px 14px 4px 14px;
+            max-width: 82%;
+            margin: 0 0 10px auto;
+            font-size: 15px;
+            line-height: 1.45
+        }
+
+        .cb-quick {
+            padding: 6px 12px 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            background: #fff
+        }
+
+        .cb-pill {
+            border: 1px solid #e5e7eb;
+            background: #fff;
+            color: #111827;
+            padding: 8px 12px;
+            border-radius: 18px;
+            font-size: 14px;
+            cursor: pointer
+        }
+
+        .cb-inputbar {
+            border-top: 1px solid #eee;
+            padding: 10px;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            background: #fff
+        }
+
+        #chat-send {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 0;
+            background: #153054;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .cb-note {
+            padding: 6px 14px 12px;
+            font-size: 10px;
+            text-align: center;
+            color: #6b7280;
+            background: #fff
+        }
+
+        #back-to-top {
+            transition: opacity .3s
+        }
+
+        #back-to-top.hidden {
+            opacity: 0;
+            pointer-events: none
+        }
+
+        @media (max-width:640px) {
+            #chatbot-box {
+                width: 92vw;
+                right: 4vw;
+                bottom: 90px;
+                height: 70vh
+            }
+        }
 
         /* ===== Product Card – Poly Store (đã gộp, không trùng lặp) ===== */
-        :root{--acv-blue:#153054;--card-r:14px}
-
-        .product-card{
-            position:relative;border:1px solid #e5edf6;border-radius:var(--card-r);
-            background:#fff;overflow:hidden;
-            box-shadow:0 2px 10px rgba(21,48,84,.06);
-            transition:transform .25s,box-shadow .25s;
+        :root {
+            --acv-blue: #153054;
+            --card-r: 14px
         }
-        .product-card:hover{transform:translateY(-6px);box-shadow:0 16px 32px rgba(21,48,84,.15)}
+
+        .product-card {
+            position: relative;
+            border: 1px solid #e5edf6;
+            border-radius: var(--card-r);
+            background: #fff;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(21, 48, 84, .06);
+            transition: transform .25s, box-shadow .25s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 32px rgba(21, 48, 84, .15)
+        }
 
         /* media */
-        .product-media{position:relative;aspect-ratio:1/1;background:#f6f7fb;overflow:hidden}
-        .product-media img{width:100%;height:100%;object-fit:cover;transform:scale(1.02);transition:transform .6s ease}
-        .product-card:hover .product-media img{transform:scale(1.08)}
-        .media-gradient{position:absolute;inset:auto 0 0 0;height:44%;background:linear-gradient(to top,rgba(0,0,0,.45),rgba(0,0,0,0))}
+        .product-media {
+            position: relative;
+            aspect-ratio: 1/1;
+            background: #f6f7fb;
+            overflow: hidden
+        }
+
+        .product-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scale(1.02);
+            transition: transform .6s ease
+        }
+
+        .product-card:hover .product-media img {
+            transform: scale(1.08)
+        }
+
+        .media-gradient {
+            position: absolute;
+            inset: auto 0 0 0;
+            height: 44%;
+            background: linear-gradient(to top, rgba(0, 0, 0, .45), rgba(0, 0, 0, 0))
+        }
 
         /* badges & actions */
-        .badge-new{background:#153054}
-        .badge-sale{background:#ef4444;color:#fff;padding:2px 8px;border-radius:999px;font-size:.7rem;font-weight:700;box-shadow:0 8px 16px rgba(0,0,0,.2)}
-        .action-group{position:absolute;top:10px;right:10px;display:flex;flex-direction:column;gap:8px;z-index:3;opacity:0;transform:translateX(6px);transition:all .25s ease}
-        .product-card:hover .action-group{opacity:1;transform:none}
-        .action-btn{background:#fff;border:0;width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 20px rgba(21,48,84,.25)}
-        .action-btn:hover{background:#e8f1fb}
+        .badge-new {
+            background: #153054
+        }
+
+        .badge-sale {
+            background: #ef4444;
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: .7rem;
+            font-weight: 700;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, .2)
+        }
+
+        .action-group {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 3;
+            opacity: 0;
+            transform: translateX(6px);
+            transition: all .25s ease
+        }
+
+        .product-card:hover .action-group {
+            opacity: 1;
+            transform: none
+        }
+
+        .action-btn {
+            background: #fff;
+            border: 0;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(21, 48, 84, .25)
+        }
+
+        .action-btn:hover {
+            background: #e8f1fb
+        }
 
         /* body */
-        .product-body{padding:12px 14px}
-        .product-title{font-weight:600;color:#1f2937;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:42px}
-        .price{color:var(--acv-blue);font-weight:800;font-size:1rem;margin-top:6px}
+        .product-body {
+            padding: 12px 14px
+        }
+
+        .product-title {
+            font-weight: 600;
+            color: #1f2937;
+            line-height: 1.35;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            min-height: 42px
+        }
+
+        .price {
+            color: var(--acv-blue);
+            font-weight: 800;
+            font-size: 1rem;
+            margin-top: 6px
+        }
     </style>
 </head>
+
 <body class="bg-gray-100">
 
-<!-- Ticker -->
+    <!-- Ticker -->
 
 
-<!-- Navbar -->
-<div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
-<div class="container mx-auto py-8">
-    <div class="swiper banner-slider">
-        <div class="swiper-wrapper">
-            <div class="swiper-slide">
-                <img loading="lazy" src="/image/banner1.jpg" alt="Banner thời trang nam" class="w-full h-full object-cover"/>
+    <!-- Navbar -->
+    <div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
+    <div class="container mx-auto py-8">
+        <div class="swiper banner-slider">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide">
+                    <img loading="lazy" src="/image/banner1.jpg" alt="Banner thời trang nam"
+                        class="w-full h-full object-cover" />
+                </div>
+                <div class="swiper-slide">
+                    <img loading="lazy" src="/image/banner2.jpg" alt="Banner khuyến mãi"
+                        class="w-full h-full object-cover" />
+                </div>
+                <div class="swiper-slide">
+                    <img loading="lazy" src="/image/banner3.jpg" alt="Banner khuyến mãi"
+                        class="w-full h-full object-cover" />
+                </div>
             </div>
-            <div class="swiper-slide">
-                <img loading="lazy" src="/image/banner2.jpg" alt="Banner khuyến mãi" class="w-full h-full object-cover"/>
-            </div>
-            <div class="swiper-slide">
-                <img loading="lazy" src="/image/banner3.jpg" alt="Banner khuyến mãi" class="w-full h-full object-cover"/>
-            </div>
+            <div class="swiper-button-next text-blue-800"></div>
+            <div class="swiper-button-prev text-blue-800"></div>
+            <div class="swiper-pagination"></div>
         </div>
-        <div class="swiper-button-next text-blue-800"></div>
-        <div class="swiper-button-prev text-blue-800"></div>
-        <div class="swiper-pagination"></div>
     </div>
-</div>
-<!-- Modal thêm giỏ -->
-<div class="modal fade" id="addToCartModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content rounded-lg">
-            <div class="modal-header" style="background:#153054;color:#fff">
-                <h5 class="modal-title">Thêm vào giỏ hàng</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4">
-                <div class="flex items-center space-x-4">
-                    <img id="modalProductImage" src="" class="w-20 h-20 object-cover rounded" alt="">
-                    <div>
-                        <h6 id="modalProductName" class="font-semibold"></h6>
-                        <p id="modalProductPrice" class="text-blue-800 font-bold"></p>
-                        <p id="modalProductStock" class="text-sm text-gray-600"></p>
+    <!-- Modal thêm giỏ -->
+    <div class="modal fade" id="addToCartModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content rounded-lg">
+                <div class="modal-header" style="background:#153054;color:#fff">
+                    <h5 class="modal-title">Thêm vào giỏ hàng</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <div class="flex items-center space-x-4">
+                        <img id="modalProductImage" src="" class="w-20 h-20 object-cover rounded" alt="">
+                        <div>
+                            <h6 id="modalProductName" class="font-semibold"></h6>
+                            <p id="modalProductPrice" class="text-blue-800 font-bold"></p>
+                            <p id="modalProductStock" class="text-sm text-gray-600"></p>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="font-semibold">Chọn size:</h6>
+                        <div class="flex space-x-2 mt-2" id="modalSizeOptions"></div>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="font-semibold">Chọn màu sắc:</h6>
+                        <div class="flex space-x-2 mt-2" id="modalColorOptions"></div>
+                    </div>
+                    <div class="mt-4">
+                        <h6 class="font-semibold">Số lượng:</h6>
+                        <div class="flex items-center space-x-2 mt-2">
+                            <button class="quantity-btn minus px-3 py-1 bg-gray-200 rounded">-</button>
+                            <input type="number" value="1" min="1"
+                                class="quantity-input w-16 text-center border rounded">
+                            <button class="quantity-btn plus px-3 py-1 bg-gray-200 rounded">+</button>
+                        </div>
+                    </div>
+                    <div id="modalError" class="text-red-500 text-sm mt-2 hidden">Vui lòng chọn kích thước và màu sắc!
                     </div>
                 </div>
-                <div class="mt-4">
-                    <h6 class="font-semibold">Chọn size:</h6>
-                    <div class="flex space-x-2 mt-2" id="modalSizeOptions"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button id="confirmAddToCart" class="btn text-white" style="background:#153054">Thêm vào
+                        giỏ</button>
                 </div>
-                <div class="mt-4">
-                    <h6 class="font-semibold">Chọn màu sắc:</h6>
-                    <div class="flex space-x-2 mt-2" id="modalColorOptions"></div>
-                </div>
-                <div class="mt-4">
-                    <h6 class="font-semibold">Số lượng:</h6>
-                    <div class="flex items-center space-x-2 mt-2">
-                        <button class="quantity-btn minus px-3 py-1 bg-gray-200 rounded">-</button>
-                        <input type="number" value="1" min="1" class="quantity-input w-16 text-center border rounded">
-                        <button class="quantity-btn plus px-3 py-1 bg-gray-200 rounded">+</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div class="container mx-auto py-8">
+        <!-- Tiêu đề + dropdown sắp xếp -->
+        <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between mb-6">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-800">Sản phẩm mới</h1>
+                <p class="text-gray-600">Những item vừa cập bến — bắt trend liền tay 😎</p>
+            </div>
+
+            <div class="w-full lg:w-auto">
+                <label for="sortSelectNew" class="sr-only">Sắp xếp</label>
+                <select id="sortSelectNew" class="w-full lg:w-64 border rounded-lg px-3 py-2 bg-white">
+                    <option value="">Sắp xếp</option>
+                    <option value="price_asc">Giá: Tăng dần</option>
+                    <option value="price_desc">Giá: Giảm dần</option>
+                    <option value="name_asc">Tên: A–Z</option>
+                    <option value="name_desc">Tên: Z–A</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grid sản phẩm (thêm id để sort) -->
+        <div id="productGridNew" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+            <div class="product-card" th:each="product : ${products}">
+                <!-- MEDIA -->
+                <div class="product-media">
+                    <a th:href="@{/chitietsanpham(id=${product.id})}">
+                        <img th:src="${product.urlHinhAnh}" th:alt="${product.tenSanPham}" loading="lazy" />
+                    </a>
+
+                    <!-- Badges -->
+                    <div class="absolute top-2 left-2 flex items-center gap-2 z-10">
+                        <span class="badge-new text-white text-xs font-semibold px-2 py-1 rounded">New</span>
+                        <span class="badge-sale" th:if="${product.discount != null and product.discount != '0%'}"
+                            th:text="'-' + ${product.discount}">-10%</span>
                     </div>
-                </div>
-                <div id="modalError" class="text-red-500 text-sm mt-2 hidden">Vui lòng chọn kích thước và màu sắc!</div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-                <button id="confirmAddToCart" class="btn text-white" style="background:#153054">Thêm vào giỏ</button>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- CONTENT -->
-<div class="container mx-auto py-8">
-    <!-- Tiêu đề + dropdown sắp xếp -->
-    <div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between mb-6">
-        <div>
-            <h1 class="text-3xl font-bold text-gray-800">Sản phẩm mới</h1>
-            <p class="text-gray-600">Những item vừa cập bến — bắt trend liền tay 😎</p>
-        </div>
-
-        <div class="w-full lg:w-auto">
-            <label for="sortSelectNew" class="sr-only">Sắp xếp</label>
-            <select id="sortSelectNew" class="w-full lg:w-64 border rounded-lg px-3 py-2 bg-white">
-                <option value="">Sắp xếp</option>
-                <option value="price_asc">Giá: Tăng dần</option>
-                <option value="price_desc">Giá: Giảm dần</option>
-                <option value="name_asc">Tên: A–Z</option>
-                <option value="name_desc">Tên: Z–A</option>
-            </select>
-        </div>
-    </div>
-
-    <!-- Grid sản phẩm (thêm id để sort) -->
-    <div id="productGridNew" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <div class="product-card" th:each="product : ${products}">
-            <!-- MEDIA -->
-            <div class="product-media">
-                <a th:href="@{/chitietsanpham(id=${product.id})}">
-                    <img th:src="${product.urlHinhAnh}" th:alt="${product.tenSanPham}" loading="lazy"/>
-                </a>
-
-                <!-- Badges -->
-                <div class="absolute top-2 left-2 flex items-center gap-2 z-10">
-                    <span class="badge-new text-white text-xs font-semibold px-2 py-1 rounded">New</span>
-                    <span class="badge-sale"
-                          th:if="${product.discount != null and product.discount != '0%'}"
-                          th:text="'-' + ${product.discount}">-10%</span>
-                </div>
-
-                <!-- Actions -->
-                <div class="action-group">
-                    <button class="action-btn cart-icon"
-                            th:attr="
+                    <!-- Actions -->
+                    <div class="action-group">
+                        <button class="action-btn cart-icon" th:attr="
                     data-product-id=${product.id},
                     data-product-name=${product.tenSanPham},
                     data-product-price=${product.price},
@@ -353,41 +714,32 @@
                     data-kich-co=${@jacksonObjectMapper.writeValueAsString(product.kichCoList)},
                     data-mau-sac=${@jacksonObjectMapper.writeValueAsString(product.mauSacList)},
                     data-stock=${product.tongSoLuong}">
-                        <i class="fas fa-shopping-cart text-blue-800"></i>
-                    </button>
+                            <i class="fas fa-shopping-cart text-blue-800"></i>
+                        </button>
 
-                    <button class="action-btn quick-view-btn"
-                            th:attr="data-product-id=${product.id}">
-                        <i class="fas fa-eye text-blue-800"></i>
-                    </button>
+                        <button class="action-btn quick-view-btn" th:attr="data-product-id=${product.id}">
+                            <i class="fas fa-eye text-blue-800"></i>
+                        </button>
+                    </div>
+
+                    <div class="media-gradient"></div>
                 </div>
 
-                <div class="media-gradient"></div>
+                <!-- BODY -->
+                <a th:href="@{/chitietsanpham(id=${product.id})}" class="block">
+                    <div class="product-body">
+                        <h4 class="product-title" th:text="${product.tenSanPham}">Tên sản phẩm</h4>
+
+                        <div th:if="${product.oldPrice != null and product.discount != '0%'}"
+                            class="text-blue-800 font-bold mt-2">
+                            <span class="formatted-old-price" th:text="${product.oldPrice}">Giá gốc</span>
+                        </div>
+
+                    </div>
+                </a>
             </div>
-
-            <!-- BODY -->
-            <a th:href="@{/chitietsanpham(id=${product.id})}" class="block">
-                <div class="product-body">
-                    <h4 class="product-title" th:text="${product.tenSanPham}">Tên sản phẩm</h4>
-
-                    <div class="price text-blue-800 font-bold mt-2" th:attr="data-price=${product.price}">
-                        <span th:text="${product.price}"></span> VNĐ
-                    </div>
-                    <div th:if="${product.oldPrice != null and product.discount != '0%'}"
-                         class="text-sm text-red-600 line-through">
-                        <span class="formatted-old-price" th:text="${product.oldPrice}">Giá gốc</span>
-                    </div>
-
-                    <div class="rating text-yellow-400 text-sm mt-1"
-                         th:attr="data-product-id=${product.id}">
-                        <span class="stars"></span>
-                        <span class="avg-rating">0</span> (<span class="total-reviews">0</span> đánh giá)
-                    </div>
-                </div>
-            </a>
         </div>
     </div>
-</div>
 
 
 
@@ -399,389 +751,392 @@
     </div>
 
 
-</div>
-
-<!-- Footer -->
-<footer style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
-  <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-    <div>
-      <h3 class="text-lg font-bold mb-4">Poly Store Store</h3>
-      <p class="text-sm">Cửa hàng thời trang hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
-    </div>
-    <div>
-      <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
-      <ul class="space-y-2">
-        <li><a href="/new" class="hover:text-blue-300">Sản phẩm mới</a></li>
-        <li><a href="/all" class="hover:text-blue-300">Tất cả sản phẩm</a></li>
-        <li><a href="/bestsellers" class="hover:text-blue-300">Sản phẩm bán chạy</a></li>
-        <li><a href="/chinh-sach" class="hover:text-blue-300">Chính sách</a></li>
-      </ul>
     </div>
 
-  </div>
+    <!-- Footer -->
+    <footer
+        style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
+        <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h3 class="text-lg font-bold mb-4">Poly Store Store</h3>
+                <p class="text-sm"></p>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
+                <ul class="space-y-2">
+                    <li><a href="/new" class="hover:text-blue-300">Sản phẩm mới</a></li>
+                    <li><a href="/all" class="hover:text-blue-300">Tất cả sản phẩm</a></li>
+                    <li><a href="/bestsellers" class="hover:text-blue-300">Sản phẩm bán chạy</a></li>
+                    <li><a href="/chinh-sach" class="hover:text-blue-300">Chính sách</a></li>
+                </ul>
+            </div>
 
-  <div class="text-center mt-8 text-sm">© 2025 Poly Store Store. All rights reserved.</div>
+        </div>
 
-  <div class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10"></div>
-</footer>
+        <div class="text-center mt-8 text-sm">© 2025 Poly Store Store. All rights reserved.</div>
 
-<button id="back-to-top" class="fixed bottom-20 right-20 bg-blue-600 text-white p-3 rounded-full shadow-lg hidden" aria-label="Quay lại đầu trang">
-    <i class="fas fa-arrow-up"></i>
-</button>
+        <div
+            class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10">
+        </div>
+    </footer>
 
-<!-- Scripts -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-<script src="/js/navbar.js"></script>
-<!-- Sort (Giá/Tên) cho trang Sản phẩm mới -->
-<script>
-    new Swiper('.banner-slider', {
-        loop: true,
-        autoplay: { delay: 5000 },
-        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-        pagination: { el: '.swiper-pagination', clickable: true },
-    });
-    (() => {
-        const grid   = document.getElementById('productGridNew');
-        const select = document.getElementById('sortSelectNew');
-        if (!grid || !select) return;
+    <button id="back-to-top" class="fixed bottom-20 right-20 bg-blue-600 text-white p-3 rounded-full shadow-lg hidden"
+        aria-label="Quay lại đầu trang">
+        <i class="fas fa-arrow-up"></i>
+    </button>
 
-        // Lưu thứ tự ban đầu để khôi phục
-        const initialOrder = Array.from(grid.children);
-
-        const readPrice = (card) => {
-            const el  = card.querySelector('.price');
-            const raw = el?.getAttribute('data-price');
-            const n   = raw ? Number(raw) : Number((el?.textContent || '').replace(/[^\d.-]/g,''));
-            return isNaN(n) ? 0 : n;
-        };
-        const readName = (card) => (card.querySelector('.product-title')?.textContent || '').trim();
-        const viCmp    = (a,b) => a.localeCompare(b, 'vi', { sensitivity: 'base' });
-
-        function applySort(value){
-            if (!value) {
-                const frag = document.createDocumentFragment();
-                initialOrder.forEach(el => frag.appendChild(el));
-                grid.appendChild(frag);
-                return;
-            }
-            const items = Array.from(grid.querySelectorAll('.product-card'));
-            items.sort((a,b) => {
-                if (value === 'price_asc')  return readPrice(a) - readPrice(b);
-                if (value === 'price_desc') return readPrice(b) - readPrice(a);
-                if (value === 'name_asc')   return viCmp(readName(a), readName(b));
-                if (value === 'name_desc')  return viCmp(readName(b), readName(a));
-                return 0;
-            });
-            const frag = document.createDocumentFragment();
-            items.forEach(el => frag.appendChild(el));
-            grid.appendChild(frag);
-        }
-
-        select.addEventListener('change', e => applySort(e.target.value));
-    })();
-</script>
-
-<script>
-    /* ------------ Quick reply combobox ------------ */
-    const qrTrigger=document.getElementById('qr-trigger');
-    const qrMenu=document.getElementById('qr-menu');
-    qrTrigger?.addEventListener('click',(e)=>{e.stopPropagation();const open=qrMenu.classList.toggle('show');qrTrigger.setAttribute('aria-expanded',open?'true':'false');qrMenu.setAttribute('aria-hidden',open?'false':'true')});
-    document.addEventListener('click',(e)=>{if(!qrMenu)return;if(!qrMenu.contains(e.target)&&!qrTrigger.contains(e.target)){qrMenu.classList.remove('show');qrTrigger.setAttribute('aria-expanded','false');qrMenu.setAttribute('aria-hidden','true')}});
-
-    /* -------------------- Helpers ----------------- */
-    function safeJSONParse(val,fallback=[]){
-        if(val==null||val===''||val==='undefined'||val==='null') return fallback;
-        try{return JSON.parse(val)}catch(_){}
-        try{const t=document.createElement('textarea');t.innerHTML=val;return JSON.parse(t.value)}catch(_){return fallback}
-    }
-    const isCssColor=(str)=>/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(str)||/^rgb(a?)\(/i.test(str)||/^[a-z]+$/i.test(str);
-    const showSuccess=(text)=>window.Swal?Swal.fire({icon:'success',title:'Thành công',text,timer:1500,showConfirmButton:false}):alert(text);
-    const showError=(text)=>window.Swal?Swal.fire({icon:'error',title:'Lỗi',text}):alert('Lỗi: '+text);
-
-    /* ----------------- Format giá ----------------- */
-    document.querySelectorAll('.price').forEach(el=>{
-        const raw=el.getAttribute('data-price');
-        const n=Number(String(raw).replace(/[^\d.-]/g,''));
-        el.textContent=Number.isFinite(n)&&n>0?('Từ '+n.toLocaleString('vi-VN')+' VNĐ'):'Liên hệ';
-    });
-    document.querySelectorAll('.formatted-old-price').forEach(el=>{
-        const raw=el.textContent.trim();const n=Number(String(raw).replace(/[^\d.-]/g,''));
-        if(Number.isFinite(n)&&n>0) el.textContent=n.toLocaleString('vi-VN')+' VNĐ';
-    });
-
-    /* --------------- Back to top ------------------ */
-    const backToTop=document.getElementById('back-to-top');
-    window.addEventListener('scroll',()=>{backToTop.classList.toggle('hidden',window.scrollY<200)});
-    backToTop.addEventListener('click',()=>window.scrollTo({top:0,behavior:'smooth'}));
-
-    /* ----------------- Rating --------------------- */
-    document.addEventListener('DOMContentLoaded',function(){
-        document.querySelectorAll('.rating').forEach(container=>{
-            const sanPhamId=container.dataset.productId;if(!sanPhamId) return;
-            fetch(`/api/product/${sanPhamId}/ratings`,{credentials:'include'})
-                .then(res=>res.ok?res.json():Promise.reject(res.status))
-                .then(data=>{
-                    const starsContainer=container.querySelector('.stars');
-                    const avgEl=container.querySelector('.avg-rating');
-                    const totalEl=container.querySelector('.total-reviews');
-                    const all=[...(data.myReviews||[]),...(data.otherReviews||[])];
-                    if(all.length===0){starsContainer.innerHTML='Chưa có đánh giá';avgEl.textContent='0';totalEl.textContent='0';return}
-                    const avg=all.reduce((s,r)=>s+r.rating,0)/all.length;const r=Math.round(avg*2)/2;
-                    avgEl.textContent=r.toFixed(1);totalEl.textContent=all.length;
-                    let html='';const full=Math.floor(r);const half=r%1>=0.5;
-                    for(let i=0;i<full;i++) html+='<i class="fas fa-star text-yellow-400"></i>';
-                    if(half&&full<5) html+='<i class="fas fa-star-half-alt text-yellow-400"></i>';
-                    for(let i=0;i<5-full-(half?1:0);i++) html+='<i class="far fa-star text-yellow-400"></i>';
-                    starsContainer.innerHTML=html;
-                })
-                .catch(()=>{container.innerHTML='<span class="text-gray-600">Lỗi tải đánh giá</span>'});
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    <script src="/js/navbar.js"></script>
+    <!-- Sort (Giá/Tên) cho trang Sản phẩm mới -->
+    <script>
+        new Swiper('.banner-slider', {
+            loop: true,
+            autoplay: { delay: 5000 },
+            navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+            pagination: { el: '.swiper-pagination', clickable: true },
         });
-    });
+        (() => {
+            const grid = document.getElementById('productGridNew');
+            const select = document.getElementById('sortSelectNew');
+            if (!grid || !select) return;
 
-    /* -------- Cart + Quick view (biến thể) ------- */
-    document.querySelectorAll('.cart-icon').forEach((button)=>{
-        button.addEventListener('click',async ()=>{
-            const modalEl=document.getElementById('addToCartModal');
-            const modal=new bootstrap.Modal(modalEl);
+            // Lưu thứ tự ban đầu để khôi phục
+            const initialOrder = Array.from(grid.children);
 
-            modalEl.querySelector('#modalProductImage').src=button.dataset.productImg||'';
-            modalEl.querySelector('#modalProductName').textContent=button.dataset.productName||'Sản phẩm';
-            modalEl.querySelector('#modalProductPrice').textContent='Từ '+Number(button.dataset.productPrice||0).toLocaleString('vi-VN')+' VNĐ';
-            modalEl.querySelector('#modalProductStock').textContent=`Tồn kho: ${button.dataset.stock||'N/A'}`;
-
-            const productId=button.dataset.productId;
-
-            let sizes=safeJSONParse(button.dataset.kichCo);
-            let colors=safeJSONParse(button.dataset.mauSac);
-            if(!Array.isArray(sizes)||!Array.isArray(colors)||(!sizes.length&&!colors.length)){
-                try{
-                    const resp=await fetch(`/api/product/${encodeURIComponent(productId)}/options`,{headers:{Accept:'application/json'}});
-                    if(resp.ok){const j=await resp.json();sizes=j.sizes||[];colors=j.colors||[];}
-                }catch(_){}
-            }
-
-            const sizeWrap=modalEl.querySelector('#modalSizeOptions'); sizeWrap.innerHTML='';
-            const colorWrap=modalEl.querySelector('#modalColorOptions'); colorWrap.innerHTML='';
-            sizes.forEach(s=>{
-                const b=document.createElement('button');b.className='size-option';b.textContent=s.ten||s.name||'Size';b.dataset.sizeId=s.id;sizeWrap.appendChild(b);
-            });
-            colors.forEach(c=>{
-                const b=document.createElement('button');b.className='color-option';
-                const hex=(c.maMauHex||'').trim();
-                if(hex && isCssColor(hex)){b.dataset.swatch='true';b.style.backgroundColor=hex;b.title=c.tenMau||'';}
-                else{b.textContent=c.tenMau||'Màu';}
-                b.dataset.colorId=c.id;colorWrap.appendChild(b);
-            });
-
-            const minusBtn=modalEl.querySelector('.quantity-btn.minus');
-            const plusBtn=modalEl.querySelector('.quantity-btn.plus');
-            const qtyInput=modalEl.querySelector('.quantity-input');
-            minusBtn.onclick=()=>{qtyInput.value=Math.max(1,(parseInt(qtyInput.value)||1)-1)};
-            plusBtn.onclick =()=>{const max=parseInt(qtyInput.max||'999999',10);qtyInput.value=Math.min((parseInt(qtyInput.value)||1)+1,max)};
-
-            let selectedSizeId=null,selectedColorId=null,currentVariant=null;
-            const variantCache=new Map(); // key: `${sid}-${cid}`
-            let validCombos=null;
-
-            async function tryLoadValidCombos(){
-                const urls=[
-                    `/api/product/${encodeURIComponent(productId)}/valid-combinations`,
-                    `/api/product/${encodeURIComponent(productId)}/combinations`,
-                    `/api/product/${encodeURIComponent(productId)}/variants`
-                ];
-                for(const u of urls){
-                    try{
-                        const r=await fetch(u,{headers:{Accept:'application/json'}});
-                        if(r.ok){
-                            const j=await r.json();
-                            if(Array.isArray(j)){validCombos=j;return;}
-                        }
-                    }catch(_){}
-                }
-                validCombos=null;
-            }
-            await tryLoadValidCombos();
-
-            const keyOf=(sid,cid)=>`${sid}-${cid}`;
-            async function probeVariant(sid,cid){
-                const k=keyOf(sid,cid);
-                if(variantCache.has(k)) return variantCache.get(k);
-                const urls=[
-                    `/polyshoe/chi-tiet-san-pham/api?sanPhamId=${encodeURIComponent(productId)}&sizeId=${encodeURIComponent(sid)}&colorId=${encodeURIComponent(cid)}`,
-                    `/api/getChiTietSanPham?sanPhamId=${encodeURIComponent(productId)}&sizeId=${encodeURIComponent(sid)}&colorId=${encodeURIComponent(cid)}`
-                ];
-                let value={exists:false};
-                for(const u of urls){
-                    try{
-                        const res=await fetch(u,{credentials:'include'});
-                        if(!res.ok) continue;
-                        const data=await res.json();
-                        if(data?.id){value={exists:true,id:data.id,stock:data.soLuongTonKho,gia:data.gia,oldPrice:data.oldPrice};break;}
-                    }catch(_){}
-                }
-                variantCache.set(k,value);
-                return value;
-            }
-
-            function setDisabled(btn,dis){btn.disabled=dis;btn.classList.toggle('opacity-50',dis);btn.classList.toggle('cursor-not-allowed',dis);if(dis) btn.classList.remove('active')}
-            function enableAllSizes(){sizeWrap.querySelectorAll('.size-option').forEach(b=>setDisabled(b,false))}
-            function enableAllColors(){colorWrap.querySelectorAll('.color-option').forEach(b=>setDisabled(b,false))}
-
-            function applyEnableBySize(sid){
-                if(!sid){enableAllColors();return;}
-                const cBtns=[...colorWrap.querySelectorAll('.color-option')];
-                if(validCombos){
-                    const ok=new Set(validCombos.filter(v=>String(v.sizeId)===String(sid)).map(v=>String(v.colorId)));
-                    cBtns.forEach(b=>setDisabled(b,!ok.has(b.dataset.colorId)));
-                }else{
-                    Promise.all(cBtns.map(async b=>{const r=await probeVariant(sid,b.dataset.colorId);setDisabled(b,!r.exists)}));
-                }
-            }
-            function applyEnableByColor(cid){
-                if(!cid){enableAllSizes();return;}
-                const sBtns=[...sizeWrap.querySelectorAll('.size-option')];
-                if(validCombos){
-                    const ok=new Set(validCombos.filter(v=>String(v.colorId)===String(cid)).map(v=>String(v.sizeId)));
-                    sBtns.forEach(b=>setDisabled(b,!ok.has(b.dataset.sizeId)));
-                }else{
-                    Promise.all(sBtns.map(async b=>{const r=await probeVariant(b.dataset.sizeId,cid);setDisabled(b,!r.exists)}));
-                }
-            }
-
-            const stockEl=modalEl.querySelector('#modalProductStock');
-            const priceEl=modalEl.querySelector('#modalProductPrice');
-
-            async function fetchVariantAndRender(){
-                if(!selectedSizeId||!selectedColorId){
-                    currentVariant=null;stockEl.textContent='Tồn kho: hãy chọn size & màu';return;
-                }
-                let data=variantCache.get(keyOf(selectedSizeId,selectedColorId));
-                if(!data||data.id==null) data=await probeVariant(selectedSizeId,selectedColorId);
-                if(!data?.id){currentVariant=null;stockEl.textContent='Biến thể không khả dụng';return;}
-                currentVariant={id:data.id,soLuongTonKho:data.stock,gia:data.gia,oldPrice:data.oldPrice};
-
-                if(typeof data.stock==='number'){
-                    stockEl.textContent=`Tồn kho: ${data.stock}`;
-                    qtyInput.max=data.stock;
-                    if(+qtyInput.value>data.stock) qtyInput.value=data.stock;
-                }else{
-                    stockEl.textContent='Tồn kho: N/A';
-                    qtyInput.removeAttribute('max');
-                }
-                const cur=Number(data.gia||0).toLocaleString('vi-VN')+' VNĐ';
-                if(data.oldPrice && data.oldPrice!==data.gia){
-                    const old=Number(data.oldPrice).toLocaleString('vi-VN')+' VNĐ';
-                    priceEl.innerHTML=`${cur} <span class="text-red-600 line-through ms-2">${old}</span>`;
-                }else{
-                    priceEl.textContent=cur;
-                }
-            }
-
-            sizeWrap.querySelectorAll('.size-option').forEach(b=>{
-                b.addEventListener('click',async ()=>{
-                    const was=b.classList.contains('active');
-                    if(was){
-                        b.classList.remove('active');selectedSizeId=null;applyEnableBySize(null);
-                        if(selectedColorId) applyEnableByColor(selectedColorId);
-                        currentVariant=null;
-                        stockEl.textContent=selectedColorId?'Tồn kho: hãy chọn size':`Tồn kho: ${button.dataset.stock||'N/A'}`;
-                        priceEl.textContent='Từ '+Number(button.dataset.productPrice||0).toLocaleString('vi-VN')+' VNĐ';
-                        qtyInput.removeAttribute('max');
-                        return;
-                    }
-                    sizeWrap.querySelectorAll('.size-option').forEach(x=>x.classList.remove('active'));
-                    b.classList.add('active');
-                    selectedSizeId=b.dataset.sizeId;
-                    applyEnableBySize(selectedSizeId);
-                    await fetchVariantAndRender();
-                });
-            });
-
-            colorWrap.querySelectorAll('.color-option').forEach(b=>{
-                b.addEventListener('click',async ()=>{
-                    const was=b.classList.contains('active');
-                    if(was){
-                        b.classList.remove('active');selectedColorId=null;applyEnableByColor(null);
-                        if(selectedSizeId) applyEnableBySize(selectedSizeId);
-                        currentVariant=null;
-                        stockEl.textContent=selectedSizeId?'Tồn kho: hãy chọn màu':`Tồn kho: ${button.dataset.stock||'N/A'}`;
-                        priceEl.textContent='Từ '+Number(button.dataset.productPrice||0).toLocaleString('vi-VN')+' VNĐ';
-                        qtyInput.removeAttribute('max');
-                        return;
-                    }
-                    colorWrap.querySelectorAll('.color-option').forEach(x=>x.classList.remove('active'));
-                    b.classList.add('active');
-                    selectedColorId=b.dataset.colorId;
-                    applyEnableByColor(selectedColorId);
-                    await fetchVariantAndRender();
-                });
-            });
-
-            modal.show();
-
-            const confirmBtn=modalEl.querySelector('#confirmAddToCart');
-            const errEl=modalEl.querySelector('#modalError');
-            confirmBtn.onclick=async ()=>{
-                errEl.classList.add('hidden');
-                const sBtn=sizeWrap.querySelector('.size-option.active');
-                const cBtn=colorWrap.querySelector('.color-option.active');
-                if(!sBtn||!cBtn){errEl.classList.remove('hidden');return;}
-                if(!currentVariant?.id){
-                    await fetchVariantAndRender();
-                    if(!currentVariant?.id){showError('Không thể lấy thông tin biến thể!');return;}
-                }
-                const quantity=Math.max(1,parseInt(qtyInput.value)||1);
-                if(typeof currentVariant.soLuongTonKho==='number' && quantity>currentVariant.soLuongTonKho){
-                    showError('Số lượng vượt quá tồn kho!');return;
-                }
-
-                confirmBtn.disabled=true;confirmBtn.classList.add('loading');
-                try{
-                    try{
-                        const authRes=await fetch('/api/cart/check-auth',{credentials:'include'});
-                        if(authRes.ok){
-                            const auth=await authRes.json();
-                            if(auth && auth.isAuthenticated===false){ window.location.href='/customers/login'; return; }
-                        }
-                    }catch(_){}
-                    const payload={id:currentVariant.id,quantity};
-                    const addRes=await fetch('/api/cart/add',{method:'POST',headers:{'Content-Type':'application/json'},credentials:'include',body:JSON.stringify(payload)});
-                    if(addRes.ok){
-                        showSuccess('Đã thêm vào giỏ hàng!');
-                        try{window.updateCartCount?.();}catch(_){}
-                        modal.hide();
-                    }else{
-                        let msg='';
-                        try{const j=await addRes.json();msg=j.error||JSON.stringify(j);}catch(_){msg=await addRes.text();}
-                        showError(msg||'Có lỗi xảy ra khi thêm vào giỏ hàng!');
-                    }
-                }catch(e){
-                    showError(e?.message||'Lỗi mạng khi thêm vào giỏ hàng!');
-                }finally{
-                    confirmBtn.disabled=false;confirmBtn.classList.remove('loading');
-                }
+            const readPrice = (card) => {
+                const el = card.querySelector('.price');
+                const raw = el?.getAttribute('data-price');
+                const n = raw ? Number(raw) : Number((el?.textContent || '').replace(/[^\d.-]/g, ''));
+                return isNaN(n) ? 0 : n;
             };
-        });
-    });
+            const readName = (card) => (card.querySelector('.product-title')?.textContent || '').trim();
+            const viCmp = (a, b) => a.localeCompare(b, 'vi', { sensitivity: 'base' });
 
-    /* ----------------- Quick View ----------------- */
-    document.querySelectorAll('.quick-view-btn').forEach((button)=>{
-        button.addEventListener('click',async ()=>{
-            const productId=button.dataset.productId;
-            let product=null;
-            try{
-                const res=await fetch(`/api/product/${encodeURIComponent(productId)}`,{headers:{Accept:'application/json'}});
-                if(!res.ok) throw new Error('Fetch failed');
-                const ct=res.headers.get('content-type')||'';
-                product = ct.includes('application/json') ? await res.json() : JSON.parse(await res.text());
-            }catch(_){
-                alert('Không lấy được dữ liệu sản phẩm.'); return;
+            function applySort(value) {
+                if (!value) {
+                    const frag = document.createDocumentFragment();
+                    initialOrder.forEach(el => frag.appendChild(el));
+                    grid.appendChild(frag);
+                    return;
+                }
+                const items = Array.from(grid.querySelectorAll('.product-card'));
+                items.sort((a, b) => {
+                    if (value === 'price_asc') return readPrice(a) - readPrice(b);
+                    if (value === 'price_desc') return readPrice(b) - readPrice(a);
+                    if (value === 'name_asc') return viCmp(readName(a), readName(b));
+                    if (value === 'name_desc') return viCmp(readName(b), readName(a));
+                    return 0;
+                });
+                const frag = document.createDocumentFragment();
+                items.forEach(el => frag.appendChild(el));
+                grid.appendChild(frag);
             }
 
-            const modalEl=document.createElement('div');
-            modalEl.className='modal fade';modalEl.tabIndex=-1;
-            modalEl.innerHTML=`
+            select.addEventListener('change', e => applySort(e.target.value));
+        })();
+    </script>
+
+    <script>
+        /* ------------ Quick reply combobox ------------ */
+        const qrTrigger = document.getElementById('qr-trigger');
+        const qrMenu = document.getElementById('qr-menu');
+        qrTrigger?.addEventListener('click', (e) => { e.stopPropagation(); const open = qrMenu.classList.toggle('show'); qrTrigger.setAttribute('aria-expanded', open ? 'true' : 'false'); qrMenu.setAttribute('aria-hidden', open ? 'false' : 'true') });
+        document.addEventListener('click', (e) => { if (!qrMenu) return; if (!qrMenu.contains(e.target) && !qrTrigger.contains(e.target)) { qrMenu.classList.remove('show'); qrTrigger.setAttribute('aria-expanded', 'false'); qrMenu.setAttribute('aria-hidden', 'true') } });
+
+        /* -------------------- Helpers ----------------- */
+        function safeJSONParse(val, fallback = []) {
+            if (val == null || val === '' || val === 'undefined' || val === 'null') return fallback;
+            try { return JSON.parse(val) } catch (_) { }
+            try { const t = document.createElement('textarea'); t.innerHTML = val; return JSON.parse(t.value) } catch (_) { return fallback }
+        }
+        const isCssColor = (str) => /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(str) || /^rgb(a?)\(/i.test(str) || /^[a-z]+$/i.test(str);
+        const showSuccess = (text) => window.Swal ? Swal.fire({ icon: 'success', title: 'Thành công', text, timer: 1500, showConfirmButton: false }) : alert(text);
+        const showError = (text) => window.Swal ? Swal.fire({ icon: 'error', title: 'Lỗi', text }) : alert('Lỗi: ' + text);
+
+        /* ----------------- Format giá ----------------- */
+        document.querySelectorAll('.price').forEach(el => {
+            const raw = el.getAttribute('data-price');
+            const n = Number(String(raw).replace(/[^\d.-]/g, ''));
+            el.textContent = Number.isFinite(n) && n > 0 ? ('Từ ' + n.toLocaleString('vi-VN') + ' VNĐ') : 'Liên hệ';
+        });
+        document.querySelectorAll('.formatted-old-price').forEach(el => {
+            const raw = el.textContent.trim(); const n = Number(String(raw).replace(/[^\d.-]/g, ''));
+            if (Number.isFinite(n) && n > 0) el.textContent = n.toLocaleString('vi-VN') + ' VNĐ';
+        });
+
+        /* --------------- Back to top ------------------ */
+        const backToTop = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => { backToTop.classList.toggle('hidden', window.scrollY < 200) });
+        backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        /* ----------------- Rating --------------------- */
+        document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.rating').forEach(container => {
+                const sanPhamId = container.dataset.productId; if (!sanPhamId) return;
+                fetch(`/api/product/${sanPhamId}/ratings`, { credentials: 'include' })
+                    .then(res => res.ok ? res.json() : Promise.reject(res.status))
+                    .then(data => {
+                        const starsContainer = container.querySelector('.stars');
+                        const avgEl = container.querySelector('.avg-rating');
+                        const totalEl = container.querySelector('.total-reviews');
+                        const all = [...(data.myReviews || []), ...(data.otherReviews || [])];
+                        if (all.length === 0) { starsContainer.innerHTML = 'Chưa có đánh giá'; avgEl.textContent = '0'; totalEl.textContent = '0'; return }
+                        const avg = all.reduce((s, r) => s + r.rating, 0) / all.length; const r = Math.round(avg * 2) / 2;
+                        avgEl.textContent = r.toFixed(1); totalEl.textContent = all.length;
+                        let html = ''; const full = Math.floor(r); const half = r % 1 >= 0.5;
+                        for (let i = 0; i < full; i++) html += '<i class="fas fa-star text-yellow-400"></i>';
+                        if (half && full < 5) html += '<i class="fas fa-star-half-alt text-yellow-400"></i>';
+                        for (let i = 0; i < 5 - full - (half ? 1 : 0); i++) html += '<i class="far fa-star text-yellow-400"></i>';
+                        starsContainer.innerHTML = html;
+                    })
+                    .catch(() => { container.innerHTML = '<span class="text-gray-600">Lỗi tải đánh giá</span>' });
+            });
+        });
+
+        /* -------- Cart + Quick view (biến thể) ------- */
+        document.querySelectorAll('.cart-icon').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const modalEl = document.getElementById('addToCartModal');
+                const modal = new bootstrap.Modal(modalEl);
+
+                modalEl.querySelector('#modalProductImage').src = button.dataset.productImg || '';
+                modalEl.querySelector('#modalProductName').textContent = button.dataset.productName || 'Sản phẩm';
+                modalEl.querySelector('#modalProductStock').textContent = `Tồn kho: ${button.dataset.stock || 'N/A'}`;
+
+                const productId = button.dataset.productId;
+
+                let sizes = safeJSONParse(button.dataset.kichCo);
+                let colors = safeJSONParse(button.dataset.mauSac);
+                if (!Array.isArray(sizes) || !Array.isArray(colors) || (!sizes.length && !colors.length)) {
+                    try {
+                        const resp = await fetch(`/api/product/${encodeURIComponent(productId)}/options`, { headers: { Accept: 'application/json' } });
+                        if (resp.ok) { const j = await resp.json(); sizes = j.sizes || []; colors = j.colors || []; }
+                    } catch (_) { }
+                }
+
+                const sizeWrap = modalEl.querySelector('#modalSizeOptions'); sizeWrap.innerHTML = '';
+                const colorWrap = modalEl.querySelector('#modalColorOptions'); colorWrap.innerHTML = '';
+                sizes.forEach(s => {
+                    const b = document.createElement('button'); b.className = 'size-option'; b.textContent = s.ten || s.name || 'Size'; b.dataset.sizeId = s.id; sizeWrap.appendChild(b);
+                });
+                colors.forEach(c => {
+                    const b = document.createElement('button'); b.className = 'color-option';
+                    const hex = (c.maMauHex || '').trim();
+                    if (hex && isCssColor(hex)) { b.dataset.swatch = 'true'; b.style.backgroundColor = hex; b.title = c.tenMau || ''; }
+                    else { b.textContent = c.tenMau || 'Màu'; }
+                    b.dataset.colorId = c.id; colorWrap.appendChild(b);
+                });
+
+                const minusBtn = modalEl.querySelector('.quantity-btn.minus');
+                const plusBtn = modalEl.querySelector('.quantity-btn.plus');
+                const qtyInput = modalEl.querySelector('.quantity-input');
+                minusBtn.onclick = () => { qtyInput.value = Math.max(1, (parseInt(qtyInput.value) || 1) - 1) };
+                plusBtn.onclick = () => { const max = parseInt(qtyInput.max || '999999', 10); qtyInput.value = Math.min((parseInt(qtyInput.value) || 1) + 1, max) };
+
+                let selectedSizeId = null, selectedColorId = null, currentVariant = null;
+                const variantCache = new Map(); // key: `${sid}-${cid}`
+                let validCombos = null;
+
+                async function tryLoadValidCombos() {
+                    const urls = [
+                        `/api/product/${encodeURIComponent(productId)}/valid-combinations`,
+                        `/api/product/${encodeURIComponent(productId)}/combinations`,
+                        `/api/product/${encodeURIComponent(productId)}/variants`
+                    ];
+                    for (const u of urls) {
+                        try {
+                            const r = await fetch(u, { headers: { Accept: 'application/json' } });
+                            if (r.ok) {
+                                const j = await r.json();
+                                if (Array.isArray(j)) { validCombos = j; return; }
+                            }
+                        } catch (_) { }
+                    }
+                    validCombos = null;
+                }
+                await tryLoadValidCombos();
+
+                const keyOf = (sid, cid) => `${sid}-${cid}`;
+                async function probeVariant(sid, cid) {
+                    const k = keyOf(sid, cid);
+                    if (variantCache.has(k)) return variantCache.get(k);
+                    const urls = [
+                        `/polyshoe/chi-tiet-san-pham/api?sanPhamId=${encodeURIComponent(productId)}&sizeId=${encodeURIComponent(sid)}&colorId=${encodeURIComponent(cid)}`,
+                        `/api/getChiTietSanPham?sanPhamId=${encodeURIComponent(productId)}&sizeId=${encodeURIComponent(sid)}&colorId=${encodeURIComponent(cid)}`
+                    ];
+                    let value = { exists: false };
+                    for (const u of urls) {
+                        try {
+                            const res = await fetch(u, { credentials: 'include' });
+                            if (!res.ok) continue;
+                            const data = await res.json();
+                            if (data?.id) { value = { exists: true, id: data.id, stock: data.soLuongTonKho, gia: data.gia, oldPrice: data.oldPrice }; break; }
+                        } catch (_) { }
+                    }
+                    variantCache.set(k, value);
+                    return value;
+                }
+
+                function setDisabled(btn, dis) { btn.disabled = dis; btn.classList.toggle('opacity-50', dis); btn.classList.toggle('cursor-not-allowed', dis); if (dis) btn.classList.remove('active') }
+                function enableAllSizes() { sizeWrap.querySelectorAll('.size-option').forEach(b => setDisabled(b, false)) }
+                function enableAllColors() { colorWrap.querySelectorAll('.color-option').forEach(b => setDisabled(b, false)) }
+
+                function applyEnableBySize(sid) {
+                    if (!sid) { enableAllColors(); return; }
+                    const cBtns = [...colorWrap.querySelectorAll('.color-option')];
+                    if (validCombos) {
+                        const ok = new Set(validCombos.filter(v => String(v.sizeId) === String(sid)).map(v => String(v.colorId)));
+                        cBtns.forEach(b => setDisabled(b, !ok.has(b.dataset.colorId)));
+                    } else {
+                        Promise.all(cBtns.map(async b => { const r = await probeVariant(sid, b.dataset.colorId); setDisabled(b, !r.exists) }));
+                    }
+                }
+                function applyEnableByColor(cid) {
+                    if (!cid) { enableAllSizes(); return; }
+                    const sBtns = [...sizeWrap.querySelectorAll('.size-option')];
+                    if (validCombos) {
+                        const ok = new Set(validCombos.filter(v => String(v.colorId) === String(cid)).map(v => String(v.sizeId)));
+                        sBtns.forEach(b => setDisabled(b, !ok.has(b.dataset.sizeId)));
+                    } else {
+                        Promise.all(sBtns.map(async b => { const r = await probeVariant(b.dataset.sizeId, cid); setDisabled(b, !r.exists) }));
+                    }
+                }
+
+                const stockEl = modalEl.querySelector('#modalProductStock');
+                const priceEl = modalEl.querySelector('#modalProductPrice');
+
+                async function fetchVariantAndRender() {
+                    if (!selectedSizeId || !selectedColorId) {
+                        currentVariant = null; stockEl.textContent = 'Tồn kho: hãy chọn size & màu'; return;
+                    }
+                    let data = variantCache.get(keyOf(selectedSizeId, selectedColorId));
+                    if (!data || data.id == null) data = await probeVariant(selectedSizeId, selectedColorId);
+                    if (!data?.id) { currentVariant = null; stockEl.textContent = 'Biến thể không khả dụng'; return; }
+                    currentVariant = { id: data.id, soLuongTonKho: data.stock, gia: data.gia, oldPrice: data.oldPrice };
+
+                    if (typeof data.stock === 'number') {
+                        stockEl.textContent = `Tồn kho: ${data.stock}`;
+                        qtyInput.max = data.stock;
+                        if (+qtyInput.value > data.stock) qtyInput.value = data.stock;
+                    } else {
+                        stockEl.textContent = 'Tồn kho: N/A';
+                        qtyInput.removeAttribute('max');
+                    }
+                    const cur = Number(data.gia || 0).toLocaleString('vi-VN') + ' VNĐ';
+                    if (data.oldPrice && data.oldPrice !== data.gia) {
+                        const old = Number(data.oldPrice).toLocaleString('vi-VN') + ' VNĐ';
+                        priceEl.innerHTML = `${cur} <span class="text-red-600 line-through ms-2">${old}</span>`;
+                    } else {
+                        priceEl.textContent = cur;
+                    }
+                }
+
+                sizeWrap.querySelectorAll('.size-option').forEach(b => {
+                    b.addEventListener('click', async () => {
+                        const was = b.classList.contains('active');
+                        if (was) {
+                            b.classList.remove('active'); selectedSizeId = null; applyEnableBySize(null);
+                            if (selectedColorId) applyEnableByColor(selectedColorId);
+                            currentVariant = null;
+                            stockEl.textContent = selectedColorId ? 'Tồn kho: hãy chọn size' : `Tồn kho: ${button.dataset.stock || 'N/A'}`;
+                            priceEl.textContent = 'Từ ' + Number(button.dataset.productPrice || 0).toLocaleString('vi-VN') + ' VNĐ';
+                            qtyInput.removeAttribute('max');
+                            return;
+                        }
+                        sizeWrap.querySelectorAll('.size-option').forEach(x => x.classList.remove('active'));
+                        b.classList.add('active');
+                        selectedSizeId = b.dataset.sizeId;
+                        applyEnableBySize(selectedSizeId);
+                        await fetchVariantAndRender();
+                    });
+                });
+
+                colorWrap.querySelectorAll('.color-option').forEach(b => {
+                    b.addEventListener('click', async () => {
+                        const was = b.classList.contains('active');
+                        if (was) {
+                            b.classList.remove('active'); selectedColorId = null; applyEnableByColor(null);
+                            if (selectedSizeId) applyEnableBySize(selectedSizeId);
+                            currentVariant = null;
+                            stockEl.textContent = selectedSizeId ? 'Tồn kho: hãy chọn màu' : `Tồn kho: ${button.dataset.stock || 'N/A'}`;
+                            priceEl.textContent = 'Từ ' + Number(button.dataset.productPrice || 0).toLocaleString('vi-VN') + ' VNĐ';
+                            qtyInput.removeAttribute('max');
+                            return;
+                        }
+                        colorWrap.querySelectorAll('.color-option').forEach(x => x.classList.remove('active'));
+                        b.classList.add('active');
+                        selectedColorId = b.dataset.colorId;
+                        applyEnableByColor(selectedColorId);
+                        await fetchVariantAndRender();
+                    });
+                });
+
+                modal.show();
+
+                const confirmBtn = modalEl.querySelector('#confirmAddToCart');
+                const errEl = modalEl.querySelector('#modalError');
+                confirmBtn.onclick = async () => {
+                    errEl.classList.add('hidden');
+                    const sBtn = sizeWrap.querySelector('.size-option.active');
+                    const cBtn = colorWrap.querySelector('.color-option.active');
+                    if (!sBtn || !cBtn) { errEl.classList.remove('hidden'); return; }
+                    if (!currentVariant?.id) {
+                        await fetchVariantAndRender();
+                        if (!currentVariant?.id) { showError('Không thể lấy thông tin biến thể!'); return; }
+                    }
+                    const quantity = Math.max(1, parseInt(qtyInput.value) || 1);
+                    if (typeof currentVariant.soLuongTonKho === 'number' && quantity > currentVariant.soLuongTonKho) {
+                        showError('Số lượng vượt quá tồn kho!'); return;
+                    }
+
+                    confirmBtn.disabled = true; confirmBtn.classList.add('loading');
+                    try {
+                        try {
+                            const authRes = await fetch('/api/cart/check-auth', { credentials: 'include' });
+                            if (authRes.ok) {
+                                const auth = await authRes.json();
+                                if (auth && auth.isAuthenticated === false) { window.location.href = '/customers/login'; return; }
+                            }
+                        } catch (_) { }
+                        const payload = { id: currentVariant.id, quantity };
+                        const addRes = await fetch('/api/cart/add', { method: 'POST', headers: { 'Content-Type': 'application/json' }, credentials: 'include', body: JSON.stringify(payload) });
+                        if (addRes.ok) {
+                            showSuccess('Đã thêm vào giỏ hàng!');
+                            try { window.updateCartCount?.(); } catch (_) { }
+                            modal.hide();
+                        } else {
+                            let msg = '';
+                            try { const j = await addRes.json(); msg = j.error || JSON.stringify(j); } catch (_) { msg = await addRes.text(); }
+                            showError(msg || 'Có lỗi xảy ra khi thêm vào giỏ hàng!');
+                        }
+                    } catch (e) {
+                        showError(e?.message || 'Lỗi mạng khi thêm vào giỏ hàng!');
+                    } finally {
+                        confirmBtn.disabled = false; confirmBtn.classList.remove('loading');
+                    }
+                };
+            });
+        });
+
+        /* ----------------- Quick View ----------------- */
+        document.querySelectorAll('.quick-view-btn').forEach((button) => {
+            button.addEventListener('click', async () => {
+                const productId = button.dataset.productId;
+                let product = null;
+                try {
+                    const res = await fetch(`/api/product/${encodeURIComponent(productId)}`, { headers: { Accept: 'application/json' } });
+                    if (!res.ok) throw new Error('Fetch failed');
+                    const ct = res.headers.get('content-type') || '';
+                    product = ct.includes('application/json') ? await res.json() : JSON.parse(await res.text());
+                } catch (_) {
+                    alert('Không lấy được dữ liệu sản phẩm.'); return;
+                }
+
+                const modalEl = document.createElement('div');
+                modalEl.className = 'modal fade'; modalEl.tabIndex = -1;
+                modalEl.innerHTML = `
         <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
           <div class="modal-header" style="background:#153054;color:#fff">
             <h5 class="modal-title">${product.tenSanPham ?? 'Sản phẩm'}</h5>
@@ -789,7 +1144,7 @@
           </div>
           <div class="modal-body">
             <img src="${product.urlHinhAnh ?? ''}" alt="${product.tenSanPham ?? ''}" class="w-100 h-64 object-cover rounded mb-4">
-            <p class="text-blue-800 font-bold">${Number(product.price||0).toLocaleString('vi-VN')} VNĐ</p>
+            <p class="text-blue-800 font-bold">${Number(product.price || 0).toLocaleString('vi-VN')} VNĐ</p>
             <p class="text-sm text-gray-600">Tồn kho: ${product.tongSoLuong ?? 'N/A'}</p>
             <p class="text-sm">${product.moTa || 'Không có mô tả'}</p>
           </div>
@@ -798,118 +1153,119 @@
             <a href="/chitietsanpham?id=${product.id}" class="btn text-white" style="background:#153054;">Xem chi tiết</a>
           </div>
         </div></div>`;
-            document.body.appendChild(modalEl);
-            const quickModal=new bootstrap.Modal(modalEl);
-            quickModal.show();
-            modalEl.addEventListener('hidden.bs.modal',()=>modalEl.remove(),{once:true});
-        });
-    });
-
-    /* ----------------- Chatbot -------------------- */
-    const toggleBtn=document.getElementById('chatbot-toggle');
-    const chatBox=document.getElementById('chatbot-box');
-    const closeBtn=document.getElementById('chatbot-close');
-    const chatInput=document.getElementById('chat-input');
-    const chatMessages=document.getElementById('chat-messages');
-
-    function openChat(){if(!chatBox.classList.contains('is-open')){chatBox.classList.add('is-open');restoreHistory();ensureGreeting();requestAnimationFrame(()=>chatInput?.focus());}}
-    function closeChat(){chatBox.classList.remove('is-open')}
-    function isOpen(){return chatBox.classList.contains('is-open')}
-    toggleBtn.onclick=(e)=>{e.stopPropagation();isOpen()?closeChat():openChat()};
-    closeBtn.onclick=(e)=>{e.stopPropagation();closeChat()};
-    document.addEventListener('click',(e)=>{if(!chatBox.contains(e.target)&&!toggleBtn.contains(e.target)) closeChat()});
-    document.addEventListener('keydown',(e)=>{if(e.key==='Escape'&&isOpen()) closeChat()});
-
-    document.querySelectorAll('.quick-reply').forEach(btn=>{
-        btn.addEventListener('click',()=>{chatInput.value=btn.textContent;chatInput.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}));});
-    });
-    const sendBtn=document.getElementById('chat-send');
-    sendBtn?.addEventListener('click',()=>{chatInput.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}));});
-
-    function saveToHistory(role,msg){
-        const current=JSON.parse(sessionStorage.getItem('chat_history')||'[]');
-        current.push({role,msg});
-        sessionStorage.setItem('chat_history',JSON.stringify(current));
-    }
-    function restoreHistory(){
-        chatMessages.innerHTML='';
-        const items=JSON.parse(sessionStorage.getItem('chat_history')||'[]');
-        for(const item of items){
-            const div=document.createElement('div');
-            div.className=item.role==='user'?'chatbot-msg-user':'chatbot-msg-bot';
-            div.innerHTML=item.msg;
-            chatMessages.appendChild(div);
-        }
-        const hasUserMsg=items.some(i=>i.role==='user');
-        document.getElementById('quick-row').style.display=hasUserMsg?'none':'flex';
-        const typing=document.createElement('div');
-        typing.id='typing-indicator';typing.className='chatbot-msg-bot hidden';typing.textContent='Đang soạn tin...';
-        chatMessages.appendChild(typing);
-        chatMessages.scrollTop=chatMessages.scrollHeight;
-    }
-    function ensureGreeting(){
-        const items=JSON.parse(sessionStorage.getItem('chat_history')||'[]');
-        if(items.length>0) return;
-        const greet1='Xin chào Bạn! Mình là trợ lý AI của Poly Store Store';
-        const greet2='Mình rất sẵn lòng hỗ trợ Bạn 😊';
-        const g1=document.createElement('div');g1.className='chatbot-msg-bot';g1.textContent=greet1;
-        const g2=document.createElement('div');g2.className='chatbot-msg-bot';g2.textContent=greet2;
-        chatMessages.appendChild(g1);chatMessages.appendChild(g2);
-        saveToHistory('bot',greet1);saveToHistory('bot',greet2);
-        chatMessages.scrollTop=chatMessages.scrollHeight;
-    }
-
-    chatInput.addEventListener('keydown',async (event)=>{
-        if(event.key!=='Enter'||event.repeat) return;
-        event.preventDefault();
-        const message=chatInput.value.trim(); if(!message) return;
-        document.getElementById('quick-row').style.display='none';
-
-        const userDiv=document.createElement('div');
-        userDiv.className='chatbot-msg-user';
-        userDiv.textContent=message;
-        chatMessages.appendChild(userDiv);
-        saveToHistory('user',message);
-        chatInput.value='';
-
-        const typing=document.getElementById('typing-indicator');
-        typing?.classList.remove('hidden');
-        chatMessages.scrollTop=chatMessages.scrollHeight;
-
-        try{
-            const res=await fetch('https://duclong206.app.n8n.cloud/webhook/website-chatbot',{
-                method:'POST',
-                headers:{'Content-Type':'application/json'},
-                body:JSON.stringify({body:{from:'user_123',message}})
+                document.body.appendChild(modalEl);
+                const quickModal = new bootstrap.Modal(modalEl);
+                quickModal.show();
+                modalEl.addEventListener('hidden.bs.modal', () => modalEl.remove(), { once: true });
             });
-            const data=await res.json();
-            let raw=(typeof data.message==='string')?data.message:(data.message?.message ?? 'Xin lỗi, bot không phản hồi đúng định dạng.');
-            raw=raw.replace(/```json\n|\n```/g,'').trim();
-            try{const parsed=JSON.parse(raw);raw=parsed.message||raw;}catch(_){}
-            const html=raw
-                .replace(/(https?:\/\/[^\s<]+|polyshoe\.site\/[^\s<]+)/g,(u)=>{
-                    const url=u.startsWith('http')?u:'https://'+u;
-                    return /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(url)
-                        ? `<img src="${url}" alt="Ảnh" loading="lazy" style="max-width:100%;height:auto;margin-top:8px;" />`
-                        : `<a href="${url}" target="_blank" rel="noopener" style="color:#153054;text-decoration:underline;">${u}</a>`;
-                })
-                .replace(/\n/g,'<br>');
-            const botDiv=document.createElement('div');
-            botDiv.className='chatbot-msg-bot';
-            botDiv.innerHTML=html;
-            chatMessages.appendChild(botDiv);
-            saveToHistory('bot',botDiv.innerHTML);
-            chatMessages.scrollTop=chatMessages.scrollHeight;
-        }catch(err){
-            const botErr=document.createElement('div');
-            botErr.className='chatbot-msg-bot';
-            botErr.textContent='Lỗi kết nối. Vui lòng thử lại.';
-            chatMessages.appendChild(botErr);
-            saveToHistory('bot',botErr.textContent);
-        }finally{
-            typing?.classList.add('hidden');
+        });
+
+        /* ----------------- Chatbot -------------------- */
+        const toggleBtn = document.getElementById('chatbot-toggle');
+        const chatBox = document.getElementById('chatbot-box');
+        const closeBtn = document.getElementById('chatbot-close');
+        const chatInput = document.getElementById('chat-input');
+        const chatMessages = document.getElementById('chat-messages');
+
+        function openChat() { if (!chatBox.classList.contains('is-open')) { chatBox.classList.add('is-open'); restoreHistory(); ensureGreeting(); requestAnimationFrame(() => chatInput?.focus()); } }
+        function closeChat() { chatBox.classList.remove('is-open') }
+        function isOpen() { return chatBox.classList.contains('is-open') }
+        toggleBtn.onclick = (e) => { e.stopPropagation(); isOpen() ? closeChat() : openChat() };
+        closeBtn.onclick = (e) => { e.stopPropagation(); closeChat() };
+        document.addEventListener('click', (e) => { if (!chatBox.contains(e.target) && !toggleBtn.contains(e.target)) closeChat() });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && isOpen()) closeChat() });
+
+        document.querySelectorAll('.quick-reply').forEach(btn => {
+            btn.addEventListener('click', () => { chatInput.value = btn.textContent; chatInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })); });
+        });
+        const sendBtn = document.getElementById('chat-send');
+        sendBtn?.addEventListener('click', () => { chatInput.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' })); });
+
+        function saveToHistory(role, msg) {
+            const current = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
+            current.push({ role, msg });
+            sessionStorage.setItem('chat_history', JSON.stringify(current));
         }
-    });
-</script>
+        function restoreHistory() {
+            chatMessages.innerHTML = '';
+            const items = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
+            for (const item of items) {
+                const div = document.createElement('div');
+                div.className = item.role === 'user' ? 'chatbot-msg-user' : 'chatbot-msg-bot';
+                div.innerHTML = item.msg;
+                chatMessages.appendChild(div);
+            }
+            const hasUserMsg = items.some(i => i.role === 'user');
+            document.getElementById('quick-row').style.display = hasUserMsg ? 'none' : 'flex';
+            const typing = document.createElement('div');
+            typing.id = 'typing-indicator'; typing.className = 'chatbot-msg-bot hidden'; typing.textContent = 'Đang soạn tin...';
+            chatMessages.appendChild(typing);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        function ensureGreeting() {
+            const items = JSON.parse(sessionStorage.getItem('chat_history') || '[]');
+            if (items.length > 0) return;
+            const greet1 = 'Xin chào Bạn! Mình là trợ lý AI của Poly Store Store';
+            const greet2 = 'Mình rất sẵn lòng hỗ trợ Bạn 😊';
+            const g1 = document.createElement('div'); g1.className = 'chatbot-msg-bot'; g1.textContent = greet1;
+            const g2 = document.createElement('div'); g2.className = 'chatbot-msg-bot'; g2.textContent = greet2;
+            chatMessages.appendChild(g1); chatMessages.appendChild(g2);
+            saveToHistory('bot', greet1); saveToHistory('bot', greet2);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        chatInput.addEventListener('keydown', async (event) => {
+            if (event.key !== 'Enter' || event.repeat) return;
+            event.preventDefault();
+            const message = chatInput.value.trim(); if (!message) return;
+            document.getElementById('quick-row').style.display = 'none';
+
+            const userDiv = document.createElement('div');
+            userDiv.className = 'chatbot-msg-user';
+            userDiv.textContent = message;
+            chatMessages.appendChild(userDiv);
+            saveToHistory('user', message);
+            chatInput.value = '';
+
+            const typing = document.getElementById('typing-indicator');
+            typing?.classList.remove('hidden');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                const res = await fetch('https://duclong206.app.n8n.cloud/webhook/website-chatbot', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ body: { from: 'user_123', message } })
+                });
+                const data = await res.json();
+                let raw = (typeof data.message === 'string') ? data.message : (data.message?.message ?? 'Xin lỗi, bot không phản hồi đúng định dạng.');
+                raw = raw.replace(/```json\n|\n```/g, '').trim();
+                try { const parsed = JSON.parse(raw); raw = parsed.message || raw; } catch (_) { }
+                const html = raw
+                    .replace(/(https?:\/\/[^\s<]+|polyshoe\.site\/[^\s<]+)/g, (u) => {
+                        const url = u.startsWith('http') ? u : 'https://' + u;
+                        return /\.(png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(url)
+                            ? `<img src="${url}" alt="Ảnh" loading="lazy" style="max-width:100%;height:auto;margin-top:8px;" />`
+                            : `<a href="${url}" target="_blank" rel="noopener" style="color:#153054;text-decoration:underline;">${u}</a>`;
+                    })
+                    .replace(/\n/g, '<br>');
+                const botDiv = document.createElement('div');
+                botDiv.className = 'chatbot-msg-bot';
+                botDiv.innerHTML = html;
+                chatMessages.appendChild(botDiv);
+                saveToHistory('bot', botDiv.innerHTML);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            } catch (err) {
+                const botErr = document.createElement('div');
+                botErr.className = 'chatbot-msg-bot';
+                botErr.textContent = 'Lỗi kết nối. Vui lòng thử lại.';
+                chatMessages.appendChild(botErr);
+                saveToHistory('bot', botErr.textContent);
+            } finally {
+                typing?.classList.add('hidden');
+            }
+        });
+    </script>
 </body>
+
 </html>
