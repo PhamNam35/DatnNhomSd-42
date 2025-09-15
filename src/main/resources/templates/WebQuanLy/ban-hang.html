@@ -179,12 +179,12 @@
     }
 
     .tab.active {
-      background: linear-gradient(135deg, #D32F2F, #7F0E0E); /* đỏ đậm */
+      background: black;
       color: var(--light-blue);
       font-weight: 600;
       transform: translateY(-2px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-      border-color: #B71C1C;
+      /*border-color: #B71C1C;*/
     }
 
     .tab .btn {
@@ -742,9 +742,11 @@
       .summary-total .value{ font-size: 1.2rem; }
     }
 
-    /* Footer tổng kết đơn hàng cố định đáy */
     .checkout-footer{
-      position: fixed; bottom: 0; left: 256px; right: 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;              /* mặc định full-width */
+      right: 0;
       background: rgba(255,255,255,.96);
       backdrop-filter: blur(10px);
       border-top: 1px solid var(--border-color);
@@ -752,9 +754,18 @@
       z-index: 1030;
       padding: .75rem 1rem;
     }
-    @media (max-width: 992px){
-      .checkout-footer{ left: 0; }
+
+    /* Màn ≥ 992px mới chừa chỗ cho sidebar 256px */
+    @media (min-width: 992px){
+      .checkout-footer{ left: 256px; }
     }
+    @media (max-width: 576px){
+      #checkoutFooter .btn-lg{ padding: .6rem 1rem; font-size: 1rem; }
+      #checkoutFooter #total{ font-size: 1.15rem !important; }
+      .summary-inline{ gap: .5rem; }
+      .summary-inline > div{ font-size: .875rem; }
+    }
+
 
     /* Tóm tắt inline gọn tại footer */
     .summary-inline > div{
@@ -859,12 +870,108 @@
     .text-primary{ color: var(--primary-color) !important; }
     .bg-success{ background-color: var(--success-color) !important; }
     .bg-danger{ background-color: var(--danger-color) !important; }
+    /* ===== TYPEAHEAD – HIỂN THỊ THEO CHIỀU DỌC (1 cột) ===== */
+    .typeahead{
+      position: relative;
+      width: 100%;
+      max-width: none;
+    }
+
+    /* Hộp gợi ý: rộng bằng ô input, danh sách dọc, ~4–5 item là cuộn */
+    .typeahead-list{
+      position: absolute;
+      left: 0; right: 0;
+      top: calc(100% + 6px);
+      z-index: 2000;
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: 0 12px 28px rgba(0,0,0,.1);
+      padding: 6px;
+      display: block;          /* <<< quan trọng: về hiển thị dọc */
+      width: 100%;             /* bằng ô input */
+      max-height: 380px;       /* ~ 4–5 item, tuỳ chiều cao thực tế */
+      overflow: auto;
+    }
+
+    /* Mỗi item vẫn layout ngang (ảnh trái – thông tin – giá) */
+    .typeahead-item{
+      display: grid;
+      grid-template-columns: 56px 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    .typeahead-item + .typeahead-item{ margin-top: 6px; } /* tách hàng */
+    .typeahead-item:hover,
+    .typeahead-item.active{ background: var(--light-gray); }
+
+    .typeahead-item img{
+      width:56px;height:56px;object-fit:cover;border-radius:10px;
+    }
+    .typeahead-title{ font-weight: 600; color: var(--dark-blue); }
+    .typeahead-sub{ font-size:.85rem; color: var(--neutral-gray); }
+    .typeahead-price{ text-align:right; }
+    .typeahead-price .now{ font-weight:700; color: var(--primary-color); }
+    .typeahead-price .old{ font-size:.8rem; text-decoration:line-through; opacity:.6; }
+
+    /* Mobile: quay về 1 cột cho dễ đọc */
+    @media (max-width: 992px){
+      .typeahead-list{
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: 1fr;
+      }
+    }
+    /* Nút icon-only nhỏ gọn cho QR */
+    .btn-icon{
+      width: 46px; height: 46px;          /* bạn có thể chỉnh 40–48px */
+      padding: 0;
+      display: inline-flex;
+      align-items: center; justify-content: center;
+      border-radius: 12px;
+    }
+    .btn-icon i{ font-size: 20px; }
+
+    /* Bố cục: QR nhỏ (auto) + thanh tìm kiếm chiếm phần còn lại */
+    .action-buttons{
+      display: grid !important;
+      grid-template-columns: 1fr auto !important;  /* search | icon */
+      gap: 12px;
+      margin-bottom: 0;
+      align-items: center;
+    }
+
+    /* Đảm bảo thanh tìm kiếm kéo full chiều ngang cột 2 */
+    .typeahead{ width: 100%; max-width: none; }
+
+    /* Mobile: vẫn giữ icon + search 1 hàng; nếu chật quá sẽ tự xuống hàng */
+    @media (max-width: 576px){
+      .btn-icon{ width: 42px; height: 42px; }
+    }
+    :root{ --content-offset: 256px; } /* sẽ cập nhật bằng JS bên dưới */
+
+    /* FOOTER */
+    .checkout-footer{
+      position: fixed;
+      bottom: 0;
+      right: 0;
+      left: 0;            /* mặc định mobile full width */
+      z-index: 1030;
+    }
+    @media (min-width: 992px){
+      .checkout-footer{ left: var(--content-offset); } /* bù đúng theo sidebar */
+    }
 
   </style>
 </head>
 <body>
 <div class="d-flex">
-  <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
+  <div id="sidebar"
+       th:replace="~{fragments/sidebar :: sidebar}"
+       class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
 
   <nav class="navbar custom-navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4 fixed top-0 right-0 w-[calc(100%-256px)] d-flex">
     <div class="ms-auto" th:replace="~{fragments/account_dropdown :: accountDropdown(user=${user})}"></div>
@@ -873,12 +980,7 @@
   <div class="content mt-16" id="mainContent">
     <!-- Tiêu đề -->
     <div class="text-center mb-2 mt-3">
-      <p class="fs-2 fw-bold header-gradient mb-1">Bán hàng tại quầy</p>
-      <div aria-hidden="true"
-           style="width:220px;height:4px;margin:6px auto 0;border-radius:999px;
-              background:linear-gradient(90deg, var(--secondary, #9FD5F7), var(--primary, #153054));
-              box-shadow:0 6px 16px rgba(21,48,84,.18);">
-      </div>
+      <p class="fs-2 fw-bold header-gradient mb-1">Bán hàng</p>
     </div>
 
     <!-- Tabs đơn hàng -->
@@ -887,7 +989,6 @@
         <div id="orderTabs" class="d-flex flex-wrap"></div>
         <button id="addTabBtn" class="btn btn-secondary d-flex align-items-center gap-2">
           <i class="fas fa-plus"></i>
-          Thêm Đơn Hàng
         </button>
       </div>
     </div>
@@ -898,40 +999,38 @@
       <div class="col-lg-8 d-flex flex-column gap-4">
 
         <!-- Tác vụ nhanh -->
-        <div class="glass-card p-4">
-          <div class="action-buttons">
-            <button onclick="showQrScanner()" class="btn btn-success d-flex align-items-center justify-content-center gap-3">
-              <i class="fas fa-qrcode fs-5"></i>
-              <span class="fw-semibold">Quét QR sản phẩm</span>
-            </button>
-            <button onclick="showProductModal()" class="btn btn-primary d-flex align-items-center justify-content-center gap-3">
-              <i class="fas fa-box fs-5"></i>
-              <span class="fw-semibold">Chọn sản phẩm</span>
-            </button>
+        <div class="action-buttons">
+          <!-- Thanh tìm kiếm (để TRƯỚC) -->
+          <div class="typeahead w-100">
+            <div class="position-relative">
+              <input id="productQuickSearch" type="text"
+                     class="form-control form-control-md"
+                     placeholder="Tìm sản phẩm..."
+                     autocomplete="off" aria-expanded="false"
+                     aria-controls="productSuggestions"/>
+              <i class="fas fa-magnifying-glass position-absolute"
+                 style="right:14px; top:50%; transform:translateY(-50%); opacity:.6"></i>
+            </div>
+            <div id="productSuggestions" class="typeahead-list d-none" role="listbox"></div>
           </div>
+
+          <!-- Nút QR icon-only (để SAU, bên phải) -->
+          <button onclick="showQrScanner()"
+                  class="btn btn-success btn-icon"
+                  aria-label="Quét QR sản phẩm" title="Quét QR sản phẩm">
+            <i class="fas fa-qrcode"></i>
+          </button>
         </div>
 
         <!-- Giỏ hàng -->
         <div class="glass-card p-4">
           <div class="section-header">
-            <i class="fas fa-shopping-cart section-icon"></i>
             <h3 class="fs-4 fw-bold mb-0">Giỏ hàng</h3>
           </div>
           <div class="table-responsive">
             <table class="table cart-table">
-              <colgroup>
-                <col style="width:92px">          <!-- Hình -->
-                <col style="width:28%">           <!-- Tên sản phẩm (rộng) -->
-                <col style="width:110px">         <!-- Màu -->
-                <col style="width:90px">          <!-- Kích cỡ -->
-                <col style="width:130px">         <!-- Giá -->
-                <col style="width:180px">         <!-- Số lượng -->
-                <col style="width:140px">         <!-- Thành tiền -->
-                <col style="width:110px">         <!-- Hành động -->
-              </colgroup>
               <thead>
               <tr>
-                <th>Hình ảnh</th>
                 <th>Tên sản phẩm</th>
                 <th>Màu sắc</th>
                 <th>Kích cỡ</th>
@@ -954,8 +1053,7 @@
           <!-- Thông tin khách hàng (ĐÃ CHUYỂN SANG PHẢI) -->
           <div class="glass-card p-4">
             <div class="section-header">
-              <i class="fas fa-user section-icon"></i>
-              <h3 class="fs-4 fw-bold mb-0">Thông tin khách hàng</h3>
+              <h3 class="fs-4 fw-bold mb-0">Thông tin đơn hàng</h3>
             </div>
 
             <div class="customer-info-grid mb-3">
@@ -968,7 +1066,6 @@
               </div>
               <button onclick="showCustomerModal()" class="btn btn-primary d-flex align-items-center gap-2">
                 <i class="fas fa-users"></i>
-                Chọn khách hàng
               </button>
             </div>
 
@@ -986,7 +1083,6 @@
             <!-- Địa chỉ giao hàng -->
             <div id="addressSection" class="glass-card p-4 d-none mt-3">
               <div class="section-header">
-                <i class="fas fa-map-marker-alt section-icon"></i>
                 <h3 class="fs-4 fw-bold mb-0">Địa chỉ giao hàng</h3>
               </div>
 
@@ -999,7 +1095,6 @@
                 </div>
 
                 <button onclick="showAddAddressForm()" class="btn btn-secondary d-flex align-items-center gap-2">
-                  <i class="fas fa-plus"></i>
                   Thêm địa chỉ mới
                 </button>
 
@@ -1033,7 +1128,6 @@
                   </div>
                   <div class="d-flex gap-3 mt-3">
                     <button onclick="addNewAddress()" class="btn btn-success d-flex align-items-center gap-2">
-                      <i class="fas fa-save"></i>
                       Lưu địa chỉ
                     </button>
                     <button onclick="document.getElementById('addAddressForm').classList.add('d-none')" class="btn btn-secondary">
@@ -1043,61 +1137,51 @@
                 </div>
               </div>
             </div>
-          </div>
+              <div class="form-grid mt-3">
+                <div class="floating-label">
+                  <label for="saleMethod">Phương thức bán hàng</label>
+                  <select id="saleMethod" onchange="toggleAddressSection()" class="form-select">
+                    <option value="Tại quầy">Tại quầy</option>
+                    <option value="Giao hàng">Giao hàng</option>
+                  </select>
+                </div>
 
-          <!-- Cấu hình đơn hàng -->
-          <div class="glass-card p-4">
-            <div class="section-header">
-              <i class="fas fa-cog section-icon"></i>
-              <h3 class="fs-4 fw-bold mb-0">Cấu hình đơn hàng</h3>
-            </div>
+                <div class="floating-label d-none" id="shippingFeeContainer">
+                  <label for="shippingFee">Phí vận chuyển</label>
+                  <input type="text" id="shippingFee" value="0" class="form-control" inputmode="numeric" disabled>
+                  <small id="shippingCalcStatus" class="text-muted d-none" hidden>Đang tính phí GHN…</small>
+                </div>
 
-            <div class="form-grid">
-              <div class="floating-label">
-                <label for="saleMethod">Phương thức bán hàng</label>
-                <select id="saleMethod" onchange="toggleAddressSection()" class="form-select">
-                  <option value="Tại quầy">🏪 Tại quầy</option>
-                  <option value="Giao hàng">🚚 Giao hàng</option>
-                </select>
+                <!-- GHN: Dịch vụ vận chuyển -->
+                <div class="floating-label d-none" id="shippingMethodContainer" hidden>
+                  <label for="shippingMethod">Dịch vụ GHN</label>
+                  <select id="shippingMethod" class="form-select"></select>
+                </div>
+
+                <!-- Phiếu giảm giá -->
+                <div class="mb-3" id="voucherGroup">
+                  <button type="button"
+                          class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-3 rounded-3 shadow-sm"
+                          onclick="openVoucherModal()">
+                    <span class="fw-semibold">Phiếu giảm giá</span>
+                  </button>
+                </div>
+
+
+
+                <div class="floating-label">
+                  <label for="paymentMethod">Phương thức thanh toán</label>
+                  <select id="paymentMethod" onchange="toggleCashInput()" class="form-select">
+                    <option value="550E8400-E29B-41D4-A716-446655440017">Tiền mặt</option>
+                    <option value="550E8400-E29B-41D4-A716-446655440018">Chuyển khoản</option>
+                  </select>
+                </div>
+
+                <div id="cashInput" class="d-none floating-label">
+                  <label for="cashAmount">Tiền khách đưa</label>
+                  <input type="text" id="cashAmount" value="0" class="form-control" inputmode="numeric">
+                </div>
               </div>
-
-              <div class="floating-label d-none" id="shippingFeeContainer">
-                <label for="shippingFee">Phí vận chuyển</label>
-                <input type="text" id="shippingFee" value="0" class="form-control" inputmode="numeric" disabled>
-                <small id="shippingCalcStatus" class="text-muted d-none" hidden>Đang tính phí GHN…</small>
-              </div>
-
-              <!-- GHN: Dịch vụ vận chuyển -->
-              <div class="floating-label d-none" id="shippingMethodContainer" hidden>
-                <label for="shippingMethod">Dịch vụ GHN</label>
-                <select id="shippingMethod" class="form-select"></select>
-              </div>
-
-              <!-- Phiếu giảm giá -->
-              <div class="mb-3" id="voucherGroup">
-                <button type="button"
-                        class="btn btn-primary w-100 d-flex align-items-center justify-content-center gap-2 py-3 rounded-3 shadow-sm"
-                        onclick="openVoucherModal()">
-                  <i class="fas fa-ticket-alt fs-5"></i>
-                  <span class="fw-semibold">Chọn phiếu</span>
-                </button>
-              </div>
-
-
-
-              <div class="floating-label">
-                <label for="paymentMethod">Phương thức thanh toán</label>
-                <select id="paymentMethod" onchange="toggleCashInput()" class="form-select">
-                  <option value="550E8400-E29B-41D4-A716-446655440017">💵 Tiền mặt</option>
-                  <option value="550E8400-E29B-41D4-A716-446655440018">🏦 Chuyển khoản</option>
-                </select>
-              </div>
-
-              <div id="cashInput" class="d-none floating-label">
-                <label for="cashAmount">Số tiền khách đưa</label>
-                <input type="text" id="cashAmount" value="0" class="form-control" inputmode="numeric">
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -1122,7 +1206,6 @@
       <div class="modal-content">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div class="d-flex align-items-center gap-3">
-            <i class="fas fa-users fs-3 text-primary"></i>
             <h3 class="fs-3 fw-bold">Danh sách khách hàng</h3>
           </div>
           <button onclick="document.getElementById('customerModal').style.display='none'" class="btn-close"></button>
@@ -1137,13 +1220,11 @@
 
         <div class="mb-4">
           <h4 class="fs-5 fw-semibold text-muted mb-3 d-flex align-items-center gap-2">
-            <i class="fas fa-user text-primary"></i>
             Khách lẻ
           </h4>
           <div id="retailCustomer" class="p-3 border-2 border-dashed rounded cursor-pointer hover-bg-light"
                onclick="selectCustomerFromModal('0999999999', 'Khách lẻ', '')">
             <div class="d-flex align-items-center gap-3">
-              <i class="fas fa-user-circle fs-3 text-muted"></i>
               <span class="fw-medium">Khách lẻ</span>
             </div>
           </div>
@@ -1151,7 +1232,6 @@
 
         <div>
           <h4 class="fs-5 fw-semibold text-muted mb-3 d-flex align-items-center gap-2">
-            <i class="fas fa-address-book text-success"></i>
             Khách hàng khác
           </h4>
           <div id="customerList" class="overflow-auto" style="max-height: 300px;"></div>
@@ -1165,7 +1245,6 @@
     <div id="productModal" class="modal">
       <div class="modal-content">
         <div class="d-flex align-items-center gap-3 mb-4">
-          <i class="fas fa-box fs-3 text-primary"></i>
           <h3 class="fs-3 fw-bold">Danh sách sản phẩm</h3>
         </div>
         <div class="mb-4">
@@ -1244,23 +1323,21 @@
       <div class="modal-content" style="max-width: 720px;">
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="d-flex align-items-center gap-3">
-            <i class="fas fa-ticket-alt fs-3 text-primary"></i>
             <h3 class="fs-3 fw-bold">Chọn mã giảm giá</h3>
           </div>
           <button onclick="closeVoucherModal()" class="btn-close"></button>
         </div>
 
-        <!-- Order -->
         <div class="mb-4">
           <div id="orderVoucherList" class="d-grid gap-2"></div>
         </div>
 
         <div class="d-flex justify-content-between gap-3">
-          <button class="btn btn-outline-secondary" onclick="clearVoucherSelections()">Bỏ chọn tất cả</button>
+          <button class="btn btn-outline-secondary" onclick="clearVoucherSelections()">Bỏ chọn</button>
           <div class="d-flex gap-3">
-            <button class="btn btn-secondary" onclick="closeVoucherModal()">Hủy</button>
+            <button class="btn btn-secondary" onclick="closeVoucherModal()">Đóng</button>
             <button class="btn btn-success" onclick="applySelectedVouchers()">
-              <i class="fas fa-check-circle me-2"></i>Áp dụng
+              Áp dụng
             </button>
           </div>
         </div>
@@ -1275,24 +1352,22 @@
         <div class="col-12 col-md">
           <div class="d-flex gap-2 flex-wrap summary-inline">
             <div>Tạm tính: <strong id="subTotal">0 VNĐ</strong></div>
-            <div id="shippingBaseRow" class="d-none">Phí VC (gốc): <strong id="shippingFeeBaseDisplay">0 VNĐ</strong></div>
-            <div id="shippingDiscountRow" class="d-none">Giảm VC: <strong id="shippingDiscountDisplay">- 0 VNĐ</strong></div>
-            <div id="orderDiscountRow">Giảm đơn: <strong id="orderDiscountDisplay">- 0 VNĐ</strong></div>
+            <div id="orderDiscountRow">Giảm giá: <strong id="orderDiscountDisplay">- 0 VNĐ</strong></div>
           </div>
         </div>
 
-        <div class="col-6 col-md-auto ms-md-auto">
+        <div class="col-12 col-md-auto ms-md-auto">
           <div class="text-end">
-            <div class="small text-muted">Tổng tiền</div>
+            <div class="small text-muted">Tổng tiền thanh toán</div>
             <div id="total" class="fs-4 fw-bold text-success">0 VNĐ</div>
-            <div class="small">Trả lại: <strong id="changeAmount">0 VNĐ</strong></div>
+            <div class="small">Tiền thừa: <strong id="changeAmount">0 VNĐ</strong></div>
           </div>
         </div>
 
-        <div class="col-6 col-md-auto">
+        <div class="col-12 col-md-auto">
           <button onclick="createOrder()" class="btn btn-success btn-lg w-100 d-flex align-items-center justify-content-center gap-2">
             <i class="fas fa-check-circle"></i>
-            Tạo đơn hàng
+            Thanh toán
           </button>
         </div>
       </div>
@@ -1304,6 +1379,130 @@
 <div id="toastContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+  function updateContentOffset(){
+    const sb = document.getElementById('sidebar');
+    let offset = 0;
+    if (sb) {
+      const rect = sb.getBoundingClientRect();
+      // mép phải của sidebar (clamp >= 0)
+      offset = Math.max(0, Math.round(rect.right));
+    }
+    // dưới 992px thì cho full width
+    if (window.innerWidth < 992) offset = 0;
+
+    document.documentElement.style.setProperty('--content-offset', offset + 'px');
+    // bạn đã có sẵn hàm này để tránh footer che nội dung
+    if (typeof syncMainPaddingWithFooter === 'function') syncMainPaddingWithFooter();
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    updateContentOffset();
+
+    const sb = document.getElementById('sidebar');
+    if (sb && window.ResizeObserver) {
+      new ResizeObserver(updateContentOffset).observe(sb);
+    }
+    // Nếu bạn toggle class khi thu gọn/mở rộng -> bắt luôn
+    if (sb && window.MutationObserver) {
+      new MutationObserver(updateContentOffset)
+              .observe(sb, { attributes: true, attributeFilter: ['class','style'] });
+    }
+    window.addEventListener('resize', updateContentOffset);
+  });
+</script>
+
+<script>
+  /* ====== TÌM KIẾM NHANH SẢN PHẨM (TYPEAHEAD) ====== */
+  function debounce(fn, wait = 220) { let t=null; return (...a)=>{clearTimeout(t); t=setTimeout(()=>fn(...a), wait);} }
+  const quickSearchState = { items: [], highlight: -1, open: false, lastKeyword: '' };
+  const fmtVND = (n) => (Number(n)||0).toLocaleString('vi-VN') + ' VNĐ';
+
+  function openSuggestion(){ quickSearchState.open = true; document.getElementById('productSuggestions')?.classList.remove('d-none'); }
+  function closeSuggestion(){ quickSearchState.open=false; quickSearchState.highlight=-1; const box=document.getElementById('productSuggestions'); if(box){ box.classList.add('d-none'); box.innerHTML=''; } document.getElementById('productQuickSearch')?.setAttribute('aria-expanded','false'); }
+  function highlightRow(idx){ const box=document.getElementById('productSuggestions'); if(!box) return; [...box.querySelectorAll('.typeahead-item')].forEach((el,i)=>{ el.classList.toggle('active', i===idx); if(i===idx) el.scrollIntoView({block:'nearest'}); }); }
+
+  function renderProductSuggestions(list){
+    const box = document.getElementById('productSuggestions');
+    const input = document.getElementById('productQuickSearch');
+    if(!box || !input) return;
+    if(!list?.length){ box.innerHTML = `<div class="typeahead-empty">Không tìm thấy sản phẩm phù hợp.</div>`; openSuggestion(); input.setAttribute('aria-expanded','true'); return; }
+    box.innerHTML = list.map((p,i)=>{
+      const giaGoc=Number(p.gia ?? p.price ?? 0);
+      const giaKM=Number(p.giaKhuyenMai ?? p.discountedPrice ?? giaGoc);
+      const giamPct=Number(p.phanTramGiam ?? 0);
+      const ton=Number(p.soLuongTonKho ?? p.availableStock ?? 0);
+      const name=p.tenSanPham || 'Sản phẩm';
+      const mau=p.mauSanPham?.tenMau || p.mauSac || '-';
+      const size=p.kichSanPham?.ten || p.kichCo || '-';
+      const img=p.hinhAnh || 'https://via.placeholder.com/56x56?text=No+Image';
+      return `
+      <div class="typeahead-item" role="option" data-index="${i}" data-pdid="${p.idChiTietSanPham || ''}">
+        <img src="${img}" alt="">
+        <div>
+          <div class="typeahead-title">${name}</div>
+          <div class="typeahead-sub">Màu: ${mau} • Size: ${size} • Tồn: ${ton}</div>
+        </div>
+        <div class="typeahead-price">
+          ${giamPct>0
+              ? `<div class="now">${(giaKM||giaGoc).toLocaleString('vi-VN')} VNĐ</div>
+               <div class="old">${giaGoc.toLocaleString('vi-VN')} VNĐ</div>`
+              : `<div class="now">${giaGoc.toLocaleString('vi-VN')} VNĐ</div>`}
+        </div>
+      </div>`;
+    }).join('');
+    openSuggestion(); input.setAttribute('aria-expanded','true');
+    box.querySelectorAll('.typeahead-item').forEach(el=>{
+      el.addEventListener('click', async ()=>{
+        const pdid = el.getAttribute('data-pdid');
+        if (pdid) { await addProductByQr(String(pdid)); closeSuggestion(); input.value=''; }
+        else { closeSuggestion(); }
+      });
+    });
+  }
+
+  const quickFetchProducts = debounce(async (keyword='')=>{
+    try{
+      const res = await fetch(`${BASE_URL}/products?keyword=${encodeURIComponent(keyword)}`);
+      if(!res.ok) throw new Error('Không tải được sản phẩm.');
+      const data = await res.json();
+      const items = Array.isArray(data.products) ? data.products.slice(0,12) : [];
+      quickSearchState.items = items; quickSearchState.highlight=-1;
+      renderProductSuggestions(items);
+    }catch(e){
+      const box = document.getElementById('productSuggestions');
+      if(box) box.innerHTML = `<div class="typeahead-empty">Lỗi tải dữ liệu: ${e.message}</div>`;
+      openSuggestion();
+    }
+  }, 220);
+
+  // Gắn event cho input (gọi sau khi DOM sẵn sàng)
+  function initQuickProductSearch(){
+    const input = document.getElementById('productQuickSearch');
+    const box   = document.getElementById('productSuggestions');
+    if(!input || !box) return;
+
+    input.addEventListener('focus', ()=> { if(!quickSearchState.open) quickFetchProducts(''); });
+    input.addEventListener('input', (e)=> { const kw=e.target.value.trim(); quickSearchState.lastKeyword=kw; quickFetchProducts(kw); });
+    input.addEventListener('keydown', async (e)=>{
+      const {items, highlight} = quickSearchState; const max = items.length-1;
+      if(e.key==='ArrowDown'){ e.preventDefault(); quickSearchState.highlight=Math.min(max, highlight+1); highlightRow(quickSearchState.highlight); }
+      else if(e.key==='ArrowUp'){ e.preventDefault(); quickSearchState.highlight=Math.max(0, highlight-1); highlightRow(quickSearchState.highlight); }
+      else if(e.key==='Enter'){ if(!items.length) return; e.preventDefault(); const idx=(quickSearchState.highlight>=0)?quickSearchState.highlight:0; const picked=items[idx]; if(picked?.idChiTietSanPham){ await addProductByQr(String(picked.idChiTietSanPham)); closeSuggestion(); input.value=''; } }
+      else if(e.key==='Escape'){ closeSuggestion(); }
+    });
+
+    document.addEventListener('click', (evt)=>{
+      const within = input.contains(evt.target) || box.contains(evt.target);
+      if(!within) closeSuggestion();
+    });
+
+    box.addEventListener('mousemove', (e)=>{
+      const item = e.target.closest('.typeahead-item'); if(!item) return;
+      const idx = Number(item.dataset.index || -1);
+      if(idx>=0){ quickSearchState.highlight=idx; highlightRow(idx); }
+    });
+  }
+
   function hydrateCashInputFromState() {
     const tab = tabs.find(t => t.id === currentTabId);
     const cashEl = document.getElementById('cashAmount');
@@ -2059,7 +2258,6 @@
         <div class="d-flex flex-column align-items-center gap-3 text-muted">
           <i class="fas fa-shopping-cart" style="font-size: 4rem; opacity: 0.3;"></i>
           <p class="fs-4 fw-medium">Giỏ hàng trống</p>
-          <p class="small">Hãy thêm sản phẩm vào giỏ hàng</p>
         </div>
       </td>
     `;
@@ -2097,23 +2295,15 @@
 
       row.innerHTML = `
       <td>
-        <img src="${item.hinhAnh || "https://via.placeholder.com/60x60?text=No+Image"}"
-             alt="Hình ảnh"
-             class="rounded shadow-sm"
-             style="width: 60px; height: 60px; object-fit: cover;"
-             onerror="this.src='https://via.placeholder.com/60x60?text=No+Image'">
-      </td>
-      <td>
         <div class="fw-semibold">${item.tenSanPham || "N/A"}</div>
-        <div class="small text-muted">Tồn kho khả dụng: ${actualStock}</div>
       </td>
       <td>
-        <span class="badge badge-primary">
+        <span>
           ${item.mauSac || "N/A"}
         </span>
       </td>
       <td>
-        <span class="badge badge-secondary">
+        <span>
           ${item.kichCo || "N/A"}
         </span>
       </td>
@@ -2152,7 +2342,6 @@
         <button class="btn btn-danger btn-sm d-flex align-items-center gap-2"
                 onclick="removeItem(${index}, '${item.idChiTietSanPham}')">
           <i class="fas fa-trash"></i>
-          <span class="d-none d-sm-inline">Xóa</span>
         </button>
       </td>
     `;
@@ -2432,8 +2621,7 @@
       const tabContent = document.createElement('div');
       tabContent.className = 'd-flex align-items-center gap-2';
       tabContent.innerHTML = `
-        <i class="fas fa-receipt"></i>
-        <span class="fw-semibold">Đơn ${tab.id}</span>
+        <span class="fw-semibold">Tab ${tab.id}</span>
       `;
 
       const deleteBtn = document.createElement('button');
@@ -3998,7 +4186,6 @@
                   div.style.cursor = 'pointer';
                   div.innerHTML = `
                         <div class="d-flex align-items-center gap-3">
-                            <i class="fas fa-user-circle fs-3 text-primary"></i>
                             <div>
                                 <div class="fw-semibold">${customer.hoTen}</div>
                                 <div class="small text-muted">${customer.soDienThoai} • ${customer.email}</div>
@@ -4627,7 +4814,7 @@
       });
     }
 
-
+    initQuickProductSearch();
     // Khởi tạo khi trang load
     initTabs();
   });
