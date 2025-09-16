@@ -24,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,10 +37,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequestMapping("/thanh-toan")
@@ -212,6 +210,7 @@ public class KHThanhToanController {
 
             model.addAttribute("voucherPtttMapById", voucherPtttMapById);
             model.addAttribute("voucherPtttMapByMa", voucherPtttMapByMa);
+            commonUserCart(model, authentication);
 
             // Log kiểm tra
             logger.info("PTTT map by ID: {}", voucherPtttMapById);
@@ -227,7 +226,42 @@ public class KHThanhToanController {
         return "WebKhachHang/thanh-toan";
     }
 
+    private String extractEmailFromAuthentication(Authentication authentication) {
+        if (authentication instanceof OAuth2AuthenticationToken) {
+            OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+            return (String) oauthToken.getPrincipal().getAttributes().get("email");
+        } else if (authentication.getPrincipal() instanceof NguoiDung) {
+            NguoiDung user = (NguoiDung) authentication.getPrincipal();
+            return user.getEmail();
+        }
+        return null; // Trường hợp không xác định được email
+    }
 
+    private void commonUserCart(Model model, Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            try {
+                String email = extractEmailFromAuthentication(authentication);
+                if (email != null) {
+                    NguoiDung nguoiDung = nguoiDungRepository.findByEmail(email).orElse(null);
+                    model.addAttribute("loggedInUser", nguoiDung);
+                    model.addAttribute("user", nguoiDung);
+                    if (nguoiDung != null && "customer".equals(nguoiDung.getVaiTro())) {
+                        GioHang gioHang = khachHangGioHangService.getOrCreateGioHang(nguoiDung.getId());
+                        model.addAttribute("gioHangId", gioHang.getId());
+                        model.addAttribute("chiTietGioHang",
+                                khachHangGioHangService.getGioHangChiTiets(gioHang.getId()) != null
+                                        ? khachHangGioHangService.getGioHangChiTiets(gioHang.getId())
+                                        : Collections.emptyList());
+                        model.addAttribute("tongTien",
+                                gioHang.getTongTien() != null ? gioHang.getTongTien() : BigDecimal.ZERO);
+                    }
+                }
+            } catch (Exception ignored) {}
+        } else {
+            model.addAttribute("loggedInUser", null);
+            model.addAttribute("user", null);
+        }
+    }
 
     @Transactional
     @PostMapping("/dat-hang")
