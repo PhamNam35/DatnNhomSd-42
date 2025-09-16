@@ -9,31 +9,494 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
 
-    <!-- Style đồng bộ với trang Tạo/Sửa -->
+    <!-- Style -->
     <style>
-        :root{ --primary:#153054; --secondary:#9FD5F7; --text:#263238; --line:#e9ecef; }
-        body{background:#f6f9fb;color:var(--text)}
-        .content{padding:2rem;margin-left:256px;margin-top:70px}
-        .sticky-header{position:sticky;top:70px;z-index:1000;background:#fff;padding:1rem 2rem;margin:-2rem -2rem 1.25rem -2rem;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
-        .sticky-header h2{font-weight:700;margin:0;color:var(--primary);display:flex;align-items:center;gap:.5rem}
-        .badge-state{font-size:.9rem}
-        .card-section{border:1px solid var(--line);border-radius:.75rem;background:#fff;overflow:hidden}
-        .card-section .card-header{background:rgba(159,213,247,.25);border-bottom:1px solid var(--line);font-weight:600;color:var(--primary);display:flex;align-items:center;gap:.5rem}
-        .card-section .card-body{padding:1rem 1.25rem}
-        .form-label{font-weight:600;color:#334155}
-        .form-control,.form-select{border-radius:.5rem;border:1px solid #dfe3e8;transition:border-color .2s,box-shadow .2s}
-        .form-control:focus,.form-select:focus{border-color:var(--secondary);box-shadow:0 0 0 .25rem rgba(159,213,247,.45)}
-        .input-group-text{background:#f8fbfe;border-color:#dfe3e8}
-        .table-responsive{border-radius:.5rem;overflow:hidden}
-        .btn-primary{--bs-btn-bg:var(--primary);--bs-btn-border-color:var(--primary);--bs-btn-hover-bg:#102845;--bs-btn-hover-border-color:#102845}
-        .btn-secondary{--bs-btn-bg:var(--secondary);--bs-btn-border-color:var(--secondary);--bs-btn-color:#0b2a45;--bs-btn-hover-bg:#8bcdf5;--bs-btn-hover-border-color:#8bcdf5}
-        .readonly-note{background:#e8f4fd;border:1px dashed var(--secondary);color:#0b2a45;border-radius:.5rem;padding:.75rem 1rem}
-        .payment-tags{display:flex;flex-wrap:wrap;gap:.5rem}
-        .payment-tag{background:rgba(159,213,247,.35);border:1px solid var(--line);color:#0b2a45;border-radius:999px;padding:.25rem .75rem;font-weight:600}
-        .payment-tag.empty{background:#fff3cd;color:#664d03;border-color:#ffe69c;font-style:italic}
+        :root {
+            /* Màu chính */
+            --primary-color: #DC3545;
+            --primary-hover: #C82333;
+            --secondary-color: #FFFFFF;
+            --secondary-hover: #E9ECEF;
+            --accent-color: #000000;
+            --accent-hover: #6C757D;
+            --border-active: #FF6B6B;
+
+            /* Màu nền */
+            --main-background: #F8F9FA;
+            --content-background: #ffffff;
+            --header-background: #DC3545;
+
+            /* Màu văn bản */
+            --text-primary: #000000;
+            --text-content: #333333;
+            --text-secondary: #6C757D;
+            --text-link: #DC3545;
+            --text-white: #ffffff;
+
+            /* Màu nút */
+            --btn-danger: #DC3545;
+            --btn-danger-hover: #C82333;
+
+            /* Màu trạng thái */
+            --success-bg: #F8D7DA;
+            --success-text: #721C24;
+            --warning-bg: #FFF3CD;
+            --warning-text: #856404;
+            --error-bg: #F8D7DA;
+            --error-text: #721C24;
+
+            /* Màu khác */
+            --border-color: #dee2e6;
+            --light-gray: #f8f9fa;
+            --shadow-light: 0 8px 32px rgba(220, 53, 69, 0.1);
+            --shadow-medium: 0 12px 40px rgba(220, 53, 69, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(220, 53, 69, 0.2);
+
+            --nav-h: 56px;      /* cao navbar (fallback) */
+            --header-gap: 0px;  /* sát navbar */
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            background-color: var(--main-background);
+            color: var(--text-content);
+            margin: 0;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .content {
+            margin-left: 250px;
+            padding: 32px;
+            padding-top: calc(var(--nav-h) + var(--header-gap));
+            min-height: 100vh;
+            background: var(--content-background);
+            transition: all 0.3s ease;
+        }
+
+        .navbar {
+            background: var(--content-background);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-light);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: calc(100% - 250px);
+            z-index: 1000;
+        }
+
+        .sticky-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--content-background);
+            border: none;
+            border-radius: 20px;
+            padding: 18px 22px;
+            margin: 0 0 20px 0;
+            box-shadow: var(--shadow-light);
+        }
+
+        .sticky-header h2 {
+            position: relative;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .sticky-header h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: -10px;
+            width: 100px;
+            height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+        }
+
+        .sticky-header h2 i {
+            color: var(--accent-color);
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 1.25rem;
+        }
+
+        .badge-state {
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-section {
+            background: var(--content-background);
+            border: none;
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .card-section:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .card-section .card-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+            font-weight: 600;
+            padding: 16px 24px;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-section .card-body {
+            padding: 24px;
+        }
+
+        .form-label {
+            position: absolute;
+            left: 1rem;
+            top: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            pointer-events: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            background: var(--content-background);
+            padding: 0 0.5rem;
+            border-radius: 4px;
+        }
+
+        .form-control, .form-select {
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            padding: 12px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--content-background);
+            color: var(--text-content);
+            padding-top: 1.75rem;
+            padding-bottom: 0.75rem;
+            height: auto;
+        }
+
+        .form-control[readonly] {
+            background: var(--light-gray);
+            opacity: 1;
+            cursor: default;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+            outline: none;
+            transform: translateY(-1px);
+        }
+
+        .input-group-text {
+            background: var(--content-background);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-content);
+            font-weight: 500;
+        }
+
+        .table-responsive {
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            background: var(--content-background);
+            box-shadow: var(--shadow-light);
+            overflow-x: auto;
+        }
+
+        .table {
+            margin-bottom: 0;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            background: var(--light-gray);
+            color: var(--text-primary);
+            font-weight: 600;
+            border-bottom: 2px solid var(--border-color);
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
+            padding: 1.5rem 1rem;
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .table td {
+            padding: 1.5rem 1rem;
+            vertical-align: middle;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-content);
+            white-space: nowrap;
+            text-align: center;
+        }
+
+        .table tbody tr:hover {
+            background: var(--accent-hover);
+            transform: scale(1.01);
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.1);
+        }
+
+        .table-responsive::-webkit-scrollbar {
+            height: 12px;
+        }
+
+        .table-responsive::-webkit-scrollbar-track {
+            background: var(--light-gray);
+            border-radius: 6px;
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-radius: 6px;
+            border: 2px solid var(--light-gray);
+        }
+
+        .table-responsive::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(135deg, var(--primary-hover), var(--accent-hover));
+        }
+
+        .btn {
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+            color: var(--text-white);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--secondary-color);
+            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: var(--secondary-hover);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
+        }
+
+        .readonly-note {
+            background: var(--error-bg);
+            border: 1px dashed var(--error-text);
+            color: var(--error-text);
+            border-radius: 12px;
+            padding: 12px 16px;
+            box-shadow: var(--shadow-light);
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .payment-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .payment-tag {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
+            border: none;
+            border-radius: 999px;
+            padding: 6px 12px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .payment-tag.empty {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+            border: 1px solid var(--warning-text);
+            font-style: italic;
+        }
+
+        .toast-container {
+            z-index: 1080;
+        }
+
+        .toast {
+            border-radius: 12px;
+            box-shadow: var(--shadow-medium);
+            border: none;
+            overflow: hidden;
+        }
+
+        .toast-body {
+            display: flex;
+            align-items: center;
+            font-weight: 500;
+        }
+
+        .toast.text-bg-success {
+            background: var(--success-bg);
+            color: var(--success-text);
+        }
+
+        .toast.text-bg-danger {
+            background: var(--error-bg);
+            color: var(--error-text);
+        }
+
+        .toast.text-bg-info {
+            background: var(--warning-bg);
+            color: var(--warning-text);
+        }
+
+        .btn-close-white {
+            filter: brightness(0) invert(1);
+        }
+
+        .pagination .page-link {
+            border-radius: 8px;
+            color: var(--text-content);
+            border: 1px solid var(--border-color);
+            margin: 0 4px;
+            padding: 8px 12px;
+            font-weight: 500;
+        }
+
+        .pagination .page-link:hover {
+            background: var(--primary-color);
+            color: var(--text-white);
+            border-color: var(--primary-color);
+        }
+
+        .pagination .page-item.active .page-link {
+            background: var(--primary-color);
+            border-color: var(--primary-color);
+            color: var(--text-white);
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: var(--text-secondary);
+            background: var(--light-gray);
+            border-color: var(--border-color);
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            accent-color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                margin-left: 0;
+                padding: 18px;
+                padding-top: calc(var(--nav-h) + var(--header-gap));
+            }
+
+            .sticky-header {
+                padding: 16px;
+                border-radius: 14px;
+            }
+
+            .sticky-header h2 {
+                font-size: 2rem;
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+
+            .card-section {
+                border-radius: 14px;
+            }
+
+            .form-control, .form-select {
+                font-size: 0.875rem;
+                padding: 10px 14px;
+            }
+
+            .btn {
+                font-size: 0.875rem;
+                padding: 10px 20px;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: none; }
+        }
+
+        .sticky-header, .card-section, .table-responsive, .readonly-note, .toast {
+            animation: fadeIn 0.6s ease-out;
+        }
     </style>
 </head>
-<body class="bg-light">
+<body>
 <div class="d-flex">
     <!-- Sidebar + Navbar -->
     <div th:replace="~{fragments/sidebar :: sidebar}" class="fixed top-0 left-0 h-full bg-gray-800 text-white w-64"></div>
@@ -43,7 +506,7 @@
 
     <div class="content" id="content">
         <!-- Toasts -->
-        <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index:1080">
+        <div class="toast-container position-fixed top-0 end-0 p-3">
             <div class="toast align-items-center text-bg-success border-0" role="alert" id="successToast" aria-live="assertive" aria-atomic="true" th:if="${successMessage}">
                 <div class="d-flex">
                     <div class="toast-body"><i class="fas fa-check-circle me-2"></i><span th:text="${successMessage}"></span></div>
@@ -66,19 +529,19 @@
 
         <!-- Header -->
         <div class="sticky-header">
-            <h2 class="mb-0"><i class="fas fa-ticket-alt"></i>Chi Tiết Phiếu Giảm Giá</h2>
+            <h2 class="mb-0"><i class="fas fa-ticket-alt"></i> Chi Tiết Phiếu Giảm Giá</h2>
             <span class="badge badge-state"
-                  th:classappend="${getStatus.apply(voucher)=='Sắp diễn ra'} ? ' text-bg-warning' : (${getStatus.apply(voucher)=='Đang diễn ra'} ? ' text-bg-success' : (${getStatus.apply(voucher)=='Đã kết thúc'} ? ' text-bg-secondary' : ' text-bg-light'))"
+                  th:classappend="${getStatus.apply(voucher)=='Sắp diễn ra'} ? 'text-bg-warning' : (${getStatus.apply(voucher)=='Đang diễn ra'} ? 'text-bg-success' : (${getStatus.apply(voucher)=='Đã kết thúc'} ? 'text-bg-secondary' : 'text-bg-light'))"
                   th:text="${getStatus.apply(voucher)}">Trạng thái</span>
         </div>
 
         <!-- Ghi chú readonly -->
         <div class="readonly-note mb-3">
-            <i class="fas fa-info-circle me-2"></i>Tất cả thông tin ở chế độ xem (không chỉnh sửa).
+            <i class="fas fa-info-circle me-2"></i> Tất cả thông tin ở chế độ xem (không chỉnh sửa).
         </div>
 
         <!-- Form (readonly) -->
-        <div class="bg-white p-4 rounded shadow-sm">
+        <div class="card-section">
             <form id="detailVoucherForm" th:object="${voucher}">
                 <div class="row g-4">
                     <!-- 1) THÔNG TIN CƠ BẢN -->
@@ -87,20 +550,20 @@
                             <div class="card-header"><i class="fa-regular fa-rectangle-list"></i><span>Thông tin cơ bản</span></div>
                             <div class="card-body">
                                 <div class="row g-3">
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label"><i class="fas fa-barcode me-2"></i>Mã phiếu:</label>
                                         <input type="text" th:field="*{ma}" class="form-control" readonly/>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label"><i class="fas fa-tag me-2"></i>Tên phiếu:</label>
                                         <input type="text" th:field="*{ten}" class="form-control" readonly placeholder="Tên phiếu giảm giá"/>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label"><i class="fas fa-calendar-alt me-2"></i>Ngày bắt đầu:</label>
                                         <input type="text" class="form-control" readonly
                                                th:value="${voucher.ngayBatDau != null ? #temporals.format(voucher.ngayBatDau, 'dd/MM/yyyy HH:mm') : ''}"/>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label"><i class="fas fa-calendar-check me-2"></i>Ngày kết thúc:</label>
                                         <input type="text" class="form-control" readonly
                                                th:value="${voucher.ngayKetThuc != null ? #temporals.format(voucher.ngayKetThuc, 'dd/MM/yyyy HH:mm') : ''}"/>
@@ -122,28 +585,12 @@
                                         <label class="form-check-label">
                                             <input type="radio" th:field="*{phamViApDung}" value="ORDER" disabled> Giảm giá đơn hàng
                                         </label>
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING" disabled> Giảm phí vận chuyển
-                                        </label>
-                                    </div>
-                                </div>
-
-                                <!-- Kiểu freeship (SHIPPING) -->
-                                <div class="mb-3" id="shipTypeGroup" th:style="${voucher.phamViApDung == 'SHIPPING' ? 'display:block' : 'display:none'}">
-                                    <label class="form-label"><i class="fas fa-truck-fast me-2"></i>Kiểu freeship:</label>
-                                    <div class="d-flex flex-wrap gap-4">
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{loai}" value="FREESHIP_FULL" disabled> Miễn phí ship toàn phần
-                                        </label>
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{loai}" value="FREESHIP_CAP" disabled> Miễn phí ship tối đa X VND
-                                        </label>
                                     </div>
                                 </div>
 
                                 <!-- Kiểu giảm (ORDER) -->
                                 <div class="mb-3" id="discountTypeGroup" th:style="${voucher.phamViApDung == 'ORDER' ? 'display:block' : 'display:none'}">
-                                    <label class="form-label"><i class="fas a-percentage me-2"></i>Kiểu giảm:</label>
+                                    <label class="form-label"><i class="fas fa-percentage me-2"></i>Kiểu giảm:</label>
                                     <div class="d-flex flex-wrap gap-4">
                                         <label class="form-check-label">
                                             <input type="radio" th:field="*{loai}" value="PERCENT" disabled> Giảm theo %
@@ -156,7 +603,7 @@
 
                                 <!-- Giá trị -->
                                 <div class="row g-3">
-                                    <div class="col-md-6" id="discountValueGroup" th:style="${voucher.loai == 'FREESHIP_FULL' ? 'display:none' : 'display:block'}">
+                                    <div class="col-md-6 position-relative" id="discountValueGroup" th:style="${voucher.loai == 'FREESHIP_FULL' ? 'display:none' : 'display:block'}">
                                         <label class="form-label">Giá trị giảm:</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="giaTriGiam" name="giaTriGiam" readonly
@@ -165,7 +612,7 @@
                                                   th:text="${voucher.loai == 'PERCENT' ? '%' : (voucher.loai == 'FREESHIP_FULL' ? '' : 'VND')}">%</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-6" id="maxDiscountGroup" th:style="${(voucher.loai == 'PERCENT' or voucher.loai == 'FREESHIP_CAP') ? 'display:block' : 'display:none'}">
+                                    <div class="col-md-6 position-relative" id="maxDiscountGroup" th:style="${(voucher.loai == 'PERCENT' or voucher.loai == 'FREESHIP_CAP') ? 'display:block' : 'display:none'}">
                                         <label class="form-label">Giá trị giảm tối đa:</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="giaTriGiamToiDa" name="giaTriGiamToiDa" readonly
@@ -173,7 +620,7 @@
                                             <span class="input-group-text">VND</span>
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-6 position-relative">
                                         <label class="form-label">Đơn tối thiểu áp dụng:</label>
                                         <div class="input-group">
                                             <input type="text" class="form-control" id="giaTriGiamToiThieu" name="giaTriGiamToiThieu" readonly
@@ -182,7 +629,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -204,7 +650,7 @@
                                             </label>
                                         </div>
                                     </div>
-                                    <div class="col-lg-6">
+                                    <div class="col-lg-6 position-relative">
                                         <label class="form-label">Lượt sử dụng:</label>
                                         <input type="text" class="form-control" id="gioiHanSuDung" name="gioiHanSuDung" readonly
                                                th:value="${gioiHanSuDungStr}" placeholder="Số lượt sử dụng">
@@ -251,8 +697,8 @@
                             <div class="card-header"><i class="fa-solid fa-user-check"></i><span>Khách hàng được áp dụng</span></div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-bordered table-hover align-middle bg-white table-sm">
-                                        <thead class="table-light">
+                                    <table class="table table-bordered table-hover align-middle table-sm">
+                                        <thead>
                                         <tr>
                                             <th style="width:70px">#</th>
                                             <th>Họ tên</th>
@@ -299,7 +745,6 @@
                                         </ul>
                                     </nav>
                                 </div>
-
                             </div>
                         </div>
                     </div>

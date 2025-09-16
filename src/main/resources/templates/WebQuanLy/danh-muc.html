@@ -14,34 +14,45 @@
     <script th:src="@{/js/sidebar.js}" defer></script>
     <style>
         :root {
-            --primary-color: #153054;
-            --primary-hover: #102C47;
-            --secondary-color: #9FD5F7;
-            --secondary-hover: #84C7EA;
-            --accent-color: #479BD3;
-            --accent-hover: #CAEAFB;
-            --border-active: #62B2E7;
-            --main-background: #F4F9FC;
+            /* Màu chính */
+            --primary-color: #DC3545;
+            --primary-hover: #C82333;
+            --secondary-color: #FFFFFF;
+            --secondary-hover: #E9ECEF;
+            --accent-color: #000000;
+            --accent-hover: #6C757D;
+            --border-active: #FF6B6B;
+
+            /* Màu nền */
+            --main-background: #F8F9FA;
             --content-background: #ffffff;
-            --header-background: #153054;
-            --text-primary: #153054;
+            --header-background: #DC3545;
+
+            /* Màu văn bản */
+            --text-primary: #000000;
             --text-content: #333333;
-            --text-secondary: #6B7280;
-            --text-link: #479BD3;
+            --text-secondary: #6C757D;
+            --text-link: #DC3545;
             --text-white: #ffffff;
-            --btn-danger: #F44336;
-            --btn-danger-hover: #D32F2F;
-            --success-bg: #D1FADF;
-            --success-text: #027A48;
-            --warning-bg: #FEF3C7;
-            --warning-text: #B45309;
-            --error-bg: #FECACA;
-            --error-text: #991B1B;
+
+            /* Màu nút */
+            --btn-danger: #DC3545;
+            --btn-danger-hover: #C82333;
+
+            /* Màu trạng thái */
+            --success-bg: #F8D7DA;
+            --success-text: #721C24;
+            --warning-bg: #FFF3CD;
+            --warning-text: #856404;
+            --error-bg: #F8D7DA;
+            --error-text: #721C24;
+
+            /* Màu khác */
             --border-color: #dee2e6;
             --light-gray: #f8f9fa;
-            --shadow-light: 0 8px 32px rgba(21, 48, 84, 0.1);
-            --shadow-medium: 0 12px 40px rgba(21, 48, 84, 0.15);
-            --shadow-heavy: 0 20px 60px rgba(21, 48, 84, 0.2);
+            --shadow-light: 0 8px 32px rgba(220, 53, 69, 0.1);
+            --shadow-medium: 0 12px 40px rgba(220, 53, 69, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(220, 53, 69, 0.2);
         }
 
         body {
@@ -128,7 +139,6 @@
             font-weight: 700;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
-
         .card-header::before {
             content: '';
             position: absolute;
@@ -136,7 +146,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(159, 213, 247, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -160,7 +170,7 @@
 
         .form-control:focus, .form-select:focus {
             border-color: var(--border-active);
-            box-shadow: 0 0 0 4px rgba(98, 178, 231, 0.1);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
             outline: none;
             transform: translateY(-1px);
         }
@@ -203,11 +213,12 @@
             left: 100%;
         }
 
+        /* Nút Primary (Thêm) */
         .btn-primary {
             background: var(--primary-color);
             border-color: var(--primary-color);
             color: var(--text-white) !important;
-            box-shadow: 0 4px 15px rgba(21, 48, 84, 0.2);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
         }
 
         .btn-primary:hover {
@@ -215,14 +226,15 @@
             border-color: var(--primary-hover);
             color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.3);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
         }
 
+        /* Nút Secondary (Sửa) */
         .btn-warning {
             background: var(--secondary-color);
             border-color: var(--secondary-color);
             color: var(--text-primary);
-            box-shadow: 0 4px 15px rgba(159, 213, 247, 0.3);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
         }
 
         .btn-warning:hover {
@@ -230,14 +242,15 @@
             border-color: var(--secondary-hover);
             color: var(--text-primary);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(159, 213, 247, 0.4);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.4);
         }
 
+        /* Nút Success (Xem) */
         .btn-success {
             background: var(--accent-color);
             border-color: var(--accent-color);
             color: var(--text-white);
-            box-shadow: 0 4px 15px rgba(71, 155, 211, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         .btn-success:hover {
@@ -245,14 +258,15 @@
             border-color: var(--primary-color);
             color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(71, 155, 211, 0.4);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
         }
 
+        /* Nút Danger (Xóa) */
         .btn-danger {
             background: var(--btn-danger);
             border-color: var(--btn-danger);
             color: var(--text-white);
-            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
         }
 
         .btn-danger:hover {
@@ -260,22 +274,22 @@
             border-color: var(--btn-danger-hover);
             color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(244, 67, 54, 0.4);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
         }
 
         .btn-secondary {
             background: var(--text-secondary);
             border-color: var(--text-secondary);
             color: var(--text-white);
-            box-shadow: 0 4px 15px rgba(107, 114, 128, 0.3);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
         }
 
         .btn-secondary:hover {
-            background: #4b5563;
-            border-color: #4b5563;
+            background: #6C757D;
+            border-color: #6C757D;
             color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(107, 114, 128, 0.4);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
         }
 
         .btn-sm {
@@ -331,7 +345,21 @@
         .table-hover > tbody > tr:hover {
             background: var(--accent-hover);
             transform: scale(1.01);
-            box-shadow: 0 4px 20px rgba(71, 155, 211, 0.1);
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.1);
+        }
+
+        .product-image {
+            max-width: 50px;
+            max-height: 50px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .product-image:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.2);
         }
 
         .action-buttons {
@@ -341,6 +369,47 @@
             gap: 8px;
             height: 100%;
             width: 100%;
+        }
+
+        .action-buttons .btn {
+            margin: 0;
+        }
+
+        .form-switch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .form-check-input {
+            cursor: pointer;
+            width: 3em;
+            height: 1.5em;
+            border-radius: 2em;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            position: relative;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--success-text);
+            border-color: var(--success-text);
+            box-shadow: 0 0 0 4px rgba(114, 28, 36, 0.2);
+        }
+
+        .form-check-input:not(:checked) {
+            background-color: var(--btn-danger);
+            border-color: var(--btn-danger);
+            box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.2);
+        }
+
+        .form-check-label {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-left: 1rem;
+            transition: all 0.3s ease;
+            color: var(--text-content);
         }
 
         .pagination-custom {
@@ -360,7 +429,7 @@
             padding: 12px 18px;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             font-weight: 600;
-            box-shadow: 0 2px 8px rgba(21, 48, 84, 0.1);
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.1);
         }
 
         .pagination-custom .page-link:hover {
@@ -368,14 +437,14 @@
             background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
             border-color: var(--accent-color);
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(71, 155, 211, 0.2);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.2);
         }
 
         .pagination-custom .page-item.active .page-link {
             background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             border-color: var(--primary-color);
             color: var(--text-white);
-            box-shadow: 0 8px 25px rgba(21, 48, 84, 0.3);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
         }
 
         .modal-content {
@@ -403,7 +472,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(159, 213, 247, 0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -488,8 +557,7 @@
         .floating-label select:focus,
         .floating-label textarea:focus {
             border-color: var(--border-active);
-            box-shadow: 0 0 0 4px rgba(98, 178, 231, 0.1);
-            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
             transform: translateY(-1px);
         }
 
@@ -535,18 +603,45 @@
 
         .search-form-row {
             display: flex;
+            flex-wrap: wrap;
             align-items: end;
             gap: 1.5rem;
         }
 
-        .search-form-row .col-md-4 {
-            flex: 1;
+        .search-form-row .col-md-3, .search-form-row .col-md-4 {
+            flex: 1 1 20%; /* Làm cho các cột linh hoạt hơn, khoảng 20% mỗi cột để phù hợp 4-5 cột/hàng */
+            min-width: 200px; /* Đảm bảo không quá nhỏ */
         }
 
         .search-form-row .floating-label {
             margin-bottom: 0;
         }
 
+        #imagePreviewContainer {
+            background: rgba(248,249,250,0.8);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 2px dashed var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        #imagePreviewContainer:hover {
+            border-color: var(--border-active);
+            background: rgba(248,249,250,0.95);
+        }
+
+        #imagePreview {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        #imagePreview:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(220, 53, 69, 0.2);
+        }
+
+        /* Role Badge Styles */
         .role-badge {
             position: fixed;
             top: 20px;
@@ -558,7 +653,7 @@
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            box-shadow: 0 4px 12px rgba(21, 48, 84, 0.15);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
         }
 
         .role-admin {
@@ -583,6 +678,7 @@
             color: var(--text-content);
         }
 
+        /* Badge trạng thái */
         .badge {
             padding: 0.5rem 1rem;
             border-radius: 20px;
@@ -605,6 +701,18 @@
         .badge-danger {
             background: var(--error-bg);
             color: var(--error-text);
+        }
+
+        /* QR Scanner Modal */
+        #qrScannerModal .modal-dialog {
+            max-width: 600px;
+        }
+
+        #qr-reader {
+            width: 100%;
+            max-height: 400px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
         }
 
         @media (max-width: 768px) {
@@ -639,6 +747,11 @@
                 padding: 1rem 0.5rem;
             }
 
+            .product-image {
+                max-width: 40px;
+                max-height: 40px;
+            }
+
             .action-buttons {
                 flex-direction: row;
                 gap: 4px;
@@ -652,9 +765,22 @@
                 font-size: 0.75rem;
             }
 
+            .form-check-input {
+                width: 2.5em;
+                height: 1.25em;
+            }
+
             .role-badge {
                 left: 20px;
                 top: 80px;
+            }
+
+            #qrScannerModal .modal-dialog {
+                max-width: 90%;
+            }
+
+            #qr-reader {
+                max-height: 300px;
             }
         }
 
@@ -673,6 +799,32 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Custom style for TomSelect to match theme */
+        .ts-wrapper.single .ts-control, .ts-wrapper.multi .ts-control {
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 14px;
+            background-color: var(--content-background);
+        }
+
+        .ts-wrapper.single .ts-control:focus, .ts-wrapper.multi .ts-control:focus {
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 0.25rem rgba(255, 107, 107, 0.1);
+        }
+
+        .ts-dropdown {
+            font-size: 14px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+        }
+
+        .ts-control input {
+            padding: 4px;
+        }
+
+        .ts-readonly .ts-control { opacity: .7; pointer-events: none; }
     </style>
 </head>
 <body>

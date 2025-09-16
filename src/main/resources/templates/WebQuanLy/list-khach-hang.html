@@ -7,17 +7,58 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        :root {
+            /* Màu chính */
+            --primary-color: #DC3545;
+            --primary-hover: #C82333;
+            --secondary-color: #FFFFFF;
+            --secondary-hover: #E9ECEF;
+            --accent-color: #000000;
+            --accent-hover: #6C757D;
+            --border-active: #FF6B6B;
+
+            /* Màu nền */
+            --main-background: #F8F9FA;
+            --content-background: #ffffff;
+            --header-background: #DC3545;
+
+            /* Màu văn bản */
+            --text-primary: #000000;
+            --text-content: #333333;
+            --text-secondary: #6C757D;
+            --text-link: #DC3545;
+            --text-white: #ffffff;
+
+            /* Màu nút */
+            --btn-danger: #DC3545;
+            --btn-danger-hover: #C82333;
+
+            /* Màu trạng thái */
+            --success-bg: #F8D7DA;
+            --success-text: #721C24;
+            --warning-bg: #FFF3CD;
+            --warning-text: #856404;
+            --error-bg: #F8D7DA;
+            --error-text: #721C24;
+
+            /* Màu khác */
+            --border-color: #dee2e6;
+            --light-gray: #f8f9fa;
+            --shadow-light: 0 8px 32px rgba(220, 53, 69, 0.1);
+            --shadow-medium: 0 12px 40px rgba(220, 53, 69, 0.15);
+            --shadow-heavy: 0 20px 60px rgba(220, 53, 69, 0.2);
+        }
 
         * {
             box-sizing: border-box;
         }
 
         body {
-            background: #ffffff;
-            color: #153054;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+            background-color: var(--main-background);
+            color: var(--text-content);
+            min-height: 100vh;
             margin: 0;
             padding: 0;
         }
@@ -27,7 +68,7 @@
             padding: 32px;
             padding-top: 100px;
             min-height: 100vh;
-            background: #ffffff;
+            background: var(--content-background);
             transition: all 0.3s ease;
         }
 
@@ -38,39 +79,42 @@
         }
 
         .page-title {
-            color: #153054;
-            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-weight: 700;
-            font-size: 2.25rem;
-            letter-spacing: -0.025em;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
             display: flex;
             align-items: center;
             gap: 16px;
             justify-content: center;
-            position: relative;
         }
 
         .page-title::after {
-            content: "";
+            content: '';
             position: absolute;
-            bottom: -8px;
+            bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 10%;
-            height: 4px; /* Tăng độ dày lên 4px để đậm hơn */
-            background-color: #1e90ff;
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+            border-radius: 2px;
         }
 
         .page-title i {
-            background: #153054;
-            color: white;
+            color: var(--accent-color);
             padding: 15px;
             border-radius: 12px;
             font-size: 1.25rem;
         }
 
         .page-subtitle {
-            color: #6b7280;
+            color: var(--text-secondary);
             font-size: 1.1rem;
             margin-bottom: 32px;
             font-weight: 400;
@@ -78,53 +122,56 @@
         }
 
         .card {
-            background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 16px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            background: var(--content-background);
+            border: none;
+            border-radius: 20px;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
         }
 
         .card:hover {
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-            transform: translateY(-2px);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-medium);
         }
 
         .card-body {
-            padding: 24px;
+            padding: 2rem;
         }
 
         .search-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 1px solid #e2e8f0;
+            background: var(--content-background);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-light);
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
         .form-control, .form-select {
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
-            color: #153054;
             border-radius: 12px;
+            border: 2px solid var(--border-color);
             padding: 12px 16px;
-            font-size: 0.95rem;
-            transition: all 0.2s ease;
-            font-weight: 400;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--content-background);
+            color: var(--text-content);
         }
 
         .form-control:focus, .form-select:focus {
-            border-color: #153054;
-            box-shadow: 0 0 0 3px rgba(21, 48, 84, 0.1);
-            background: #ffffff;
-            color: #153054;
+            border-color: var(--border-active);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
             outline: none;
+            transform: translateY(-1px);
         }
 
         .input-group-text {
-            background: #f9fafb;
-            border: 2px solid #e5e7eb;
-            color: #6b7280;
-            border-radius: 12px 0 0 12px;
+            background: var(--light-gray);
+            border: 2px solid var(--border-color);
             border-right: none;
+            border-radius: 12px 0 0 12px;
+            color: var(--text-primary);
         }
 
         .input-group .form-control {
@@ -133,94 +180,125 @@
         }
 
         .form-label {
-            color: #153054;
+            position: absolute;
+            left: 1rem;
+            top: 0.5rem;
+            font-size: 0.75rem;
             font-weight: 600;
-            font-size: 0.9rem;
-            margin-bottom: 8px;
+            color: var(--text-primary);
+            pointer-events: none;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            background: var(--content-background);
+            padding: 0 0.5rem;
+            border-radius: 4px;
+        }
+
+        .form-control, .form-select {
+            padding-top: 1.75rem;
+            padding-bottom: 0.75rem;
         }
 
         .btn {
             border-radius: 12px;
-            font-weight: 600;
             padding: 12px 24px;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
             border: none;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
         .btn-primary {
-            background: #153054;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: var(--primary-color);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.2);
         }
 
         .btn-primary:hover {
-            background: #1e4a7a;
-            color: #ffffff;
+            background: var(--primary-hover);
+            color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
         }
 
         .btn-success {
-            background: #153054;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            background: var(--accent-color);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
         .btn-success:hover {
-            background: #1e4a7a;
+            background: var(--primary-color);
+            color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+            background: var(--btn-danger);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
         }
 
         .btn-danger:hover {
-            background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%);
+            background: var(--btn-danger-hover);
+            color: var(--text-white);
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.4);
-        }
-
-        .btn-danger i {
-            text-decoration: underline;
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
         }
 
         .btn-secondary {
-            background: #f3f4f6;
-            color: #153054;
-            border: 2px solid #e5e7eb;
+            background: var(--text-secondary);
+            color: var(--text-white);
+            box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
         }
 
         .btn-secondary:hover {
-            background: #e5e7eb;
-            color: #153054;
+            background: #6C757D;
+            color: var(--text-white);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
         }
 
         .btn-action {
             padding: 8px 16px;
             margin: 0 4px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            font-weight: 500;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            min-width: 44px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .table-container {
-            background: #ffffff;
+            background: var(--content-background);
             border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow-light);
             overflow-x: auto;
             overflow-y: visible;
             margin-top: 24px;
-            border: 1px solid #e5e7eb;
+            border: 1px solid var(--border-color);
             max-width: 100%;
         }
 
@@ -229,41 +307,43 @@
             font-size: 0.9rem;
             min-width: 1300px;
             width: 100%;
+            border-color: var(--border-color);
         }
 
         .table th {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background: var(--light-gray);
             border: none;
-            font-weight: 700;
-            color: #153054;
-            padding: 20px 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            padding: 1.5rem 1rem;
             text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
+            font-size: 0.95rem;
+            letter-spacing: 0.5px;
             position: sticky;
             top: 0;
             z-index: 10;
-            border-bottom: 2px solid #e5e7eb;
-            white-space: nowrap;
+            border-bottom: 2px solid var(--border-color);
+            text-align: center;
+            vertical-align: middle;
         }
 
         .table td {
-            padding: 16px;
+            padding: 1.5rem 1rem;
             vertical-align: middle;
-            color: #153054;
-            border-bottom: 1px solid #f3f4f6;
-            font-weight: 400;
-            white-space: nowrap;
+            color: var(--text-content);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 500;
+            text-align: center;
         }
 
         .table tbody tr {
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .table tbody tr:hover {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            background: var(--accent-hover);
             transform: scale(1.01);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 20px rgba(220, 53, 69, 0.1);
         }
 
         .table tbody tr:last-child td {
@@ -278,27 +358,51 @@
         }
 
         .modal-content {
-            background: #ffffff;
+            background: var(--content-background);
             border: none;
-            border-radius: 20px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            border-radius: 24px;
+            box-shadow: var(--shadow-heavy);
+            backdrop-filter: blur(20px);
             overflow: hidden;
         }
 
         .modal-header {
-            background: #153054;
-            color: #ffffff;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: var(--text-white);
             border-bottom: none;
-            padding: 24px 32px;
+            padding: 2rem 2.5rem;
+            border-radius: 24px 24px 0 0;
+            position: relative;
+        }
+
+        .modal-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .modal-header:hover::before {
+            left: 100%;
         }
 
         .modal-header .modal-title {
             font-weight: 700;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--text-white);
         }
 
         .modal-header .btn-close {
-            filter: invert(1);
+            filter: invert(1) grayscale(100%) brightness(200%);
+            font-size: 1.2rem;
+            padding: 0.5rem;
             opacity: 0.8;
         }
 
@@ -307,9 +411,9 @@
         }
 
         .modal-body {
-            background: #ffffff;
-            color: #153054;
-            padding: 32px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(248,249,250,0.95));
+            color: var(--text-content);
+            padding: 2.5rem;
         }
 
         .modal-dialog-lg {
@@ -321,83 +425,89 @@
             border: none;
             padding: 16px 20px;
             font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--shadow-light);
         }
 
         .alert-success {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            color: #065f46;
-            border-left: 4px solid #10b981;
+            background: var(--success-bg);
+            color: var(--success-text);
+            border-left: 4px solid var(--success-text);
         }
 
         .alert-danger {
-            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-            color: #991b1b;
-            border-left: 4px solid #ef4444;
+            background: var(--error-bg);
+            color: var(--error-text);
+            border-left: 4px solid var(--error-text);
         }
 
         .pagination {
             gap: 8px;
+            justify-content: center;
         }
 
         .pagination .page-link {
-            color: #153054;
-            background: #ffffff;
-            border: 2px solid #e5e7eb;
+            color: var(--text-primary);
+            background: var(--content-background);
+            border: 2px solid var(--border-color);
             border-radius: 12px;
-            padding: 12px 16px;
+            padding: 12px 18px;
             font-weight: 600;
-            transition: all 0.2s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(220, 53, 69, 0.1);
         }
 
         .pagination .page-link:hover {
-            background: #f3f4f6;
-            border-color: #d1d5db;
+            color: var(--text-white);
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+            border-color: var(--accent-color);
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.2);
         }
 
         .pagination .page-item.active .page-link {
-            background: #153054;
-            color: #ffffff;
-            border-color: #153054;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            border-color: var(--primary-color);
+            color: var(--text-white);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.3);
         }
 
         .pagination .page-item.disabled .page-link {
-            background: #f9fafb;
-            color: #9ca3af;
-            border-color: #e5e7eb;
+            background: var(--light-gray);
+            color: var(--text-secondary);
+            border-color: var(--border-color);
         }
 
         .badge {
             font-weight: 600;
             padding: 8px 16px;
             border-radius: 20px;
-            font-size: 0.8rem;
+            font-size: 0.875rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
         .badge.bg-primary {
-            background: #153054 !important;
-            color: #ffffff !important;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color)) !important;
+            color: var(--text-white) !important;
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.15);
         }
 
         .badge.bg-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
-            color: #ffffff !important;
+            background: var(--success-bg) !important;
+            color: var(--success-text) !important;
         }
 
         .badge.bg-danger {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
-            color: #ffffff !important;
+            background: var(--error-bg) !important;
+            color: var(--error-text) !important;
         }
 
         .action-buttons {
             display: flex;
             gap: 8px;
             justify-content: center;
+            align-items: center;
+            height: 100%;
         }
 
         .table-container::-webkit-scrollbar {
@@ -405,18 +515,18 @@
         }
 
         .table-container::-webkit-scrollbar-track {
-            background: #f1f5f9;
+            background: var(--light-gray);
             border-radius: 6px;
         }
 
         .table-container::-webkit-scrollbar-thumb {
-            background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
             border-radius: 6px;
-            border: 2px solid #f1f5f9;
+            border: 2px solid var(--light-gray);
         }
 
         .table-container::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+            background: linear-gradient(135deg, var(--primary-hover), var(--accent-hover));
         }
 
         @media (max-width: 768px) {
@@ -432,7 +542,7 @@
             }
 
             .page-title {
-                font-size: 1.75rem;
+                font-size: 2rem;
                 flex-direction: column;
                 text-align: center;
                 gap: 12px;
@@ -444,7 +554,7 @@
             }
 
             .modal-body {
-                padding: 20px;
+                padding: 1.5rem;
             }
 
             .table {
@@ -462,7 +572,7 @@
         }
 
         .modal-header.bg-danger {
-            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+            background: linear-gradient(135deg, var(--btn-danger), var(--btn-danger-hover)) !important;
         }
 
         .row {
@@ -474,15 +584,15 @@
         }
 
         .text-danger {
-            color: #dc2626 !important;
+            color: var(--btn-danger) !important;
         }
 
         .text-muted {
-            color: #6b7280 !important;
+            color: var(--text-secondary) !important;
         }
 
         .text-warning {
-            color: #f59e0b !important;
+            color: var(--warning-text) !important;
         }
 
         .btn-close {
@@ -594,10 +704,10 @@
                         <a th:href="'tel:' + ${customer.soDienThoai}" class="text-decoration-none" th:text="${customer.soDienThoai}"></a>
                     </td>
                     <td class="address-cell">
-    <span th:if="${defaultAddresses[customerStat.index] != null}"
-          th:text="${defaultAddresses[customerStat.index].tinhThanhPho} + ', ' + ${defaultAddresses[customerStat.index].quanHuyen} + ', ' + ${defaultAddresses[customerStat.index].phuongXa} + ', ' + ${defaultAddresses[customerStat.index].chiTietDiaChi}"
-          th:title="${defaultAddresses[customerStat.index].tinhThanhPho} + ', ' + ${defaultAddresses[customerStat.index].quanHuyen} + ', ' + ${defaultAddresses[customerStat.index].phuongXa} + ', ' + ${defaultAddresses[customerStat.index].chiTietDiaChi}">
-    </span>
+                        <span th:if="${defaultAddresses[customerStat.index] != null}"
+                              th:text="${defaultAddresses[customerStat.index].tinhThanhPho} + ', ' + ${defaultAddresses[customerStat.index].quanHuyen} + ', ' + ${defaultAddresses[customerStat.index].phuongXa} + ', ' + ${defaultAddresses[customerStat.index].chiTietDiaChi}"
+                              th:title="${defaultAddresses[customerStat.index].tinhThanhPho} + ', ' + ${defaultAddresses[customerStat.index].quanHuyen} + ', ' + ${defaultAddresses[customerStat.index].phuongXa} + ', ' + ${defaultAddresses[customerStat.index].chiTietDiaChi}">
+                        </span>
                         <span th:unless="${defaultAddresses[customerStat.index] != null}" class="text-muted">Chưa có địa chỉ</span>
                     </td>
                     <td>
@@ -623,7 +733,7 @@
         </div>
 
         <nav aria-label="Phân trang" class="mt-5">
-            <ul class="pagination justify-content-center">
+            <ul class="pagination">
                 <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
                     <a class="page-link" th:href="@{/polyshoe/customers(page=${currentPage - 1}, keyword=${keyword})}">
                         <i class="fa-solid fa-chevron-left me-1"></i> Trước
@@ -654,15 +764,15 @@
                         <form id="addCustomerForm" th:action="@{/polyshoe/customers/add}" th:object="${customer}" method="post" novalidate>
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addHoTen" class="form-label">Họ tên <span class="text-danger">*</span></label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addHoTen">Họ tên <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="addHoTen" th:field="*{hoTen}" required>
                                         <div class="text-danger small error-message" id="addHoTenError"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addTenDangNhap" class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addTenDangNhap">Tên đăng nhập <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="addTenDangNhap" th:field="*{tenDangNhap}" required>
                                         <div class="text-danger small error-message" id="addTenDangNhapError"></div>
                                     </div>
@@ -671,15 +781,15 @@
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addEmail" class="form-label">Email <span class="text-danger">*</span></label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addEmail">Email <span class="text-danger">*</span></label>
                                         <input type="email" class="form-control" id="addEmail" th:field="*{email}" required>
                                         <div class="text-danger small error-message" id="addEmailError"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addSoDienThoai" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addSoDienThoai">Số điện thoại <span class="text-danger">*</span></label>
                                         <input type="text" class="form-control" id="addSoDienThoai" th:field="*{soDienThoai}" required>
                                         <div class="text-danger small error-message" id="addSoDienThoaiError"></div>
                                     </div>
@@ -688,15 +798,15 @@
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addMatKhau" class="form-label">Mật khẩu <span class="text-danger">*</span></label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addMatKhau">Mật khẩu <span class="text-danger">*</span></label>
                                         <input type="password" class="form-control" id="addMatKhau" th:field="*{matKhau}" required>
                                         <div class="text-danger small error-message" id="addMatKhauError"></div>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addNgaySinh" class="form-label">Ngày sinh</label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addNgaySinh">Ngày sinh</label>
                                         <input type="date" class="form-control" id="addNgaySinh" th:field="*{ngaySinh}">
                                         <div class="text-danger small error-message" id="addNgaySinhError"></div>
                                     </div>
@@ -705,8 +815,8 @@
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addGioiTinh" class="form-label">Giới tính</label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addGioiTinh">Giới tính</label>
                                         <select class="form-select" id="addGioiTinh" th:field="*{gioiTinh}">
                                             <option value="true">Nam</option>
                                             <option value="false">Nữ</option>
@@ -715,8 +825,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addTinhThanhPho" class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addTinhThanhPho">Tỉnh/Thành phố <span class="text-danger">*</span></label>
                                         <select class="form-select" id="addTinhThanhPho" name="tinhThanhPho" required>
                                             <option value="">Chọn tỉnh/thành phố</option>
                                         </select>
@@ -727,8 +837,8 @@
 
                             <div class="row">
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addQuanHuyen" class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addQuanHuyen">Quận/Huyện <span class="text-danger">*</span></label>
                                         <select class="form-select" id="addQuanHuyen" name="quanHuyen" required>
                                             <option value="">Chọn quận/huyện</option>
                                         </select>
@@ -736,8 +846,8 @@
                                     </div>
                                 </div>
                                 <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="addPhuongXa" class="form-label">Phường/Xã <span class="text-danger">*</span></label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addPhuongXa">Phường/Xã <span class="text-danger">*</span></label>
                                         <select class="form-select" id="addPhuongXa" name="phuongXa" required>
                                             <option value="">Chọn phường/xã</option>
                                         </select>
@@ -748,8 +858,8 @@
 
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="mb-3">
-                                        <label for="addChiTietDiaChi" class="form-label">Địa chỉ chi tiết</label>
+                                    <div class="mb-3 floating-label">
+                                        <label for="addChiTietDiaChi">Địa chỉ chi tiết</label>
                                         <input type="text" class="form-control" id="addChiTietDiaChi" name="chiTietDiaChi">
                                         <div class="text-danger small error-message" id="addChiTietDiaChiError"></div>
                                     </div>
@@ -787,7 +897,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Họ tên <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="hoTen"
                                                    th:value="${customer.hoTen}" required>
@@ -795,7 +905,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Tên đăng nhập <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="tenDangNhap"
                                                    th:value="${customer.tenDangNhap}" required>
@@ -806,7 +916,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Email <span class="text-danger">*</span></label>
                                             <input type="email" class="form-control" name="email"
                                                    th:value="${customer.email}" required>
@@ -814,7 +924,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Số điện thoại <span class="text-danger">*</span></label>
                                             <input type="text" class="form-control" name="soDienThoai"
                                                    th:value="${customer.soDienThoai}" required>
@@ -825,7 +935,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Mật khẩu <span class="text-danger">*</span></label>
                                             <input type="password" class="form-control" name="matKhau"
                                                    th:value="${customer.matKhau}" required>
@@ -833,7 +943,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Ngày sinh</label>
                                             <input type="date" class="form-control" name="ngaySinh"
                                                    th:value="${customer.ngaySinh != null ? #temporals.format(customer.ngaySinh, 'yyyy-MM-dd') : ''}">
@@ -844,7 +954,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Giới tính</label>
                                             <select class="form-select" name="gioiTinh">
                                                 <option value="true" th:selected="${customer.gioiTinh == true}">Nam</option>
@@ -854,7 +964,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Trạng thái</label>
                                             <select class="form-select" name="trangThai">
                                                 <option value="true" th:selected="${customer.trangThai == true}">Kích hoạt</option>
@@ -867,7 +977,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Tỉnh/Thành phố <span class="text-danger">*</span></label>
                                             <select class="form-select" th:id="'editTinhThanhPho' + ${customer.id}"
                                                     name="tinhThanhPho" required
@@ -878,7 +988,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Quận/Huyện <span class="text-danger">*</span></label>
                                             <select class="form-select" th:id="'editQuanHuyen' + ${customer.id}"
                                                     name="quanHuyen" required
@@ -892,7 +1002,7 @@
 
                                 <div class="row">
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Phường/Xã <span class="text-danger">*</span></label>
                                             <select class="form-select" th:id="'editPhuongXa' + ${customer.id}"
                                                     name="phuongXa" required
@@ -903,7 +1013,7 @@
                                         </div>
                                     </div>
                                     <div class="col-md-6">
-                                        <div class="mb-3">
+                                        <div class="mb-3 floating-label">
                                             <label class="form-label">Địa chỉ chi tiết</label>
                                             <input type="text" class="form-control" name="chiTietDiaChi"
                                                    th:value="${defaultAddresses[customerStat.index] != null ? defaultAddresses[customerStat.index].chiTietDiaChi : ''}">
@@ -926,15 +1036,11 @@
                 </div>
             </div>
         </th:block>
-
-
     </div>
 </div>
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-
-        // Hàm validate cho form thêm khách hàng
         function validateAddCustomerForm() {
             let isValid = true;
             const hoTen = document.getElementById('addHoTen');
@@ -948,24 +1054,21 @@
             const phuongXa = document.getElementById('addPhuongXa');
             const chiTietDiaChi = document.getElementById('addChiTietDiaChi');
 
-            // Xóa thông báo lỗi cũ
             document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
 
-            // Validate Họ tên
-            const hoTenValue = hoTen.value.trim(); // Loại bỏ khoảng trắng đầu và cuối
-            const hoTenRegex = /^[A-Za-zÀ-ỹ\s]+$/; // Chỉ cho phép chữ cái và khoảng trắng
+            const hoTenValue = hoTen.value.trim();
+            const hoTenRegex = /^[A-Za-zÀ-ỹ\s]+$/;
             if (!hoTenValue) {
                 document.getElementById('addHoTenError').textContent = 'Họ tên không được để trống';
                 isValid = false;
             } else if (!hoTenRegex.test(hoTenValue)) {
                 document.getElementById('addHoTenError').textContent = 'Họ tên chỉ được chứa chữ cái và khoảng trắng';
                 isValid = false;
-            } else if (hoTenValue.indexOf('  ') !== -1) { // Kiểm tra có nhiều hơn 1 khoảng trắng liên tiếp
+            } else if (hoTenValue.indexOf('  ') !== -1) {
                 document.getElementById('addHoTenError').textContent = 'Họ tên chỉ được chứa 1 khoảng trắng giữa các từ';
                 isValid = false;
             }
 
-            // Validate Tên đăng nhập
             const tenDangNhapRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
             if (!tenDangNhap.value.trim()) {
                 document.getElementById('addTenDangNhapError').textContent = 'Tên đăng nhập không được để trống';
@@ -975,7 +1078,6 @@
                 isValid = false;
             }
 
-            // Validate Email
             const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
             if (!email.value.trim()) {
                 document.getElementById('addEmailError').textContent = 'Email không được để trống';
@@ -985,7 +1087,6 @@
                 isValid = false;
             }
 
-            // Validate Số điện thoại
             const soDienThoaiRegex = /^[0-9]{10}$/;
             if (!soDienThoai.value.trim()) {
                 document.getElementById('addSoDienThoaiError').textContent = 'Số điện thoại không được để trống';
@@ -995,7 +1096,6 @@
                 isValid = false;
             }
 
-            // Validate Mật khẩu
             if (!matKhau.value.trim()) {
                 document.getElementById('addMatKhauError').textContent = 'Mật khẩu không được để trống';
                 isValid = false;
@@ -1004,7 +1104,6 @@
                 isValid = false;
             }
 
-            // Validate Ngày sinh (tùy chọn, chỉ kiểm tra định dạng nếu có giá trị)
             if (!ngaySinh.value) {
                 document.getElementById('addNgaySinhError').textContent = 'Ngày sinh không được để trống';
                 isValid = false;
@@ -1026,25 +1125,21 @@
                 }
             }
 
-            // Validate Tỉnh/Thành phố
             if (!tinhThanhPho.value) {
                 document.getElementById('addTinhThanhPhoError').textContent = 'Vui lòng chọn tỉnh/thành phố';
                 isValid = false;
             }
 
-            // Validate Quận/Huyện
             if (!quanHuyen.value) {
                 document.getElementById('addQuanHuyenError').textContent = 'Vui lòng chọn quận/huyện';
                 isValid = false;
             }
 
-            // Validate Phường/Xã
             if (!phuongXa.value) {
                 document.getElementById('addPhuongXaError').textContent = 'Vui lòng chọn phường/xã';
                 isValid = false;
             }
 
-            // Validate Địa chỉ chi tiết
             const chiTietDiaChiValue = chiTietDiaChi.value.trim();
             if (!chiTietDiaChiValue) {
                 document.getElementById('addChiTietDiaChiError').textContent = 'Địa chỉ chi tiết không được để trống';
@@ -1060,17 +1155,15 @@
             return isValid;
         }
 
-        // Gắn sự kiện submit cho form thêm khách hàng
         const addCustomerForm = document.getElementById('addCustomerForm');
         if (addCustomerForm) {
             addCustomerForm.addEventListener('submit', function (event) {
                 if (!validateAddCustomerForm()) {
-                    event.preventDefault(); // Ngăn form submit nếu validate thất bại
+                    event.preventDefault();
                 }
             });
         }
 
-        // Hàm validate cho form chỉnh sửa khách hàng
         function validateEditCustomerForm(form) {
             let isValid = true;
             const hoTen = form.querySelector('input[name="hoTen"]');
@@ -1084,24 +1177,21 @@
             const phuongXa = form.querySelector('select[name="phuongXa"]');
             const chiTietDiaChi = form.querySelector('input[name="chiTietDiaChi"]');
 
-            // Xóa thông báo lỗi cũ
             form.querySelectorAll('.error-message').forEach(el => el.textContent = '');
 
-            // Validate Họ tên
-            const hoTenValue = hoTen.value.trim(); // Loại bỏ khoảng trắng đầu và cuối
-            const hoTenRegex = /^[A-Za-zÀ-ỹ\s]+$/; // Chỉ cho phép chữ cái và khoảng trắng
+            const hoTenValue = hoTen.value.trim();
+            const hoTenRegex = /^[A-Za-zÀ-ỹ\s]+$/;
             if (!hoTenValue) {
                 hoTen.nextElementSibling.textContent = 'Họ tên không được để trống';
                 isValid = false;
             } else if (!hoTenRegex.test(hoTenValue)) {
                 hoTen.nextElementSibling.textContent = 'Họ tên chỉ được chứa chữ cái và khoảng trắng';
                 isValid = false;
-            } else if (hoTenValue.indexOf('  ') !== -1) { // Kiểm tra có nhiều hơn 1 khoảng trắng liên tiếp
+            } else if (hoTenValue.indexOf('  ') !== -1) {
                 hoTen.nextElementSibling.textContent = 'Họ tên chỉ được chứa 1 khoảng trắng giữa các từ';
                 isValid = false;
             }
 
-            // Validate Tên đăng nhập
             const tenDangNhapRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/;
             if (!tenDangNhap.value.trim()) {
                 tenDangNhap.nextElementSibling.textContent = 'Tên đăng nhập không được để trống';
@@ -1111,7 +1201,6 @@
                 isValid = false;
             }
 
-            // Validate Email
             const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
             if (!email.value.trim()) {
                 email.nextElementSibling.textContent = 'Email không được để trống';
@@ -1121,7 +1210,6 @@
                 isValid = false;
             }
 
-            // Validate Số điện thoại
             const soDienThoaiRegex = /^[0-9]{10}$/;
             if (!soDienThoai.value.trim()) {
                 soDienThoai.nextElementSibling.textContent = 'Số điện thoại không được để trống';
@@ -1131,7 +1219,6 @@
                 isValid = false;
             }
 
-            // Validate Mật khẩu
             if (!matKhau.value.trim()) {
                 matKhau.nextElementSibling.textContent = 'Mật khẩu không được để trống';
                 isValid = false;
@@ -1140,7 +1227,6 @@
                 isValid = false;
             }
 
-            // Validate Ngày sinh (tùy chọn)
             if (!ngaySinh.value) {
                 ngaySinh.nextElementSibling.textContent = 'Ngày sinh không được để trống';
                 isValid = false;
@@ -1162,25 +1248,21 @@
                 }
             }
 
-            // Validate Tỉnh/Thành phố
             if (!tinhThanhPho.value) {
                 tinhThanhPho.nextElementSibling.textContent = 'Vui lòng chọn tỉnh/thành phố';
                 isValid = false;
             }
 
-            // Validate Quận/Huyện
             if (!quanHuyen.value) {
                 quanHuyen.nextElementSibling.textContent = 'Vui lòng chọn quận/huyện';
                 isValid = false;
             }
 
-            // Validate Phường/Xã
             if (!phuongXa.value) {
                 phuongXa.nextElementSibling.textContent = 'Vui lòng chọn phường/xã';
                 isValid = false;
             }
 
-            // Validate Địa chỉ chi tiết
             const chiTietDiaChiValue = chiTietDiaChi.value.trim();
             if (!chiTietDiaChiValue) {
                 chiTietDiaChi.nextElementSibling.textContent = 'Địa chỉ chi tiết không được để trống';
@@ -1196,12 +1278,11 @@
             return isValid;
         }
 
-        // Gắn sự kiện submit cho các form chỉnh sửa
         const editCustomerForms = document.querySelectorAll('form[action="/polyshoe/customers/edit"]');
         editCustomerForms.forEach(form => {
             form.addEventListener('submit', function (event) {
                 if (!validateEditCustomerForm(form)) {
-                    event.preventDefault(); // Ngăn form submit nếu validate thất bại
+                    event.preventDefault();
                 }
             });
         });
@@ -1210,7 +1291,7 @@
             try {
                 const res  = await fetch('/api/ghn/provinces');
                 const json = await res.json();
-                const list = JSON.parse(json.data)?.data || []; // [{ProvinceID, ProvinceName}, ...]
+                const list = JSON.parse(json.data)?.data || [];
 
                 const provinceSelects = document.querySelectorAll(
                     'select[id^="addTinhThanhPho"], select[id^="editTinhThanhPho"]'
@@ -1219,9 +1300,9 @@
                     select.innerHTML = '<option value="">Chọn tỉnh/thành phố</option>';
                     list.forEach(p => {
                         const opt = document.createElement('option');
-                        opt.value       = p.ProvinceName; // lưu tên để hiển thị/submit
+                        opt.value       = p.ProvinceName;
                         opt.textContent = p.ProvinceName;
-                        opt.dataset.id  = p.ProvinceID;   // GHN ProvinceID
+                        opt.dataset.id  = p.ProvinceID;
                         select.appendChild(opt);
                     });
                 });
@@ -1236,7 +1317,7 @@
             try {
                 const res  = await fetch(`/api/ghn/districts?provinceId=${provinceId}`);
                 const json = await res.json();
-                const list = JSON.parse(json.data)?.data || []; // [{DistrictID, DistrictName}, ...]
+                const list = JSON.parse(json.data)?.data || [];
 
                 districtSelect.innerHTML = '<option value="">Chọn quận/huyện</option>';
                 wardSelect.innerHTML     = '<option value="">Chọn phường/xã</option>';
@@ -1245,7 +1326,7 @@
                     const opt = document.createElement('option');
                     opt.value       = d.DistrictName;
                     opt.textContent = d.DistrictName;
-                    opt.dataset.id  = d.DistrictID; // GHN DistrictID
+                    opt.dataset.id  = d.DistrictID;
                     districtSelect.appendChild(opt);
                 });
             } catch (e) {
@@ -1257,14 +1338,14 @@
             try {
                 const res  = await fetch(`/api/ghn/wards?districtId=${districtId}`);
                 const json = await res.json();
-                const list = JSON.parse(json.data)?.data || []; // [{WardCode, WardName}, ...]
+                const list = JSON.parse(json.data)?.data || [];
 
                 wardSelect.innerHTML = '<option value="">Chọn phường/xã</option>';
                 list.forEach(w => {
                     const opt = document.createElement('option');
                     opt.value        = w.WardName;
                     opt.textContent  = w.WardName;
-                    opt.dataset.code = w.WardCode; // GHN WardCode
+                    opt.dataset.code = w.WardCode;
                     wardSelect.appendChild(opt);
                 });
             } catch (e) {
@@ -1305,9 +1386,7 @@
             });
         }
 
-        // === KHỞI TẠO GHN (sau khi đã khai báo các hàm ghn* ở trên) ===
         ghnFetchProvinces().then(() => {
-            // --- ADD form selects ---
             const addProvinceSelect = document.getElementById('addTinhThanhPho');
             const addDistrictSelect = document.getElementById('addQuanHuyen');
             const addWardSelect     = document.getElementById('addPhuongXa');
@@ -1333,7 +1412,6 @@
                 });
             }
 
-            // --- EDIT modals: load sẵn khi mở modal ---
             const editModals = document.querySelectorAll('[id^="editCustomerModal"]');
             editModals.forEach(modal => {
                 modal.addEventListener('show.bs.modal', function () {
@@ -1379,10 +1457,8 @@
                 }
             }
         });
-
     });
 </script>
 <script th:src="@{/js/notification.js}"></script>
-
 </body>
 </html>
