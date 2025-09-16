@@ -7,6 +7,7 @@
     <title>Poly Store Store - Chi tiết sản phẩm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="/css/black-white-red-theme.css" />
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="/image/Poly Store.png" type="image/png" sizes="32x32" />
@@ -136,7 +137,7 @@
         }
 
         .navbar {
-            background: linear-gradient(to right, #153054, #1e4066);
+            background: linear-gradient(to right, #000000, #222222);
         }
 
         .navbar {
@@ -160,13 +161,13 @@
 
         .size-option.active,
         .color-option.active {
-            background-color: #153054;
+            background-color: #000000;
             color: white;
         }
 
         .ticker {
-            background-color: #9FD5F7;
-            color: #153054;
+            background-color: #f8f8f8;
+            color: #000000;
             font-weight: bold;
             position: fixed;
             top: 0;
@@ -523,7 +524,7 @@
 
         /* Header tối, icon tròn */
         .cb-header {
-            background: #153054;
+            background: #000000;
             color: #fff;
             padding: 10px 12px;
             display: flex;
@@ -549,7 +550,7 @@
             width: 28px;
             height: 28px;
             border-radius: 50%;
-            background: #9FD5F7;
+            background: #f8f8f8;
             display: inline-block;
         }
 
@@ -674,7 +675,7 @@
 
 
         .chatbot-msg-user {
-            background: #153054;
+            background: #000000;
             color: #fff;
             padding: 10px 12px;
             border-radius: 14px 14px 4px 14px;
@@ -744,7 +745,7 @@
             height: 44px;
             border-radius: 50%;
             border: 0;
-            background: #153054;
+            background: #000000;
             color: #fff;
             display: flex;
             align-items: center;
@@ -800,10 +801,10 @@
         }
 
         .star-fill {
-            color: #f59e0b
+            color: #000000
         }
 
-        /* vàng */
+        /* black */
         .star-empty {
             color: #e5e7eb
         }
@@ -832,7 +833,7 @@
         .hist-bar>span {
             display: block;
             height: 100%;
-            background: #f59e0b
+            background: #000000
         }
 
         .hist-count {
@@ -858,9 +859,9 @@
         }
 
         .filter-chip.active {
-            background: #153054;
+            background: #000000;
             color: #fff;
-            border-color: #153054
+            border-color: #000000
         }
 
         .sort-select {
@@ -878,8 +879,8 @@
         }
 
         .review-card.my {
-            border-color: #153054;
-            box-shadow: 0 4px 14px rgba(21, 48, 84, .08)
+            border-color: #000000;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .08)
         }
 
         .rev-head {
@@ -902,8 +903,8 @@
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            background: #e8eef6;
-            color: #153054;
+            background: #f0f0f0;
+            color: #000000;
             font-weight: 700
         }
 
@@ -997,7 +998,7 @@
         }
 
         .thumbnail-img:focus {
-            outline: 2px solid #153054;
+            outline: 2px solid #000000;
             outline-offset: 2px;
         }
 
@@ -1036,7 +1037,7 @@
         .hist-bar>span {
             display: block;
             height: 100%;
-            background: #f59e0b;
+            background: #000000;
             transform-origin: left;
             animation: grow .6s ease
         }
@@ -1094,7 +1095,7 @@
 
             <!-- Giá -->
             <div class="mb-4">
-                <span id="detail-price" class="price text-[#153054] font-bold text-2xl"
+                <span id="detail-price" class="price text-black font-bold text-2xl"
                     th:attr="data-min=${minPrice},data-max=${maxPrice},data-old-min=${oldMinPrice},data-old-max=${oldMaxPrice}">
                 </span>
 
@@ -1144,7 +1145,7 @@
             <!-- CTA -->
             <div class="button-group mt-4">
                 <button id="btnAddToCart"
-                    class="btn bg-[#153054] text-white hover:bg-[#1e4066] px-6 py-2 rounded add-to-cart" th:attr="data-product-id=${productDetail.id},
+                    class="btn bg-black text-white hover:bg-gray-800 px-6 py-2 rounded add-to-cart" th:attr="data-product-id=${productDetail.id},
                          data-san-pham-id=${productDetail.sanPhamId},
                          data-product-name=${productDetail.tenSanPham},
                          data-product-price=${#numbers.formatDecimal(productDetail.gia, 0, 0, 'COMMA')},
@@ -1171,7 +1172,7 @@
     <!-- DESCRIPTION & PRODUCT INFO -->
     <div class="bg-white rating-card mt-10 p-6">
         <!-- Tiêu đề chung -->
-        <h2 class="text-2xl font-bold text-[#153054] mb-4">Mô tả sản phẩm</h2>
+        <h2 class="text-2xl font-bold text-black mb-4">Mô tả sản phẩm</h2>
 
         <!-- Thông tin ngắn gọn (trên cùng) -->
         <div class="mb-6">
@@ -1186,7 +1187,7 @@
                 <div th:if="${productDetail.tenDanhMuc != null}" class="flex items-start">
                     <dt class="text-gray-500 font-medium mr-2">Loại:</dt>
                     <dd class="text-gray-900">
-                        <a class="text-[#153054] underline" th:href="@{'/category/' + ${productDetail.danhMucId}}"
+                        <a class="text-black underline" th:href="@{'/category/' + ${productDetail.danhMucId}}"
                             th:text="${productDetail.tenDanhMuc}"></a>
                     </dd>
                 </div>
@@ -1215,17 +1216,7 @@
                     <dd class="text-gray-900" th:text="${productDetail.kieuDang.tenKieuDang}"></dd>
                 </div>
 
-                <!-- Tay áo -->
-                <div th:if="${productDetail.tayAo != null}" class="flex items-start">
-                    <dt class="text-gray-500 font-medium mr-2">Tay áo:</dt>
-                    <dd class="text-gray-900" th:text="${productDetail.tayAo.tenTayAo}"></dd>
-                </div>
 
-                <!-- Cổ áo -->
-                <div th:if="${productDetail.coAo != null}" class="flex items-start">
-                    <dt class="text-gray-500 font-medium mr-2">Cổ áo:</dt>
-                    <dd class="text-gray-900" th:text="${productDetail.coAo.tenCoAo}"></dd>
-                </div>
 
                 <!-- Giới tính -->
                 <div th:if="${productDetail.gioiTinh != null}" class="flex items-start">
@@ -1241,16 +1232,6 @@
             </dl>
         </div>
 
-        <!-- Mô tả chi tiết (dưới cùng) -->
-        <div class="relative">
-            <p id="moTa" class="text-gray-700 leading-relaxed max-h-24 overflow-hidden transition-all duration-300"
-                th:utext="${#strings.escapeXml(productDetail.moTa)?.replaceAll('\\n','<br/>')}">
-            </p>
-            <button id="toggleBtn" class="text-[#153054] mt-2 mx-auto block hover:underline"
-                aria-label="Xem thêm mô tả">
-                Xem thêm
-            </button>
-        </div>
     </div>
 
     <!-- Lightbox -->
@@ -1259,67 +1240,121 @@
     </div>
 </section>
 
-<section class="container mx-auto py-12">
-    <h2 class="text-2xl font-bold text-gray-800 mb-6">Sản phẩm liên quan</h2>
-    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        <div th:each="sp : ${sanPhamLienQuan}" class="bg-white rounded-lg shadow hover:shadow-md transition p-3">
-            <a th:href="@{/chitietsanpham(id=${sp.id})}">
-                <img th:src="${sp.urlHinhAnh}" th:alt="${sp.tenSanPham}"
-                    class="w-full h-52 object-cover rounded mb-3" />
-                <h3 th:text="${sp.tenSanPham}" class="text-base font-semibold text-gray-700 line-clamp-2 h-[48px]"></h3>
-                <div class="mb-2">
-                    <!-- Giá hiện tại -->
-                    <span class="price text-[#153054] font-bold text-sm" th:attr="data-price=${sp.price}"></span>
-
-                    <!-- Giá gạch: chỉ hiện khi có giảm giá -->
-                    <div th:if="${sp.discount != null and !#strings.equalsIgnoreCase(sp.discount,'0%')}"
-                        class="old-price text-sm text-red-600 line-through inline-block ml-2">
-                        <span th:attr="data-old-price=${sp.oldPrice}"></span>
-                    </div>
-
-                    <!-- (tuỳ chọn) nhãn chiến dịch/ phần trăm -->
-                    <div th:if="${sp.discountCampaignName != null or (sp.discount != null and !#strings.equalsIgnoreCase(sp.discount,'0%'))}"
-                        class="text-sm text-green-600">
-                        <span
-                            th:text="${sp.discountCampaignName != null ? 'Giảm giá: ' + sp.discountCampaignName : 'Giảm ' + sp.discount}"></span>
-                    </div>
 
 
+
+
+<!-- Modern Footer Design -->
+<footer class="bg-black text-white mt-12 relative z-10">
+    <!-- Footer Wave Top -->
+    <div class="absolute top-0 left-0 w-full overflow-hidden footer-wave">
+        <svg class="relative block w-full rotate-180" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 1200 120" preserveAspectRatio="none">
+            <path
+                d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+                class="fill-white"></path>
+        </svg>
+    </div>
+
+    <!-- Main Footer Content -->
+    <div class="container mx-auto px-6 pt-20 pb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <!-- Column 1: About -->
+            <div>
+                <h3 class="text-xl font-bold mb-4">
+                    Poly Shoe Store
+                </h3>
+                <p class="text-gray-300 mb-4">Cửa hàng giày dép hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.
+                </p>
+                <div class="flex space-x-4 mt-6">
+                    <a href="#"
+                        class="bg-white bg-opacity-20 hover:bg-red-600 hover:bg-opacity-100 p-2 rounded-full transition duration-300"
+                        aria-label="Facebook">
+                        Facebook
+                    </a>
+                    <a href="#"
+                        class="bg-white bg-opacity-20 hover:bg-red-600 hover:bg-opacity-100 p-2 rounded-full transition duration-300"
+                        aria-label="Instagram">
+                        Instagram
+                    </a>
+                    <a href="#"
+                        class="bg-white bg-opacity-20 hover:bg-red-600 hover:bg-opacity-100 p-2 rounded-full transition duration-300"
+                        aria-label="Twitter">
+                        Twitter
+                    </a>
                 </div>
-            </a>
+            </div>
+
+            <!-- Column 2: Quick Links -->
+            <div>
+                <h3 class="text-xl font-bold mb-4">
+                    Liên kết nhanh
+                </h3>
+                <ul class="space-y-2">
+                    <li>
+                        <a href="/new" class="text-gray-300 hover:text-red-500">
+                            Sản phẩm mới
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/all" class="text-gray-300 hover:text-red-500">
+                            Tất cả sản phẩm
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/bestsellers" class="text-gray-300 hover:text-red-500">
+                            Sản phẩm bán chạy
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/chinh-sach" class="text-gray-300 hover:text-red-500">
+                            Chính sách
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Column 3: Contact -->
+            <div>
+                <h3 class="text-xl font-bold mb-4">
+                    Liên hệ
+                </h3>
+                <ul class="space-y-3">
+                    <li class="text-gray-300">
+                        FPT Polytechnic, Hà Nội
+                    </li>
+                    <li class="text-gray-300">
+                        +84 123 456 789
+                    </li>
+                    <li class="text-gray-300">
+                        polyshoe@example.com
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-sm text-gray-400">© 2025 Poly Shoe Store. All rights reserved.</p>
+            <div class="mt-4 md:mt-0">
+                <ul class="flex space-x-6">
+                    <li><a href="#" class="text-sm text-gray-400 hover:text-red-500">Điều khoản</a></li>
+                    <li><a href="#" class="text-sm text-gray-400 hover:text-red-500">Riêng tư</a></li>
+                    <li><a href="#" class="text-sm text-gray-400 hover:text-red-500">Cookies</a></li>
+                </ul>
+            </div>
         </div>
     </div>
-</section>
 
-
-
-<footer
-    style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
-    <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-        <div>
-            <h3 class="text-lg font-bold mb-4">Poly Store Store</h3>
-            <p class="text-sm"></p>
-        </div>
-        <div>
-            <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
-            <ul class="space-y-2">
-                <li><a href="/new" class="hover:text-blue-300">Sản phẩm mới</a></li>
-                <li><a href="/all" class="hover:text-blue-300">Tất cả sản phẩm</a></li>
-                <li><a href="/bestsellers" class="hover:text-blue-300">Sản phẩm bán chạy</a></li>
-                <li><a href="/chinh-sach" class="hover:text-blue-300">Chính sách</a></li>
-            </ul>
-        </div>
-    </div>
-    <div class="text-center mt-8 text-sm">© 2025 Poly Store Store. All rights reserved.</div>
-
+    <!-- Subtle pattern overlay -->
     <div
-        class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10">
+        class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(255,255,255,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(255,255,255,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10">
     </div>
 </footer>
 
-<button id="back-to-top" class="fixed bottom-20 right-20 bg-blue-600 text-white p-3 rounded-full shadow-lg hidden"
+<button id="back-to-top" class="fixed bottom-20 right-20 bg-red-600 text-white p-3 rounded-full shadow-lg hidden"
     aria-label="Quay lại đầu trang">
-    <i class="fas fa-arrow-up"></i>
+    Lên
 </button>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -1500,7 +1535,7 @@
 
     function updateSendBtn() {
         const hasText = chatInput.value.trim().length > 0;
-        sendBtn.style.backgroundColor = hasText ? '#1e4066' : '#9FD5F7';
+        sendBtn.style.backgroundColor = hasText ? '#000000' : '#cccccc';
         sendBtn.disabled = !hasText;
         sendBtn.style.opacity = hasText ? '1' : '.9';
         sendBtn.style.cursor = hasText ? 'pointer' : 'not-allowed';
@@ -1701,7 +1736,7 @@
                     if (isImageUrl(url)) {
                         return `<img src="${url}" alt="Ảnh" loading="lazy" style="max-width:100%;height:auto;margin-top:8px;" />`;
                     }
-                    return `<a href="${url}" target="_blank" rel="noopener" style="color:#153054;text-decoration:underline;">${raw}</a>`;
+                    return `<a href="${url}" target="_blank" rel="noopener" style="color:#000000;text-decoration:underline;">${raw}</a>`;
                 }
             )
             .replace(/\n/g, '<br>');

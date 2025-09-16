@@ -199,7 +199,6 @@ public class KhachhangSanPhamService {
                 .collect(Collectors.toList());
         dto.setValidCombinations(combinations);
 
-        // Lấy thông tin chất liệu, xuất xứ, thương hiệu, kiểu dáng, tay áo, cổ áo
         ChatLieuDto chatLieuDto = new ChatLieuDto();
         chatLieuDto.setId(chiTiet.getChatLieu().getId());
         chatLieuDto.setTenChatLieu(chiTiet.getChatLieu().getTenChatLieu());
