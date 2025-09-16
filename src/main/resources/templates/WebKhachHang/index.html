@@ -12,8 +12,10 @@
     integrity="sha512-Avb2QiuDEEvB4bZJYdft2mNjVShBftLdPG8FJ0V7irTLQ8Uo0qcPxh4Plq7G5tGm0rU+1SPhVotteLpBERwTkw=="
     crossorigin="anonymous" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="/css/black-white-red-theme.css" />
   <style>
     /* Messenger FAB (nút mở Messenger) */
     .messenger-fab {
@@ -114,6 +116,135 @@
       object-fit: cover;
       height: 500px;
       width: 100%;
+    }
+
+    /* Modern Hero Banner Styling */
+    .hero-banner {
+      margin-bottom: 2rem;
+    }
+
+    .hero-banner .swiper-slide {
+      height: 600px;
+    }
+
+    .hero-banner .swiper-button-next,
+    .hero-banner .swiper-button-prev {
+      background-color: rgba(255, 255, 255, 0.2);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      transition: all 0.3s ease;
+    }
+
+    .hero-banner .swiper-button-next:hover,
+    .hero-banner .swiper-button-prev:hover {
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .hero-banner .swiper-button-next:after,
+    .hero-banner .swiper-button-prev:after {
+      font-size: 18px;
+    }
+
+    /* Accessibility - Screen reader only */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    .hero-banner .swiper-pagination-bullet {
+      width: 10px;
+      height: 10px;
+      background-color: rgba(255, 255, 255, 0.7);
+      opacity: 0.7;
+    }
+
+    .hero-banner .swiper-pagination-bullet-active {
+      background-color: #ffffff;
+      opacity: 1;
+    }
+
+    @media (max-width: 768px) {
+      .hero-banner .swiper-slide {
+        height: 500px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-banner .swiper-slide {
+        height: 400px;
+      }
+
+      .hero-banner .container .text-white {
+        padding: 0 1rem;
+        max-width: 90%;
+      }
+
+      .hero-banner .text-3xl {
+        font-size: 1.5rem;
+      }
+
+      .action-group {
+        opacity: 1;
+        transform: none;
+      }
+
+      .product-card .action-btn {
+        width: 36px;
+        height: 36px;
+      }
+
+      .modal-product-info {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .modal-product-info img {
+        margin-bottom: 1rem;
+      }
+
+      .size-options,
+      .color-options {
+        gap: 0.5rem;
+      }
+
+      #mini-tabs {
+        overflow-x: auto;
+      }
+
+      section {
+        padding-left: 1rem;
+        padding-right: 1rem;
+      }
+
+      .product-grid {
+        gap: 0.75rem;
+      }
+    }
+
+    /* Ensure text readability on mobile */
+    @media (max-width: 480px) {
+      .hero-banner .text-3xl {
+        font-size: 1.25rem;
+      }
+
+      .hero-banner p {
+        font-size: 0.875rem;
+      }
+
+      .hero-banner a {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+      }
     }
 
     .ticker {
@@ -414,6 +545,7 @@
       line-height: 1.35;
       display: -webkit-box;
       -webkit-line-clamp: 2;
+      line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
       min-height: 42px;
@@ -426,316 +558,523 @@
 
   <div th:replace="~{fragments/kh_navbar :: navbar(user=${user}, keyword=${keyword}, cartCount=${cartCount})}"></div>
 
-  <nav id="mini-tabs" class="bg-white/90 backdrop-blur sticky top-[40px] z-[1039] border-b border-gray-200">
+  <!-- Modern Main Navigation Tabs
+  <nav id="mini-tabs" class="bg-white sticky top-[40px] z-[1039] shadow-sm">
     <div class="container mx-auto">
-      <ul class="flex items-center gap-2 sm:gap-3 overflow-x-auto no-scrollbar px-3 sm:px-0 relative">
+      <ul class="flex items-center justify-end gap-2 sm:gap-4 overflow-x-auto no-scrollbar px-3 sm:px-0 relative">
         <li>
           <a href="#section-new"
-            class="tab-link inline-flex items-center gap-2 px-3 py-3 rounded-md text-sm font-semibold text-gray-700 hover:text-[#153054] hover:bg-[#E8F2FF]">
-            <i class="fa-solid fa-star"></i><span>Mới</span>
+            class="tab-link inline-flex items-center gap-2 px-4 py-4 text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors duration-300 border-b-2 border-transparent">
+            <span>Mới</span>
           </a>
         </li>
         <li>
           <a href="#section-all"
-            class="tab-link inline-flex items-center gap-2 px-3 py-3 rounded-md text-sm font-semibold text-gray-700 hover:text-[#153054] hover:bg-[#E8F2FF]">
-            <i class="fa-solid fa-boxes-stacked"></i><span>Tất cả</span>
+            class="tab-link inline-flex items-center gap-2 px-4 py-4 text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors duration-300 border-b-2 border-transparent">
+            <span>Tất cả</span>
           </a>
         </li>
         <li>
           <a href="#section-best"
-            class="tab-link inline-flex items-center gap-2 px-3 py-3 rounded-md text-sm font-semibold text-gray-700 hover:text-[#153054] hover:bg-[#E8F2FF]">
-            <i class="fa-solid fa-fire"></i><span>Bán chạy</span>
+            class="tab-link inline-flex items-center gap-2 px-4 py-4 text-sm font-semibold text-gray-700 hover:text-red-600 transition-colors duration-300 border-b-2 border-transparent">
+            <span>Bán chạy</span>
           </a>
-        </li>
+        </li> -->
 
-
-        <span id="tab-indicator"
-          class="absolute bottom-0 h-[3px] bg-[#153054] rounded transition-all duration-300 ease-out"></span>
-      </ul>
-    </div>
+  <!-- Custom indicator that will be controlled by JavaScript -->
+  <span id="tab-indicator"
+    class="absolute bottom-0 h-[3px] bg-red-600 rounded-t transition-all duration-300 ease-out"></span>
+  </ul>
+  </div>
   </nav>
 
+  <!-- Category navigation has been moved to the left side and will be part of the main layout -->
 
-  <nav class="bg-white/95 backdrop-blur sticky top-[80px] z-[1038] border-b border-gray-200">
-    <div class="container mx-auto">
-      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar px-3 py-2">
-        <a th:each="c : ${categories}" th:href="@{/category/{id}(id=${c.id})}"
-          th:classappend="${currentCategoryId == c.id} ? ' active' : ''" th:attr="data-name=${c.tenDanhMuc}"
-          class="cat-chip inline-flex items-center gap-2 px-3 py-2 rounded-full text-sm font-medium border
-                border-gray-200 text-gray-700 hover:border-[#153054] hover:bg-[#E8F2FF] hover:text-[#153054] whitespace-nowrap">
-          <i class="fa-regular fa-circle"></i>
-          <span th:text="${c.tenDanhMuc}">Danh mục</span>
-        </a>
-      </div>
-    </div>
-  </nav>
-
+  <!-- Modern Add to Cart Modal -->
   <div class="modal fade" id="addToCartModal" tabindex="-1" aria-labelledby="addToCartModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-lg">
-        <div class="modal-header" style="background-color: #153054; color: white;">
-          <h5 class="modal-title" id="addToCartModalLabel">Thêm vào giỏ hàng</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      <div class="modal-content rounded-xl shadow-lg border-0">
+        <!-- Modal Header with Custom Design -->
+        <div class="modal-header bg-black text-white py-4 px-5 border-0 rounded-t-xl">
+          <h5 class="modal-title text-lg font-bold" id="addToCartModalLabel">
+            Thêm vào giỏ hàng
+          </h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body p-4">
-          <div class="modal-product-info flex items-center space-x-4">
-            <img id="modalProductImage" src="" alt="Product Image" class="w-20 h-20 object-cover rounded">
+
+        <div class="modal-body p-6">
+          <!-- Product Info with Enhanced Layout -->
+          <div class="modal-product-info flex items-center gap-5 pb-5 border-b border-gray-100">
+            <div class="w-24 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+              <img id="modalProductImage" src="" alt="Product Image" class="w-full h-full object-cover">
+            </div>
             <div>
-              <h6 id="modalProductName" class="font-semibold"></h6>
-              <p id="modalProductPrice" class="text-blue-800 font-bold"></p>
-              <p id="modalProductStock" class="text-sm text-gray-600"></p>
+              <h6 id="modalProductName" class="font-bold text-gray-800 text-lg mb-1"></h6>
+              <p id="modalProductPrice" class="text-red-600 font-bold text-xl"></p>
+              <p id="modalProductStock" class="text-sm text-gray-600 mt-1">
+                <span>Tồn kho: 20</span>
+              </p>
             </div>
           </div>
-          <div class="size-selection mt-4">
-            <h6 class="font-semibold">Chọn size:</h6>
-            <div class="size-options flex space-x-2 mt-2" id="modalSizeOptions"></div>
+
+          <!-- Size Selection with Better Visualization -->
+          <div class="size-selection mt-5">
+            <h6 class="font-semibold text-gray-700 mb-3">
+              Chọn size:
+            </h6>
+            <div class="size-options flex flex-wrap gap-2 mt-2" id="modalSizeOptions"></div>
           </div>
-          <div class="color-selection mt-4">
-            <h6 class="font-semibold">Chọn màu sắc:</h6>
-            <div class="color-options flex space-x-2 mt-2" id="modalColorOptions"></div>
+
+          <!-- Color Selection with Better Visualization -->
+          <div class="color-selection mt-5">
+            <h6 class="font-semibold text-gray-700 mb-3">
+              Chọn màu sắc:
+            </h6>
+            <div class="color-options flex flex-wrap gap-2 mt-2" id="modalColorOptions"></div>
           </div>
-          <div class="quantity-selection mt-4">
-            <h6 class="font-semibold">Số lượng:</h6>
-            <div class="quantity-control flex items-center space-x-2 mt-2">
-              <button class="quantity-btn minus px-3 py-1 bg-gray-200 rounded">-</button>
-              <input type="number" value="1" min="1" step="1" class="quantity-input w-16 text-center border rounded">
-              <button class="quantity-btn plus px-3 py-1 bg-gray-200 rounded">+</button>
+
+          <!-- Quantity Selection with Enhanced Controls -->
+          <div class="quantity-selection mt-5">
+            <h6 class="font-semibold text-gray-700 mb-3">
+              Số lượng:
+            </h6>
+            <div class="quantity-control flex items-center gap-3 mt-2">
+              <button
+                class="quantity-btn minus w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-200"
+                aria-label="Giảm số lượng" title="Giảm số lượng">
+                -
+              </button>
+              <input type="number" value="1" min="1" step="1"
+                class="quantity-input w-16 h-10 text-center border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300">
+              <button
+                class="quantity-btn plus w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors duration-200"
+                aria-label="Tăng số lượng" title="Tăng số lượng">
+                +
+              </button>
             </div>
 
-            <!-- THÊM MỚI: lỗi số lượng -->
-            <div id="qtyError" class="text-red-500 text-sm mt-2 hidden" role="alert" aria-live="assertive"></div>
+            <!-- Quantity Error Message -->
+            <div id="qtyError" class="text-red-500 text-sm mt-2 hidden flex items-center" role="alert"
+              aria-live="assertive">
+              <span>Số lượng vượt quá tồn kho</span>
+            </div>
           </div>
 
-          <div id="modalError" class="text-red-500 text-sm mt-2 hidden">Vui lòng chọn kích thước và màu sắc!</div>
+          <!-- Error Message -->
+          <div id="modalError" class="text-red-500 text-sm mt-4 hidden bg-red-50 p-3 rounded-lg">
+            <span>Vui lòng chọn kích thước và màu sắc!</span>
+          </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
-          <button type="button" class="btn text-white" style="background-color: #153054;" id="confirmAddToCart">Thêm vào
-            giỏ</button>
+
+        <!-- Footer with Enhanced Buttons -->
+        <div class="modal-footer border-0 gap-3 p-4">
+          <button type="button" class="btn btn-light rounded-lg border px-4 py-2 hover:bg-gray-100"
+            data-bs-dismiss="modal">
+            Đóng
+          </button>
+          <button type="button"
+            class="btn bg-red-600 text-white rounded-lg px-5 py-2 hover:bg-red-700 transition-colors duration-200"
+            id="confirmAddToCart">
+            Thêm vào giỏ
+          </button>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="container mx-auto py-8">
+  <!-- Hero Banner Section with Modern Design -->
+  <div class="mt-5 hero-banner relative overflow-hidden bg-gradient-to-r from-gray-900 to-black mb-8">
     <div class="swiper banner-slider">
       <div class="swiper-wrapper">
-        <div class="swiper-slide">
+        <div class="swiper-slide relative">
+          <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent z-10"></div>
           <img loading="lazy" src="/image/banner1.jpg" alt="Banner thời trang nam" class="w-full h-full object-cover" />
+          <div class="container mx-auto absolute inset-0 flex items-center z-20">
+            <div class="text-white max-w-lg px-6 md:px-0">
+              <h2 class="text-3xl md:text-4xl font-bold mb-3 animate__animated animate__fadeInUp">Bộ Sưu Tập Mới</h2>
+              <p class="text-gray-200 mb-6 animate__animated animate__fadeInUp animate__delay-1s">Khám phá các xu hướng
+                mới nhất với thiết kế độc quyền tại Poly Shoe Store</p>
+              <a href="/new"
+                class="inline-block bg-white text-black px-6 py-3 rounded-md font-semibold hover:bg-gray-100 transition duration-300 animate__animated animate__fadeInUp animate__delay-2s">Khám
+                phá ngay</a>
+            </div>
+          </div>
         </div>
-        <div class="swiper-slide">
+        <div class="swiper-slide relative">
+          <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent z-10"></div>
           <img loading="lazy" src="/image/banner2.jpg" alt="Banner khuyến mãi" class="w-full h-full object-cover" />
+          <div class="container mx-auto absolute inset-0 flex items-center z-20">
+            <div class="text-white max-w-lg px-6 md:px-0">
+              <h2 class="text-3xl md:text-4xl font-bold mb-3 animate__animated animate__fadeInUp">Khuyến Mãi Đặc Biệt
+              </h2>
+              <p class="text-gray-200 mb-6 animate__animated animate__fadeInUp animate__delay-1s">Giảm giá lên đến 50%
+                cho các sản phẩm hot nhất mùa này</p>
+              <a href="/bestsellers"
+                class="inline-block bg-white text-black px-6 py-3 rounded-md font-semibold hover:bg-gray-100 transition duration-300 animate__animated animate__fadeInUp animate__delay-2s">Mua
+                ngay</a>
+            </div>
+          </div>
         </div>
-        <div class="swiper-slide">
+        <div class="swiper-slide relative">
+          <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent z-10"></div>
           <img loading="lazy" src="/image/banner3.jpg" alt="Banner khuyến mãi" class="w-full h-full object-cover" />
+          <div class="container mx-auto absolute inset-0 flex items-center z-20">
+            <div class="text-white max-w-lg px-6 md:px-0">
+              <h2 class="text-3xl md:text-4xl font-bold mb-3 animate__animated animate__fadeInUp">Bộ Sưu Tập Giới Hạn
+              </h2>
+              <p class="text-gray-200 mb-6 animate__animated animate__fadeInUp animate__delay-1s">Đẳng cấp và phong cách
+                với các thiết kế độc quyền</p>
+              <a href="/all"
+                class="inline-block bg-white text-black px-6 py-3 rounded-md font-semibold hover:bg-gray-100 transition duration-300 animate__animated animate__fadeInUp animate__delay-2s">Xem
+                ngay</a>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="swiper-button-next text-blue-800"></div>
-      <div class="swiper-button-prev text-blue-800"></div>
+      <div class="swiper-button-next text-white"></div>
+      <div class="swiper-button-prev text-white"></div>
       <div class="swiper-pagination"></div>
     </div>
   </div>
 
-  <section id="section-new" class="container mx-auto py-10 bg-white rounded-lg">
+  <!-- Main Content Layout with Left Sidebar -->
+  <div class="container mx-auto mb-12">
+    <div class="main-content-with-sidebar">
+      <!-- Categories Left Sidebar -->
+      <aside class="categories-sidebar sticky top-[88px] max-h-[calc(100vh-100px)] overflow-y-auto shadow-sm">
+        <h3 class="font-bold text-lg mb-4 pb-2 border-b border-gray-200">Danh mục</h3>
+        <div class="flex flex-col gap-2">
+          <a th:each="c : ${categories}" th:href="@{/category/{id}(id=${c.id})}"
+            th:classappend="${currentCategoryId == c.id} ? ' active' : ''" th:attr="data-name=${c.tenDanhMuc}"
+            class="cat-chip text-sm font-medium border border-gray-200 bg-white text-gray-700 transition-all duration-200 hover:shadow">
+            <span th:text="${c.tenDanhMuc}">Danh mục</span>
+          </a>
+        </div>
+      </aside>
 
-    <div class="flex items-end justify-between mb-4 border-b border-gray-200 pb-3">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-800">Sản phẩm mới</h2>
-        <p class="text-sm text-gray-500 mt-1">Những item vừa cập bến — bắt trend ngay!</p>
+      <!-- Right Side Content -->
+      <div class="product-sections">
+        <!-- Modern Product Sections -->
+        <!-- New Products Section -->
+        <section id="section-new" class="mb-12">
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <!-- Section Header -->
+            <div class="flex items-end justify-between border-b border-gray-100 p-6">
+              <div class="relative">
+                <h2 class="text-3xl font-bold text-gray-800">Sản phẩm mới</h2>
+                <div class="absolute -bottom-6 left-0 w-24 h-1 bg-red-500 rounded-full"></div>
+                <p class="text-sm text-gray-500 mt-1">Những item vừa cập bến — bắt trend ngay!</p>
+              </div>
+
+            </div>
+
+            <!-- Products Grid -->
+            <div class="p-6">
+              <div class="product-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="product-card" th:each="product : ${newProducts}">
+                  <div class="product-media">
+                    <a th:href="@{/chitietsanpham(id=${product.id})}">
+                      <img th:src="${product.urlHinhAnh}" th:alt="'Hình ảnh sản phẩm ' + ${product.tenSanPham}"
+                        loading="lazy" th:title="${product.tenSanPham}" />
+                    </a>
+
+                    <div class="absolute top-3 left-3 z-10">
+                      <span
+                        class="badge-new inline-block px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">New</span>
+                    </div>
+
+                    <div class="action-group">
+                      <button class="action-btn cart-icon" th:attr="
+                            data-product-id=${product.id},
+                            data-product-name=${product.tenSanPham},
+                            data-product-price=${product.price},
+                            data-product-img=${product.urlHinhAnh},
+                            data-kich-co=${@jacksonObjectMapper.writeValueAsString(product.kichCoList)},
+                            data-mau-sac=${@jacksonObjectMapper.writeValueAsString(product.mauSacList)},
+                            data-stock=${product.tongSoLuong},
+                            title='Thêm vào giỏ hàng',
+                            aria-label='Thêm vào giỏ hàng'">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="sr-only">Thêm vào giỏ hàng</span>
+                      </button>
+                      <button class="action-btn quick-view-btn" th:attr="
+                            data-product-id=${product.id},
+                            title='Xem nhanh sản phẩm',
+                            aria-label='Xem nhanh sản phẩm'">
+                        <i class="fas fa-eye"></i>
+                        <span class="sr-only">Xem nhanh sản phẩm</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="product-body">
+                    <a th:href="@{/chitietsanpham(id=${product.id})}">
+                      <h3 th:text="${product.tenSanPham}" class="product-title"></h3>
+                      <div class="price font-bold mt-2">
+                        <span
+                          th:text="${#numbers.formatDecimal(product.oldPrice, 1, 'COMMA', 0, 'POINT') + ' VNĐ'}">2.000.000
+                          VNĐ</span>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- All Products Section -->
+        <section id="section-all" class="mb-12">
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <!-- Section Header -->
+            <div class="flex items-end justify-between border-b border-gray-100 p-6">
+              <div class="relative">
+                <h2 class="text-3xl font-bold text-gray-800">Tất cả sản phẩm</h2>
+                <div class="absolute -bottom-6 left-0 w-24 h-1 bg-red-500 rounded-full"></div>
+                <p class="text-sm text-gray-500 mt-1">Khám phá toàn bộ danh mục tại Poly Shoe Store</p>
+              </div>
+              <a href="/all"
+                class="inline-flex items-center gap-2 px-5 py-2 bg-gray-50 text-black font-semibold rounded-full hover:bg-gray-100 transition duration-300">
+                Xem tất cả
+              </a>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="p-6">
+              <div class="product-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="product-card" th:each="product : ${allProducts}">
+                  <div class="product-media">
+                    <a th:href="@{/chitietsanpham(id=${product.id})}">
+                      <img th:src="${product.urlHinhAnh}" th:alt="'Hình ảnh sản phẩm ' + ${product.tenSanPham}"
+                        loading="lazy" th:title="${product.tenSanPham}" />
+                    </a>
+
+                    <div class="action-group">
+                      <button class="action-btn cart-icon" th:attr="
+                            data-product-id=${product.id},
+                            data-product-name=${product.tenSanPham},
+                            data-product-price=${product.price},
+                            data-product-img=${product.urlHinhAnh},
+                            data-kich-co=${@jacksonObjectMapper.writeValueAsString(product.kichCoList)},
+                            data-mau-sac=${@jacksonObjectMapper.writeValueAsString(product.mauSacList)},
+                            data-stock=${product.tongSoLuong},
+                            title='Thêm vào giỏ hàng',
+                            aria-label='Thêm vào giỏ hàng'">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="sr-only">Thêm vào giỏ hàng</span>
+                      </button>
+                      <button class="action-btn quick-view-btn" th:attr="
+                            data-product-id=${product.id},
+                            title='Xem nhanh sản phẩm',
+                            aria-label='Xem nhanh sản phẩm'">
+                        <i class="fas fa-eye"></i>
+                        <span class="sr-only">Xem nhanh sản phẩm</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="product-body">
+                    <a th:href="@{/chitietsanpham(id=${product.id})}">
+                      <h3 th:text="${product.tenSanPham}" class="product-title"></h3>
+                      <div class="price font-bold mt-2">
+                        <span
+                          th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">2.000.000
+                          VNĐ</span>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Bestseller Products Section -->
+        <section id="section-best" class="mb-12">
+          <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+            <!-- Section Header -->
+            <div class="flex items-end justify-between border-b border-gray-100 p-6">
+              <div class="relative">
+                <h2 class="text-3xl font-bold text-gray-800">Sản phẩm bán chạy</h2>
+                <div class="absolute -bottom-6 left-0 w-24 h-1 bg-red-500 rounded-full"></div>
+                <p class="text-sm text-gray-500 mt-1">Top pick được săn nhiều nhất thời gian qua</p>
+              </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="p-6">
+              <div class="product-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div class="product-card" th:each="product : ${bestsellerProducts}">
+                  <div class="product-media">
+                    <a th:href="@{/chitietsanpham(id=${product.id})}">
+                      <img th:src="${product.urlHinhAnh}" th:alt="'Hình ảnh sản phẩm ' + ${product.tenSanPham}"
+                        loading="lazy" th:title="${product.tenSanPham}" />
+                    </a>
+
+                    <div class="absolute top-3 left-3 z-10">
+                      <span
+                        class="badge-hot inline-block px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider">Hot</span>
+                    </div>
+
+                    <div class="action-group">
+                      <button class="action-btn cart-icon" th:attr="
+                            data-product-id=${product.id},
+                            data-product-name=${product.tenSanPham},
+                            data-product-price=${product.price},
+                            data-product-img=${product.urlHinhAnh},
+                            data-kich-co=${@jacksonObjectMapper.writeValueAsString(product.kichCoList)},
+                            data-mau-sac=${@jacksonObjectMapper.writeValueAsString(product.mauSacList)},
+                            data-stock=${product.tongSoLuong},
+                            title='Thêm vào giỏ hàng',
+                            aria-label='Thêm vào giỏ hàng'">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="sr-only">Thêm vào giỏ hàng</span>
+                      </button>
+                      <button class="action-btn quick-view-btn" th:attr="
+                            data-product-id=${product.id},
+                            title='Xem nhanh sản phẩm',
+                            aria-label='Xem nhanh sản phẩm'">
+                        <i class="fas fa-eye"></i>
+                        <span class="sr-only">Xem nhanh sản phẩm</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="product-body">
+                    <a th:href="@{/chitietsanpham(id=${product.id})}">
+                      <h3 th:text="${product.tenSanPham}" class="product-title"></h3>
+                      <div class="price font-bold mt-2">
+                        <span
+                          th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">2.000.000
+                          VNĐ</span>
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </div>
-      <a href="/new" class="inline-flex items-center gap-2 text-blue-800 font-semibold hover:underline">
-        Xem tất cả <span aria-hidden="true">»</span>
-      </a>
+    </div>
+  </div>
+
+
+
+
+
+
+
+  <!-- Modern Footer Design -->
+  <footer class="bg-black text-white mt-12 relative z-10">
+    <!-- Footer Wave Top -->
+    <div class="absolute top-0 left-0 w-full overflow-hidden footer-wave">
+      <svg class="relative block w-full rotate-180" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 1200 120" preserveAspectRatio="none">
+        <path
+          d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z"
+          class="fill-white"></path>
+      </svg>
     </div>
 
-
-    <div class="product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div class="product-card bg-white rounded-lg shadow-md overflow-hidden" th:each="product : ${newProducts}">
-        <div class="relative">
-          <a th:href="@{/chitietsanpham(id=${product.id})}">
-            <img th:src="${product.urlHinhAnh}" th:alt="'Hình ảnh sản phẩm ' + ${product.tenSanPham}"
-              class="w-full h-52 object-cover" loading="lazy" />
-          </a>
-
-          <span
-            class="absolute top-2 left-2 bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded shadow">New</span>
-
-          <div class="action-group">
-            <button class="action-btn cart-icon" th:attr="
-                  data-product-id=${product.id},
-                  data-product-name=${product.tenSanPham},
-                  data-product-price=${product.price},
-                  data-product-img=${product.urlHinhAnh},
-                  data-kich-co=${@jacksonObjectMapper.writeValueAsString(product.kichCoList)},
-                  data-mau-sac=${@jacksonObjectMapper.writeValueAsString(product.mauSacList)},
-                  data-stock=${product.tongSoLuong}">
-              <i class="fas fa-shopping-cart text-blue-800"></i>
-            </button>
-            <button class="action-btn quick-view-btn" th:attr="data-product-id=${product.id}"
-              aria-label="Xem nhanh sản phẩm">
-              <i class="fas fa-eye text-blue-800"></i>
-            </button>
+    <!-- Main Footer Content -->
+    <div class="container mx-auto px-6 pt-20 pb-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <!-- Column 1: About -->
+        <div>
+          <h3 class="text-xl font-bold mb-4">
+            Poly Shoe Store
+          </h3>
+          <p class="text-gray-300 mb-4">Cửa hàng giày dép hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
+          <div class="flex space-x-4 mt-6">
+            <a href="#"
+              class="bg-white bg-opacity-20 hover:bg-red-600 hover:bg-opacity-100 p-2 rounded-full transition duration-300"
+              aria-label="Facebook">
+              Facebook
+            </a>
+            <a href="#"
+              class="bg-white bg-opacity-20 hover:bg-red-600 hover:bg-opacity-100 p-2 rounded-full transition duration-300"
+              aria-label="Instagram">
+              Instagram
+            </a>
+            <a href="#"
+              class="bg-white bg-opacity-20 hover:bg-red-600 hover:bg-opacity-100 p-2 rounded-full transition duration-300"
+              aria-label="Twitter">
+              Twitter
+            </a>
           </div>
         </div>
 
-        <a th:href="@{/chitietsanpham(id=${product.id})}" class="block p-4">
-          <h4 th:text="${product.tenSanPham}" class="text-sm font-semibold text-gray-800 truncate"></h4>
-
-
-          <div class="price text-blue-800 font-bold mt-2">
-            <span th:text="${#numbers.formatDecimal(product.oldPrice, 1, 'COMMA', 0, 'POINT') + ' VNĐ'}">2.000.000
-              VNĐ</span>
-          </div>
-
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="section-all" class="container mx-auto py-10 bg-white rounded-lg mt-8">
-
-    <div class="flex items-end justify-between mb-4 border-b border-gray-200 pb-3">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-800">Tất cả sản phẩm</h2>
-        <p class="text-sm text-gray-500 mt-1">Khám phá toàn bộ danh mục tại Poly Store Store.</p>
-      </div>
-      <a href="/all" class="inline-flex items-center gap-2 text-blue-800 font-semibold hover:underline">
-        Xem tất cả <span aria-hidden="true">»</span>
-      </a>
-    </div>
-
-
-    <div class="product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div class="product-card bg-white rounded-lg shadow-md overflow-hidden" th:each="product : ${allProducts}">
-        <div class="relative">
-          <a th:href="@{/chitietsanpham(id=${product.id})}">
-            <img th:src="${product.urlHinhAnh}" th:alt="'Hình ảnh sản phẩm ' + ${product.tenSanPham}"
-              class="w-full h-52 object-cover" loading="lazy" />
-          </a>
-
-          <div class="action-group">
-            <button class="action-btn cart-icon" th:attr="
-                  data-product-id=${product.id},
-                  data-product-name=${product.tenSanPham},
-                  data-product-price=${product.price},
-                  data-product-img=${product.urlHinhAnh},
-                  data-kich-co=${@jacksonObjectMapper.writeValueAsString(product.kichCoList)},
-                  data-mau-sac=${@jacksonObjectMapper.writeValueAsString(product.mauSacList)},
-                  data-stock=${product.tongSoLuong}">
-              <i class="fas fa-shopping-cart text-blue-800"></i>
-            </button>
-            <button class="action-btn quick-view-btn" th:attr="data-product-id=${product.id}"
-              aria-label="Xem nhanh sản phẩm">
-              <i class="fas fa-eye text-blue-800"></i>
-            </button>
-          </div>
+        <!-- Column 2: Quick Links -->
+        <div>
+          <h3 class="text-xl font-bold mb-4">
+            Liên kết nhanh
+          </h3>
+          <ul class="space-y-2">
+            <li>
+              <a href="/new" class="text-gray-300 hover:text-red-500">
+                Sản phẩm mới
+              </a>
+            </li>
+            <li>
+              <a href="/all" class="text-gray-300 hover:text-red-500">
+                Tất cả sản phẩm
+              </a>
+            </li>
+            <li>
+              <a href="/bestsellers" class="text-gray-300 hover:text-red-500">
+                Sản phẩm bán chạy
+              </a>
+            </li>
+            <li>
+              <a href="/chinh-sach" class="text-gray-300 hover:text-red-500">
+                Chính sách
+              </a>
+            </li>
+          </ul>
         </div>
 
-        <a th:href="@{/chitietsanpham(id=${product.id})}" class="block p-4">
-          <h4 th:text="${product.tenSanPham}" class="text-sm font-semibold text-gray-800 truncate"></h4>
-
-          <div class="price text-blue-800 font-bold mt-2">
-            <span th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">2.000.000
-              VNĐ</span>
-          </div>
-
-
-
-
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <section id="section-best" class="container mx-auto py-10 bg-white rounded-lg mt-8">
-
-    <div class="flex items-end justify-between mb-4 border-b border-gray-200 pb-3">
-      <div>
-        <h2 class="text-2xl font-bold text-gray-800">Sản phẩm bán chạy</h2>
-        <p class="text-sm text-gray-500 mt-1">Top pick được săn nhiều nhất thời gian qua.</p>
-      </div>
-      <a href="/bestsellers" class="inline-flex items-center gap-2 text-blue-800 font-semibold hover:underline">
-        Xem tất cả <span aria-hidden="true">»</span>
-      </a>
-    </div>
-
-
-    <div class="product-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-      <div class="product-card bg-white rounded-lg shadow-md overflow-hidden" th:each="product : ${bestsellerProducts}">
-        <div class="relative">
-          <a th:href="@{/chitietsanpham(id=${product.id})}">
-            <img th:src="${product.urlHinhAnh}" th:alt="'Hình ảnh sản phẩm ' + ${product.tenSanPham}"
-              class="w-full h-52 object-cover" loading="lazy" />
-          </a>
-
-          <span
-            class="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded shadow">Hot</span>
-
-          <div class="action-group">
-            <button class="action-btn cart-icon" th:attr="
-                  data-product-id=${product.id},
-                  data-product-name=${product.tenSanPham},
-                  data-product-price=${product.price},
-                  data-product-img=${product.urlHinhAnh},
-                  data-kich-co=${@jacksonObjectMapper.writeValueAsString(product.kichCoList)},
-                  data-mau-sac=${@jacksonObjectMapper.writeValueAsString(product.mauSacList)},
-                  data-stock=${product.tongSoLuong}">
-              <i class="fas fa-shopping-cart text-blue-800"></i>
-            </button>
-            <button class="action-btn quick-view-btn" th:attr="data-product-id=${product.id}"
-              aria-label="Xem nhanh sản phẩm">
-              <i class="fas fa-eye text-blue-800"></i>
-            </button>
-          </div>
+        <!-- Column 3: Contact -->
+        <div>
+          <h3 class="text-xl font-bold mb-4">
+            Liên hệ
+          </h3>
+          <ul class="space-y-3">
+            <li class="text-gray-300">
+              FPT Polytechnic, Hà Nội
+            </li>
+            <li class="text-gray-300">
+              +84 123 456 789
+            </li>
+            <li class="text-gray-300">
+              polyshoe@example.com
+            </li>
+          </ul>
         </div>
+      </div>
 
-        <a th:href="@{/chitietsanpham(id=${product.id})}" class="block p-4">
-          <h4 th:text="${product.tenSanPham}" class="text-sm font-semibold text-gray-800 truncate"></h4>
-
-          <div class="price text-blue-800 font-bold mt-2">
-            <span th:text="${#numbers.formatDecimal(product.oldPrice, 0, 'COMMA', 0, 'POINT') + ' VNĐ'}">2.000.000
-              VNĐ</span>
-          </div>
-        </a>
+      <!-- Copyright -->
+      <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
+        <p class="text-sm text-gray-400">© 2025 Poly Shoe Store. All rights reserved.</p>
+        <div class="mt-4 md:mt-0">
+          <ul class="flex space-x-6">
+            <li><a href="#" class="text-sm text-gray-400 hover:text-red-500">Điều khoản</a></li>
+            <li><a href="#" class="text-sm text-gray-400 hover:text-red-500">Riêng tư</a></li>
+            <li><a href="#" class="text-sm text-gray-400 hover:text-red-500">Cookies</a></li>
+          </ul>
+        </div>
       </div>
     </div>
-  </section>
 
-
-
-
-
-
-
-  <footer
-    style="background: linear-gradient(to right, #153054, #1e4066); color: white; padding-top: 30px; padding-bottom: 20px; position: relative; z-index: 1;">
-    <div class="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div>
-        <h3 class="text-lg font-bold mb-4">Poly Shoe Store</h3>
-        <p class="text-sm">Cửa hàng giày hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
-      </div>
-      <div>
-        <h3 class="text-lg font-bold mb-4">Liên kết nhanh</h3>
-        <ul class="space-y-2">
-          <li><a href="/new" class="hover:text-blue-300">Sản phẩm mới</a></li>
-          <li><a href="/all" class="hover:text-blue-300">Tất cả sản phẩm</a></li>
-          <li><a href="/bestsellers" class="hover:text-blue-300">Sản phẩm bán chạy</a></li>
-          <li><a href="/chinh-sach" class="hover:text-blue-300">Chính sách</a></li>
-        </ul>
-      </div>
-
-    </div>
-
-    <div class="text-center mt-8 text-sm">© 2025 Poly Shoe Store. All rights reserved.</div>
-
+    <!-- Subtle pattern overlay -->
     <div
-      class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(0,0,0,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10">
+      class="absolute top-0 left-0 w-full h-full bg-[linear-gradient(45deg,transparent_40%,rgba(255,255,255,0.02)_50%,transparent_60%),linear-gradient(-45deg,transparent_40%,rgba(255,255,255,0.02)_50%,transparent_60%)] bg-[length:60px_60px] animate-[patternMove_20s_linear_infinite] -z-10">
     </div>
   </footer>
 
-  <button id="back-to-top" class="fixed bottom-20 right-20 bg-blue-600 text-white p-3 rounded-full shadow-lg hidden"
+  <button id="back-to-top" class="fixed bottom-20 right-20 bg-red-600 text-white p-3 rounded-full shadow-lg hidden"
     aria-label="Quay lại đầu trang">
-    <i class="fas fa-arrow-up"></i>
+    Lên
   </button>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
@@ -747,9 +1086,38 @@
     document.addEventListener('DOMContentLoaded', function () {
       new Swiper('.banner-slider', {
         loop: true,
-        autoplay: { delay: 5000 },
-        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
-        pagination: { el: '.swiper-pagination', clickable: true },
+        autoplay: {
+          delay: 6000,
+          disableOnInteraction: false
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev'
+        },
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true
+        },
+        effect: 'fade',
+        fadeEffect: {
+          crossFade: true
+        },
+        speed: 1000,
+        on: {
+          slideChangeTransitionStart: function () {
+            // Reset animations
+            const currentSlide = this.slides[this.activeIndex];
+            const animations = currentSlide.querySelectorAll('.animate__animated');
+            animations.forEach(el => {
+              const animClass = el.className.match(/animate__[a-zA-Z]+(?!animated)/g);
+              if (animClass) {
+                el.classList.remove(...animClass);
+                void el.offsetWidth; // Trigger reflow
+                el.classList.add(...animClass);
+              }
+            });
+          }
+        }
       });
     });
 
@@ -1243,8 +1611,6 @@
   <script>
     (function () {
       const ICONS = [
-        { k: /\b(ao|áo)\b.*\b(nam)\b/i, icon: 'fa-shirt' },
-        { k: /\b(ao|áo)\b.*\b(nu|nữ)\b/i, icon: 'fa-person-dress' },
         { k: /\bquan|quần\b/i, icon: 'fa-person-walking' },
         { k: /\bgiay|giày\b/i, icon: 'fa-shoe-prints' },
         { k: /\bphu kien|phụ kiện\b/i, icon: 'fa-ring' },

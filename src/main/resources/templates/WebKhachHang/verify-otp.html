@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Xác thực OTP - Poly Store Store</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="icon" href="/image/Poly Store.png" type="image/png" sizes="32x32"/>
     <style>
         :root {
-            --primary-color: #153054;
-            --secondary-color: #9FD5F7;
+            --primary-color: #000000;
+            --secondary-color: #d9121f;
             --accent-color: #666666;
             --light-gray: #f8f9fa;
             --medium-gray: #e9ecef;
@@ -31,7 +32,7 @@
         body {
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f0f0 50%, #e5e5e5 100%);
             position: relative;
             overflow-x: hidden;
         }
@@ -44,15 +45,20 @@
             right: 0;
             bottom: 0;
             background-image:
-                    linear-gradient(45deg, transparent 40%, rgba(0,0,0,0.02) 50%, transparent 60%),
-                    linear-gradient(-45deg, transparent 40%, rgba(0,0,0,0.02) 50%, transparent 60%);
+                linear-gradient(45deg, transparent 45%, rgba(0, 0, 0, 0.01) 50%, transparent 55%),
+                linear-gradient(-45deg, transparent 45%, rgba(0, 0, 0, 0.01) 50%, transparent 55%);
             background-size: 60px 60px;
-            animation: patternMove 20s linear infinite;
+            animation: patternMove 30s linear infinite;
         }
 
         @keyframes patternMove {
-            0% { background-position: 0 0, 0 0; }
-            100% { background-position: 60px 60px, -60px 60px; }
+            0% {
+                background-position: 0 0, 0 0;
+            }
+
+            100% {
+                background-position: 60px 60px, -60px 60px;
+            }
         }
 
         body::after {
@@ -62,15 +68,25 @@
             left: 10%;
             width: 100px;
             height: 100px;
-            border: 2px solid rgba(0,0,0,0.05);
+            border: 2px solid rgba(0, 0, 0, 0.05);
             border-radius: 50%;
             animation: float1 15s ease-in-out infinite;
         }
 
         @keyframes float1 {
-            0%, 100% { transform: translate(0, 0) rotate(0deg); }
-            33% { transform: translate(30px, -30px) rotate(120deg); }
-            66% { transform: translate(-20px, 20px) rotate(240deg); }
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
         }
 
         .container-fluid {
@@ -96,7 +112,7 @@
             right: -50px;
             width: 80px;
             height: 80px;
-            border: 1px solid rgba(0,0,0,0.1);
+            border: 1px solid rgba(0, 0, 0, 0.1);
             transform: rotate(45deg);
             animation: float2 12s ease-in-out infinite;
         }
@@ -108,19 +124,33 @@
             left: -30px;
             width: 60px;
             height: 60px;
-            background: rgba(0,0,0,0.03);
+            background: rgba(0, 0, 0, 0.03);
             border-radius: 50%;
             animation: float3 18s ease-in-out infinite;
         }
 
         @keyframes float2 {
-            0%, 100% { transform: rotate(45deg) translate(0, 0); }
-            50% { transform: rotate(225deg) translate(20px, -20px); }
+
+            0%,
+            100% {
+                transform: rotate(45deg) translate(0, 0);
+            }
+
+            50% {
+                transform: rotate(225deg) translate(20px, -20px);
+            }
         }
 
         @keyframes float3 {
-            0%, 100% { transform: scale(1) translate(0, 0); }
-            50% { transform: scale(1.2) translate(-10px, 10px); }
+
+            0%,
+            100% {
+                transform: scale(1) translate(0, 0);
+            }
+
+            50% {
+                transform: scale(1.2) translate(-10px, 10px);
+            }
         }
 
         .otp-card {
@@ -172,7 +202,10 @@
         .welcome-title {
             font-size: 24px;
             font-weight: 800;
-            color: var(--primary-color);
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin-bottom: 4px;
             letter-spacing: -0.5px;
         }
@@ -205,8 +238,8 @@
         }
 
         .otp-input:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(0, 0, 0, 0.1);
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 4px rgba(217, 18, 31, 0.1);
         }
 
         .btn-submit {
@@ -232,7 +265,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
             transition: left 0.5s;
         }
 
@@ -241,7 +274,7 @@
         }
 
         .btn-submit:hover {
-            background: var(--secondary-color);
+            background: #333333;
             transform: translateY(-2px);
             box-shadow: var(--shadow-medium);
         }
@@ -259,7 +292,7 @@
             display: inline-block;
             width: 18px;
             height: 18px;
-            border: 2px solid rgba(255,255,255,0.3);
+            border: 2px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
@@ -267,7 +300,9 @@
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         .alert {
@@ -317,7 +352,7 @@
             height: 2px;
             bottom: -2px;
             left: 50%;
-            background: var(--primary-color);
+            background: var(--secondary-color);
             transition: all 0.3s ease;
             transform: translateX(-50%);
         }
@@ -351,175 +386,248 @@
             }
         }
 
+        .hidden {
+            display: none;
+        }
+
         .was-validated .otp-input:invalid {
             border-color: #dc3545;
             animation: shake 0.5s ease-in-out;
         }
 
         @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-5px);
+            }
+
+            75% {
+                transform: translateX(5px);
+            }
         }
     </style>
 </head>
+
 <body>
-<div class="container-fluid">
-    <div class="otp-container">
-        <div class="otp-card">
-            <div class="brand-section">
-                <h1 class="welcome-title">Xác thực OTP</h1>
-                <p class="welcome-subtitle">Nhập mã OTP đã gửi đến email của bạn</p>
+    <div class="container-fluid">
+        <div class="otp-container">
+            <div class="otp-card">
+                <div class="brand-section">
+                    <h1 class="welcome-title">Xác thực OTP</h1>
+                    <p class="welcome-subtitle">Nhập mã OTP đã gửi đến email của bạn</p>
+                </div>
+
+                <form th:action="@{/customers/auth/verify-otp}" method="post" class="needs-validation" novalidate>
+                    <input type="hidden" name="email" th:value="${email}" />
+                    <div class="otp-inputs">
+                        <input type="text" class="otp-input" id="otp-1" maxlength="1" required title="Nhập số thứ 1"
+                            aria-label="Nhập số thứ 1">
+                        <input type="text" class="otp-input" id="otp-2" maxlength="1" required title="Nhập số thứ 2"
+                            aria-label="Nhập số thứ 2">
+                        <input type="text" class="otp-input" id="otp-3" maxlength="1" required title="Nhập số thứ 3"
+                            aria-label="Nhập số thứ 3">
+                        <input type="text" class="otp-input" id="otp-4" maxlength="1" required title="Nhập số thứ 4"
+                            aria-label="Nhập số thứ 4">
+                        <input type="text" class="otp-input" id="otp-5" maxlength="1" required title="Nhập số thứ 5"
+                            aria-label="Nhập số thứ 5">
+                        <input type="text" class="otp-input" id="otp-6" maxlength="1" required title="Nhập số thứ 6"
+                            aria-label="Nhập số thứ 6">
+                    </div>
+                    <input type="hidden" name="otp" id="otp-hidden">
+
+                    <div th:if="${error == 'invalid'}" class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Mã OTP không đúng, vui lòng thử lại.
+                    </div>
+                    <div th:if="${error == 'expired'}" class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Mã OTP đã hết hiệu lực, vui lòng yêu cầu mã mới.
+                    </div>
+                    <div th:if="${error == 'not_found'}" class="alert alert-danger">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        Không tìm thấy tài khoản với email này.
+                    </div>
+
+                    <button type="submit" class="btn btn-submit" id="submitButton">
+                        <span class="btn-text">Xác nhận</span>
+                    </button>
+
+                    <div class="footer-links">
+                        <p id="countdown-text" class="mb-2"></p>
+                        <span id="expiry-time"
+                            th:text="${otpExpiry != null} ? ${#temporals.format(otpExpiry, 'yyyy-MM-dd HH:mm:ss')} : ''"
+                            class="hidden"></span>
+<!--                        <a href="#" id="resend-otp" class="disabled"><i class="fas fa-redo me-1"></i>Gửi lại OTP</a>-->
+                        <p id="otp-message" class="alert alert-success mt-2 hidden"></p>
+                    </div>
+                </form>
             </div>
-
-            <form th:action="@{/customers/auth/verify-otp}" method="post" class="needs-validation" novalidate>
-                <input type="hidden" name="email" th:value="${email}" />
-                <div class="otp-inputs">
-                    <input type="text" class="otp-input" id="otp-1" maxlength="1" required>
-                    <input type="text" class="otp-input" id="otp-2" maxlength="1" required>
-                    <input type="text" class="otp-input" id="otp-3" maxlength="1" required>
-                    <input type="text" class="otp-input" id="otp-4" maxlength="1" required>
-                    <input type="text" class="otp-input" id="otp-5" maxlength="1" required>
-                    <input type="text" class="otp-input" id="otp-6" maxlength="1" required>
-                </div>
-                <input type="hidden" name="otp" id="otp-hidden">
-
-                <div th:if="${error == 'invalid'}" class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    Mã OTP không đúng, vui lòng thử lại.
-                </div>
-                <div th:if="${error == 'expired'}" class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    Mã OTP đã hết hiệu lực, vui lòng yêu cầu mã mới.
-                </div>
-                <div th:if="${error == 'not_found'}" class="alert alert-danger">
-                    <i class="fas fa-exclamation-circle me-2"></i>
-                    Không tìm thấy tài khoản với email này.
-                </div>
-
-                <button type="submit" class="btn btn-submit" id="submitButton">
-                    <span class="btn-text">Xác nhận</span>
-                </button>
-
-                <div class="footer-links">
-                    <p id="countdown-text" class="mb-2"></p>
-                    <span id="expiry-time" th:text="${otpExpiry != null} ? ${#temporals.format(otpExpiry, 'yyyy-MM-dd HH:mm:ss')} : ''" style="display: none;"></span>
-                    <a href="#" id="resend-otp" class="disabled"><i class="fas fa-redo me-1"></i>Gửi lại OTP</a>
-                    <p id="otp-message" class="alert alert-success mt-2" style="display: none;"></p>
-                </div>
-            </form>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-    function showLoading(button) {
-        button.classList.add('btn-loading');
-        button.innerHTML = '<span class="spinner"></span>Đang xác nhận...';
-    }
-
-    function hideLoading(button) {
-        button.classList.remove('btn-loading');
-        button.innerHTML = '<span class="btn-text">Xác nhận</span>';
-    }
-
-    (function() {
-        'use strict';
-        window.addEventListener('load', function() {
-            var form = document.querySelector('.needs-validation');
-            var submitButton = document.getElementById('submitButton');
-
-            form.addEventListener('submit', function(event) {
-                const otpInputs = document.querySelectorAll('.otp-input');
-                let otp = '';
-                otpInputs.forEach(input => {
-                    otp += input.value.trim();
-                });
-                document.getElementById('otp-hidden').value = otp;
-
-                if (form.checkValidity() === false || otp.length !== 6) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    otpInputs.forEach(input => {
-                        if (!input.value.trim()) {
-                            input.classList.add('is-invalid');
-                        } else {
-                            input.classList.remove('is-invalid');
-                        }
-                    });
-                    hideLoading(submitButton);
-                } else {
-                    showLoading(submitButton);
-                }
-                form.classList.add('was-validated');
-            }, false);
-        }, false);
-    })();
-
-    document.addEventListener('DOMContentLoaded', function() {
-        const alerts = document.querySelectorAll('.alert');
-        alerts.forEach(function(alert) {
-            setTimeout(function() {
-                alert.style.opacity = '0';
-                alert.style.transform = 'translateY(-20px)';
-                setTimeout(function() {
-                    alert.style.display = 'none';
-                }, 300);
-            }, 5000);
-        });
-
-        const otpInputs = document.querySelectorAll('.otp-input');
-        otpInputs.forEach((input, index) => {
-            input.addEventListener('input', function(e) {
-                const value = e.target.value;
-                if (value.length === 1 && index < otpInputs.length - 1) {
-                    otpInputs[index + 1].focus();
-                } else if (value.length === 0 && index > 0) {
-                    otpInputs[index - 1].focus();
-                }
-                e.target.value = value.replace(/\D/g, '').slice(0, 1);
-            });
-
-            input.addEventListener('keydown', function(e) {
-                if (e.key === 'Backspace' && !e.target.value && index > 0) {
-                    otpInputs[index - 1].focus();
-                }
-            });
-
-            input.addEventListener('paste', function(e) {
-                e.preventDefault();
-                const pasteData = e.clipboardData.getData('text').trim().replace(/\D/g, '').slice(0, 6);
-                let pastedIndex = 0;
-                otpInputs.forEach((input, idx) => {
-                    if (idx < pasteData.length) {
-                        input.value = pasteData[pastedIndex];
-                        pastedIndex++;
-                    } else {
-                        input.value = '';
-                    }
-                    if (idx < otpInputs.length - 1) {
-                        otpInputs[idx + 1].focus();
-                    }
-                });
-            });
-        });
-
-        let expiryTimeString = document.getElementById("expiry-time").innerText;
-        let countdownText = document.getElementById("countdown-text");
-        let resendOtpButton = document.getElementById("resend-otp");
-        let otpMessage = document.getElementById("otp-message");
-        let emailInput = document.querySelector("input[name='email']").value;
-
-        let error = document.querySelector("[class*='alert-danger']");
-        if (error) {
-            countdownText.innerText = error.textContent;
-            resendOtpButton.classList.remove("disabled");
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showLoading(button) {
+            button.classList.add('btn-loading');
+            button.innerHTML = '<span class="spinner"></span>Đang xác nhận...';
         }
 
-        if (expiryTimeString && expiryTimeString.trim() !== "") {
-            let expiryTime = new Date(expiryTimeString);
-            if (!isNaN(expiryTime.getTime())) {
+        function hideLoading(button) {
+            button.classList.remove('btn-loading');
+            button.innerHTML = '<span class="btn-text">Xác nhận</span>';
+        }
+
+        (function () {
+            'use strict';
+            window.addEventListener('load', function () {
+                var form = document.querySelector('.needs-validation');
+                var submitButton = document.getElementById('submitButton');
+
+                form.addEventListener('submit', function (event) {
+                    const otpInputs = document.querySelectorAll('.otp-input');
+                    let otp = '';
+                    otpInputs.forEach(input => {
+                        otp += input.value.trim();
+                    });
+                    document.getElementById('otp-hidden').value = otp;
+
+                    if (form.checkValidity() === false || otp.length !== 6) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        otpInputs.forEach(input => {
+                            if (!input.value.trim()) {
+                                input.classList.add('is-invalid');
+                            } else {
+                                input.classList.remove('is-invalid');
+                            }
+                        });
+                        hideLoading(submitButton);
+                    } else {
+                        showLoading(submitButton);
+                    }
+                    form.classList.add('was-validated');
+                }, false);
+            }, false);
+        })();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(function (alert) {
+                setTimeout(function () {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-20px)';
+                    setTimeout(function () {
+                        alert.classList.add('hidden');
+                    }, 300);
+                }, 5000);
+            });
+
+            const otpInputs = document.querySelectorAll('.otp-input');
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', function (e) {
+                    const value = e.target.value;
+                    if (value.length === 1 && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    } else if (value.length === 0 && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                    e.target.value = value.replace(/\D/g, '').slice(0, 1);
+                });
+
+                input.addEventListener('keydown', function (e) {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+
+                input.addEventListener('paste', function (e) {
+                    e.preventDefault();
+                    const pasteData = e.clipboardData.getData('text').trim().replace(/\D/g, '').slice(0, 6);
+                    let pastedIndex = 0;
+                    otpInputs.forEach((input, idx) => {
+                        if (idx < pasteData.length) {
+                            input.value = pasteData[pastedIndex];
+                            pastedIndex++;
+                        } else {
+                            input.value = '';
+                        }
+                        if (idx < otpInputs.length - 1) {
+                            otpInputs[idx + 1].focus();
+                        }
+                    });
+                });
+            });
+
+            let expiryTimeString = document.getElementById("expiry-time").innerText;
+            let countdownText = document.getElementById("countdown-text");
+            let resendOtpButton = document.getElementById("resend-otp");
+            let otpMessage = document.getElementById("otp-message");
+            let emailInput = document.querySelector("input[name='email']").value;
+
+            let error = document.querySelector("[class*='alert-danger']");
+            if (error) {
+                countdownText.innerText = error.textContent;
+                resendOtpButton.classList.remove("disabled");
+            }
+
+            if (expiryTimeString && expiryTimeString.trim() !== "") {
+                let expiryTime = new Date(expiryTimeString);
+                if (!isNaN(expiryTime.getTime())) {
+                    let countdownInterval = setInterval(function () {
+                        let now = new Date();
+                        let remainingTime = Math.floor((expiryTime - now) / 1000);
+
+                        if (remainingTime > 0) {
+                            let minutes = Math.floor(remainingTime / 60);
+                            let seconds = remainingTime % 60;
+                            countdownText.innerText = `Mã OTP sẽ hết hạn trong: ${minutes} phút ${seconds} giây`;
+                        } else {
+                            countdownText.innerText = "Mã OTP đã hết hiệu lực!";
+                            resendOtpButton.classList.remove("disabled");
+                            clearInterval(countdownInterval);
+                        }
+                    }, 1000);
+                }
+            }
+
+            resendOtpButton.addEventListener("click", function (event) {
+                event.preventDefault();
+                if (resendOtpButton.classList.contains("disabled")) return;
+                resendOtpButton.classList.add("disabled");
+                otpMessage.classList.remove('hidden');
+                otpMessage.innerText = "Đang gửi lại OTP...";
+
+                fetch("/customers/auth/resend-otp", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: emailInput })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            otpMessage.innerText = "Mã OTP đã được gửi lại!";
+                            let newExpiryTime = new Date(new Date().getTime() + 180 * 1000);
+                            expiryTimeString = newExpiryTime.toISOString().replace("T", " ").substring(0, 19);
+                            document.getElementById("expiry-time").innerText = expiryTimeString;
+                            startCountdown(newExpiryTime);
+                        } else {
+                            otpMessage.innerText = "Gửi lại OTP thất bại: " + (data.error || "Lỗi không xác định");
+                        }
+                        resendOtpButton.classList.remove("disabled");
+                    })
+                    .catch(error => {
+                        otpMessage.innerText = "Lỗi khi gửi lại OTP!";
+                        console.error(error);
+                        resendOtpButton.classList.remove("disabled");
+                    });
+            });
+
+            function startCountdown(expiryTime) {
                 let countdownInterval = setInterval(function () {
                     let now = new Date();
                     let remainingTime = Math.floor((expiryTime - now) / 1000);
@@ -535,57 +643,8 @@
                     }
                 }, 1000);
             }
-        }
-
-        resendOtpButton.addEventListener("click", function (event) {
-            event.preventDefault();
-            if (resendOtpButton.classList.contains("disabled")) return;
-            resendOtpButton.classList.add("disabled");
-            otpMessage.style.display = 'block';
-            otpMessage.innerText = "Đang gửi lại OTP...";
-
-            fetch("/customers/auth/resend-otp", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: emailInput })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        otpMessage.innerText = "Mã OTP đã được gửi lại!";
-                        let newExpiryTime = new Date(new Date().getTime() + 180 * 1000);
-                        expiryTimeString = newExpiryTime.toISOString().replace("T", " ").substring(0, 19);
-                        document.getElementById("expiry-time").innerText = expiryTimeString;
-                        startCountdown(newExpiryTime);
-                    } else {
-                        otpMessage.innerText = "Gửi lại OTP thất bại: " + (data.error || "Lỗi không xác định");
-                    }
-                    resendOtpButton.classList.remove("disabled");
-                })
-                .catch(error => {
-                    otpMessage.innerText = "Lỗi khi gửi lại OTP!";
-                    console.error(error);
-                    resendOtpButton.classList.remove("disabled");
-                });
         });
-
-        function startCountdown(expiryTime) {
-            let countdownInterval = setInterval(function () {
-                let now = new Date();
-                let remainingTime = Math.floor((expiryTime - now) / 1000);
-
-                if (remainingTime > 0) {
-                    let minutes = Math.floor(remainingTime / 60);
-                    let seconds = remainingTime % 60;
-                    countdownText.innerText = `Mã OTP sẽ hết hạn trong: ${minutes} phút ${seconds} giây`;
-                } else {
-                    countdownText.innerText = "Mã OTP đã hết hiệu lực!";
-                    resendOtpButton.classList.remove("disabled");
-                    clearInterval(countdownInterval);
-                }
-            }, 1000);
-        }
-    });
-</script>
+    </script>
 </body>
+
 </html>
