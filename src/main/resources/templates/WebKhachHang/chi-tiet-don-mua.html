@@ -798,17 +798,17 @@
         Xác nhận đã nhận hàng
       </button>
 
-      <button th:if="${currentStatus == 'Vận chuyển thành công'}"
-              class="btn-exchange"
-              th:attr="onclick=|requestExchange('${hoaDon.id}')|">
-        <i class="fas fa-exchange-alt"></i> Yêu cầu đổi sản phẩm
-      </button>
-      <button th:if="${currentStatus == 'Vận chuyển thành công'}"
-              class="btn-cancel"
-              th:attr="onclick=|requestReturn('${hoaDon.id}')|">
-        <i class="fas fa-undo"></i>
-        Yêu cầu trả hàng
-      </button>
+<!--      <button th:if="${currentStatus == 'Vận chuyển thành công'}"-->
+<!--              class="btn-exchange"-->
+<!--              th:attr="onclick=|requestExchange('${hoaDon.id}')|">-->
+<!--        <i class="fas fa-exchange-alt"></i> Yêu cầu đổi sản phẩm-->
+<!--      </button>-->
+<!--      <button th:if="${currentStatus == 'Vận chuyển thành công'}"-->
+<!--              class="btn-cancel"-->
+<!--              th:attr="onclick=|requestReturn('${hoaDon.id}')|">-->
+<!--        <i class="fas fa-undo"></i>-->
+<!--        Yêu cầu trả hàng-->
+<!--      </button>-->
       <button th:if="${currentStatus == 'Chưa xác nhận'}"
               class="btn-cancel"
               th:attr="onclick=|cancelOrder('${hoaDon.id}', '${hoaDon.donHang.maDonHang}')|">
