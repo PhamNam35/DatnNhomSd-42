@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8"/>
-  <title>Chi tiết đơn mua - Poly Store Store</title>
+  <title>Chi tiết đơn mua - PolyShoes</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
   <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet"/>
@@ -798,17 +798,17 @@
         Xác nhận đã nhận hàng
       </button>
 
-      <button th:if="${currentStatus == 'Vận chuyển thành công'}"
-              class="btn-exchange"
-              th:attr="onclick=|requestExchange('${hoaDon.id}')|">
-        <i class="fas fa-exchange-alt"></i> Yêu cầu đổi sản phẩm
-      </button>
-      <button th:if="${currentStatus == 'Vận chuyển thành công'}"
-              class="btn-cancel"
-              th:attr="onclick=|requestReturn('${hoaDon.id}')|">
-        <i class="fas fa-undo"></i>
-        Yêu cầu trả hàng
-      </button>
+<!--      <button th:if="${currentStatus == 'Vận chuyển thành công'}"-->
+<!--              class="btn-exchange"-->
+<!--              th:attr="onclick=|requestExchange('${hoaDon.id}')|">-->
+<!--        <i class="fas fa-exchange-alt"></i> Yêu cầu đổi sản phẩm-->
+<!--      </button>-->
+<!--      <button th:if="${currentStatus == 'Vận chuyển thành công'}"-->
+<!--              class="btn-cancel"-->
+<!--              th:attr="onclick=|requestReturn('${hoaDon.id}')|">-->
+<!--        <i class="fas fa-undo"></i>-->
+<!--        Yêu cầu trả hàng-->
+<!--      </button>-->
       <button th:if="${currentStatus == 'Chưa xác nhận'}"
               class="btn-cancel"
               th:attr="onclick=|cancelOrder('${hoaDon.id}', '${hoaDon.donHang.maDonHang}')|">
@@ -1001,7 +1001,7 @@
       <!-- Column 1: About -->
       <div>
         <h3 class="text-xl font-bold mb-4">
-          Poly Store Store
+          PolyShoes
         </h3>
         <p class="text-gray-300 mb-4">Cửa hàng giày dép hàng đầu với các sản phẩm chất lượng và giá cả hợp lý.</p>
         <div class="flex space-x-4 mt-6">
@@ -1073,7 +1073,7 @@
 
     <!-- Copyright -->
     <div class="border-t border-gray-800 mt-10 pt-6 flex flex-col md:flex-row justify-between items-center">
-      <p class="text-sm text-gray-400">© 2025 Poly Store Store. All rights reserved.</p>
+      <p class="text-sm text-gray-400">© 2025 PolyShoes. All rights reserved.</p>
       <div class="mt-4 md:mt-0">
         <ul class="flex space-x-6">
           <li><a href="#" class="text-sm text-gray-400 hover:text-red-500">Điều khoản</a></li>

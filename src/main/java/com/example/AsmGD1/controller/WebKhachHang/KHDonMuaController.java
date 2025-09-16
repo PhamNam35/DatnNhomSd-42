@@ -443,9 +443,9 @@ public class KHDonMuaController {
                     "<p>Xin chào " + nguoiDung.getHoTen() + ",</p>" +
                     "<p>Đơn hàng của bạn với mã <strong>" + hoaDon.getDonHang().getMaDonHang() + "</strong> đã được hủy thành công.</p>" +
                     "<p><strong>Lý do hủy:</strong> " + ghiChu + "</p>" +
-                    "<p>Cảm ơn bạn đã sử dụng dịch vụ của Poly Store Store!</p>" +
-                    "<p>Trân trọng,<br>Đội ngũ Poly Store Store</p>";
-            emailService.sendEmail(nguoiDung.getEmail(), "Hủy đơn hàng - Poly Store Store", emailContent);
+                    "<p>Cảm ơn bạn đã sử dụng dịch vụ của PolyShoes!</p>" +
+                    "<p>Trân trọng,<br>Đội ngũ PolyShoes</p>";
+            emailService.sendEmail(nguoiDung.getEmail(), "Hủy đơn hàng - PolyShoes", emailContent);
 
             return ResponseEntity.ok("Đơn hàng đã được hủy thành công.");
         } catch (IllegalStateException e) {
@@ -549,9 +549,9 @@ public class KHDonMuaController {
                 String emailContent = "<h2>Thông báo hoàn thành đơn hàng</h2>" +
                         "<p>Xin chào " + nguoiDung.getHoTen() + ",</p>" +
                         "<p>Đơn hàng của bạn với mã <strong>" + hoaDon.getDonHang().getMaDonHang() + "</strong> đã được xác nhận hoàn thành.</p>" +
-                        "<p>Cảm ơn bạn đã mua sắm tại Poly Store Store! Chúng tôi mong được phục vụ bạn trong tương lai.</p>" +
-                        "<p>Trân trọng,<br>Đội ngũ Poly Store Store</p>";
-                emailService.sendEmail(nguoiDung.getEmail(), "Hoàn thành đơn hàng - Poly Store Store", emailContent);
+                        "<p>Cảm ơn bạn đã mua sắm tại PolyShoes! Chúng tôi mong được phục vụ bạn trong tương lai.</p>" +
+                        "<p>Trân trọng,<br>Đội ngũ PolyShoes</p>";
+                emailService.sendEmail(nguoiDung.getEmail(), "Hoàn thành đơn hàng - PolyShoes", emailContent);
             } catch (Exception e) {
                 System.err.println("Lỗi khi gửi email: " + e.getMessage());
             }
@@ -1286,8 +1286,8 @@ public class KHDonMuaController {
                                         : "<p>Vui lòng hoàn tất thanh toán qua cổng VNPay.</p>")
                                 : "") +
                         "<p>Chúng tôi sẽ xử lý yêu cầu trong thời gian sớm nhất.</p>" +
-                        "<p>Trân trọng,<br>Đội ngũ Poly Store Store</p>";
-                emailService.sendEmail(email, "Xác nhận yêu cầu đổi sản phẩm - Poly Store Store", emailContent);
+                        "<p>Trân trọng,<br>Đội ngũ PolyShoes</p>";
+                emailService.sendEmail(email, "Xác nhận yêu cầu đổi sản phẩm - PolyShoes", emailContent);
             } catch (Exception e) {
                 logger.warn("Không thể gửi email: {}", e.getMessage());
             }

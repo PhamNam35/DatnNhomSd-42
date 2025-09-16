@@ -23,7 +23,7 @@ public class GuiMailService {
     @Autowired
     private JavaMailSender mailSender;
 
-    @Value("${app.brand.name:Poly Store Store}")
+    @Value("${app.brand.name:PolyShoes}")
     private String brandName;
 
     @Value("${spring.mail.username:no-reply@polyshoe.local}")
