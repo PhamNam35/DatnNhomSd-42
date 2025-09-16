@@ -151,7 +151,7 @@ public class HomeController {
     @GetMapping("/new")
     public String pageNewProducts(Model model, Authentication authentication) {
         model.addAttribute("products", khachhangSanPhamService.getNewProducts());
-        commonUserCart(model, authentication); // optional: tách dùng chung
+        commonUserCart(model, authentication);
         return "WebKhachHang/list-new";
     }
 
@@ -214,8 +214,9 @@ public class HomeController {
 
 
     @GetMapping("/chitietsanpham")
-    public String productDetail(@RequestParam("id") UUID sanPhamId, Model model) {
+    public String productDetail(@RequestParam("id") UUID sanPhamId, Model model, Authentication authentication) {
         ChiTietSanPhamDto productDetail = khachhangSanPhamService.getProductDetail(sanPhamId);
+        commonUserCart(model, authentication);
         if (productDetail == null) {
             model.addAttribute("error", "Sản phẩm không tồn tại hoặc đã bị xóa!");
             return "WebKhachHang/error";
@@ -340,6 +341,7 @@ public class HomeController {
                     ? khachHangGioHangService.getGioHangChiTiets(gioHang.getId()) : Collections.emptyList());
             model.addAttribute("tongTien", gioHang.getTongTien() != null ? gioHang.getTongTien() : BigDecimal.ZERO);
             model.addAttribute("loggedInUser", nguoiDung);
+            model.addAttribute("user", nguoiDung);
         } catch (Exception e) {
             model.addAttribute("error", "Không thể tải giỏ hàng: " + e.getMessage());
         }
