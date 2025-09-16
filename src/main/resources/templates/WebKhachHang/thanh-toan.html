@@ -11,1022 +11,525 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="/image/Poly Store.png" type="image/png" sizes="32x32" />
     <style>
-        :root {
-            --primary-color: #153054;
-            --secondary-color: #9FD5F7;
-            --secondary-color: #9FD5F7;
-            --primary-hover: #1e4066;
-            --secondary-hover: #7bc3f0;
-            --success-color: #10b981;
-            --warning-color: #f59e0b;
-            --error-color: #ef4444;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --border-radius: 12px;
-            --border-radius-lg: 16px;
-            --border-radius-xl: 20px;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            --transition-slow: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            --gradient-primary: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 100%);
-            --gradient-secondary: linear-gradient(135deg, var(--secondary-color) 0%, var(--secondary-hover) 100%);
-            --gradient-surface: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: var(--font-family);
-            line-height: 1.6;
-            color: var(--gray-800);
-            background: linear-gradient(135deg, var(--gray-50) 0%, #ffffff 50%, var(--gray-50) 100%);
-            padding: 0;
-            margin: 0;
-            scroll-behavior: smooth;
-            overflow-x: hidden;
-        }
-
-        .search-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            max-height: 300px;
-            overflow-y: auto;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .search-suggestions.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .suggestion-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .suggestion-item:hover {
-            background-color: #f1f5f9;
-        }
-
-        .suggestion-item img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            margin-right: 10px;
-            border-radius: 4px;
-        }
-
-        .history-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.2s;
-            background-color: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .history-item:hover {
-            background-color: #e2e8f0;
-        }
-
-        .history-item .highlight {
-            background-color: #9FD5F7;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-
-        .history-item .delete-btn {
-            color: #ef4444;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 5px;
-            transition: color 0.2s;
-        }
-
-        .history-item .delete-btn:hover {
-            color: #b91c1c;
-        }
-
-        .search-suggestions {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-            max-height: 300px;
-            overflow-y: auto;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .search-suggestions.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .suggestion-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .suggestion-item:hover {
-            background-color: #f1f5f9;
-        }
-
-        .suggestion-item img {
-            width: 50px;
-            height: 50px;
-            object-fit: cover;
-            margin-right: 10px;
-            border-radius: 4px;
-        }
-
-        .history-item {
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.2s;
-            background-color: #f8fafc;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .history-item:hover {
-            background-color: #e2e8f0;
-        }
-
-        .history-item .highlight {
-            background-color: #9FD5F7;
-            padding: 2px 4px;
-            border-radius: 4px;
-        }
-
-        .history-item .delete-btn {
-            color: #ef4444;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 5px;
-            transition: color 0.2s;
-        }
-
-        .history-item .delete-btn:hover {
-            color: #b91c1c;
-        }
-
-        /* Enhanced button system with micro-interactions */
-        .btn-primary {
-            background: var(--gradient-primary);
-            border: none;
-            border-radius: var(--border-radius);
-            padding: 14px 28px;
-            font-weight: 600;
-            color: white;
-            font-size: 15px;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-            position: relative;
-            overflow: hidden;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-        }
-
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: var(--transition-slow);
-        }
-
-        .btn-primary:hover:not(:disabled) {
-            background: linear-gradient(135deg, var(--primary-hover) 0%, #2a5a8a 100%);
-            transform: translateY(-2px) scale(1.02);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .btn-primary:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary:active {
-            transform: translateY(0) scale(0.98);
-            box-shadow: var(--shadow);
-            transition: var(--transition-fast);
-        }
-
-        .btn-primary:focus {
-            outline: 3px solid rgba(21, 48, 84, 0.3);
-            outline-offset: 2px;
-        }
-
-        /* Enhanced form controls with better states */
-        .form-control {
-            border: 2px solid var(--gray-200);
-            border-radius: var(--border-radius);
-            padding: 16px 20px;
-            font-size: 15px;
-            transition: var(--transition);
-            background: white;
-            font-family: var(--font-family);
-            position: relative;
-        }
-
-        .form-control:focus {
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 4px rgba(21, 48, 84, 0.1);
-            outline: none;
-            background: var(--gray-50);
-            transform: translateY(-1px);
-        }
-
-        .form-control:hover:not(:focus):not(:disabled) {
-            border-color: var(--gray-300);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .form-control:disabled {
-            background: var(--gray-50);
-            border-color: var(--gray-200);
-            color: var(--gray-600);
-            cursor: not-allowed;
-        }
-
-        /* Enhanced section boxes with better animations */
-        .section-box {
-            background: white;
-            border-radius: var(--border-radius-lg);
-            padding: 32px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--gray-100);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            transform: translateZ(0);
-        }
-
-        .section-box::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--gradient-primary);
-            opacity: 0;
-            transition: var(--transition);
-            transform: scaleX(0);
-            transform-origin: left;
-        }
-
-        .section-box::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(21, 48, 84, 0.03) 0%, transparent 70%);
-            opacity: 0;
-            transition: var(--transition-slow);
-            pointer-events: none;
-        }
-
-        .section-box:hover {
-            transform: translateY(-6px) scale(1.01);
-            box-shadow: var(--shadow-2xl);
-            border-color: var(--secondary-color);
-        }
-
-        .section-box:hover::before {
-            opacity: 1;
-            transform: scaleX(1);
-        }
-
-        .section-box:hover::after {
-            opacity: 1;
-        }
-
-        /* Enhanced payment methods with better interactions */
-        .payment-method {
-            padding: 24px;
-            border: 2px solid var(--gray-200);
-            border-radius: var(--border-radius);
-            margin-bottom: 16px;
-            cursor: pointer;
-            transition: var(--transition);
-            background: white;
-            position: relative;
-            overflow: hidden;
-            transform: translateZ(0);
-        }
-
-        .payment-method::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(21, 48, 84, 0.05), transparent);
-            transition: var(--transition-slow);
-        }
-
-        .payment-method::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(21, 48, 84, 0.1) 0%, transparent 70%);
-            transition: var(--transition);
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-        }
-
-        .payment-method:hover {
-            border-color: var(--primary-color);
-            background: var(--gradient-surface);
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .payment-method:hover::before {
-            left: 100%;
-        }
-
-        .payment-method:hover::after {
-            width: 100px;
-            height: 100px;
-        }
-
-        .payment-method.active {
-            border-color: #9FD5F7;
-            background: #9FD5F7;
-            box-shadow: var(--shadow-md);
-            transform: scale(1.02);
-        }
-
-        .payment-method.active::after {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, rgba(21, 48, 84, 0.05) 0%, transparent 70%);
-        }
-
-        /* Enhanced address cards */
-        .address-card {
-            cursor: pointer;
-            transition: var(--transition);
-            border: 2px solid var(--gray-200);
-            border-radius: var(--border-radius);
-            padding: 24px;
-            margin-bottom: 16px;
-            background: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .address-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--gradient-primary);
-            transform: scaleY(0);
-            transition: var(--transition);
-            transform-origin: bottom;
-        }
-
-        .address-card:hover {
-            background: var(--gradient-surface);
-            border-color: var(--primary-color);
-            transform: translateY(-2px) translateX(4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .address-card:hover::before {
-            transform: scaleY(1);
-        }
-
-        .address-card.active {
-            border-color: var(--primary-color);
-            background: var(--gradient-secondary);
-            box-shadow: var(--shadow-md);
-            transform: translateX(4px);
-        }
-
-        .address-card.active::before {
-            transform: scaleY(1);
-        }
-
-        /* Enhanced modal system */
-        .modal-content {
-            border-radius: var(--border-radius-xl);
-            border: none;
-            box-shadow: var(--shadow-2xl);
-            overflow: hidden;
-            backdrop-filter: blur(20px);
-        }
-
-        .modal-header {
-            background: var(--gradient-primary);
-            color: white;
-            border-bottom: none;
-            padding: 28px 36px;
-            position: relative;
-        }
-
-        .modal-header::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-        }
-
-        .modal-body {
-            padding: 36px;
-            background: var(--gradient-surface);
-        }
-
-        .modal-footer {
-            background: linear-gradient(135deg, white 0%, var(--gray-50) 100%);
-            border-top: 1px solid var(--gray-200);
-            padding: 24px 36px;
-        }
-
-        /* Enhanced voucher modal */
-        #voucherModal .modal-dialog {
-            max-width: 800px;
-        }
-
-        #voucherModal .voucher-card {
-            padding: 24px;
-            border: 2px solid var(--gray-200) !important;
-            border-radius: var(--border-radius) !important;
-            transition: var(--transition);
-            background: white;
-            position: relative;
-            overflow: hidden;
-            margin-bottom: 12px;
-        }
-
-        #voucherModal .voucher-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(21, 48, 84, 0.05), transparent);
-            transition: var(--transition-slow);
-        }
-
-        #voucherModal .voucher-card::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 0;
-            height: 100%;
-            background: var(--gradient-primary);
-            transition: var(--transition);
-        }
-
-        #voucherModal .voucher-card:hover {
-            border-color: var(--primary-color) !important;
-            background: var(--gradient-surface);
-            transform: translateY(-2px) translateX(4px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        #voucherModal .voucher-card:hover::before {
-            left: 100%;
-        }
-
-        #voucherModal .voucher-card:hover::after {
-            width: 4px;
-        }
-
-        /* Enhanced animations */
-        @keyframes spin {
-            0% {
-                transform: rotate(0deg) scale(1);
+        /* =========================================
+           CHECKOUT THEME — RED / BLACK / WHITE
+           (pure CSS: drop-in replacement; no JS/HTML changes)
+           ========================================= */
+        :root{
+            /* Palette */
+            --red:#e50914; --red-2:#ff3340; --red-dark:#b91c1c;
+            --black:#0b0b0b; --ink:#121417; --ink-2:#1f2328;
+            --muted:#6b7280; --line:#e9eaee; --white:#fff;
+
+            --primary-color:var(--red);
+            --primary-hover:var(--red-dark);
+            --secondary-color:var(--black);
+            --secondary-hover:#1a1a1a;
+
+            --gray-50:#fafafa; --gray-100:#f3f4f6; --gray-200:#e5e7eb; --gray-300:#d1d5db;
+            --gray-400:#9ca3af; --gray-500:#6b7280; --gray-600:#4b5563; --gray-700:#374151;
+            --gray-800:#1f2937; --gray-900:#111827;
+
+            --border-radius:12px; --border-radius-lg:16px; --border-radius-xl:20px;
+            --shadow-sm:0 6px 18px rgba(0,0,0,.10);
+            --shadow:0 10px 24px rgba(0,0,0,.12);
+            --shadow-md:0 14px 30px rgba(0,0,0,.14);
+            --shadow-lg:0 22px 50px rgba(0,0,0,.16);
+            --shadow-xl:0 30px 70px rgba(0,0,0,.20);
+
+            --transition:all .3s cubic-bezier(.4,0,.2,1);
+
+            --gradient-primary:linear-gradient(135deg, var(--red) 0%, var(--red-dark) 100%);
+            --gradient-secondary:linear-gradient(135deg, var(--black) 0%, #1c1c1c 100%);
+            --gradient-surface:linear-gradient(135deg,#ffffff 0%, #fafafb 100%);
+        }
+
+        *{box-sizing:border-box}
+        body{
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont,'Segoe UI', Roboto, sans-serif;
+            line-height:1.6; color:var(--ink);
+            background: linear-gradient(135deg, var(--gray-50) 0%, #fff 50%, var(--gray-50) 100%);
+            margin:0; padding:0; overflow-x:hidden;
+        }
+        ::selection{background:rgba(229,9,20,.18)}
+        :focus-visible{outline:3px solid var(--red); outline-offset:2px; border-radius:8px}
+
+        /* ===== Top ticker / navbar tone (nếu dùng fragment navbar) ===== */
+        .ticker{
+            background: linear-gradient(90deg, var(--red) 0%, var(--red-2) 100%);
+            color:#fff; font-weight:700; position:relative; z-index:1050;
+        }
+        .navbar{
+            background: linear-gradient(135deg,#0f0f10 0%, #1b1b1c 100%);
+            border-bottom: 2px solid rgba(229,9,20,.35);
+            backdrop-filter: blur(16px); box-shadow: var(--shadow-sm);
+        }
+
+        /* ===== Page title ===== */
+        h1{
+            font-size:28px; font-weight:900; color:var(--black);
+            display:flex; align-items:center; gap:12px; margin-bottom:18px;
+            position:relative; padding-bottom:10px;
+        }
+        h1::after{
+            content:''; position:absolute; left:0; bottom:0; height:3px; width:90px;
+            background:linear-gradient(90deg,var(--red),var(--black)); border-radius:2px;
+        }
+
+        /* ===== Cards / Sections ===== */
+        .section-title{
+            font-size:18px; font-weight:800; color:var(--black);
+            display:flex; align-items:center; margin-bottom:18px; padding-bottom:8px; position:relative;
+        }
+        .section-title::after{
+            content:''; position:absolute; left:0; bottom:0; height:2px; width:60px;
+            background:linear-gradient(90deg,var(--red),var(--black));
+        }
+        .section-title i{
+            margin-right:10px; font-size:18px;
+            background:linear-gradient(135deg,var(--red),var(--black));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+        }
+        .section-box{
+            background:#fff; border-radius:var(--border-radius-lg);
+            padding:24px; border:1px solid var(--line); box-shadow:var(--shadow);
+            transition:var(--transition); position:relative; overflow:hidden; animation:fadeInUp .5s both;
+        }
+        .section-box::before{
+            content:''; position:absolute; inset:0 0 auto 0; height:3px; background:var(--gradient-primary); opacity:.95;
+        }
+        .section-box:hover{ transform:translateY(-3px); box-shadow:var(--shadow-lg) }
+
+        /* ===== NEW LAYOUT (khác hoàn toàn):
+           1) “Đơn hàng” kéo lên đầu trang, băng rộng full-bleed (sticky)
+           2) Các form block bên dưới xếp mosaic 2 cột trên màn hình lớn
+        ============================================================= */
+        .grid{display:grid; gap:24px}
+
+        /* Desktop ≥1024px: ép lại thành 2 cột rộng đều, “Đơn hàng” lên hàng 1 full width */
+        @media (min-width:1024px){
+            .grid{
+                grid-template-columns: repeat(2, minmax(0,1fr)) !important; /* override tailwind lg:grid-cols-3 */
+                grid-auto-flow: dense;
+            }
+            /* Khối “Đơn hàng” chính là .grid > .section-box:last-child trong HTML gốc */
+            .grid > .section-box:last-child{
+                grid-column: 1 / -1; grid-row: 1; position: sticky; top: 88px; z-index: 3;
+            }
+            /* Cụm bên trái (div lg:col-span-2) chuyển thành lưới mosaic 2 cột */
+            .grid > .lg\:col-span-2{
+                grid-column: 1 / -1; /* full width phía dưới summary */
+            }
+            .lg\:col-span-2.space-y-6{ display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:24px }
+            .lg\:col-span-2.space-y-6 > .section-box{ margin:0 }
+            .lg\:col-span-2.space-y-6 > .section-box:first-child{ grid-column: 1 / -1 } /* “Thông tin khách hàng” full width */
+        }
+
+        /* ===== Controls ===== */
+        .form-label{ font-weight:700; color:var(--ink-2); margin-bottom:8px; display:flex; align-items:center; font-size:14px }
+        .form-label i{ margin-right:8px; color:var(--red) }
+        .form-control{
+            border:2px solid var(--gray-200); border-radius:12px; padding:14px 16px; font-size:15px;
+            transition:var(--transition); background:#fff; color:var(--ink);
+        }
+        .form-control:hover{ border-color:#dfe1e6 }
+        .form-control:focus{
+            border-color:var(--red); background:#fff; box-shadow:0 0 0 4px rgba(229,9,20,.1); outline:none; transform:translateY(-1px)
+        }
+
+        /* Buttons */
+        .btn-primary{
+            background:var(--gradient-primary); border:none; color:#fff;
+            border-radius:14px; padding:12px 20px; font-weight:800; box-shadow:0 12px 28px rgba(229,9,20,.28);
+            transition:var(--transition);
+        }
+        .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 18px 38px rgba(229,9,20,.38) }
+        .btn-outline-primary{
+            background:transparent; border:2px solid var(--red); color:var(--red);
+            border-radius:12px; padding:10px 18px; font-weight:800; transition:var(--transition);
+        }
+        .btn-outline-primary:hover{ background:var(--red); color:#fff; transform:translateY(-1px) }
+        .btn-secondary{
+            background:#f4f5f7; border:1px solid var(--line); color:var(--ink);
+            border-radius:12px; padding:10px 18px; font-weight:700; transition:var(--transition);
+        }
+        .btn-secondary:hover{ background:#eee; transform:translateY(-1px) }
+        .btn.loading{ color:transparent !important; position:relative; pointer-events:none }
+        .btn.loading::after{
+            content:""; position:absolute; top:50%; left:50%; width:18px; height:18px; margin:-9px 0 0 -9px;
+            border:2px solid rgba(255,255,255,.35); border-top:2px solid #fff; border-radius:50%; animation:spin 1s linear infinite;
+        }
+        button[disabled]{ opacity:.6; cursor:not-allowed; transform:none !important }
+
+        /* Payment method cards */
+        .payment-method{
+            padding:18px; border:2px solid var(--gray-200); border-radius:12px; margin-bottom:12px; cursor:pointer;
+            background:#fff; transition:var(--transition); position:relative; overflow:hidden;
+        }
+        .payment-method::before{
+            content:""; position:absolute; top:0; left:-100%; width:100%; height:100%;
+            background: linear-gradient(90deg, transparent, rgba(229,9,20,.08), transparent);
+            transition:transform .6s;
+        }
+        .payment-method:hover{ border-color:var(--red); background:var(--gradient-surface); transform:translateY(-3px); box-shadow:var(--shadow) }
+        .payment-method:hover::before{ left:100% }
+        .payment-method input[type="radio"]{ width:18px; height:18px; accent-color:var(--red) }
+        .payment-method.active{
+            border-color: rgba(229,9,20,.6); background: linear-gradient(180deg,#fff 0%, #fff1f2 100%);
+            box-shadow: 0 8px 22px rgba(229,9,20,.2); transform: scale(1.01);
+        }
+
+        /* Address cards */
+        .address-card{
+            cursor:pointer; transition:var(--transition);
+            border:2px solid var(--gray-200); border-radius:12px; padding:16px; background:#fff; position:relative; overflow:hidden;
+        }
+        .address-card::before{
+            content:""; position:absolute; left:0; top:0; width:4px; height:100%;
+            background:var(--gradient-primary); transform:scaleY(0); transform-origin:bottom; transition:var(--transition);
+        }
+        .address-card:hover{ background:var(--gradient-surface); border-color:var(--red); transform: translateY(-2px) translateX(4px); box-shadow:var(--shadow) }
+        .address-card:hover::before{ transform:scaleY(1) }
+        .address-card.active{ border-color:var(--red); background:#fff5f6; box-shadow:var(--shadow-sm); transform:translateX(4px) }
+        .address-card.active::before{ transform:scaleY(1) }
+
+        /* Order list */
+        .order-item{ border-bottom:1px solid var(--line); padding-bottom:16px; margin-bottom:16px;
+            display:grid; grid-template-columns: 90px 1fr; gap:12px; border-radius:12px; transition:var(--transition) }
+        .order-item:hover{ background:#fff5f5; transform:translateY(-1px) }
+        .order-item-img{ width:90px; height:90px; object-fit:cover; border-radius:12px; box-shadow:0 6px 16px rgba(0,0,0,.12); border:1px solid #eee; transition:var(--transition) }
+        .order-item:hover .order-item-img{ transform: scale(1.04) rotate(.8deg) }
+
+        /* Totals */
+        #subtotal,#shipping-fee,#discount-order,#discount-ship,#total{ font-variant-numeric:tabular-nums; letter-spacing:.2px }
+        #total{ color:var(--black)!important; font-weight:900 }
+
+        /* Voucher modal + cards */
+        .modal-content{ border-radius:20px; border:none; box-shadow:var(--shadow-xl); overflow:hidden; backdrop-filter: blur(20px) }
+        .modal-header{ background:var(--gradient-primary); color:#fff; border-bottom:none; padding:20px 24px; position:relative }
+        .modal-header::after{ content:""; position:absolute; left:0; right:0; bottom:0; height:1px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.3),transparent) }
+        .modal-body{ padding:24px; background:var(--gradient-surface) }
+        .modal-footer{ background: linear-gradient(135deg,#fff 0%, #fafafa 100%); border-top:1px solid var(--line); padding:16px 24px }
+
+        /* Cưỡng bức đổi gradient header của 2 modal địa chỉ (ghi đè inline style cũ xanh) */
+        #addressModal .modal-header, #addAddressModal .modal-header{ background:var(--gradient-primary) !important; color:#fff }
+        #addressModal .btn-close, #addAddressModal .btn-close{ filter: brightness(0) invert(1) }
+
+        /* Nút “Thêm địa chỉ mới” trong modal địa chỉ: chuyển sang đen→đỏ */
+        button[onclick="openAddAddressModal()"]{
+            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--red) 100%) !important;
+            color:#fff !important; border:none !important;
+        }
+
+        /* Voucher cards */
+        #voucherModal .voucher-card{
+            padding:16px; border:2px solid var(--gray-200)!important; border-radius:12px!important;
+            background:#fff; position:relative; overflow:hidden; transition:var(--transition);
+        }
+        #voucherModal .voucher-card:hover{ border-color:var(--red)!important; background:#fff7f8; transform:translateY(-2px) translateX(4px); box-shadow:var(--shadow) }
+        #voucherModal .voucher-card input[type="radio"]{ accent-color:var(--red) }
+        .voucher-search{ position:sticky; top:0; z-index:2; background:#fff; padding:10px 0 14px; margin-bottom:10px }
+        .voucher-search .input-group-text{ background:#fff; border:2px solid var(--line); border-right:none; border-radius:12px 0 0 12px }
+        .voucher-search .form-control{ border-left:none; border-right:none; border-top:2px solid var(--line); border-bottom:2px solid var(--line); border-radius:0 }
+        #voucher-search-clear{ border:2px solid var(--line); border-left:none; border-radius:0 12px 12px 0 }
+
+        /* Sticky submit inside card */
+        .submit-btn{ position: sticky; bottom: 16px; z-index: 10 }
+
+        /* Search suggest tone (giữ logic) */
+        .search-suggestions{ position:absolute; top:100%; left:0; right:0; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow-sm); z-index:1000; max-height:320px; overflow-y:auto; opacity:0; visibility:hidden; transition: opacity .25s ease, visibility .25s ease }
+        .search-suggestions.active{ opacity:1; visibility:visible }
+        .suggestion-item{ display:flex; align-items:center; gap:10px; padding:12px; border-bottom:1px solid #f0f2f4; cursor:pointer; transition:background .2s }
+        .suggestion-item:hover{ background:#fff5f5 }
+        .suggestion-item img{ width:50px; height:50px; object-fit:cover; border-radius:8px }
+        .history-item{ padding:12px; border-bottom:1px solid #f0f2f4; background:#fafafa; display:flex; align-items:center; justify-content:space-between; cursor:pointer }
+        .history-item .highlight{ background:#ffe3e5; padding:2px 6px; border-radius:6px }
+        .history-item .delete-btn{ color:var(--red); font-size:14px; padding:5px }
+        .history-item .delete-btn:hover{ color:var(--red-dark) }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar{ width:10px; height:10px }
+        ::-webkit-scrollbar-track{ background:#f2f3f6; border-radius:8px }
+        ::-webkit-scrollbar-thumb{ background: linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:8px; border:2px solid #f2f3f6 }
+
+        /* Footer recolor (ghi đè inline style xanh bằng !important) */
+        footer{
+            background: linear-gradient(90deg,#0f0f10, #1b1b1c) !important;
+            color:#fff; border-top:3px solid rgba(229,9,20,.4); padding-top:30px; padding-bottom:20px; position:relative; z-index:1
+        }
+        footer a{ color:#ffe6e8 } footer a:hover{ color:#ffb3b8 !important }
+
+        /* Utilities */
+        .text-primary{ color:var(--red)!important }
+        .text-secondary{ color:var(--muted)!important }
+        .text-muted{ color:var(--gray-500)!important }
+        .fw-bold{ font-weight:800!important } .fw-semibold{ font-weight:700!important }
+
+        /* ===== SweetAlert2: cưỡng bức sang đỏ/đen (ghi đè các color inline cũ) ===== */
+        .swal2-confirm{ background:var(--red)!important; border-color:var(--red)!important }
+        .swal2-cancel{ background:#222 !important; color:#fff !important; border: none !important }
+
+        /* ===== Fix màu xanh còn sót từ Tailwind arbitrary class ===== */
+        .text-\[\#153054\]{ color: var(--red) !important }
+
+        /* Responsive tweaks */
+        @media (max-width:768px){
+            .section-box{ padding:20px }
+            .payment-method,.address-card{ padding:16px }
+            .order-item{ grid-template-columns:70px 1fr }
+            .order-item-img{ width:70px; height:70px }
+        }
+
+        /* Animations */
+        @keyframes spin{ 0%{transform:rotate(0) scale(1)} 50%{transform:rotate(180deg) scale(1.08)} 100%{transform:rotate(360deg) scale(1)} }
+        @keyframes fadeInUp{ from{opacity:0; transform: translateY(28px)} to{opacity:1; transform: translateY(0)} }
+
+        /* Add-address form focus overrides (giữ logic) */
+        #add-address-form .form-control:focus{ border-color:var(--red)!important; box-shadow:0 0 0 3px rgba(229,9,20,.12)!important }
+        #add-address-form button:hover{ transform:translateY(-1px); box-shadow:var(--shadow)!important }
+        #add-address-form button[onclick="hideAddAddressForm()"]:hover{ background:#eee!important; border-color:#ddd!important }
+
+        /* Address list scrollbar */
+        #address-list::-webkit-scrollbar{ width:8px }
+        #address-list::-webkit-scrollbar-track{ background:#f2f3f6; border-radius:6px }
+        #address-list::-webkit-scrollbar-thumb{ background: linear-gradient(180deg, var(--red), var(--red-dark)); border-radius:6px }
+
+        /* Voucher eligibility state (giữ logic, thêm style) */
+        .voucher-disabled{ opacity:.55; filter:grayscale(.15); cursor:not-allowed }
+        /* =========================================================
+   LAYOUT V2 — ORDER DRAWER BÊN PHẢI (desktop ≥1200px)
+   Giữ nguyên logic + class; chỉ thay bố cục bằng CSS.
+   ========================================================= */
+        @media (min-width: 1200px){
+
+            /* 1) Content chính thành 1 cột full-width */
+            .grid{
+                grid-template-columns: 1fr !important;       /* bỏ layout 2/3 + 1/3 */
+                grid-auto-flow: row !important;
+            }
+            .grid > .lg\:col-span-2{
+                grid-column: 1 / -1 !important;
+            }
+            /* bỏ mosaic cũ nếu có */
+            .lg\:col-span-2.space-y-6{
+                display: block !important;
             }
 
-            50% {
-                transform: rotate(180deg) scale(1.1);
+            /* 2) Chừa không gian bên phải cho drawer */
+            body{ padding-right: 440px; } /* 400px drawer + lề */
+
+            /* 3) “Đơn hàng” (section-box cuối) biến thành ngăn kéo cố định */
+            .grid > .section-box:last-child{
+                position: fixed !important;
+                right: 24px; top: 100px; width: 400px;
+                max-height: calc(100vh - 130px);
+                overflow: auto; z-index: 40;
+
+                /* nhấn mạnh ngăn kéo */
+                border-width: 2px;
+                box-shadow: 0 24px 80px rgba(0,0,0,.35);
+                transform: translateZ(0);
             }
 
-            100% {
-                transform: rotate(360deg) scale(1);
+            /* 4) Nút Đặt hàng dính đáy trong ngăn kéo */
+            .grid > .section-box:last-child .submit-btn{
+                position: sticky; bottom: 12px; z-index: 5;
             }
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(40px);
+        /* Tablet landscape (≥992px và <1200px): dùng drawer hẹp hơn */
+        @media (min-width: 992px) and (max-width: 1199.98px){
+            body{ padding-right: 360px; }
+            .grid{ grid-template-columns: 1fr !important; }
+            .grid > .section-box:last-child{
+                position: fixed !important;
+                right: 16px; top: 96px; width: 320px;
+                max-height: calc(100vh - 120px);
+                overflow:auto; z-index: 40;
+                border-width: 2px; box-shadow: 0 20px 64px rgba(0,0,0,.32);
             }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-            }
-
-            50% {
-                opacity: 0.7;
+            .grid > .section-box:last-child .submit-btn{
+                position: sticky; bottom: 10px;
             }
         }
 
-        @keyframes slideInRight {
-            from {
-                opacity: 0;
-                transform: translateX(40px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateX(0);
+        /* Mobile: trở về dạng xếp dọc như thường */
+        @media (max-width: 991.98px){
+            body{ padding-right: 0; }
+            .grid > .section-box:last-child{
+                position: static !important;
+                width: auto; max-height: none; box-shadow: var(--shadow);
             }
         }
 
-        @keyframes bounceIn {
-            0% {
-                opacity: 0;
-                transform: scale(0.3);
-            }
-
-            50% {
-                opacity: 1;
-                transform: scale(1.05);
-            }
-
-            70% {
-                transform: scale(0.9);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+        /* Nhấn thị giác cho drawer */
+        .grid > .section-box:last-child::before{
+            height: 4px !important; /* viền đầu đỏ đậm hơn */
         }
+        /* =========================================
+           OVERRIDE – LAYOUT V3
+           Mục tiêu:
+           1) Bỏ drawer cố định bên phải
+           2) Trả về bố cục 1 cột
+           3) Đưa khối "Đơn hàng" xuống dưới (ngay trên footer)
+           ========================================= */
 
-        /* Enhanced form labels with icons */
-        .form-label {
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            font-size: 14px;
-            letter-spacing: 0.025em;
-        }
+        /* >= 992px: 1 cột, content lên trước, Đơn hàng xuống sau */
+        @media (min-width: 992px){
+            /* bỏ phần padding-right do drawer cũ */
+            body{ padding-right: 0 !important; }
 
-        .form-label i {
-            margin-right: 8px;
-            color: var(--primary-color);
-            font-size: 14px;
-        }
-
-        /* Enhanced order items */
-        .order-item {
-            border-bottom: 1px solid var(--gray-200);
-            padding-bottom: 24px;
-            margin-bottom: 24px;
-            transition: var(--transition);
-            border-radius: var(--border-radius);
-        }
-
-        .order-item:hover {
-            background: var(--gradient-surface);
-            padding: 20px;
-            margin: -4px -20px 20px -20px;
-            box-shadow: var(--shadow-sm);
-            transform: translateY(-1px);
-        }
-
-        .order-item-img {
-            width: 90px;
-            height: 90px;
-            object-fit: cover;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            border: 2px solid var(--gray-100);
-        }
-
-        .order-item:hover .order-item-img {
-            transform: scale(1.05) rotate(1deg);
-            box-shadow: var(--shadow-md);
-            border-color: var(--secondary-color);
-        }
-
-        /* Enhanced responsive design */
-        @media (max-width: 768px) {
-            body {
-                padding: 0;
-                margin: 0;
+            /* grid 1 cột, chảy theo chiều dọc */
+            .grid{
+                grid-template-columns: 1fr !important;
+                grid-auto-flow: row !important;
             }
 
-            .section-box {
-                padding: 24px 20px;
-                margin-bottom: 16px;
+            /* Cụm form (khối trái cũ) lên trước */
+            .grid > .lg\:col-span-2{
+                grid-column: 1 / -1 !important;
+                order: 1 !important;
+                display: block !important; /* bỏ mosaic cũ */
             }
 
-            .modal-body {
-                padding: 24px 20px;
+            /* Khối "Đơn hàng" xuống dưới cùng, dạng block thường */
+            .grid > .section-box:last-child{
+                grid-column: 1 / -1 !important;
+                order: 2 !important;
+
+                /* Hủy sticky/fixed của layout cũ */
+                position: static !important;
+                right: auto !important; top: auto !important;
+                width: auto !important; max-height: none !important; overflow: visible !important;
+
+                /* Nhẹ nhàng hơn để trông giống một section trước footer */
+                box-shadow: var(--shadow) !important;
+                border-width: 1px !important;
+                margin-top: 16px !important;
             }
 
-            .modal-header {
-                padding: 20px;
-            }
-
-            .modal-footer {
-                padding: 16px 20px;
-            }
-
-            .payment-method {
-                padding: 20px;
-            }
-
-            .address-card {
-                padding: 20px;
-            }
-
-            .order-item-img {
-                width: 70px;
-                height: 70px;
+            /* Nút "Đặt hàng" vẫn bám đáy của chính section nếu nội dung dài */
+            .grid > .section-box:last-child .submit-btn{
+                position: sticky !important;
+                bottom: 12px !important;
             }
         }
 
-        /* Enhanced focus states for accessibility */
-        .btn:focus,
-        .form-control:focus,
-        .payment-method:focus,
-        .address-card:focus,
-        .voucher-card:focus {
-            outline: 3px solid var(--primary-color);
-            outline-offset: 2px;
-        }
-
-        /* Enhanced scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--gray-100);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 4px;
-            transition: var(--transition);
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--primary-hover);
-        }
-
-        /* Enhanced utility classes */
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
-
-        .text-secondary {
-            color: var(--gray-600) !important;
-        }
-
-        .text-muted {
-            color: var(--gray-500) !important;
-        }
-
-        .fw-bold {
-            font-weight: 700 !important;
-        }
-
-        .fw-semibold {
-            font-weight: 600 !important;
-        }
-
-        /* Enhanced grid system */
-        .grid {
-            display: grid;
-            gap: 24px;
-        }
-
-        .grid-cols-1 {
-            grid-template-columns: repeat(1, minmax(0, 1fr));
-        }
-
-        @media (min-width: 1024px) {
-            .lg\:grid-cols-3 {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+        /* >= 1200px: đảm bảo không kích hoạt drawer cũ */
+        @media (min-width: 1200px){
+            body{ padding-right: 0 !important; }
+            .grid{
+                grid-template-columns: 1fr !important;
+                grid-auto-flow: row !important;
             }
-
-            .lg\:col-span-2 {
-                grid-column: span 2 / span 2;
+            .grid > .section-box:last-child{
+                position: static !important;
+                right: auto !important; top: auto !important;
+                width: auto !important; max-height: none !important; overflow: visible !important;
+                box-shadow: var(--shadow) !important;
+                border-width: 1px !important;
             }
         }
 
-        @media (min-width: 768px) {
-            .md\:grid-cols-2 {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+        /* Mobile đã là 1 cột sẵn, giữ nguyên.
+           (Chỉ đảm bảo khối "Đơn hàng" không bị các rule cũ tác động) */
+        @media (max-width: 991.98px){
+            .grid > .section-box:last-child{
+                position: static !important;
+                width: auto !important; max-height: none !important; overflow: visible !important;
             }
+        }
+        /* ========== ORDER BOTTOM BAR (fixed) ========== */
+        body{ padding-bottom:120px !important; }            /* chừa chỗ cho thanh đáy */
+        @media (max-width:576px){ body{ padding-bottom:150px !important; } }
 
-            .md\:grid-cols-3 {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+        #order-bar{
+            position:fixed; left:0; right:0; bottom:0;
+            background:#fff; border-top:2px solid var(--line);
+            box-shadow:0 -18px 40px rgba(0,0,0,.18);
+            z-index:1040; transform:translateZ(0);
+        }
+        #order-bar .order-bar__summary{
+            display:flex; align-items:center; gap:12px; padding:12px 16px;
+        }
+        #order-bar .order-bar__totals{
+            display:flex; flex-wrap:wrap; gap:12px 20px; font-size:14px;
+        }
+        #order-bar .order-bar__totals .pair{ display:flex; gap:6px; align-items:baseline }
+        #order-bar .order-bar__totals #total{ font-weight:900; }
+        #order-bar .order-bar__actions{ display:flex; gap:10px; margin-left:auto }
+
+        #order-bar .order-bar__details{
+            display:none; border-top:1px solid var(--line);
+            max-height:60vh; overflow:auto; background:var(--gradient-surface);
+        }
+        #order-bar .order-bar__details.open{ display:block; }
+
+        #order-bar .order-item{ border-bottom:1px solid var(--line); padding:12px 0 }
+        #order-bar .order-item-img{ width:64px; height:64px }
+
+        #order-bar-toggle{ display:none }
+        @media (max-width:768px){ #order-bar-toggle{ display:inline-flex } }
+        /* ===== SMART LAYOUT v4 — rõ ràng, không chồng chéo ===== */
+
+        /* Mặc định mobile: form trước, đơn hàng sau (như hiện tại) */
+        .checkout-grid{
+            display:grid; grid-template-areas:"form" "summary"; gap:24px;
+        }
+        /* gán vùng */
+        .form-stack{ grid-area: form; }
+        #order-summary{ grid-area: summary; }
+
+        /* Tablet/Desktop ≥ 992px: 2 cột – aside sticky */
+        @media (min-width: 992px){
+            .checkout-grid{
+                grid-template-columns: minmax(0,1fr) 380px;
+                grid-template-areas: "form summary";
+                align-items:start;
+            }
+            #order-summary{
+                position: sticky; top: 96px; /* dưới navbar + padding tiêu đề */
+                max-height: calc(100vh - 120px); overflow:auto;
             }
         }
 
-        /* Enhanced section animations */
-        .section-box {
-            animation: fadeInUp 0.6s ease-out;
-            animation-fill-mode: both;
+        /* Widescreen ≥ 1400px: nới nhẹ aside */
+        @media (min-width: 1400px){
+            .checkout-grid{
+                grid-template-columns: minmax(0,1fr) 420px;
+            }
         }
 
-        .section-box:nth-child(1) {
-            animation-delay: 0.1s;
-        }
+        /* Thanh tóm tắt đáy chỉ dùng trên mobile (ẩn khi thấy được #order-summary) */
+        body{ padding-bottom:120px !important; }
+        @media (max-width:576px){ body{ padding-bottom:150px !important; } }
 
-        .section-box:nth-child(2) {
-            animation-delay: 0.2s;
+        #order-bar{
+            position:fixed; left:0; right:0; bottom:0;
+            background:#fff; border-top:2px solid var(--line);
+            box-shadow:0 -18px 40px rgba(0,0,0,.18); z-index:1040;
         }
+        #order-bar .order-bar__summary{ display:flex; align-items:center; gap:12px; padding:12px 16px; }
+        #order-bar .order-bar__totals{ display:flex; flex-wrap:wrap; gap:12px 20px; font-size:14px; }
+        #order-bar .order-bar__totals .pair{ display:flex; gap:6px; align-items:baseline }
+        #order-bar .order-bar__actions{ display:flex; gap:10px; margin-left:auto }
+        #order-bar .order-bar__details{
+            display:none; border-top:1px solid var(--line);
+            max-height:60vh; overflow:auto; background:var(--gradient-surface);
+        }
+        #order-bar .order-bar__details.open{ display:block; }
 
-        .section-box:nth-child(3) {
-            animation-delay: 0.3s;
-        }
+        /* Ẩn nút “Chi tiết” trên màn rộng (vì đã có aside sticky) */
+        #order-bar-toggle{ display:none }
+        @media (max-width:768px){ #order-bar-toggle{ display:inline-flex } }
 
-        .section-box:nth-child(4) {
-            animation-delay: 0.4s;
-        }
+        /* Khi đang nhìn rõ aside, tự ẩn thanh đáy (sẽ bật/tắt bằng JS/IntersectionObserver) */
+        #order-bar.is-hidden{ display:none !important; }
 
-        /* Enhanced button loading state */
-        .btn.loading {
-            position: relative;
-            color: transparent !important;
-            pointer-events: none;
-        }
+        /* Tăng cảm giác dính của aside khi cuộn */
+        #order-summary::-webkit-scrollbar{ width:10px }
+        #order-summary::-webkit-scrollbar-thumb{ background: linear-gradient(180deg,var(--red),var(--red-dark)); border-radius:8px }
 
-        .btn.loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        button[disabled] {
-            pointer-events: none;
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .btn-outline-primary {
-            background: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            border-radius: var(--border-radius);
-            padding: 12px 24px;
-            font-weight: 600;
-            transition: var(--transition);
-        }
-
-        .btn-outline-primary:hover {
-            background: var(--primary-color);
-            color: white;
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .btn-secondary {
-            background: var(--gray-100);
-            border: 1px solid var(--gray-300);
-            color: var(--gray-700);
-            border-radius: var(--border-radius);
-            padding: 12px 24px;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-
-        .btn-secondary:hover {
-            background: var(--gray-200);
-            border-color: var(--gray-400);
-            transform: translateY(-1px);
-        }
-
-        .navbar {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-hover) 50%, #2a5a8a 100%);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: var(--shadow-lg);
-            position: relative;
-            /* Changed from fixed to relative */
-            width: 100%;
-            z-index: 1040;
-        }
-
-        .ticker {
-            background: linear-gradient(90deg, var(--secondary-color) 0%, #b8e0f8 50%, var(--secondary-color) 100%);
-            color: var(--primary-color);
-            font-weight: 700;
-            position: relative;
-            /* Changed from fixed to relative */
-            width: 100%;
-            z-index: 1050;
-            box-shadow: var(--shadow-sm);
-        }
-
-        .section-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            margin-bottom: 24px;
-            position: relative;
-            padding-bottom: 12px;
-        }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            border-radius: 2px;
-        }
-
-        .section-title i {
-            margin-right: 12px;
-            font-size: 20px;
-            color: var(--secondary-color);
-            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .payment-method input[type="radio"] {
-            width: 20px;
-            height: 20px;
-            accent-color: var(--primary-color);
-        }
-
-        .loading {
-            opacity: 0.7;
-            pointer-events: none;
-            position: relative;
-        }
-
-        .voucher-disabled {
-            opacity: 0.6;
-            pointer-events: none;
-        }
-
-        .voucher-disabled .form-check-input {
-            pointer-events: none;
-        }
-
-        .submit-btn {
-            position: sticky;
-            bottom: 20px;
-            z-index: 10;
-        }
-
-        .text-primary {
-            color: var(--primary-color) !important;
-        }
-
-        .text-secondary {
-            color: var(--gray-600) !important;
-        }
-
-        .text-muted {
-            color: var(--gray-500) !important;
-        }
-
-        .fw-bold {
-            font-weight: 700 !important;
-        }
-
-        .fw-semibold {
-            font-weight: 600 !important;
-        }
-
-        /* Enhanced form control focus states */
-        #add-address-form .form-control:focus {
-            border-color: var(--primary-color) !important;
-            box-shadow: 0 0 0 3px rgba(21, 48, 84, 0.1) !important;
-            outline: none;
-        }
-
-        /* Enhanced button hover effects */
-        #add-address-form button:hover {
-            transform: translateY(-1px);
-            box-shadow: var(--shadow-md) !important;
-        }
-
-        #add-address-form button[onclick="hideAddAddressForm()"]:hover {
-            background: var(--gray-200) !important;
-            border-color: var(--gray-300) !important;
-        }
-
-        /* Enhanced add new address button hover */
-        button[onclick="showAddAddressForm()"]:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg) !important;
-            background: linear-gradient(135deg, #8dd3f7 0%, #6bb8e8 100%) !important;
-        }
-
-        /* Enhanced scrollbar for address list */
-        #address-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        #address-list::-webkit-scrollbar-track {
-            background: var(--gray-100);
-            border-radius: 3px;
-        }
-
-        #address-list::-webkit-scrollbar-thumb {
-            background: var(--primary-color);
-            border-radius: 3px;
-        }
-
-        #address-list::-webkit-scrollbar-thumb:hover {
-            background: #1a3a5f;
-        }
     </style>
 </head>
 
@@ -1036,48 +539,43 @@
         <h1 class="text-3xl font-bold text-gray-800 mb-6">Thanh toán</h1>
         <div th:if="${error}" class="bg-red-100 text-red-700 p-4 rounded mb-4" th:text="${error}"></div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <!-- LEFT -->
-            <div class="lg:col-span-2 space-y-6">
+        <!-- ========== MAIN CONTENT (chỉ còn form, 1 cột) ========== -->
+        <div class="checkout-grid grid grid-cols-1 gap-6">
+            <div class="form-stack space-y-6">
+            <!-- Thông tin khách hàng -->
                 <div class="section-box">
                     <h2 class="section-title mb-4"><i class="fas fa-user mr-2"></i> Thông tin khách hàng</h2>
                     <form id="checkout-form">
                         <div class="mb-4">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ giao hàng</label>
-                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                data-bs-target="#addressModal">
-                                Chọn địa chỉ giao hàng
-                            </button>
                             <input type="hidden" id="addressId" name="addressId" />
                         </div>
+
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div>
                                 <label for="fullName" class="form-label">
-                                    <i class="fas fa-user"></i>
-                                    Họ và tên
+                                    <i class="fas fa-user"></i> Họ và tên
                                 </label>
                                 <input type="text" id="fullName" name="fullName" class="form-control w-full"
-                                    th:value="${nguoiNhan}" required disabled />
+                                       th:value="${nguoiNhan}" required disabled />
                             </div>
                             <div>
                                 <label for="phone" class="form-label">
-                                    <i class="fas fa-phone"></i>
-                                    Số điện thoại
+                                    <i class="fas fa-phone"></i> Số điện thoại
                                 </label>
                                 <input type="tel" id="phone" name="phone" class="form-control w-full"
-                                    th:value="${soDienThoaiNguoiNhan}" required disabled />
+                                       th:value="${soDienThoaiNguoiNhan}" required disabled />
                             </div>
                         </div>
+
                         <div>
                             <label for="address" class="form-label">
-                                <i class="fas fa-map-marker-alt"></i>
-                                Địa chỉ nhận hàng
+                                <i class="fas fa-map-marker-alt"></i> Địa chỉ nhận hàng
                             </label>
                             <input type="text" id="address" name="address" class="form-control w-full"
-                                th:value="${loggedInUser?.chiTietDiaChi}" required disabled />
+                                   th:value="${loggedInUser?.chiTietDiaChi}" required disabled />
                         </div>
 
-                        <!-- hidden region selects for shipping calc -->
+                        <!-- Vùng chọn tỉnh/huyện/xã (ẩn) để tính ship -->
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 mt-4" hidden>
                             <select id="province" class="form-control" required disabled>
                                 <option value="">-- Chọn tỉnh/thành --</option>
@@ -1092,6 +590,7 @@
                     </form>
                 </div>
 
+                <!-- Phương thức vận chuyển (ẩn) -->
                 <div class="section-box" hidden>
                     <h2 class="section-title mb-4"><i class="fas fa-truck mr-2"></i> Phương thức vận chuyển</h2>
                     <select id="shippingMethod" name="shippingMethod" class="form-control w-full" required>
@@ -1100,29 +599,33 @@
                     </select>
                 </div>
 
+                <!-- Phương thức thanh toán -->
                 <div class="section-box">
                     <h2 class="section-title mb-4"><i class="fas fa-credit-card mr-2"></i> Phương thức thanh toán</h2>
                     <div class="payment-method active" data-value="550E8400-E29B-41D4-A716-446655440017">
                         <input type="radio" name="paymentMethod" value="550E8400-E29B-41D4-A716-446655440017" checked>
-                        <span class="ml-2 font-medium">Thanh toán khi nhận hàng (COD)</span>
+                        <span class="ml-2 font-medium">Thanh toán khi nhận hàng</span>
                     </div>
                     <div class="payment-method" data-value="550E8400-E29B-41D4-A716-446655440018">
                         <input type="radio" name="paymentMethod" value="550E8400-E29B-41D4-A716-446655440018">
                         <span class="ml-2 font-medium">Chuyển khoản ngân hàng</span>
                     </div>
-
                 </div>
 
+                <!-- Ghi chú -->
                 <div class="section-box">
                     <h2 class="section-title mb-4"><i class="fas fa-sticky-note mr-2"></i> Ghi chú</h2>
                     <textarea id="note" name="note" class="form-control w-full" rows="4"
-                        placeholder="Ghi chú cho đơn hàng (tùy chọn)"></textarea>
+                              placeholder="Ghi chú cho đơn hàng (tùy chọn)"></textarea>
                 </div>
             </div>
+        </div>
 
-            <!-- RIGHT -->
-            <div class="section-box">
+        <!-- ========== ORDER SUMMARY: di chuyển xuống dưới, ngay trước footer ========== -->
+        <div class="mt-6">
+            <div class="section-box" id="order-summary">
                 <h2 class="section-title mb-4"><i class="fas fa-shopping-bag mr-2"></i> Đơn hàng</h2>
+
                 <div id="order-items" class="space-y-4 mb-6"></div>
 
                 <div class="border-top pt-3">
@@ -1133,36 +636,31 @@
                         <span>Phí vận chuyển:</span><span id="shipping-fee" class="fw-semibold">0 VNĐ</span>
                     </div>
                     <div class="d-flex justify-content-between mb-1 small">
-                        <span>Giảm giá đơn (ORDER):</span><span id="discount-order" class="fw-semibold">0 VNĐ</span>
+                        <span>Giảm giá:</span><span id="discount-order" class="fw-semibold">0 VNĐ</span>
                     </div>
                     <div class="d-flex justify-content-between mb-2 small">
-                        <span>Giảm phí vận chuyển (FREESHIP):</span><span id="discount-ship" class="fw-semibold">0
-                            VNĐ</span>
+                        <span hidden="">Giảm phí vận chuyển:</span><span id="discount-ship" class="fw-semibold" hidden="">0 VNĐ</span>
                     </div>
                     <div class="d-flex justify-content-between fs-5 fw-bold">
                         <span>Tổng tiền:</span><span id="total" class="text-[#153054]">0 VNĐ</span>
                     </div>
                 </div>
 
-                <!-- ========== CHỌN MÃ GIẢM GIÁ (NEW) ========== -->
+                <!-- CHỌN MÃ GIẢM GIÁ -->
                 <div class="mt-4">
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                        <div class="d-flex align-items-center gap-3">
-                            <i class="fas fa-ticket-alt fs-3 text-primary"></i>
-                            <h3 class="fs-5 fw-bold mb-0">Chọn mã giảm giá</h3>
-                        </div>
-                        <button type="button" class="btn btn-primary" onclick="openVoucherModal()">Chọn</button>
+                        <button type="button" class="btn btn-primary" onclick="openVoucherModal()">Mã giảm giá</button>
                     </div>
+
                     <!-- tóm tắt mã đang chọn -->
                     <div id="voucher-summary" class="small text-muted"></div>
 
-                    <!-- Giữ 2 select ẨN để dùng lại applyOrderVoucher/applyShipVoucher -->
+                    <!-- giữ 2 select ẩn -->
                     <select id="order-voucher" hidden>
                         <option value=""></option>
                         <th:block th:each="voucher : ${vouchers}">
                             <option th:if="${voucher.phamViApDung != 'SHIPPING'}" th:value="${voucher.ma}"
-                                th:text="${voucher.ten} + ' (Tối thiểu: ' + ${#numbers.formatDecimal(voucher.giaTriGiamToiThieu, 0, 'COMMA', 0, 'POINT')} + ' VNĐ)'">
-                            </option>
+                                    th:text="${voucher.ten} + ' (Tối thiểu: ' + ${#numbers.formatDecimal(voucher.giaTriGiamToiThieu, 0, 'COMMA', 0, 'POINT')} + ' VNĐ)'"></option>
                         </th:block>
                     </select>
 
@@ -1170,25 +668,21 @@
                         <option value=""></option>
                         <th:block th:each="voucher : ${vouchers}">
                             <option th:if="${voucher.phamViApDung == 'SHIPPING'}" th:value="${voucher.ma}"
-                                th:text="${voucher.ten}">
-                            </option>
+                                    th:text="${voucher.ten}"></option>
                         </th:block>
                     </select>
                 </div>
 
-
                 <button id="submit-order" class="btn btn-primary w-100 mt-4 submit-btn" disabled
-                    onclick="checkOrderButtonStatus()">
+                        onclick="checkOrderButtonStatus()">
                     <i class="fas fa-check-circle me-2"></i> Đặt hàng
                 </button>
 
                 <script>
                     function checkOrderButtonStatus() {
                         if (document.getElementById('submit-order').disabled) {
-                            // Kiểm tra lý do nút bị disabled
                             const fullName = document.getElementById('fullName').value.trim();
                             const address = document.getElementById('address').value.trim();
-
                             if (!fullName || !address) {
                                 Swal.fire({
                                     icon: 'warning',
@@ -1201,7 +695,6 @@
                                     title: 'Đang xử lý...',
                                     text: 'Đang tính phí vận chuyển, vui lòng đợi trong giây lát.'
                                 }).then(() => {
-                                    // Khi người dùng đóng thông báo, thử kích hoạt nút đặt hàng
                                     shippingFeeReady = true;
                                     updateSubmitEnabled();
                                 });
@@ -1209,7 +702,6 @@
                         }
                     }
                 </script>
-
             </div>
         </div>
     </section>
@@ -1390,60 +882,8 @@
                         </div>
                     </div>
 
-
-                    <!-- SHIPPING -->
-                    <div class="mb-3" id="ship-list">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <i class="fas fa-truck"></i>
-                            <span class="fw-bold">Freeship (SHIPPING)</span>
-                        </div>
-
-                        <th:block th:each="v : ${vouchers}">
-                            <th:block th:if="${v.phamViApDung == 'SHIPPING'}">
-                                <label class="voucher-card d-flex align-items-start gap-3 border rounded mb-2 w-100"
-                                    style="cursor:pointer;" th:attr="data-scope=${'SHIPPING'},
-                      data-code=${v.ma},
-                      data-min-order=${v.giaTriGiamToiThieu},
-                      data-loai=${v.loai},
-                      data-giam=${v.giaTriGiam != null ? v.giaTriGiam : 0},
-                      data-cap=${v.giaTriGiamToiDa != null ? v.giaTriGiamToiDa : 0}">
-                                    <div class="flex-grow-1">
-                                        <div class="fw-semibold" th:text="${v.ten}">Tên phiếu</div>
-                                        <div class="text-muted small">
-                                            <span th:text="${
-              v.loai == 'FREESHIP_FULL' ? 'Miễn phí vận chuyển'
-              : (v.loai == 'FREESHIP_CAP'
-                  ? 'Giảm ' + #numbers.formatDecimal(v.giaTriGiamToiDa, 0, 'POINT', 0, 'COMMA') + ' VND'
-                  : 'Giảm phí vận chuyển')
-            }">Mô tả freeship</span>
-                                            • ĐH tối thiểu:
-                                            <span
-                                                th:text="${#numbers.formatDecimal(v.giaTriGiamToiThieu, 0, 'POINT', 0, 'COMMA')}">0</span>
-                                            VND
-                                            • HSD:
-                                            <span th:text="${#temporals.format(v.ngayKetThuc,'d/M/yyyy')}"></span>
-                                            • PTTT:
-                                            <span th:text="${
-              #maps.containsKey(voucherPtttMapById, v.id) ? voucherPtttMapById[v.id]
-              : (#maps.containsKey(voucherPtttMapByMa, v.ma) ? voucherPtttMapByMa[v.ma]
-              : 'Tất cả')
-            }">Tất cả</span>
-                                        </div>
-                                    </div>
-                                    <input class="form-check-input mt-1" type="radio" name="rb-ship" th:value="${v.ma}">
-                                </label>
-                            </th:block>
-                        </th:block>
-                    </div>
-
-
-                    <!-- ORDER -->
                     <!-- ORDER -->
                     <div class="mt-4" id="order-list">
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <i class="fas fa-receipt"></i>
-                            <span class="fw-bold">Mã giảm giá đơn hàng (ORDER)</span>
-                        </div>
 
                         <th:block th:each="v : ${vouchers}">
                             <th:block th:if="${v.phamViApDung != 'SHIPPING'}">
@@ -1500,7 +940,146 @@
     </div>
 
 
+    <div id="order-bar" role="region" aria-label="Tóm tắt đơn hàng" class="d-none">
+        <div class="container order-bar__summary">
+            <button id="order-bar-toggle" class="btn btn-secondary btn-sm" type="button" aria-expanded="false">
+                <i class="fa fa-list"></i><span class="ms-2">Chi tiết</span>
+            </button>
 
+            <div class="order-bar__totals ms-2">
+                <div class="pair"><span>Tạm tính:</span><strong id="ob-subtotal">0&nbsp;VNĐ</strong></div>
+                <div class="pair"><span>Ship:</span><strong id="ob-ship">0&nbsp;VNĐ</strong></div>
+                <div class="pair"><span>Giảm:</span><strong id="ob-discount">0&nbsp;VNĐ</strong></div>
+                <div class="pair"><span>Tổng:</span><strong id="ob-total">0&nbsp;VNĐ</strong></div>
+            </div>
+
+            <div class="order-bar__actions">
+                <button id="order-bar-submit" class="btn btn-primary">
+                    <i class="fas fa-check-circle me-2"></i>Đặt hàng
+                </button>
+            </div>
+        </div>
+
+        <div class="order-bar__details" id="order-bar-details" aria-hidden="true"></div>
+    </div>
+
+    <script>
+        (function(){
+            // --- 1) Đồng bộ dữ liệu từ summary sang thanh đáy ---
+            function syncOrderBar(){
+                const ob = document.getElementById('order-bar');
+                if(!ob) return;
+
+                // Lấy số liệu
+                const subtotal = document.getElementById('subtotal')?.textContent || '0 VNĐ';
+                const ship     = document.getElementById('shipping-fee')?.textContent || '0 VNĐ';
+                const dOrder   = document.getElementById('discount-order')?.textContent || '0 VNĐ';
+                const dShip    = document.getElementById('discount-ship')?.textContent || '0 VNĐ';
+                const total    = document.getElementById('total')?.textContent || '0 VNĐ';
+
+                // Đổ vào bar
+                document.getElementById('ob-subtotal').textContent = subtotal;
+                document.getElementById('ob-ship').textContent     = ship;
+                // gộp giảm
+                try{
+                    const n = s => Number(String(s).replace(/[^\d]/g,''))||0;
+                    const gop = Math.max(0, n(dOrder) + n(dShip));
+                    document.getElementById('ob-discount').textContent =
+                        new Intl.NumberFormat('vi-VN').format(gop) + ' VNĐ';
+                }catch(e){ document.getElementById('ob-discount').textContent = dOrder; }
+                document.getElementById('ob-total').textContent    = total;
+
+                // Render danh sách rút gọn (tối đa 4 item)
+                const list = document.getElementById('order-items');
+                const details = document.getElementById('order-bar-details');
+                if(list && details){
+                    const items = Array.from(list.querySelectorAll('.order-item')).slice(0,4);
+                    details.innerHTML = items.map(it => {
+                        const img = it.querySelector('img')?.getAttribute('src') || '';
+                        const name = it.querySelector('h6')?.textContent || '';
+                        const qty = (it.querySelector('p:nth-of-type(3)')?.textContent || '').replace('Số lượng:','').trim();
+                        const priceLine = it.querySelector('.fw-bold')?.textContent || '';
+                        return `
+            <div class="order-item d-flex align-items-center gap-3">
+              <img class="order-item-img" src="${img}" alt="">
+              <div class="flex-1">
+                <div class="fw-semibold">${name}</div>
+                <div class="small text-muted">SL: ${qty}</div>
+                <div class="fw-bold">${priceLine.replace('Thành tiền:','').trim()}</div>
+              </div>
+            </div>`;
+                    }).join('');
+                }
+
+                // Hiện thanh đáy khi có tổng > 0 (mobile)
+                ob.classList.toggle('d-none', !total || /(^|\D)0(\D|$)/.test(total));
+            }
+
+            // --- 2) Tự ẩn thanh đáy khi aside xuất hiện trong viewport ---
+            function initObserver(){
+                const os = document.getElementById('order-summary');
+                const ob = document.getElementById('order-bar');
+                if(!os || !ob) return;
+
+                const io = new IntersectionObserver(([entry])=>{
+                    // Nếu aside thấy >35% thì ẩn thanh đáy (tránh trùng lặp)
+                    ob.classList.toggle('is-hidden', entry.isIntersecting && entry.intersectionRatio > 0.35 && window.innerWidth >= 992);
+                }, { root: null, rootMargin: '0px 0px -30% 0px', threshold: [0, 0.35, 1] });
+                io.observe(os);
+            }
+
+            // --- 3) Toggle “Chi tiết” + chuyển tiếp click “Đặt hàng” ---
+            function initOrderBarInteractions(){
+                const toggle = document.getElementById('order-bar-toggle');
+                const details = document.getElementById('order-bar-details');
+                const submitBar = document.getElementById('order-bar-submit');
+                if(toggle && details){
+                    toggle.addEventListener('click', ()=>{
+                        const open = !details.classList.contains('open');
+                        details.classList.toggle('open', open);
+                        toggle.setAttribute('aria-expanded', String(open));
+                        details.setAttribute('aria-hidden', String(!open));
+                    });
+                }
+                if(submitBar){
+                    submitBar.addEventListener('click', ()=>{
+                        document.getElementById('submit-order')?.click();
+                    });
+                }
+            }
+
+            // --- 4) Hook vào updateTotal/loadOrderItems để luôn sync ---
+            const _updateTotal = window.updateTotal;
+            window.updateTotal = function(){
+                try { _updateTotal && _updateTotal(); } finally { syncOrderBar(); }
+            };
+
+            const _loadOrderItems = window.loadOrderItems;
+            window.loadOrderItems = async function(){
+                await (_loadOrderItems && _loadOrderItems());
+                syncOrderBar();
+            };
+
+            // Khi đổi voucher / địa chỉ / phương thức thanh toán… cũng sync
+            document.addEventListener('DOMContentLoaded', ()=>{
+                initObserver();
+                initOrderBarInteractions();
+                // lần đầu
+                syncOrderBar();
+
+                // một số hook nhanh
+                ['order-voucher','ship-voucher','shippingMethod','province','district','ward']
+                    .forEach(id => document.getElementById(id)?.addEventListener('change', syncOrderBar));
+                // đề phòng các cập nhật DOM khác
+                const mo = new MutationObserver(syncOrderBar);
+                mo.observe(document.getElementById('order-summary'), { childList:true, subtree:true, characterData:true });
+            });
+
+            // --- 5) Dọn dẹp trùng hàm _num (bạn đang khai báo 2 lần) ---
+            // Gợi ý: giữ 1 bản duy nhất ở trên cùng file:
+            // function _num(x){ const n = Number(String(x ?? 0).replace(/[^\d.]/g,'')); return isFinite(n) ? n : 0; }
+        })();
+    </script>
 
 
 
@@ -2871,7 +2450,7 @@
                 title: 'Xác nhận thanh toán',
                 html: `
             <p><strong>Tổng tiền:</strong> ${formatVND(totalAmount)}</p>
-            <p><strong>Phương thức thanh toán:</strong> ${selectedMethod === '550E8400-E29B-41D4-A716-446655440017' ? 'Thanh toán khi nhận hàng (COD)'
+            <p><strong>Phương thức thanh toán:</strong> ${selectedMethod === '550E8400-E29B-41D4-A716-446655440017' ? 'Thanh toán khi nhận hàng'
                         : selectedMethod === '550E8400-E29B-41D4-A716-446655440018' ? 'Chuyển khoản ngân hàng'
                             : 'Ví điện tử'
                     }</p>
