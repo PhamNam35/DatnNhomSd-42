@@ -253,7 +253,6 @@ public class HoaDonService {
             footer.setAlignment(Element.ALIGN_CENTER);
             footer.setSpacingBefore(20f);
             footer.add(new Phrase("Cảm ơn quý khách đã mua sắm tại Poly Shoe Store!\nVui lòng kiểm tra kỹ thông tin hóa đơn.\n", fontFooter));
-            footer.add(new Phrase("Quét mã QR dưới đây để thực hiện trả hàng:", fontNormal));
             document.add(footer);
 
             String returnUrl = "http://localhost:8080/polyshoe/tra-hang/" + id;
@@ -269,9 +268,6 @@ public class HoaDonService {
                 document.add(qrCode);
             } catch (Exception e) {
                 System.err.println("Không thể tạo mã QR: " + e.getMessage());
-                Paragraph qrError = new Paragraph("Không thể tạo mã QR cho trả hàng.", fontFooter);
-                qrError.setAlignment(Element.ALIGN_CENTER);
-                document.add(qrError);
             }
 
             document.close();
@@ -421,9 +417,7 @@ public class HoaDonService {
                     .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại."));
 
             String currentStatus = getCurrentStatus(hoaDon);
-            if (("Đang vận chuyển".equals(currentStatus) || "Hoàn thành".equals(currentStatus) ||
-                    "Đã trả hàng".equals(currentStatus) || "Đã trả hàng một phần".equals(currentStatus) ||
-                    "Đã đổi hàng".equals(currentStatus)) &&
+            if (("Đang vận chuyển".equals(currentStatus) || "Hoàn thành".equals(currentStatus)) &&
                     !hoaDon.getTrangThai().equals(currentStatus)) {
                 hoaDon.setTrangThai(currentStatus);
                 hoaDon.setNgayThanhToan(LocalDateTime.now());
@@ -523,18 +517,11 @@ public class HoaDonService {
             return "Hoàn thành";
         }
 
-        // Kiểm tra trạng thái trả hàng
         List<ChiTietDonHang> chiTietDonHangs = hoaDon.getDonHang().getChiTietDonHangs();
         long totalItems = chiTietDonHangs.size();
         long returnedItems = chiTietDonHangs.stream()
                 .filter(item -> Boolean.TRUE.equals(item.getTrangThaiHoanTra()))
                 .count();
-
-        if (returnedItems > 0 && returnedItems == totalItems) {
-            return "Đã trả hàng";
-        } else if (returnedItems > 0) {
-            return "Đã trả hàng một phần";
-        }
 
         // Kiểm tra phương thức bán hàng tại quầy
         if ("Tại quầy".equalsIgnoreCase(hoaDon.getDonHang().getPhuongThucBanHang())) {
@@ -558,95 +545,6 @@ public class HoaDonService {
     }
 
     @Transactional
-    public void processExchange(UUID hoaDonId, List<UUID> chiTietDonHangIds, List<UUID> newChiTietSanPhamIds, String lyDoDoiHang) {
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
-                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + hoaDonId));
-
-        // Kiểm tra trạng thái hợp lệ để đổi hàng
-        if (!List.of("Hoàn thành", "Vận chuyển thành công", "Đã trả hàng một phần").contains(hoaDon.getTrangThai())) {
-            throw new IllegalStateException("Hóa đơn phải ở trạng thái 'Hoàn thành', 'Vận chuyển thành công' hoặc 'Đã trả hàng một phần' để thực hiện đổi hàng.");
-        }
-
-        if (chiTietDonHangIds == null || chiTietDonHangIds.isEmpty() || newChiTietSanPhamIds == null || newChiTietSanPhamIds.isEmpty()) {
-            throw new IllegalArgumentException("Danh sách sản phẩm trả hoặc sản phẩm mới không hợp lệ.");
-        }
-
-        if (chiTietDonHangIds.size() != newChiTietSanPhamIds.size()) {
-            throw new IllegalArgumentException("Số lượng sản phẩm trả phải bằng số lượng sản phẩm đổi mới.");
-        }
-
-        BigDecimal tongTienHoan = BigDecimal.ZERO;
-        BigDecimal tongTienMoi = BigDecimal.ZERO;
-
-        try {
-            // Xử lý sản phẩm trả
-            for (UUID chiTietId : chiTietDonHangIds) {
-                ChiTietDonHang chiTiet = chiTietDonHangRepository.findById(chiTietId)
-                        .orElseThrow(() -> new RuntimeException("Chi tiết đơn hàng không tồn tại với ID: " + chiTietId));
-
-                if (Boolean.TRUE.equals(chiTiet.getTrangThaiHoanTra())) {
-                    throw new RuntimeException("Sản phẩm đã được trả trước đó: " + chiTiet.getTenSanPham());
-                }
-
-                chiTiet.setTrangThaiHoanTra(true);
-                chiTiet.setLyDoTraHang(lyDoDoiHang);
-                chiTietDonHangRepository.save(chiTiet);
-
-                ChiTietSanPham chiTietSanPham = chiTietSanPhamRepository.findById(chiTiet.getChiTietSanPham().getId())
-                        .orElseThrow(() -> new RuntimeException("Chi tiết sản phẩm không tồn tại."));
-                int soLuongTra = chiTiet.getSoLuong();
-                chiTietSanPham.setSoLuongTonKho(chiTietSanPham.getSoLuongTonKho() + soLuongTra);
-                chiTietSanPhamRepository.save(chiTietSanPham);
-
-                tongTienHoan = tongTienHoan.add(chiTiet.getThanhTien());
-            }
-
-            // Thêm sản phẩm mới
-            List<ChiTietDonHang> newChiTietDonHangs = new ArrayList<>();
-            for (UUID newChiTietSanPhamId : newChiTietSanPhamIds) {
-                ChiTietSanPham newChiTietSanPham = chiTietSanPhamRepository.findById(newChiTietSanPhamId)
-                        .orElseThrow(() -> new RuntimeException("Chi tiết sản phẩm mới không tồn tại với ID: " + newChiTietSanPhamId));
-
-                if (newChiTietSanPham.getSoLuongTonKho() <= 0) {
-                    throw new RuntimeException("Sản phẩm mới không còn hàng trong kho: " + newChiTietSanPham.getSanPham().getTenSanPham());
-                }
-
-                // Giả sử mỗi sản phẩm đổi có số lượng là 1 (có thể điều chỉnh theo yêu cầu)
-                int soLuongMoi = 1;
-                newChiTietSanPham.setSoLuongTonKho(newChiTietSanPham.getSoLuongTonKho() - soLuongMoi);
-                chiTietSanPhamRepository.save(newChiTietSanPham);
-
-                ChiTietDonHang newChiTiet = new ChiTietDonHang();
-                newChiTiet.setDonHang(hoaDon.getDonHang());
-                newChiTiet.setChiTietSanPham(newChiTietSanPham);
-                newChiTiet.setTenSanPham(newChiTietSanPham.getSanPham().getTenSanPham());
-                newChiTiet.setSoLuong(soLuongMoi);
-                newChiTiet.setGia(newChiTietSanPham.getGia());
-                newChiTiet.setThanhTien(newChiTietSanPham.getGia().multiply(new BigDecimal(soLuongMoi)));
-                newChiTiet.setTrangThaiHoanTra(false);
-                chiTietDonHangRepository.save(newChiTiet);
-
-                newChiTietDonHangs.add(newChiTiet);
-                tongTienMoi = tongTienMoi.add(newChiTiet.getThanhTien());
-            }
-
-            // Cập nhật tổng tiền hóa đơn
-            hoaDon.setTongTien(hoaDon.getTongTien().subtract(tongTienHoan).add(tongTienMoi));
-
-            // Xác định trạng thái mới
-            String trangThaiMoi = "Đã đổi hàng";
-            String ghiChu = "Đổi hàng: " + lyDoDoiHang + ". Tổng tiền trả: " + formatCurrency(tongTienHoan) + ". Tổng tiền sản phẩm mới: " + formatCurrency(tongTienMoi);
-
-            // Cập nhật trạng thái hóa đơn
-            updateStatus(hoaDonId, trangThaiMoi, ghiChu, true);
-
-        } catch (Exception e) {
-            System.err.println("Lỗi trong processExchange: " + e.getMessage());
-            throw e;
-        }
-    }
-
-    @Transactional
     public void cancelOrder(UUID hoaDonId, String ghiChu) {
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + hoaDonId));
@@ -667,180 +565,6 @@ public class HoaDonService {
         }
     }
 
-    @Transactional
-    public void processReturn(UUID hoaDonId, List<UUID> chiTietDonHangIds, String lyDoTraHang) {
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
-                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + hoaDonId));
-        if (!"Hoàn thành".equals(hoaDon.getTrangThai()) && !"Vận chuyển thành công".equals(hoaDon.getTrangThai())
-                && !"Đã trả hàng một phần".equals(hoaDon.getTrangThai())) {
-            throw new IllegalStateException("Hóa đơn phải ở trạng thái 'Hoàn thành', 'Vận chuyển thành công' hoặc 'Đã trả hàng một phần' để thực hiện trả hàng.");
-        }
-
-        if (chiTietDonHangIds == null || chiTietDonHangIds.isEmpty()) {
-            throw new IllegalArgumentException("Danh sách sản phẩm trả không hợp lệ.");
-        }
-
-        BigDecimal tongTienHangTra = BigDecimal.ZERO; // Tổng tiền hàng trả (giá gốc)
-        BigDecimal tongTienGocHoaDon = BigDecimal.ZERO; // Tổng tiền hàng gốc của hóa đơn
-
-        try {
-            // Tính tổng tiền hàng gốc của hóa đơn (để tính tỷ lệ)
-            for (ChiTietDonHang chiTiet : hoaDon.getDonHang().getChiTietDonHangs()) {
-                tongTienGocHoaDon = tongTienGocHoaDon.add(chiTiet.getThanhTien());
-            }
-
-            for (UUID chiTietId : chiTietDonHangIds) {
-                ChiTietDonHang chiTiet = chiTietDonHangRepository.findById(chiTietId)
-                        .orElseThrow(() -> new RuntimeException("Chi tiết đơn hàng không tồn tại với ID: " + chiTietId));
-
-                if (Boolean.TRUE.equals(chiTiet.getTrangThaiHoanTra())) {
-                    throw new RuntimeException("Sản phẩm đã được trả trước đó: " + chiTiet.getTenSanPham());
-                }
-
-                chiTiet.setTrangThaiHoanTra(true);
-                chiTiet.setLyDoTraHang(lyDoTraHang);
-                chiTietDonHangRepository.save(chiTiet);
-
-                ChiTietSanPham chiTietSanPham = chiTietSanPhamRepository.findById(chiTiet.getChiTietSanPham().getId())
-                        .orElseThrow(() -> new RuntimeException("Chi tiết sản phẩm không tồn tại."));
-                int soLuongTra = chiTiet.getSoLuong();
-                chiTietSanPham.setSoLuongTonKho(chiTietSanPham.getSoLuongTonKho() + soLuongTra);
-                chiTietSanPhamRepository.save(chiTietSanPham);
-
-                // Cộng dồn tổng tiền hàng trả
-                tongTienHangTra = tongTienHangTra.add(chiTiet.getThanhTien());
-            }
-
-            // Tính tỷ lệ hoàn trả
-            BigDecimal tyLeHoanTra = BigDecimal.ZERO;
-            if (tongTienGocHoaDon.compareTo(BigDecimal.ZERO) > 0) {
-                tyLeHoanTra = tongTienHangTra.divide(tongTienGocHoaDon, 4, RoundingMode.HALF_UP);
-            }
-
-            // Tính giảm giá tương ứng với sản phẩm hoàn trả
-            BigDecimal tienGiamHoaDon = hoaDon.getTienGiam() != null ? hoaDon.getTienGiam() : BigDecimal.ZERO;
-            BigDecimal giamGiaHoanTra = tienGiamHoaDon.multiply(tyLeHoanTra).setScale(0, RoundingMode.HALF_UP);
-
-            // Tổng tiền hoàn thực tế = Tiền hàng trả - Giảm giá tương ứng
-            BigDecimal tongTienHoanThucTe = tongTienHangTra.subtract(giamGiaHoanTra);
-
-            // Đảm bảo không âm
-            if (tongTienHoanThucTe.compareTo(BigDecimal.ZERO) < 0) {
-                tongTienHoanThucTe = BigDecimal.ZERO;
-            }
-
-            List<ChiTietDonHang> chiTietDonHangs = hoaDon.getDonHang().getChiTietDonHangs();
-            long totalItems = chiTietDonHangs.size();
-            long returnedItems = chiTietDonHangs.stream()
-                    .filter(item -> Boolean.TRUE.equals(item.getTrangThaiHoanTra()))
-                    .count();
-
-            // Cập nhật tổng tiền hóa đơn (trừ đi tiền hoàn thực tế)
-            hoaDon.setTongTien(hoaDon.getTongTien().subtract(tongTienHoanThucTe));
-
-            String trangThaiTraHang = returnedItems == totalItems ? "Đã trả hàng" : "Đã trả hàng một phần";
-            String ghiChu = "Lý do trả hàng: " + lyDoTraHang +
-                    ". Tổng tiền hàng trả: " + formatCurrency(tongTienHangTra) +
-                    ". Giảm giá tương ứng: " + formatCurrency(giamGiaHoanTra) +
-                    ". Tổng tiền hoàn trả thực tế: " + formatCurrency(tongTienHoanThucTe);
-
-            updateStatus(hoaDonId, trangThaiTraHang, ghiChu, true);
-
-            // Xử lý hoàn tiền vào ví (nếu có)
-            if (tongTienHoanThucTe.compareTo(BigDecimal.ZERO) > 0) {
-                String pttt = hoaDon.getPhuongThucThanhToan() != null
-                        ? hoaDon.getPhuongThucThanhToan().getTenPhuongThuc().trim()
-                        : "";
-            }
-
-        } catch (Exception e) {
-            System.err.println("Lỗi trong processReturn: " + e.getMessage());
-            throw e; // Ném lại ngoại lệ để rollback giao dịch
-        }
-    }
-
-    @Transactional
-    public void processReturnKH(UUID hoaDonId, List<UUID> chiTietDonHangIds, String lyDoTraHang) {
-        HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
-                .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại với ID: " + hoaDonId));
-        if (!List.of("Hoàn thành", "Vận chuyển thành công", "Đã trả hàng một phần").contains(hoaDon.getTrangThai())) {
-            throw new IllegalStateException("Hóa đơn phải ở trạng thái 'Hoàn thành', 'Vận chuyển thành công' hoặc 'Đã trả hàng một phần' để thực hiện trả hàng.");
-        }
-
-        if (chiTietDonHangIds == null || chiTietDonHangIds.isEmpty()) {
-            throw new IllegalArgumentException("Danh sách sản phẩm trả không hợp lệ.");
-        }
-
-        BigDecimal tongTienHangTra = BigDecimal.ZERO;
-        BigDecimal tongTienGocHoaDon = BigDecimal.ZERO;
-
-        try {
-            // Tính tổng tiền hàng gốc của hóa đơn
-            for (ChiTietDonHang chiTiet : hoaDon.getDonHang().getChiTietDonHangs()) {
-                tongTienGocHoaDon = tongTienGocHoaDon.add(chiTiet.getThanhTien());
-            }
-
-            for (UUID chiTietId : chiTietDonHangIds) {
-                ChiTietDonHang chiTiet = chiTietDonHangRepository.findById(chiTietId)
-                        .orElseThrow(() -> new RuntimeException("Chi tiết đơn hàng không tồn tại với ID: " + chiTietId));
-
-                if (Boolean.TRUE.equals(chiTiet.getTrangThaiHoanTra())) {
-                    throw new RuntimeException("Sản phẩm đã được trả trước đó: " + chiTiet.getTenSanPham());
-                }
-
-                chiTiet.setTrangThaiHoanTra(true);
-                chiTiet.setLyDoTraHang(lyDoTraHang);
-                chiTietDonHangRepository.save(chiTiet);
-
-//                ChiTietSanPham chiTietSanPham = chiTietSanPhamRepository.findById(chiTiet.getChiTietSanPham().getId())
-//                        .orElseThrow(() -> new RuntimeException("Chi tiết sản phẩm không tồn tại."));
-//                int soLuongTra = chiTiet.getSoLuong();
-//                chiTietSanPham.setSoLuongTonKho(chiTietSanPham.getSoLuongTonKho() + soLuongTra);
-//                chiTietSanPhamRepository.save(chiTietSanPham);
-
-
-                tongTienHangTra = tongTienHangTra.add(chiTiet.getThanhTien());
-            }
-
-            // Tính tỷ lệ hoàn trả
-            BigDecimal tyLeHoanTra = BigDecimal.ZERO;
-            if (tongTienGocHoaDon.compareTo(BigDecimal.ZERO) > 0) {
-                tyLeHoanTra = tongTienHangTra.divide(tongTienGocHoaDon, 4, RoundingMode.HALF_UP);
-            }
-
-            // Tính giảm giá tương ứng
-            BigDecimal tienGiamHoaDon = hoaDon.getTienGiam() != null ? hoaDon.getTienGiam() : BigDecimal.ZERO;
-            BigDecimal giamGiaHoanTra = tienGiamHoaDon.multiply(tyLeHoanTra).setScale(0, RoundingMode.HALF_UP);
-
-            // Tổng tiền hoàn thực tế
-            BigDecimal tongTienHoanThucTe = tongTienHangTra.subtract(giamGiaHoanTra);
-            if (tongTienHoanThucTe.compareTo(BigDecimal.ZERO) < 0) {
-                tongTienHoanThucTe = BigDecimal.ZERO;
-            }
-
-            // Cập nhật tổng tiền hóa đơn (chưa trừ ngay, chờ admin xác nhận)
-            List<ChiTietDonHang> chiTietDonHangs = hoaDon.getDonHang().getChiTietDonHangs();
-            long totalItems = chiTietDonHangs.size();
-            long returnedItems = chiTietDonHangs.stream()
-                    .filter(item -> Boolean.TRUE.equals(item.getTrangThaiHoanTra()))
-                    .count();
-
-            String trangThaiTraHang = returnedItems == totalItems ? "Đã trả hàng" : "Đã trả hàng một phần";
-            String ghiChu = "Yêu cầu trả hàng: " + lyDoTraHang +
-                    ". Tổng tiền hàng trả: " + formatCurrency(tongTienHangTra) +
-                    ". Giảm giá tương ứng: " + formatCurrency(giamGiaHoanTra) +
-                    ". Tổng tiền hoàn trả thực tế: " + formatCurrency(tongTienHoanThucTe);
-
-            // Cập nhật trạng thái hóa đơn
-            updateStatus(hoaDonId, trangThaiTraHang, ghiChu, true);
-
-
-        } catch (Exception e) {
-            System.err.println("Lỗi trong processReturn: " + e.getMessage());
-            throw e;
-        }
-    }
-
     public List<ChiTietDonHang> getReturnableItems(UUID hoaDonId) {
         HoaDon hoaDon = hoaDonRepository.findById(hoaDonId)
                 .orElseThrow(() -> new RuntimeException("Hóa đơn không tồn tại."));
@@ -852,16 +576,6 @@ public class HoaDonService {
     private void validateTransition(String oldStatus, String newStatus, String salesMethod) {
         String o = oldStatus == null ? "Chưa xác nhận" : oldStatus;
 
-        // ✅ CHO PHÉP TRẢ HÀNG (mọi luồng)
-        // Từ: "Hoàn thành", "Vận chuyển thành công" hoặc đã "Đã trả hàng một phần"
-        // Sang: "Đã trả hàng" hoặc "Đã trả hàng một phần"
-        if ("Đã trả hàng".equals(newStatus) || "Đã trả hàng một phần".equals(newStatus)) {
-            if (List.of("Hoàn thành", "Vận chuyển thành công", "Đã trả hàng một phần").contains(o)) {
-                return; // hợp lệ -> không kiểm tra các rule khác nữa
-            }
-            throw new IllegalStateException("Không thể chuyển sang '" + newStatus + "' từ trạng thái: " + o);
-        }
-
         // Giữ nguyên các rule hiện có bên dưới
         if ("Hủy đơn hàng".equals(newStatus)) {
             if (List.of("Chưa xác nhận", "Đã xác nhận", "Đã xác nhận Online", "Đang xử lý Online", "Đang vận chuyển").contains(o)) {
@@ -870,16 +584,8 @@ public class HoaDonService {
             throw new IllegalStateException("Không thể hủy từ trạng thái: " + o);
         }
 
-        if ("Đã đổi hàng".equals(newStatus)) {
-            if (List.of("Hoàn thành", "Vận chuyển thành công", "Đã trả hàng một phần").contains(o)) {
-                return;
-            }
-            throw new IllegalStateException("Không thể chuyển sang 'Đã đổi hàng' từ trạng thái: " + o);
-        }
-
         if ("Tại quầy".equalsIgnoreCase(salesMethod)) {
             if (("Chưa xác nhận".equals(o) && "Hoàn thành".equals(newStatus)) || "Hoàn thành".equals(newStatus)) return;
-            if ("Hoàn thành".equals(o) && List.of("Đã trả hàng", "Đã trả hàng một phần").contains(newStatus)) return;
             throw new IllegalStateException("Luồng Tại quầy không hỗ trợ chuyển từ " + o + " -> " + newStatus);
         }
 
@@ -912,9 +618,6 @@ public class HoaDonService {
             case "Vận chuyển thành công" -> "da_giao";
             case "Hoàn thành" -> "hoan_thanh";
             case "Hủy đơn hàng" -> "huy";
-            case "Đã đổi hàng" -> "da_doi_hang";
-            case "Đã trả hàng" -> "da_tra_hang";
-            case "Đã trả hàng một phần" -> "da_tra_hang_mot_phan";
             default -> throw new IllegalArgumentException("Trạng thái hóa đơn không hợp lệ: " + invoiceStatus);
         };
     }
@@ -927,7 +630,7 @@ public class HoaDonService {
 
         hd.setTrangThai(newStatus);
         hd.setGhiChu(ghiChu);
-        if (List.of("Hoàn thành", "Hủy đơn hàng", "Vận chuyển thành công", "Đã đổi hàng").contains(newStatus)) {
+        if (List.of("Hoàn thành", "Hủy đơn hàng", "Vận chuyển thành công").contains(newStatus)) {
             hd.setNgayThanhToan(LocalDateTime.now());
         }
 
@@ -983,14 +686,6 @@ public class HoaDonService {
                 case "Hủy đơn hàng":
                     tieuDe = "Đơn hàng đã bị hủy";
                     noiDung = "Đơn " + ma + " đã bị hủy. " + (ghiChu != null ? ghiChu : "");
-                    break;
-                case "Đã đổi hàng":
-                    tieuDe = "Đơn hàng của bạn đã được đổi hàng";
-                    noiDung = "Đơn " + ma + " đã được đổi hàng thành công. " + (ghiChu != null ? ghiChu : "");
-                    break;
-                case "Chờ xử lý đổi hàng":
-                    tieuDe = "Yêu cầu đổi hàng của bạn đang chờ xử lý";
-                    noiDung = "Đơn " + ma + " đã gửi yêu cầu đổi hàng. " + (ghiChu != null ? ghiChu : "");
                     break;
                 default:
                     tieuDe = "Cập nhật đơn hàng";
