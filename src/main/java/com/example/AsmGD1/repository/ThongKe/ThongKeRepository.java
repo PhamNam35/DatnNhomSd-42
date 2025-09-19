@@ -19,35 +19,18 @@ import java.util.UUID;
 @Repository
 public interface ThongKeRepository extends JpaRepository<ThongKe, UUID> {
 
-    // ========================= DOANH THU TỔNG (HT ∪ ĐĐH ∪ TRMP) =========================
+    /* ========================= DOANH THU (CHỈ HOÀN THÀNH) ========================= */
     @Query(value = """
-WITH ht AS (  -- Hoàn thành
-  SELECT DISTINCT hd.id_don_hang AS id_dh
+WITH eligible AS (  -- chỉ đơn có lịch sử HOÀN THÀNH trong khoảng
+  SELECT DISTINCT dh.id AS id_dh
   FROM hoa_don hd
-  WHERE COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) >= :start
-    AND COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) <  :end
-    AND UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'HOÀN THÀNH%'
+  JOIN don_hang dh ON dh.id = hd.id_don_hang
+  JOIN lich_su_hoa_don ls ON ls.id_hoa_don = hd.id
+  WHERE ls.thoi_gian >= :start
+    AND ls.thoi_gian <  :end
+    AND UPPER(REPLACE(REPLACE(ls.trang_thai COLLATE Vietnamese_100_CI_AI_SC_UTF8, N'_', N''), N' ', N'')) = N'HOANTHANH'
 ),
-ddh AS (      -- Đã đổi hàng
-  SELECT DISTINCT hd.id_don_hang AS id_dh
-  FROM hoa_don hd
-  WHERE COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) >= :start
-    AND COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) <  :end
-    AND UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'ĐÃ ĐỔI HÀNG%'
-),
-trmp AS (     -- Đã trả hàng một phần  ✅ THÊM
-  SELECT DISTINCT hd.id_don_hang AS id_dh
-  FROM hoa_don hd
-  WHERE COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) >= :start
-    AND COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) <  :end
-    AND UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'ĐÃ TRẢ HÀNG MỘT PHẦN%'
-),
-eligible AS ( -- gộp
-  SELECT id_dh FROM ht
-  UNION SELECT id_dh FROM ddh
-  UNION SELECT id_dh FROM trmp
-),
-lines_all AS ( -- tổng hàng ban đầu (đã gồm giảm theo chiến dịch nếu ct.thanh_tien có)
+lines_all AS (
   SELECT ct.id_don_hang AS id_dh,
          SUM(COALESCE(ct.thanh_tien,
              CAST(ct.so_luong AS decimal(18,6)) * CAST(ct.gia AS decimal(18,6))
@@ -55,7 +38,7 @@ lines_all AS ( -- tổng hàng ban đầu (đã gồm giảm theo chiến dịch
   FROM chi_tiet_don_hang ct
   GROUP BY ct.id_don_hang
 ),
-lines_kept AS ( -- phần còn giữ (không trả)
+lines_kept AS (
   SELECT ct.id_don_hang AS id_dh,
          SUM(COALESCE(ct.thanh_tien,
              CAST(ct.so_luong AS decimal(18,6)) * CAST(ct.gia AS decimal(18,6))
@@ -64,14 +47,14 @@ lines_kept AS ( -- phần còn giữ (không trả)
   WHERE (ct.trang_thai_hoan_tra = 0 OR ct.trang_thai_hoan_tra IS NULL)
   GROUP BY ct.id_don_hang
 ),
-order_disc AS ( -- tổng ORDER voucher của đơn
+order_disc AS (
   SELECT v.id_don_hang AS id_dh,
          SUM(CAST(v.gia_tri_giam AS decimal(18,6))) AS disc_total
   FROM don_hang_phieu_giam_gia v
   WHERE UPPER(v.loai_giam_gia) = N'ORDER'
   GROUP BY v.id_don_hang
 ),
-per_order AS ( -- tổng hợp theo đơn
+per_order AS (
   SELECT e.id_dh,
          COALESCE(k.merch_kept, 0) AS merch_kept,
          COALESCE(a.merch_all, 0)  AS merch_all,
@@ -93,7 +76,7 @@ FROM per_order p
     BigDecimal tinhDoanhThuTheoHoaDon(@Param("start") LocalDateTime start,
                                       @Param("end")   LocalDateTime end);
 
-    // ========================= (CÁC HÀM KHÁC KHÔNG LIÊN QUAN DOANH THU) =========================
+    /* ========================= ĐẾM THEO HOÀN THÀNH ========================= */
 
     @Query(value = """
         SELECT CAST(COUNT(DISTINCT hd.id) AS int)
@@ -119,6 +102,21 @@ WHERE ls.thoi_gian >= :start
 """, nativeQuery = true)
     Integer demSanPhamTheoHoaDon(@Param("start") LocalDateTime start,
                                  @Param("end")   LocalDateTime end);
+
+    /* Đếm KH duy nhất theo các đơn Hoàn thành trong khoảng */
+    @Query(value = """
+SELECT CAST(COUNT(DISTINCT dh.id_nguoi_dung) AS int)
+FROM hoa_don hd
+JOIN don_hang dh ON dh.id = hd.id_don_hang
+JOIN lich_su_hoa_don ls ON ls.id_hoa_don = hd.id
+WHERE ls.thoi_gian >= :start
+  AND ls.thoi_gian <  :end
+  AND UPPER(REPLACE(REPLACE(ls.trang_thai COLLATE Vietnamese_100_CI_AI_SC_UTF8, N'_', N''), N' ', N'')) = N'HOANTHANH'
+""", nativeQuery = true)
+    Integer demKhachHangHoanThanh(@Param("start") LocalDateTime start,
+                                  @Param("end")   LocalDateTime end);
+
+    /* ========================= TOP BÁN CHẠY & TỒN KHO ========================= */
 
     @Query("""
     SELECT new com.example.AsmGD1.dto.ThongKe.SanPhamBanChayDTO(
@@ -171,21 +169,7 @@ WHERE ls.thoi_gian >= :start
     """)
     Page<SanPhamTonKhoThapDTO> laySanPhamTonKhoThap(@Param("threshold") int threshold, Pageable pageable);
 
-    // ========================= NHÃN NGÀY (HT ∪ ĐĐH ∪ TRMP) =========================
-    @Query(value = """
-SELECT DISTINCT CAST(COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) AS date) AS d
-FROM hoa_don hd
-WHERE COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) >= :start
-  AND COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) <  :end
-  AND (
-    UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'HOÀN THÀNH%'
-    OR UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'ĐÃ ĐỔI HÀNG%'
-    OR UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'ĐÃ TRẢ HÀNG MỘT PHẦN%'  -- ✅ THÊM
-  )
-ORDER BY d
-""", nativeQuery = true)
-    List<LocalDate> layNhanBieuDoTheoHoaDon(@Param("start") LocalDateTime start,
-                                            @Param("end")   LocalDateTime end);
+    /* ========================= NHÃN NGÀY & SỐ LƯỢNG (Hoàn thành) ========================= */
 
     @Query(value = """
         SELECT CAST(COUNT(DISTINCT hd.id) AS int)
@@ -207,6 +191,8 @@ WHERE CAST(ls.thoi_gian AS date) = :date
   AND (ct.trang_thai_hoan_tra = 0 OR ct.trang_thai_hoan_tra IS NULL)
 """, nativeQuery = true)
     Integer laySoSanPhamTheoNgay(@Param("date") LocalDate date);
+
+    /* ========================= TẤT CẢ TRẠNG THÁI (cho pie chart) ========================= */
 
     @Query("""
         SELECT ls.trangThai, COUNT(ls)
@@ -235,20 +221,17 @@ WHERE CAST(ls.thoi_gian AS date) = :date
     List<Object[]> thongKeSoHoaDonTheoNgay(@Param("start") LocalDateTime start,
                                            @Param("end")   LocalDateTime end);
 
-    // ========================= DOANH THU THEO NGÀY (HT ∪ ĐĐH ∪ TRMP) =========================
+    /* ========================= DOANH THU THEO NGÀY (HT) ========================= */
     @Query(value = """
 WITH eligible AS (
   SELECT dh.id AS id_dh,
-         CAST(COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) AS date) AS d
+         CAST(ls.thoi_gian AS date) AS d
   FROM hoa_don hd
   JOIN don_hang dh ON dh.id = hd.id_don_hang
-  WHERE COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) >= :start
-    AND COALESCE(hd.ngay_thanh_toan, hd.ngay_tao) <  :end
-    AND (
-      UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'HOÀN THÀNH%'
-      OR UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'ĐÃ ĐỔI HÀNG%'
-      OR UPPER(LTRIM(RTRIM(hd.trang_thai)) COLLATE Vietnamese_100_CI_AI_SC_UTF8) LIKE N'ĐÃ TRẢ HÀNG MỘT PHẦN%'  -- ✅ THÊM
-    )
+  JOIN lich_su_hoa_don ls ON ls.id_hoa_don = hd.id
+  WHERE ls.thoi_gian >= :start
+    AND ls.thoi_gian <  :end
+    AND UPPER(REPLACE(REPLACE(ls.trang_thai COLLATE Vietnamese_100_CI_AI_SC_UTF8, N'_', N''), N' ', N'')) = N'HOANTHANH'
 ),
 lines_all AS (
   SELECT ct.id_don_hang AS id_dh,

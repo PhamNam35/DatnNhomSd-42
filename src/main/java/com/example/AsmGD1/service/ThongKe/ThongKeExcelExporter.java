@@ -15,6 +15,106 @@ import java.util.Map;
 @Service
 public class ThongKeExcelExporter {
 
+    /* =====================================
+       BẢN NHẸ: 4 KPI + TRẠNG THÁI ĐƠN HÀNG
+       ===================================== */
+    public byte[] exportThongKeLite(
+            String boLoc,
+            LocalDate ngayBatDau,
+            LocalDate ngayKetThuc,
+            long sumCustomers,
+            long sumProducts,
+            long sumOrders,
+            long sumRevenue,
+            Map<String, Double> trangThaiPercentMap
+    ) {
+        try (Workbook wb = new XSSFWorkbook(); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+
+            // Styles
+            DataFormat df = wb.createDataFormat();
+
+            Font bold = wb.createFont(); bold.setBold(true);
+            CellStyle header = wb.createCellStyle();
+            header.setFont(bold);
+            header.setFillForegroundColor(IndexedColors.LIGHT_CORNFLOWER_BLUE.getIndex());
+            header.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            header.setBorderBottom(BorderStyle.THIN);
+            header.setBorderTop(BorderStyle.THIN);
+            header.setBorderLeft(BorderStyle.THIN);
+            header.setBorderRight(BorderStyle.THIN);
+
+            CellStyle number  = wb.createCellStyle(); number.setDataFormat(df.getFormat("#,##0"));
+            CellStyle currency= wb.createCellStyle(); currency.setDataFormat(df.getFormat("#,##0"));
+            CellStyle percent = wb.createCellStyle(); percent.setDataFormat(df.getFormat("0.0%"));
+
+            // Sheet 0: Bộ lọc
+            Sheet s0 = wb.createSheet("Bo loc");
+            Row r0 = s0.createRow(0);
+            Cell c00 = r0.createCell(0); c00.setCellValue("Bộ lọc"); c00.setCellStyle(header);
+            Row r2 = s0.createRow(2);
+            r2.createCell(0).setCellValue("Kiểu bộ lọc");
+            r2.createCell(1).setCellValue(boLoc);
+            Row r3 = s0.createRow(3);
+            r3.createCell(0).setCellValue("Ngày bắt đầu");
+            r3.createCell(1).setCellValue(ngayBatDau != null ? ngayBatDau.toString() : "");
+            Row r4 = s0.createRow(4);
+            r4.createCell(0).setCellValue("Ngày kết thúc");
+            r4.createCell(1).setCellValue(ngayKetThuc != null ? ngayKetThuc.toString() : "");
+            autosize(s0, 0, 1);
+
+            // Sheet 1: Tổng quan – 4 KPI
+            Sheet s1 = wb.createSheet("Tong quan");
+            Row h1 = s1.createRow(0);
+            String[] cols1 = {"Chỉ tiêu", "Giá trị"};
+            for (int i = 0; i < cols1.length; i++) {
+                Cell c = h1.createCell(i); c.setCellValue(cols1[i]); c.setCellStyle(header);
+            }
+            Object[][] kpis = {
+                    {"Khách hàng", sumCustomers},
+                    {"Sản phẩm",   sumProducts},
+                    {"Đơn hàng",   sumOrders},
+                    {"Tổng doanh thu (VND)", sumRevenue}
+            };
+            for (int i = 0; i < kpis.length; i++) {
+                Row r = s1.createRow(i + 1);
+                r.createCell(0).setCellValue(String.valueOf(kpis[i][0]));
+                Cell v = r.createCell(1);
+                v.setCellValue(((Number)kpis[i][1]).doubleValue());
+                v.setCellStyle(i == 3 ? currency : number);
+            }
+            autosize(s1, 0, 1);
+
+            // Sheet 2: Trạng thái đơn hàng – %
+            Sheet s2 = wb.createSheet("Trang thai don");
+            Row h2 = s2.createRow(0);
+            String[] cols2 = {"Trạng thái", "Tỷ lệ (%)"};
+            for (int i = 0; i < cols2.length; i++) {
+                Cell c = h2.createCell(i); c.setCellValue(cols2[i]); c.setCellStyle(header);
+            }
+            int row = 1;
+            if (trangThaiPercentMap != null) {
+                for (Map.Entry<String, Double> e : trangThaiPercentMap.entrySet()) {
+                    Row rr = s2.createRow(row++);
+                    rr.createCell(0).setCellValue(e.getKey());
+                    Cell v = rr.createCell(1);
+                    double pct = (e.getValue() == null ? 0.0 : e.getValue()) / 100.0; // 65.2 -> 0.652
+                    v.setCellValue(pct);
+                    v.setCellStyle(percent);
+                }
+            }
+            autosize(s2, 0, 1);
+
+            wb.write(out);
+            return out.toByteArray();
+        } catch (Exception e) {
+            throw new RuntimeException("Xuất Excel thất bại: " + e.getMessage(), e);
+        }
+    }
+
+    /* ======================================================
+       BẢN ĐẦY ĐỦ (giữ nguyên code cũ của bạn – không sửa)
+       Nếu nơi khác còn dùng, vẫn hoạt động bình thường.
+       ====================================================== */
     public byte[] exportThongKe(
             String boLoc,
             LocalDate ngayBatDau,
@@ -47,9 +147,8 @@ public class ThongKeExcelExporter {
             CellStyle percent = wb.createCellStyle();
             percent.setDataFormat(df.getFormat("0.0%"));
 
-            // ===== Sheet 0: Bộ lọc (đảm bảo luôn createCell trước khi set) =====
+            // ===== Sheet 0: Bộ lọc =====
             Sheet s0 = wb.createSheet("Bo loc");
-
             Row r0 = s0.createRow(0);
             Cell c00 = r0.createCell(0);
             c00.setCellValue("Bộ lọc");

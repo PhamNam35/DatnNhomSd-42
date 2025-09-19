@@ -8,7 +8,6 @@ import com.example.AsmGD1.repository.ThongKe.ThongKeRepository;
 import com.example.AsmGD1.service.BanHang.DonHangService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +30,19 @@ public class ThongKeService {
     @Autowired
     private DonHangService donHangService;
 
+    /* ==== SỐ TỔNG QUAN CHO 4 Ô – CHỈ HOÀN THÀNH ==== */
+    public Map<String, Object> layTongQuanHoanThanh(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+        LocalDateTime start = ngayBatDau.atStartOfDay();
+        LocalDateTime end   = ngayKetThuc.atTime(LocalTime.MAX);
+        Map<String, Object> m = new HashMap<>();
+        m.put("khach",   defaultInteger(thongKeRepository.demKhachHangHoanThanh(start, end)));
+        m.put("sanPham", defaultInteger(thongKeRepository.demSanPhamTheoHoaDon(start, end)));
+        m.put("don",     defaultInteger(thongKeRepository.demHoaDonTheoKhoangThoiGian(start, end)));
+        m.put("doanhThu", defaultBigDecimal(thongKeRepository.tinhDoanhThuTheoHoaDon(start, end)));
+        return m;
+    }
+
+    /* ==== KHỐI TỔNG HỢP (giữ nguyên logic hiện tại) ==== */
     public ThongKeDoanhThuDTO layThongKeDoanhThu(String boLoc, LocalDate ngayBatDau, LocalDate ngayKetThuc) {
         ThongKeDoanhThuDTO thongKe = new ThongKeDoanhThuDTO();
         LocalDate homNay = LocalDate.now();
@@ -139,120 +151,11 @@ public class ThongKeService {
         return page;
     }
 
-    public List<String> layNhanBieuDo(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
-        List<LocalDate> days = thongKeRepository.layNhanBieuDoTheoHoaDon(
-                ngayBatDau.atStartOfDay(), ngayKetThuc.atTime(LocalTime.MAX));
-        return days.stream().map(LocalDate::toString).collect(Collectors.toList());
-    }
-
-    public List<Integer> layDonHangBieuDo(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
-        List<LocalDate> days = thongKeRepository.layNhanBieuDoTheoHoaDon(
-                ngayBatDau.atStartOfDay(), ngayKetThuc.atTime(LocalTime.MAX));
-        List<Integer> result = new ArrayList<>();
-        for (LocalDate day : days) {
-            Integer count = thongKeRepository.laySoHoaDonTheoNgay(day);
-            result.add(count != null ? count : 0);
-        }
-        return result;
-    }
-
-    public List<Integer> laySanPhamBieuDo(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
-        List<LocalDate> days = thongKeRepository.layNhanBieuDoTheoHoaDon(
-                ngayBatDau.atStartOfDay(), ngayKetThuc.atTime(LocalTime.MAX));
-        List<Integer> result = new ArrayList<>();
-        for (LocalDate day : days) {
-            Integer count = thongKeRepository.laySoSanPhamTheoNgay(day);
-            result.add(count != null ? count : 0);
-        }
-        return result;
-    }
-
-    private Double tinhTangTruong(BigDecimal hienTai, BigDecimal truocDo) {
-        if (truocDo == null || truocDo.compareTo(BigDecimal.ZERO) == 0)
-            return hienTai != null && hienTai.compareTo(BigDecimal.ZERO) > 0 ? 100.0 : 0.0;
-        if (hienTai == null) return -100.0;
-
-        return hienTai.subtract(truocDo)
-                .divide(truocDo, 4, BigDecimal.ROUND_HALF_UP)
-                .multiply(BigDecimal.valueOf(100))
-                .doubleValue();
-    }
-
-    private Double tinhTangTruong(Integer hienTai, Integer truocDo) {
-        if (truocDo == null || truocDo == 0)
-            return hienTai != null && hienTai > 0 ? 100.0 : 0.0;
-        if (hienTai == null) return -100.0;
-
-        return ((double) (hienTai - truocDo) / truocDo) * 100;
-    }
-
-    private BigDecimal defaultBigDecimal(BigDecimal value) {
-        return value != null ? value : BigDecimal.ZERO;
-    }
-
-    private Integer defaultInteger(Integer value) {
-        return value != null ? value : 0;
-    }
-
-    public Map<String, Map<String, Integer>> thongKeChiTietPhuongThucVaTrangThai(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
-        LocalDateTime start = ngayBatDau.atStartOfDay();
-        LocalDateTime end = ngayKetThuc.plusDays(1).atStartOfDay();
-        return donHangService.thongKeChiTietTheoPhuongThucVaTrangThai(start, end);
-    }
-
-    private String normalize(String s) {
-        if (s == null) return "";
-        String lower = s.toLowerCase().trim();
-        lower = java.text.Normalizer.normalize(lower, java.text.Normalizer.Form.NFD)
-                .replaceAll("\\p{M}+", "");
-        lower = lower.replaceAll("\\s+", "_");
-        return lower;
-    }
-
-    private String toDisplayLabel(String raw) {
-        String n = normalize(raw);
-        if (n.equals("thanh_cong") || n.equals("hoan_thanh")) return "Thành công";
-        return switch (n) {
-            case "cho_xac_nhan", "cho_duyet" -> "Chờ xác nhận";
-            case "dang_chuan_bi", "chuan_bi" -> "Đang chuẩn bị";
-            case "dang_giao", "giao_hang" -> "Đang giao";
-            case "da_huy", "huy" -> "Đã hủy";
-            case "tra_hang", "hoan_tra" -> "Trả hàng";
-            case "thanh_toan_that_bai" -> "Thanh toán thất bại";
-            default -> {
-                String original = raw == null ? "" : raw.trim();
-                yield original.isEmpty() ? "Khác" :
-                        original.substring(0,1).toUpperCase() + original.substring(1);
-            }
-        };
-    }
-
-    public Map<String, Double> layPhanTramTatCaTrangThaiDonHang(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
-        LocalDateTime start = ngayBatDau.atStartOfDay();
-        LocalDateTime end = ngayKetThuc.atTime(LocalTime.MAX);
-
-        List<Object[]> rawData = thongKeRepository.thongKePhanTramTatCaTrangThaiDonHang(start, end);
-        int tong = rawData.stream()
-                .mapToInt(r -> ((Long) r[1]).intValue())
-                .sum();
-
-        Map<String, Double> result = new LinkedHashMap<>();
-        for (Object[] row : rawData) {
-            String rawStatus = (String) row[0];
-            int count = ((Long) row[1]).intValue();
-            String label = toDisplayLabel(rawStatus);
-            double percent = (tong == 0) ? 0.0 : (count * 100.0 / tong);
-            result.merge(label, percent, Double::sum);
-        }
-
-        return result;
-    }
+    /* ====== Chart helpers ====== */
 
     private List<LocalDate> taoTrucNgayLienTuc(LocalDate start, LocalDate end) {
         List<LocalDate> days = new ArrayList<>();
-        for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) {
-            days.add(d);
-        }
+        for (LocalDate d = start; !d.isAfter(end); d = d.plusDays(1)) days.add(d);
         return days;
     }
 
@@ -302,5 +205,90 @@ public class ThongKeService {
             result.add(map.getOrDefault(d, 0L));
         }
         return result;
+    }
+
+    /* ====== Trạng thái đơn hàng (pie chart – ALL statuses) ====== */
+
+    private String normalize(String s) {
+        if (s == null) return "";
+        String lower = s.toLowerCase().trim();
+        lower = java.text.Normalizer.normalize(lower, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}+", "");
+        lower = lower.replaceAll("\\s+", "_");
+        return lower;
+    }
+
+    private String toDisplayLabel(String raw) {
+        String n = normalize(raw);
+        if (n.equals("thanh_cong") || n.equals("hoan_thanh")) return "Thành công";
+        return switch (n) {
+            case "cho_xac_nhan", "cho_duyet" -> "Chờ xác nhận";
+            case "dang_chuan_bi", "chuan_bi" -> "Đang chuẩn bị";
+            case "dang_giao", "giao_hang" -> "Đang giao";
+            case "da_huy", "huy" -> "Đã hủy";
+            case "tra_hang", "hoan_tra" -> "Trả hàng";
+            case "thanh_toan_that_bai" -> "Thanh toán thất bại";
+            default -> {
+                String original = raw == null ? "" : raw.trim();
+                yield original.isEmpty() ? "Khác" :
+                        original.substring(0,1).toUpperCase() + original.substring(1);
+            }
+        };
+    }
+
+    public Map<String, Double> layPhanTramTatCaTrangThaiDonHang(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+        LocalDateTime start = ngayBatDau.atStartOfDay();
+        LocalDateTime end = ngayKetThuc.atTime(LocalTime.MAX);
+
+        List<Object[]> rawData = thongKeRepository.thongKePhanTramTatCaTrangThaiDonHang(start, end);
+        int tong = rawData.stream()
+                .mapToInt(r -> ((Long) r[1]).intValue())
+                .sum();
+
+        Map<String, Double> result = new LinkedHashMap<>();
+        for (Object[] row : rawData) {
+            String rawStatus = (String) row[0];
+            int count = ((Long) row[1]).intValue();
+            String label = toDisplayLabel(rawStatus);
+            double percent = (tong == 0) ? 0.0 : (count * 100.0 / tong);
+            result.merge(label, percent, Double::sum);
+        }
+        return result;
+    }
+
+    /* ====== helpers ====== */
+
+    private Double tinhTangTruong(BigDecimal hienTai, BigDecimal truocDo) {
+        if (truocDo == null || truocDo.compareTo(BigDecimal.ZERO) == 0)
+            return hienTai != null && hienTai.compareTo(BigDecimal.ZERO) > 0 ? 100.0 : 0.0;
+        if (hienTai == null) return -100.0;
+
+        return hienTai.subtract(truocDo)
+                .divide(truocDo, 4, BigDecimal.ROUND_HALF_UP)
+                .multiply(BigDecimal.valueOf(100))
+                .doubleValue();
+    }
+
+    private Double tinhTangTruong(Integer hienTai, Integer truocDo) {
+        if (truocDo == null || truocDo == 0)
+            return hienTai != null && hienTai > 0 ? 100.0 : 0.0;
+        if (hienTai == null) return -100.0;
+
+        return ((double) (hienTai - truocDo) / truocDo) * 100;
+    }
+
+    private BigDecimal defaultBigDecimal(BigDecimal value) {
+        return value != null ? value : BigDecimal.ZERO;
+    }
+
+    private Integer defaultInteger(Integer value) {
+        return value != null ? value : 0;
+    }
+
+    /* Nếu cần: thống kê chi tiết phương thức/thái thái – giữ nguyên */
+    public Map<String, Map<String, Integer>> thongKeChiTietPhuongThucVaTrangThai(LocalDate ngayBatDau, LocalDate ngayKetThuc) {
+        LocalDateTime start = ngayBatDau.atStartOfDay();
+        LocalDateTime end = ngayKetThuc.plusDays(1).atStartOfDay();
+        return donHangService.thongKeChiTietTheoPhuongThucVaTrangThai(start, end);
     }
 }

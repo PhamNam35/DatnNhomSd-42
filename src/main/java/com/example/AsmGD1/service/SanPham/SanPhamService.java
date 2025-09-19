@@ -1,9 +1,5 @@
 package com.example.AsmGD1.service.SanPham;
 
-import com.example.AsmGD1.dto.ChatBot.ChiTietSanPhamDTO;
-import com.example.AsmGD1.dto.ChatBot.HoaDonSanPhamDTO;
-import com.example.AsmGD1.dto.ChatBot.SanPhamWithChiTietDTO;
-import com.example.AsmGD1.dto.SanPham.SanPhamDto;
 import com.example.AsmGD1.entity.*;
 import com.example.AsmGD1.repository.BanHang.ChiTietDonHangRepository;
 import com.example.AsmGD1.repository.HoaDon.HoaDonRepository;
@@ -215,90 +211,7 @@ public class SanPhamService {
         }
     }
 
-    public List<SanPhamDto> getAllSanPhamDtos() {
-        List<SanPham> danhSach = sanPhamRepository.findAllByTrangThai();
-        return danhSach.stream().map(sp -> {
-            SanPhamDto dto = new SanPhamDto();
-            dto.setId(sp.getId());
-            dto.setMaSanPham(sp.getMaSanPham());
-            dto.setTenSanPham(sp.getTenSanPham());
-            dto.setMoTa(sp.getMoTa());
-            dto.setUrlHinhAnh(sp.getUrlHinhAnh());
-            dto.setTrangThai(sp.getTrangThai());
-            dto.setThoiGianTao(sp.getThoiGianTao());
-            dto.setTongSoLuong(sp.getTongSoLuong());
 
-            if (sp.getDanhMuc() != null) {
-                dto.setDanhMucId(sp.getDanhMuc().getId());
-                dto.setTenDanhMuc(sp.getDanhMuc().getTenDanhMuc());
-            }
-
-            dto.setPrice(sp.getMinPrice().toString());
-            dto.setOldPrice(sp.getMaxPrice().toString());
-            dto.setSold(String.valueOf(sp.getTotalStockQuantity()));
-            return dto;
-        }).toList();
-    }
-
-    public List<SanPhamWithChiTietDTO> getSanPhamWithChiTietDTOs() {
-        List<SanPham> danhSachSanPham = sanPhamRepository.findAll();
-
-        return danhSachSanPham.stream().map(sp -> {
-            SanPhamWithChiTietDTO dto = new SanPhamWithChiTietDTO();
-            dto.setId(sp.getId());
-            dto.setMaSanPham(sp.getMaSanPham());
-            dto.setTenSanPham(sp.getTenSanPham());
-            dto.setTenDanhMuc(sp.getDanhMuc().getTenDanhMuc());
-            dto.setUrlHinhAnh(sp.getUrlHinhAnh());
-            dto.setTongSoLuong(sp.getTongSoLuong());
-
-            // 1. Set chi tiết sản phẩm như cũ
-            dto.setChiTietSanPhams(sp.getChiTietSanPhams().stream().map(ct -> {
-                ChiTietSanPhamDTO ctDto = new ChiTietSanPhamDTO();
-                ctDto.setId(ct.getId());
-                ctDto.setKichCo(ct.getKichCo().getTen());
-                ctDto.setMauSac(ct.getMauSac().getTenMau());
-                ctDto.setChatLieu(ct.getChatLieu().getTenChatLieu());
-                ctDto.setXuatXu(ct.getXuatXu().getTenXuatXu());
-                ctDto.setGia(ct.getGia());
-                ctDto.setSoLuongTonKho(ct.getSoLuongTonKho());
-                List<String> urls = (ct.getHinhAnhSanPhams() == null) ? List.of()
-                        : ct.getHinhAnhSanPhams().stream()
-                        .sorted(Comparator.comparing(
-                                ha -> ha.getThuTu() == null ? Integer.MAX_VALUE : ha.getThuTu()
-                        ))
-                        .map(HinhAnhSanPham::getUrlHinhAnh)
-                        .toList();
-
-                ctDto.setHinhAnhUrls(urls);
-                return ctDto;
-            }).collect(Collectors.toList()));
-
-            // 2. Lấy hóa đơn liên quan đến sản phẩm
-            List<ChiTietDonHang> donHangs = chiTietDonHangRepository.findBySanPhamId(sp.getId());
-
-            List<HoaDonSanPhamDTO> hoaDonDtos = donHangs.stream().map(ct -> {
-                HoaDon hoaDon = hoaDonRepository.findByDonHang_Id(ct.getDonHang().getId());
-                if (hoaDon == null) return null; // tránh null pointer nếu đơn hàng chưa có hóa đơn
-
-                HoaDonSanPhamDTO hdDto = new HoaDonSanPhamDTO();
-                hdDto.setIdHoaDon(hoaDon.getId());
-                hdDto.setIdDonHang(ct.getDonHang().getId());
-                hdDto.setIdChiTietSanPham(ct.getChiTietSanPham().getId());
-                hdDto.setTenSanPham(ct.getTenSanPham());
-                hdDto.setSoLuong(ct.getSoLuong());
-                hdDto.setGia(ct.getGia());
-                hdDto.setThanhTien(ct.getThanhTien());
-                hdDto.setGhiChu(ct.getGhiChu());
-                hdDto.setNgayTaoHoaDon(hoaDon.getNgayTao());
-                return hdDto;
-            }).filter(Objects::nonNull).collect(Collectors.toList());
-
-            dto.setHoaDonSanPhams(hoaDonDtos);
-
-            return dto;
-        }).collect(Collectors.toList());
-    }
 
     public List<SanPham> getSanPhamLienQuan(UUID idSanPham, int limit) {
         SanPham sanPhamGoc = sanPhamRepository.findById(idSanPham)
@@ -318,65 +231,6 @@ public class SanPhamService {
         return sanPhamRepository.existsByTenSanPham(tenSanPham);
     }
 
-    public Page<SanPham> getPagedAvailableProducts(Pageable pageable) {
-        Page<SanPham> page = sanPhamRepository.findAvailableProducts(LocalDateTime.now(), pageable);
-        page.getContent().forEach(this::setTongSoLuong);
-        page.getContent().forEach(this::autoUpdateStatusBasedOnDetails);
-        return page;
-    }
 
-    public Page<SanPham> searchAvailableByTenOrMa(String keyword, Pageable pageable) {
-        Page<SanPham> page = sanPhamRepository.searchAvailableByTenOrMa(
-                keyword == null ? "" : keyword.trim(),
-                LocalDateTime.now(),
-                pageable
-        );
-        page.getContent().forEach(this::setTongSoLuong);
-        page.getContent().forEach(this::autoUpdateStatusBasedOnDetails);
-        return page;
-    }
-    public Page<SanPham> getPagedAvailableOrSelectedProducts(Pageable pageable, Collection<UUID> selectedIds) {
-        Page<SanPham> base = sanPhamRepository.findAvailableProducts(LocalDateTime.now(), pageable);
-        if (selectedIds == null || selectedIds.isEmpty()) return base;
-
-        LinkedHashMap<UUID, SanPham> map = new LinkedHashMap<>();
-        // ƯU TIÊN giữ các SP đã chọn (dù không “rảnh”)
-        sanPhamRepository.findAllById(selectedIds).forEach(sp -> map.put(sp.getId(), sp));
-        // Sau đó thêm các SP “rảnh”
-        base.getContent().forEach(sp -> map.putIfAbsent(sp.getId(), sp));
-
-        List<SanPham> all = new ArrayList<>(map.values());
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), all.size());
-        List<SanPham> content = start >= end ? List.of() : all.subList(start, end);
-
-        content.forEach(this::setTongSoLuong);
-        content.forEach(this::autoUpdateStatusBasedOnDetails);
-
-        return new PageImpl<>(content, pageable, all.size());
-    }
-
-    public Page<SanPham> searchAvailableOrSelectedByTenOrMa(String keyword, Pageable pageable, Collection<UUID> selectedIds) {
-        Page<SanPham> base = sanPhamRepository.searchAvailableByTenOrMa(
-                keyword == null ? "" : keyword.trim(),
-                LocalDateTime.now(),
-                pageable
-        );
-        if (selectedIds == null || selectedIds.isEmpty()) return base;
-
-        LinkedHashMap<UUID, SanPham> map = new LinkedHashMap<>();
-        sanPhamRepository.findAllById(selectedIds).forEach(sp -> map.put(sp.getId(), sp));
-        base.getContent().forEach(sp -> map.putIfAbsent(sp.getId(), sp));
-
-        List<SanPham> all = new ArrayList<>(map.values());
-        int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), all.size());
-        List<SanPham> content = start >= end ? List.of() : all.subList(start, end);
-
-        content.forEach(this::setTongSoLuong);
-        content.forEach(this::autoUpdateStatusBasedOnDetails);
-
-        return new PageImpl<>(content, pageable, all.size());
-    }
 
 }

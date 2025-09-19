@@ -42,8 +42,9 @@ public class ThongKeController {
 
     @Autowired
     private NguoiDungService nguoiDungService;
-     @Autowired
-     private ThongKeExcelExporter thongKeExcelExporter;
+
+    @Autowired
+    private ThongKeExcelExporter thongKeExcelExporter;
 
     @GetMapping
     public String layThongKe(
@@ -59,23 +60,19 @@ public class ThongKeController {
 
         switch (boLoc) {
             case "day" -> {
-                ngayBatDau = homNay;
-                ngayKetThuc = homNay;
+                ngayBatDau = homNay; ngayKetThuc = homNay;
                 trangThaiBoLoc = "Hôm nay: " + homNay;
             }
             case "7days" -> {
-                ngayBatDau = homNay.minusDays(6);
-                ngayKetThuc = homNay;
+                ngayBatDau = homNay.minusDays(6); ngayKetThuc = homNay;
                 trangThaiBoLoc = "7 ngày: " + ngayBatDau + " đến " + ngayKetThuc;
             }
             case "month" -> {
-                ngayBatDau = homNay.withDayOfMonth(1);
-                ngayKetThuc = homNay;
+                ngayBatDau = homNay.withDayOfMonth(1); ngayKetThuc = homNay;
                 trangThaiBoLoc = "Tháng: " + homNay.getMonthValue() + "/" + homNay.getYear();
             }
             case "year" -> {
-                ngayBatDau = homNay.withDayOfYear(1);
-                ngayKetThuc = homNay;
+                ngayBatDau = homNay.withDayOfYear(1); ngayKetThuc = homNay;
                 trangThaiBoLoc = "Năm: " + homNay.getYear();
             }
             case "custom_range" -> {
@@ -95,16 +92,17 @@ public class ThongKeController {
             }
         }
 
-        // Set page size (e.g., 5 items per page)
         Pageable topSellingPageable = PageRequest.of(topSellingPage, 5);
-        Pageable lowStockPageable = PageRequest.of(lowStockPage, 5);
+        Pageable lowStockPageable   = PageRequest.of(lowStockPage, 5);
 
         ThongKeDoanhThuDTO thongKe = thongKeDichVu.layThongKeDoanhThu(boLoc, ngayBatDau, ngayKetThuc);
-        Page<SanPhamBanChayDTO> sanPhamBanChay = thongKeDichVu.laySanPhamBanChay(boLoc, ngayBatDau, ngayKetThuc, topSellingPageable);
-        Page<SanPhamTonKhoThapDTO> sanPhamTonKhoThap = thongKeDichVu.laySanPhamTonKhoThap(lowStockPageable);
+        Page<SanPhamBanChayDTO> sanPhamBanChay =
+                thongKeDichVu.laySanPhamBanChay(boLoc, ngayBatDau, ngayKetThuc, topSellingPageable);
+        Page<SanPhamTonKhoThapDTO> sanPhamTonKhoThap =
+                thongKeDichVu.laySanPhamTonKhoThap(lowStockPageable);
 
-        model.addAttribute("chartLabels", thongKeDichVu.layNhanBieuDoLienTuc(ngayBatDau, ngayKetThuc));
-        model.addAttribute("chartOrders", thongKeDichVu.layDonHangBieuDoLienTuc(ngayBatDau, ngayKetThuc));
+        model.addAttribute("chartLabels",  thongKeDichVu.layNhanBieuDoLienTuc(ngayBatDau, ngayKetThuc));
+        model.addAttribute("chartOrders",  thongKeDichVu.layDonHangBieuDoLienTuc(ngayBatDau, ngayKetThuc));
         model.addAttribute("chartRevenue", thongKeDichVu.layDoanhThuBieuDoLienTuc(ngayBatDau, ngayKetThuc));
 
         model.addAttribute("stats", thongKe);
@@ -120,74 +118,77 @@ public class ThongKeController {
         List<NguoiDung> admins = nguoiDungService.findUsersByVaiTro("admin", "", 0, 1).getContent();
         model.addAttribute("user", admins.isEmpty() ? new NguoiDung() : admins.get(0));
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth != null && auth.getPrincipal() instanceof NguoiDung) {
-            NguoiDung user = (NguoiDung) auth.getPrincipal();
+        if (auth != null && auth.getPrincipal() instanceof NguoiDung user) {
             model.addAttribute("user", user);
         }
 
         LocalDateTime startDateTime = ngayBatDau.atStartOfDay();
-        LocalDateTime endDateTime = ngayKetThuc.atTime(LocalTime.MAX);
-        Map<String, Integer> tongDonHangTheoPhuongThuc = donHangService.demDonHangTheoPhuongThuc(startDateTime, endDateTime);
+        LocalDateTime endDateTime   = ngayKetThuc.atTime(LocalTime.MAX);
+
+        // 4 số tổng quan: CHỈ đơn hoàn thành (đúng như UI)
+        Map<String, Object> tongQuan = thongKeDichVu.layTongQuanHoanThanh(ngayBatDau, ngayKetThuc);
+        model.addAttribute("sumCustomers", tongQuan.get("khach"));
+        model.addAttribute("sumProducts",  tongQuan.get("sanPham"));
+        model.addAttribute("sumOrders",    tongQuan.get("don"));
+        model.addAttribute("sumRevenue",   tongQuan.get("doanhThu"));
+
+        // Theo phương thức (nếu bạn vẫn dùng ở nơi khác)
+        Map<String, Integer> tongDonHangTheoPhuongThuc =
+                donHangService.demDonHangTheoPhuongThuc(startDateTime, endDateTime);
         model.addAttribute("tongDonTheoPhuongThuc", tongDonHangTheoPhuongThuc);
-        Map<String, Double> trangThaiPercentMap = thongKeDichVu.layPhanTramTatCaTrangThaiDonHang(ngayBatDau, ngayKetThuc);
+
+        // Pie: lấy TẤT CẢ trạng thái (đúng yêu cầu hiện tại)
+        Map<String, Double> trangThaiPercentMap =
+                thongKeDichVu.layPhanTramTatCaTrangThaiDonHang(ngayBatDau, ngayKetThuc);
         model.addAttribute("trangThaiPercentMap", trangThaiPercentMap);
 
         return "WebQuanLy/thong-ke";
     }
+
     @GetMapping("/export")
     public ResponseEntity<byte[]> exportExcel(
             @RequestParam(defaultValue = "month") String boLoc,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayBatDau,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate ngayKetThuc
     ) {
-        // Đồng bộ logic khoảng ngày với trang thống kê
         LocalDate today = LocalDate.now();
         switch (boLoc) {
-            case "day" -> { ngayBatDau = today; ngayKetThuc = today; }
+            case "day"   -> { ngayBatDau = today; ngayKetThuc = today; }
             case "7days" -> { ngayBatDau = today.minusDays(6); ngayKetThuc = today; }
             case "month" -> { ngayBatDau = today.withDayOfMonth(1); ngayKetThuc = today; }
-            case "year" -> { ngayBatDau = today.withDayOfYear(1); ngayKetThuc = today; }
+            case "year"  -> { ngayBatDau = today.withDayOfYear(1); ngayKetThuc = today; }
             case "custom_range" -> {
                 if (ngayBatDau == null || ngayKetThuc == null)
                     throw new IllegalArgumentException("Vui lòng chọn ngày bắt đầu và kết thúc.");
                 if (ngayBatDau.isAfter(ngayKetThuc))
                     throw new IllegalArgumentException("Ngày bắt đầu phải nhỏ hơn hoặc bằng ngày kết thúc.");
             }
-            default -> { /* giữ nguyên */ }
+            default -> { }
         }
 
-        // Lấy dữ liệu như trang thống kê
-        ThongKeDoanhThuDTO stats = thongKeDichVu.layThongKeDoanhThu(boLoc, ngayBatDau, ngayKetThuc);
-        List<String>  chartLabels   = thongKeDichVu.layNhanBieuDoLienTuc(ngayBatDau, ngayKetThuc);
-        List<Integer> chartOrders   = thongKeDichVu.layDonHangBieuDoLienTuc(ngayBatDau, ngayKetThuc);
-        List<Long>    chartRevenue  = thongKeDichVu.layDoanhThuBieuDoLienTuc(ngayBatDau, ngayKetThuc);
-        Map<String, Double> trangThaiPercentMap = thongKeDichVu.layPhanTramTatCaTrangThaiDonHang(ngayBatDau, ngayKetThuc);
+        // Lấy đúng 4 KPI giống trên UI
+        Map<String, Object> tongQuan = thongKeDichVu.layTongQuanHoanThanh(ngayBatDau, ngayKetThuc);
+        long sumCustomers = ((Number) tongQuan.getOrDefault("khach", 0)).longValue();
+        long sumProducts  = ((Number) tongQuan.getOrDefault("sanPham", 0)).longValue();
+        long sumOrders    = ((Number) tongQuan.getOrDefault("don", 0)).longValue();
+        long sumRevenue   = ((Number) tongQuan.getOrDefault("doanhThu", 0)).longValue();
 
-        // Lấy danh sách cho Excel (lấy tối đa 100 dòng mỗi mục)
-        Pageable topSellingPageable = PageRequest.of(0, 100);
-        Pageable lowStockPageable   = PageRequest.of(0, 100);
-        List<SanPhamBanChayDTO>    topSelling = thongKeDichVu
-                .laySanPhamBanChay(boLoc, ngayBatDau, ngayKetThuc, topSellingPageable)
-                .getContent();
-        List<SanPhamTonKhoThapDTO> lowStock   = thongKeDichVu
-                .laySanPhamTonKhoThap(lowStockPageable)
-                .getContent();
+        // % trạng thái (mọi trạng thái)
+        Map<String, Double> trangThaiPercentMap =
+                thongKeDichVu.layPhanTramTatCaTrangThaiDonHang(ngayBatDau, ngayKetThuc);
 
-        // Tạo file Excel
-        byte[] bytes = thongKeExcelExporter.exportThongKe(
+        byte[] bytes = thongKeExcelExporter.exportThongKeLite(
                 boLoc, ngayBatDau, ngayKetThuc,
-                stats, chartLabels, chartOrders, chartRevenue,
-                trangThaiPercentMap, topSelling, lowStock
+                sumCustomers, sumProducts, sumOrders, sumRevenue,
+                trangThaiPercentMap
         );
 
         String fileName = String.format("thong-ke_%s_%s.xlsx", ngayBatDau, ngayKetThuc);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType(
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"));
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"");
-        headers.setContentLength(bytes.length);
-
-        return ResponseEntity.ok().headers(headers).body(bytes);
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + fileName + "\"")
+                .contentType(MediaType.parseMediaType(
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .contentLength(bytes.length)
+                .body(bytes);
     }
-
 }
