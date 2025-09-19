@@ -251,44 +251,6 @@ public class HoaDonController {
         }
     }
 
-    @PostMapping("/exchange/{id}")
-    @ResponseBody
-    @Transactional(rollbackOn = Exception.class)
-    public ResponseEntity<Map<String, Object>> exchangeOrder(@PathVariable String id, @RequestBody Map<String, Object> request) {
-        try {
-            if (id == null || id.trim().isEmpty()) {
-                throw new IllegalArgumentException("ID hóa đơn không được để trống.");
-            }
-            UUID uuid = UUID.fromString(id);
-            String lyDoDoiHang = (String) request.get("lyDoDoiHang");
-            List<String> chiTietDonHangIdsStr = (List<String>) request.get("chiTietDonHangIds");
-            List<String> newChiTietSanPhamIdsStr = (List<String>) request.get("newChiTietSanPhamIds");
-
-            if (lyDoDoiHang == null || lyDoDoiHang.trim().isEmpty()) {
-                throw new IllegalArgumentException("Lý do đổi hàng không được để trống.");
-            }
-            if (chiTietDonHangIdsStr == null || chiTietDonHangIdsStr.isEmpty() || newChiTietSanPhamIdsStr == null || newChiTietSanPhamIdsStr.isEmpty()) {
-                throw new IllegalArgumentException("Danh sách sản phẩm trả hoặc sản phẩm mới không được để trống.");
-            }
-
-            List<UUID> chiTietDonHangIds = chiTietDonHangIdsStr.stream()
-                    .map(UUID::fromString)
-                    .collect(Collectors.toList());
-            List<UUID> newChiTietSanPhamIds = newChiTietSanPhamIdsStr.stream()
-                    .map(UUID::fromString)
-                    .collect(Collectors.toList());
-
-            hoaDonService.processExchange(uuid, chiTietDonHangIds, newChiTietSanPhamIds, lyDoDoiHang);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("message", "Đơn hàng đã được đổi hàng thành công.");
-            response.put("currentStatus", "Đã đổi hàng");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("error", "Lỗi khi đổi hàng: " + e.getMessage()));
-        }
-    }
-
     @PostMapping("/confirm/{id}")
     @ResponseBody
     @Transactional(rollbackOn = Exception.class)

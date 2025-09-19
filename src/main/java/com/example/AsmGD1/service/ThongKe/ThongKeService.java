@@ -226,7 +226,6 @@ public class ThongKeService {
             case "dang_chuan_bi", "chuan_bi" -> "Đang chuẩn bị";
             case "dang_giao", "giao_hang" -> "Đang giao";
             case "da_huy", "huy" -> "Đã hủy";
-            case "tra_hang", "hoan_tra" -> "Trả hàng";
             case "thanh_toan_that_bai" -> "Thanh toán thất bại";
             default -> {
                 String original = raw == null ? "" : raw.trim();
