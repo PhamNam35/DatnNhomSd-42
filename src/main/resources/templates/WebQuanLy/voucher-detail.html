@@ -582,9 +582,6 @@
                                 <div class="mb-3">
                                     <label class="form-label"><i class="fas fa-truck me-2"></i>Phạm vi áp dụng:</label>
                                     <div class="d-flex flex-wrap gap-4">
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{phamViApDung}" value="ORDER" disabled> Giảm giá đơn hàng
-                                        </label>
                                     </div>
                                 </div>
 
@@ -662,19 +659,19 @@
                     </div>
 
                     <!-- 4) PHƯƠNG THỨC THANH TOÁN ÁP DỤNG -->
-                    <div class="col-12">
-                        <div class="card-section">
-                            <div class="card-header"><i class="fas fa-credit-card"></i><span>Phương thức thanh toán áp dụng</span></div>
-                            <div class="card-body">
-                                <div class="payment-tags">
-                                    <span th:each="pt : ${phuongThucList}" class="payment-tag" th:text="${pt.tenPhuongThuc}">COD</span>
-                                    <span th:if="${phuongThucList.isEmpty()}" class="payment-tag empty">
-                                        Không có phương thức thanh toán nào được chọn
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+<!--                    <div class="col-12">-->
+<!--                        <div class="card-section">-->
+<!--                            <div class="card-header"><i class="fas fa-credit-card"></i><span>Phương thức thanh toán áp dụng</span></div>-->
+<!--                            <div class="card-body">-->
+<!--                                <div class="payment-tags">-->
+<!--                                    <span th:each="pt : ${phuongThucList}" class="payment-tag" th:text="${pt.tenPhuongThuc}">COD</span>-->
+<!--                                    <span th:if="${phuongThucList.isEmpty()}" class="payment-tag empty">-->
+<!--                                        Không có phương thức thanh toán nào được chọn-->
+<!--                                    </span>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
                     <!-- 5) TRẠNG THÁI -->
                     <div class="col-12">

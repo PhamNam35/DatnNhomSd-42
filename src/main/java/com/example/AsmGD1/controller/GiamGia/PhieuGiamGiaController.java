@@ -183,11 +183,11 @@ public class PhieuGiamGiaController {
         voucher.setPhamViApDung("ORDER"); // mặc định
         model.addAttribute("voucher", voucher);
         model.addAttribute("customers", phieuService.layTatCaKhachHang());
-        model.addAttribute("phuongThucList", phuongThucThanhToanRepository.findAll());
-        model.addAttribute("selectedPtttIds", new ArrayList<UUID>());
+
         addUserInfoToModel(model);
         return "WebQuanLy/voucher-create";
     }
+
 
     // ===== Create Submit (VALIDATES tightened) =====
     @PostMapping("/create")
@@ -198,7 +198,6 @@ public class PhieuGiamGiaController {
                          @ModelAttribute PhieuGiamGia voucher,
                          @RequestParam(required = false) boolean sendMail,
                          @RequestParam(required = false) List<UUID> selectedCustomerIds,
-                         @RequestParam(required = false) List<UUID> selectedPtttIds,
                          Model model,
                          RedirectAttributes redirectAttributes) {
 
@@ -233,15 +232,11 @@ public class PhieuGiamGiaController {
             String tenRaw  = voucher.getTen();
             String tenTrim = tenRaw.trim();
 
-            // cấm >= 2 khoảng trắng liên tiếp
             if (tenTrim.matches(".*\\s{2,}.*")) {
                 errors.add("Tên phiếu: giữa các từ chỉ được 1 khoảng trắng.");
-            }
-            // CHO PHÉP: chữ (có dấu), số, dấu '-' và '/', các nhóm cách nhau đúng 1 space
-            else if (!tenTrim.matches("^[\\p{L}\\d\\-/]+(?: [\\p{L}\\d\\-/]+)*$")) {
+            } else if (!tenTrim.matches("^[\\p{L}\\d\\-/]+(?: [\\p{L}\\d\\-/]+)*$")) {
                 errors.add("Tên chỉ gồm chữ (có dấu), số, dấu '-' và '/'; giữa các nhóm cách đúng 1 khoảng trắng.");
-            }
-            else {
+            } else {
                 int nonSpaceLen = tenTrim.replaceAll("\\s+", "").length();
                 if (nonSpaceLen < 6) {
                     errors.add("Tên phiếu phải có ít nhất 6 ký tự (không tính khoảng trắng).");
@@ -249,11 +244,9 @@ public class PhieuGiamGiaController {
                     errors.add("Tên phiếu tối đa 100 ký tự.");
                 }
             }
-
             // Giữ nguyên khoảng trắng đầu/cuối theo yêu cầu
             voucher.setTen(voucher.getTen());
         }
-
 
         // ----- Phạm vi -----
         if (voucher.getPhamViApDung() == null ||
@@ -416,26 +409,11 @@ public class PhieuGiamGiaController {
             }
         }
 
-        // ----- PTTT bắt buộc -----
-        if (selectedPtttIds == null || selectedPtttIds.isEmpty()) {
-            errors.add("Vui lòng chọn ít nhất một phương thức thanh toán áp dụng.");
-            voucher.setPhuongThucThanhToans(new HashSet<>());
-        } else {
-            List<PhuongThucThanhToan> foundPttts = phuongThucThanhToanRepository.findAllById(selectedPtttIds);
-            if (foundPttts.size() != selectedPtttIds.size() || foundPttts.isEmpty()) {
-                errors.add("Một hoặc nhiều phương thức thanh toán không hợp lệ.");
-                voucher.setPhuongThucThanhToans(new HashSet<>());
-            } else {
-                voucher.setPhuongThucThanhToans(new HashSet<>(foundPttts));
-            }
-        }
-
         if (!errors.isEmpty()) {
             model.addAttribute("errorMessage", String.join("<br>", errors));
             model.addAttribute("voucher", voucher);
             model.addAttribute("customers", phieuService.layTatCaKhachHang());
-            model.addAttribute("phuongThucList", phuongThucThanhToanRepository.findAll());
-            model.addAttribute("selectedPtttIds", selectedPtttIds != null ? selectedPtttIds : new ArrayList<>());
+            // (ĐÃ BỎ PHƯƠNG THỨC THANH TOÁN Ở MÀN TẠO)
             addUserInfoToModel(model);
             return "WebQuanLy/voucher-create";
         }
@@ -444,13 +422,15 @@ public class PhieuGiamGiaController {
             voucher.setThoiGianTao(LocalDateTime.now());
         }
 
+        // ✅ Không ràng buộc PTTT khi tạo (áp dụng cho mọi PTTT)
+        voucher.setPhuongThucThanhToans(new HashSet<>());
+
         try {
             PhieuGiamGia savedVoucher = phieuGiamGiaRepository.save(voucher);
-
             phieuGiamGiaRepository.flush();
 
             try {
-                Thread.sleep(500); // 500ms delay to ensure transaction is fully committed
+                Thread.sleep(500);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
@@ -479,6 +459,7 @@ public class PhieuGiamGiaController {
             return "redirect:/polyshoe/phieu-giam-gia";
         }
     }
+
 
     // ===== View =====
     @GetMapping("/view/{id}")
@@ -606,7 +587,6 @@ public class PhieuGiamGiaController {
             List<NguoiDung> daDuocGan = phieuService.layNguoiDungTheoPhieu(voucher.getId());
             selectedCustomerIds = daDuocGan.stream().map(NguoiDung::getId).toList();
         }
-        List<UUID> selectedPtttIds = voucher.getPhuongThucThanhToans().stream().map(PhuongThucThanhToan::getId).toList();
 
         model.addAttribute("voucher", voucher);
         model.addAttribute("giaTriGiamStr", giaTriGiamStr);
@@ -615,16 +595,15 @@ public class PhieuGiamGiaController {
         model.addAttribute("gioiHanSuDungStr", gioiHanSuDungStr);
         model.addAttribute("customers", customerPage.getContent());
         model.addAttribute("selectedCustomerIds", selectedCustomerIds);
-        model.addAttribute("selectedPtttIds", selectedPtttIds);
         model.addAttribute("currentCustomerPage", page);
         model.addAttribute("totalCustomerPages", customerPage.getTotalPages());
         model.addAttribute("search", search);
         model.addAttribute("getStatus", (Function<PhieuGiamGia, String>) this::getTrangThai);
-        model.addAttribute("phuongThucList", phuongThucThanhToanRepository.findAll());
         addUserInfoToModel(model);
 
         return "WebQuanLy/voucher-edit";
     }
+
 
     // ===== Edit Submit (VALIDATES tightened) =====
     @PostMapping("/edit/{id}")
@@ -636,7 +615,6 @@ public class PhieuGiamGiaController {
                          @ModelAttribute PhieuGiamGia voucher,
                          @RequestParam(required = false) boolean sendMail,
                          @RequestParam(required = false) List<UUID> selectedCustomerIds,
-                         @RequestParam(required = false) List<UUID> selectedPtttIds,
                          Model model,
                          RedirectAttributes redirectAttributes) {
 
@@ -645,26 +623,27 @@ public class PhieuGiamGiaController {
             return "redirect:/polyshoe/phieu-giam-gia";
         }
 
-        // load existing
         PhieuGiamGia existing = phieuGiamGiaRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Phiếu giảm giá không tồn tại"));
 
-        // chỉ sửa khi "Sắp diễn ra"
         String status = getTrangThai(existing);
         if (!"Sắp diễn ra".equals(status)) {
             redirectAttributes.addFlashAttribute("errorMessage", "Chỉ có thể chỉnh sửa phiếu giảm giá ở trạng thái 'Sắp diễn ra'.");
             return "redirect:/polyshoe/phieu-giam-gia";
         }
 
-        // giữ nguyên thuộc tính không cho đổi
+        // Khóa các trường không cho đổi
         voucher.setId(id);
         voucher.setMa(existing.getMa());
         voucher.setThoiGianTao(existing.getThoiGianTao());
-        // khóa luôn phạm vi theo existing (UI đã disable)
         voucher.setPhamViApDung(existing.getPhamViApDung());
 
+        // 🚫 KHÓA LOẠI PHIẾU: luôn giữ nguyên như cũ
+        voucher.setKieuPhieu(existing.getKieuPhieu());
+
         List<String> errors = new ArrayList<>();
-// ----- TÊN: không cho phép space đầu/cuối; giữa chỉ 1 space; chữ+số+-+/; >=6 (không tính space); <=100 -----
+
+        // ===== Validate Tên (giữ rule hiện tại) =====
         if (voucher.getTen() == null || voucher.getTen().isBlank()) {
             errors.add("Tên phiếu không được để trống.");
         } else {
@@ -685,8 +664,6 @@ public class PhieuGiamGiaController {
                     errors.add("Tên phiếu tối đa 100 ký tự.");
                 }
             }
-
-            // Không tự ý cắt khoảng trắng: tuân theo rule của trang edit (đã cấm space đầu/cuối ở trên)
             voucher.setTen(tenRaw);
         }
 
@@ -722,9 +699,8 @@ public class PhieuGiamGiaController {
             errors.add("Đơn tối thiểu không hợp lệ.");
         }
 
-        // ===== Theo phạm vi/loại =====
+        // ===== Validate theo phạm vi/loại =====
         if ("ORDER".equalsIgnoreCase(voucher.getPhamViApDung())) {
-            // loại bắt buộc PERCENT/CASH
             if (voucher.getLoai() == null ||
                     !(voucher.getLoai().equalsIgnoreCase("PERCENT") || voucher.getLoai().equalsIgnoreCase("CASH"))) {
                 errors.add("Kiểu giảm (ORDER) không hợp lệ (PERCENT hoặc CASH).");
@@ -761,7 +737,6 @@ public class PhieuGiamGiaController {
                             && parsedGiaTriGiam.compareTo(parsedGiaTriGiamToiThieu) >= 0) {
                         errors.add("Giá trị giảm (tiền mặt) phải nhỏ hơn 'Đơn tối thiểu áp dụng'.");
                     }
-                    // CASH không dùng cap
                     parsedGiaTriGiamToiDa = null;
                 }
             }
@@ -815,39 +790,23 @@ public class PhieuGiamGiaController {
             errors.add("Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.");
         }
 
-        // ===== PTTT bắt buộc =====
-        List<PhuongThucThanhToan> foundPttt = Collections.emptyList();
-        if (selectedPtttIds == null || selectedPtttIds.isEmpty()) {
-            errors.add("Vui lòng chọn ít nhất một phương thức thanh toán áp dụng.");
-        } else {
-            foundPttt = phuongThucThanhToanRepository.findAllById(selectedPtttIds);
-            if (foundPttt.isEmpty() || foundPttt.size() != selectedPtttIds.size()) {
-                errors.add("Một hoặc nhiều phương thức thanh toán không hợp lệ.");
-            }
-        }
-
-        // ===== Kiểu phiếu =====
-        boolean isCaNhan = "ca_nhan".equalsIgnoreCase(voucher.getKieuPhieu());
+        // ===== Kiểu phiếu (khóa đổi): xét theo existing =====
+        boolean isCaNhan = "ca_nhan".equalsIgnoreCase(existing.getKieuPhieu());
         if (isCaNhan) {
             if (selectedCustomerIds == null || selectedCustomerIds.isEmpty()) {
-                errors.add("Vui lòng chọn ít nhất một khách hàng khi tạo phiếu cá nhân.");
+                errors.add("Vui lòng chọn ít nhất một khách hàng cho phiếu cá nhân.");
             }
-        } else if ("cong_khai".equalsIgnoreCase(voucher.getKieuPhieu())) {
+        } else {
             Integer gioiHan = voucher.getGioiHanSuDung();
             if (gioiHan == null || gioiHan <= 0) {
                 errors.add("Vui lòng nhập số lượt sử dụng hợp lệ cho phiếu công khai.");
             }
-        } else {
-            errors.add("Loại phiếu không hợp lệ (công khai / cá nhân).");
         }
 
         if (!errors.isEmpty()) {
-            // render lại form với lỗi
             model.addAttribute("voucher", existing);
             model.addAttribute("errorMessage", String.join("<br>", errors));
             model.addAttribute("customers", phieuService.layTatCaKhachHang());
-            model.addAttribute("phuongThucList", phuongThucThanhToanRepository.findAll());
-            model.addAttribute("selectedPtttIds", selectedPtttIds != null ? selectedPtttIds : new ArrayList<>());
             model.addAttribute("selectedCustomerIds", selectedCustomerIds != null ? selectedCustomerIds : new ArrayList<>());
             NumberFormat nf = NumberFormat.getInstance(new Locale("vi", "VN"));
             model.addAttribute("giaTriGiamStr", existing.getGiaTriGiam() != null ? nf.format(existing.getGiaTriGiam()) : "");
@@ -855,47 +814,39 @@ public class PhieuGiamGiaController {
             model.addAttribute("giaTriGiamToiThieuStr", existing.getGiaTriGiamToiThieu() != null ? nf.format(existing.getGiaTriGiamToiThieu()) : "");
             model.addAttribute("gioiHanSuDungStr", existing.getGioiHanSuDung() != null ? String.valueOf(existing.getGioiHanSuDung()) : "");
             model.addAttribute("getStatus", (Function<PhieuGiamGia, String>) this::getTrangThai);
-            // optional để tránh lỗi pagination khi fail
             model.addAttribute("currentCustomerPage", 0);
             model.addAttribute("totalCustomerPages", 1);
             addUserInfoToModel(model);
             return "WebQuanLy/voucher-edit";
         }
 
-        // ====== COPY field hợp lệ lên 'existing' ======
+        // ===== Ghi dữ liệu hợp lệ =====
         existing.setTen(voucher.getTen());
-        // không đổi phạm vi
-        existing.setPhamViApDung(existing.getPhamViApDung());
         existing.setLoai(voucher.getLoai());
         existing.setGiaTriGiam(parsedGiaTriGiam);
         existing.setGiaTriGiamToiDa(parsedGiaTriGiamToiDa);
         existing.setGiaTriGiamToiThieu(parsedGiaTriGiamToiThieu);
         existing.setNgayBatDau(voucher.getNgayBatDau());
         existing.setNgayKetThuc(voucher.getNgayKetThuc());
-        existing.setKieuPhieu(voucher.getKieuPhieu());
 
-        // CẬP NHẬT PTTT: sửa trực tiếp trên managed collection
-        existing.getPhuongThucThanhToans().clear();
-        existing.getPhuongThucThanhToans().addAll(foundPttt);
+        // KHÔNG ĐỘNG VÀO PTTT Ở EDIT NỮA
 
-        // Kiểu phiếu
+        // Kiểu phiếu cố định theo existing
+        existing.setKieuPhieu(existing.getKieuPhieu());
         if (isCaNhan) {
             existing.setGioiHanSuDung(1);
-            existing.setSoLuong(null); // cá nhân không dùng tổng số lượng
+            existing.setSoLuong(null);
         } else {
             Integer gioiHan = voucher.getGioiHanSuDung();
             existing.setGioiHanSuDung(gioiHan);
-            // Vì "Sắp diễn ra" => chưa dùng, cho phép set lại soLuong = gioiHan
-            existing.setSoLuong(gioiHan);
+            existing.setSoLuong(gioiHan); // còn 'Sắp diễn ra' nên cho sync lại
         }
 
         try {
             PhieuGiamGia saved = phieuGiamGiaRepository.save(existing);
-//  nam      Gán khách & gửi mail nếu là cá nhân
-//           if (isCaNhan && selectedCustomerIds != null && !selectedCustomerIds.isEmpty()) {
-            broadcastVoucherUpdate("UPDATED", saved, "Phiếu giảm giá được cập nhật: " + saved.getMa());
 
-            if ("ca_nhan".equalsIgnoreCase(saved.getKieuPhieu()) && selectedCustomerIds != null) {
+            // Nếu là cá nhân: gán KH + (tuỳ chọn) gửi mail
+            if (isCaNhan && selectedCustomerIds != null && !selectedCustomerIds.isEmpty()) {
                 List<NguoiDung> users = phieuService.layNguoiDungTheoIds(selectedCustomerIds);
                 for (NguoiDung user : users) {
                     phieuService.ganPhieuChoNguoiDung(user, saved);
@@ -910,6 +861,7 @@ public class PhieuGiamGiaController {
                 }
             }
 
+            broadcastVoucherUpdate("UPDATED", saved, "Phiếu giảm giá được cập nhật: " + saved.getMa());
             redirectAttributes.addFlashAttribute("successMessage", "Cập nhật phiếu giảm giá thành công!");
             return "redirect:/polyshoe/phieu-giam-gia";
         } catch (Exception e) {
@@ -918,7 +870,6 @@ public class PhieuGiamGiaController {
             return "redirect:/polyshoe/phieu-giam-gia";
         }
     }
-
 
 
     // ===== Delete (only "Sắp diễn ra") =====

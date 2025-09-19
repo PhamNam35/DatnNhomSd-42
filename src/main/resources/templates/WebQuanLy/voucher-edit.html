@@ -9,7 +9,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/admin.css}">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
     <!-- Style -->
     <style>
@@ -37,27 +36,13 @@
         .table th,.table td{vertical-align:middle}
         .invalid-feedback{display:none;color:#dc3545;font-size:.875rem}
         .is-invalid ~ .invalid-feedback{display:block}
-        .select2-container--default .select2-selection--multiple{
-            border:1px solid #dfe3e8;border-radius:.5rem;min-height:42px;padding:2px 6px;display:flex;align-items:center;gap:4px
-        }
-        .select2-container--default .select2-selection--multiple .select2-selection__choice{
-            background:var(--secondary)!important;color:#0b2a45;border:0;border-radius:999px;padding:2px 8px;font-weight:600
-        }
-        .select2-container--default .select2-results__option--highlighted{background:var(--secondary)!important;color:#0b2a45!important}
         input[type="radio"],input[type="checkbox"]{accent-color:var(--primary)}
         .badge-state{font-size:.85rem}
-
-        /* ---- Border đỏ cho Select2 khi lỗi PTTT ---- */
-        .select2-container--default .select2-selection--multiple.is-invalid-s2{
-            border-color:#dc3545 !important;
-            box-shadow:0 0 0 .25rem rgba(220,53,69,.25) !important;
-        }
     </style>
 
     <!-- JS libs -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
     <script th:src="@{/js/sidebar.js}" defer></script>
     <script th:src="@{/js/notification.js}"></script>
 </head>
@@ -165,21 +150,21 @@
                             </div>
                             <div class="card-body">
                                 <!-- Phạm vi (LOCKED) -->
-                                <div class="mb-3" id="scopeGroup" data-locked="true">
-                                    <!-- giữ giá trị để submit vì radio disabled -->
-                                    <input type="hidden" name="phamViApDung" th:value="*{phamViApDung}" id="scopeLockedVal"/>
-                                    <label class="form-label"><i class="fas fa-truck me-2"></i>Phạm vi áp dụng:</label>
-                                    <div class="d-flex flex-wrap gap-4">
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{phamViApDung}" value="ORDER"
-                                                   onchange="toggleScopeFields()" disabled> Giảm giá đơn hàng
-                                        </label>
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING"
-                                                   onchange="toggleScopeFields()" disabled> Giảm phí vận chuyển
-                                        </label>
-                                    </div>
-                                </div>
+    <!--                                <div class="mb-3" id="scopeGroup" data-locked="true">-->
+    <!--                                    &lt;!&ndash; giữ giá trị để submit vì radio disabled &ndash;&gt;-->
+    <!--                                    <input type="hidden" name="phamViApDung" th:value="*{phamViApDung}" id="scopeLockedVal"/>-->
+    <!--                                    <label class="form-label"><i class="fas fa-truck me-2"></i>Phạm vi áp dụng:</label>-->
+    <!--                                    <div class="d-flex flex-wrap gap-4">-->
+    <!--                                        <label class="form-check-label">-->
+    <!--                                            <input type="radio" th:field="*{phamViApDung}" value="ORDER"-->
+    <!--                                                   onchange="toggleScopeFields()" disabled> Giảm giá đơn hàng-->
+    <!--                                        </label>-->
+    <!--&lt;!&ndash;                                        <label class="form-check-label">&ndash;&gt;-->
+    <!--&lt;!&ndash;                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING"&ndash;&gt;-->
+    <!--&lt;!&ndash;                                                   onchange="toggleScopeFields()" disabled> Giảm phí vận chuyển&ndash;&gt;-->
+    <!--&lt;!&ndash;                                        </label>&ndash;&gt;-->
+    <!--                                    </div>-->
+    <!--                                </div>-->
 
                                 <!-- Kiểu freeship (SHIPPING) -->
                                 <div class="mb-3" id="shipTypeGroup"
@@ -271,22 +256,25 @@
                             </div>
                             <div class="card-body">
                                 <div class="row g-3">
+
+                                    <!-- Loại phiếu (hiển thị nhưng khóa không cho đổi) -->
                                     <div class="col-lg-6">
                                         <label class="form-label"><i class="fas fa-users me-2"></i>Loại phiếu:</label>
+                                        <!-- Hidden để submit vì radio bị disabled -->
+                                        <input type="hidden" name="kieuPhieu" th:value="*{kieuPhieu}"/>
                                         <div class="d-flex flex-wrap gap-4">
-                                            <label class="form-check-label">
+                                            <label class="form-check-label" style="cursor:not-allowed;opacity:.9">
                                                 <input type="radio" th:field="*{kieuPhieu}" value="cong_khai"
-                                                       onchange="toggleUsageCount('cong_khai', true)"
-                                                       th:disabled="${st != 'Sắp diễn ra'}"> Công khai
+                                                       onchange="toggleUsageCount('cong_khai', true)" disabled> Công khai
                                             </label>
-                                            <label class="form-check-label">
+                                            <label class="form-check-label" style="cursor:not-allowed;opacity:.9">
                                                 <input type="radio" th:field="*{kieuPhieu}" value="ca_nhan"
-                                                       onchange="toggleUsageCount('ca_nhan', true)"
-                                                       th:disabled="${st != 'Sắp diễn ra'}"> Cá nhân
+                                                       onchange="toggleUsageCount('ca_nhan', true)" disabled> Cá nhân
                                             </label>
-
                                         </div>
                                     </div>
+
+                                    <!-- Lượt sử dụng -->
                                     <div class="col-lg-6">
                                         <label class="form-label">Lượt sử dụng:</label>
                                         <input type="text" th:field="*{gioiHanSuDung}" class="form-control" id="gioiHanSuDung"
@@ -295,35 +283,14 @@
                                         <small class="text-muted" id="caNhanNote" th:style="${voucher.kieuPhieu == 'ca_nhan' ? 'display:block' : 'display:none'}">* Phiếu cá nhân chỉ áp dụng 1 lượt sử dụng</small>
                                         <div class="invalid-feedback" id="gioiHanSuDungError"></div>
                                     </div>
+
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- 4) PHƯƠNG THỨC THANH TOÁN ÁP DỤNG -->
-                    <div class="col-12">
-                        <div class="card-section">
-                            <div class="card-header">
-                                <i class="fas fa-credit-card"></i>
-                                <span>Phương thức thanh toán áp dụng</span>
-                            </div>
-                            <div class="card-body">
-                                <select id="paymentMethodSelect" class="form-select" name="selectedPtttIds" multiple
-                                        th:disabled="${st != 'Sắp diễn ra'}">
-                                    <option value="all">Tất cả</option>
-                                    <option th:each="pt : ${phuongThucList}"
-                                            th:value="${pt.id}"
-                                            th:text="${pt.tenPhuongThuc}"
-                                            th:selected="${selectedPtttIds != null and selectedPtttIds.contains(pt.id)}">
-                                    </option>
-                                </select>
-                                <!-- Thông báo lỗi PTTT bắt buộc -->
-                                <div id="ptttError" class="text-danger small mt-1 d-none">
-                                    vui lòng chọn ít nhất 1 pttt khi chưa chọn
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- 4) (BỎ) PHƯƠNG THỨC THANH TOÁN ÁP DỤNG -->
+                    <div class="col-12"></div>
 
                     <!-- 5) KHÁCH HÀNG (chỉ hiện khi phiếu cá nhân) -->
                     <div class="col-12" th:if="${voucher.kieuPhieu == 'ca_nhan'}">
@@ -423,21 +390,23 @@
         </div>
 
         <!-- Modal xác nhận -->
-<!--        <div class="modal fade" id="confirmEditModal" tabindex="-1" aria-labelledby="confirmEditModalLabel" aria-hidden="true">-->
-<!--            <div class="modal-dialog modal-dialog-centered">-->
-<!--                <div class="modal-content">-->
-<!--                    <div class="modal-header">-->
-<!--                        <h5 class="modal-title" id="confirmEditModalLabel">Xác nhận lưu thay đổi</h5>-->
-<!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                    </div>-->
-<!--                    <div class="modal-body">Bạn có chắc chắn muốn lưu các thay đổi của phiếu này không?</div>-->
-<!--                    <div class="modal-footer">-->
-<!--                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>-->
-<!--                        <button type="button" class="btn btn-primary" id="confirmSubmit">Xác nhận</button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
+        <!--
+        <div class="modal fade" id="confirmEditModal" tabindex="-1" aria-labelledby="confirmEditModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="confirmEditModalLabel">Xác nhận lưu thay đổi</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">Bạn có chắc chắn muốn lưu các thay đổi của phiếu này không?</div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-primary" id="confirmSubmit">Xác nhận</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
 
     </div> <!-- /content -->
 </div> <!-- /with st -->
@@ -497,7 +466,6 @@
         if (name.length > 100) return 'Tên tối đa 100 ký tự.';
         return null;
     }
-
 
     /* ===== Toggles ===== */
     function toggleScopeFields() {
@@ -572,10 +540,6 @@
         let isValid = true;
         $('.invalid-feedback').text('').hide();
         $('.form-control').removeClass('is-invalid');
-
-        // reset lỗi PTTT
-        $('#ptttError').addClass('d-none').text('');
-        $('#paymentMethodSelect').next('.select2').find('.select2-selection').removeClass('is-invalid-s2');
 
         const ngayBatDauVal = $('#ngayBatDau').val();
         const ngayKetThucVal = $('#ngayKetThuc').val();
@@ -706,14 +670,6 @@
             }
         }
 
-        // PTTT bắt buộc (bỏ 'all')
-        const ptttChosen = ($('#paymentMethodSelect').val() || []).filter(v => v !== 'all');
-        if (ptttChosen.length === 0) {
-            $('#ptttError').text('vui lòng chọn ít nhất 1 pttt khi chưa chọn').removeClass('d-none');
-            $('#paymentMethodSelect').next('.select2').find('.select2-selection').addClass('is-invalid-s2');
-            isValid = false;
-        }
-
         if (isValid) {
             Swal.fire({
                 title: 'Xác nhận lưu thay đổi',
@@ -731,16 +687,6 @@
                     // Chuẩn hoá số trước khi submit
                     ['#giaTriGiam', '#giaTriGiamToiDa', '#giaTriGiamToiThieu', '#gioiHanSuDung']
                         .forEach(sel => $(sel).val(parseNumber($(sel).val())));
-
-                    // Bỏ 'all' trước khi submit
-                    const selected = $('#paymentMethodSelect').val();
-                    if (selected && selected.includes('all')) {
-                        const allOptions = $('#paymentMethodSelect option').map(function () {
-                            return $(this).val();
-                        }).get().filter(v => v !== 'all');
-                        $('#paymentMethodSelect').val(allOptions).trigger('change');
-                    }
-
                     $('#editVoucherForm').trigger('submit');
                 }
             });
@@ -748,31 +694,8 @@
         return isValid;
     }
 
-        /* ===== READY ===== */
+    /* ===== READY ===== */
     $(document).ready(function () {
-        // Select2 + xử lý "all"
-        $('#paymentMethodSelect').select2({
-            placeholder: 'Chọn phương thức...',
-            allowClear: true,
-            closeOnSelect: false,
-            width: '100%'
-        }).on('change', function () {
-            const selectedValues = $(this).val() || [];
-            const allOptions = $('#paymentMethodSelect option').map(function(){return $(this).val();}).get().filter(v => v !== 'all');
-            if (selectedValues.includes('all')) {
-                $(this).val(allOptions).trigger('change.select2');
-            } else if (selectedValues.length === allOptions.length) {
-                $(this).val(['all'].concat(allOptions)).trigger('change.select2');
-            }
-
-            // clear lỗi PTTT khi hợp lệ
-            const realChosen = ($(this).val() || []).filter(v => v !== 'all');
-            if (realChosen.length > 0){
-                $('#ptttError').addClass('d-none').text('');
-                $('#paymentMethodSelect').next('.select2').find('.select2-selection').removeClass('is-invalid-s2');
-            }
-        });
-
         // Định dạng số khi blur (động theo kiểu giảm)
         const formatGiaTriGiam = () => {
             const type = $('input[name="loai"]:checked').val();
@@ -823,20 +746,6 @@
         toggleDiscountFields();
         toggleUsageCount(null, false);
         setMinNowForDatetimeInputs();
-
-        // Nút xác nhận submit
-        // $('#confirmSubmit').on('click', function () {
-        //     ['#giaTriGiam','#giaTriGiamToiDa','#giaTriGiamToiThieu','#gioiHanSuDung']
-        //         .forEach(sel => $(sel).val(parseNumber($(sel).val())));
-        //
-        //     const selected = $('#paymentMethodSelect').val();
-        //     if (selected && selected.includes('all')) {
-        //         const allOptions = $('#paymentMethodSelect option').map(function(){return $(this).val();}).get().filter(v => v !== 'all');
-        //         $('#paymentMethodSelect').val(allOptions).trigger('change');
-        //     }
-        //
-        //     $('#editVoucherForm').submit();
-        // });
 
         // Toasts
         showToast('successToast');

@@ -11,142 +11,39 @@
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
 
     <!-- Style -->
-    <!-- Replace the existing <style> section with this -->
     <style>
         :root {
-            --primary: #DC2626; /* Red */
-            --secondary: #FEE2E2; /* Light red for secondary elements */
-            --text: #1F2937; /* Dark gray-black for text */
-            --line: #D1D5DB; /* Light gray for borders */
+            --primary: #DC2626;
+            --secondary: #FEE2E2;
+            --text: #1F2937;
+            --line: #D1D5DB;
         }
-        body {
-            background: #F9FAFB; /* Light gray background, close to white */
-            color: var(--text);
-        }
-        .content {
-            padding: 2rem;
-            margin-left: 256px;
-            margin-top: 70px;
-        }
-        .sticky-header {
-            position: sticky;
-            top: 70px;
-            z-index: 1000;
-            background: #FFFFFF; /* White */
-            padding: 1rem 2rem;
-            margin: -2rem -2rem 1rem -2rem;
-            border-bottom: 1px solid var(--line);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .sticky-header h2 {
-            font-weight: 700;
-            margin: 0;
-            color: var(--primary); /* Red */
-        }
-        .card-section {
-            border: 1px solid var(--line);
-            border-radius: .75rem;
-            background: #FFFFFF; /* White */
-            overflow: hidden;
-        }
-        .card-section .card-header {
-            background: rgba(254, 226, 226, 0.25); /* Light red background */
-            border-bottom: 1px solid var(--line);
-            font-weight: 600;
-            color: var(--primary); /* Red */
-            display: flex;
-            align-items: center;
-            gap: .5rem;
-        }
-        .card-section .card-body {
-            padding: 1rem 1.25rem;
-        }
-        .form-label {
-            font-weight: 600;
-            color: #1F2937; /* Dark gray-black */
-        }
-        .form-control, .form-select {
-            border-radius: .5rem;
-            border: 1px solid var(--line);
-            transition: border-color .2s, box-shadow .2s;
-        }
-        .form-control:focus, .form-select:focus {
-            border-color: var(--secondary); /* Light red */
-            box-shadow: 0 0 0 .25rem rgba(254, 226, 226, 0.45); /* Light red glow */
-        }
-        .input-group-text {
-            background: #F9FAFB; /* Light gray, near white */
-            border-color: var(--line);
-        }
-        .btn-primary {
-            --bs-btn-bg: var(--primary); /* Red */
-            --bs-btn-border-color: var(--primary);
-            --bs-btn-hover-bg: #B91C1C; /* Darker red */
-            --bs-btn-hover-border-color: #B91C1C;
-        }
-        .btn-secondary {
-            --bs-btn-bg: var(--secondary); /* Light red */
-            --bs-btn-border-color: var(--secondary);
-            --bs-btn-color: #1F2937; /* Dark gray-black */
-            --bs-btn-hover-bg: #FECACA; /* Slightly darker light red */
-            --bs-btn-hover-border-color: #FECACA;
-        }
-        .table-responsive {
-            border-radius: .5rem;
-            overflow: hidden;
-        }
-        .invalid-feedback {
-            display: none;
-            color: #B91C1C; /* Darker red for errors */
-            font-size: .875rem;
-        }
-        .is-invalid ~ .invalid-feedback {
-            display: block;
-        }
+        body { background:#F9FAFB; color:var(--text); }
+        .content { padding:2rem; margin-left:256px; margin-top:70px; }
+        .sticky-header { position:sticky; top:70px; z-index:1000; background:#fff; padding:1rem 2rem; margin:-2rem -2rem 1rem -2rem; border-bottom:1px solid var(--line); display:flex; justify-content:center; align-items:center; }
+        .sticky-header h2 { font-weight:700; margin:0; color:var(--primary); }
+        .card-section { border:1px solid var(--line); border-radius:.75rem; background:#fff; overflow:hidden; }
+        .card-section .card-header { background:rgba(254,226,226,.25); border-bottom:1px solid var(--line); font-weight:600; color:var(--primary); display:flex; align-items:center; gap:.5rem; }
+        .card-section .card-body { padding:1rem 1.25rem; }
+        .form-label { font-weight:600; color:#1F2937; }
+        .form-control,.form-select{ border-radius:.5rem; border:1px solid var(--line); transition:border-color .2s, box-shadow .2s; }
+        .form-control:focus,.form-select:focus{ border-color:var(--secondary); box-shadow:0 0 0 .25rem rgba(254,226,226,.45); }
+        .input-group-text{ background:#F9FAFB; border-color:var(--line); }
+        .btn-primary{ --bs-btn-bg:var(--primary); --bs-btn-border-color:var(--primary); --bs-btn-hover-bg:#B91C1C; --bs-btn-hover-border-color:#B91C1C; }
+        .btn-secondary{ --bs-btn-bg:var(--secondary); --bs-btn-border-color:var(--secondary); --bs-btn-color:#1F2937; --bs-btn-hover-bg:#FECACA; --bs-btn-hover-border-color:#FECACA; }
+        .table-responsive{ border-radius:.5rem; overflow:hidden; }
+        .invalid-feedback{ display:none; color:#B91C1C; font-size:.875rem; }
+        .is-invalid ~ .invalid-feedback{ display:block; }
 
-        /* Select2 – pills gọn, đẹp */
-        .select2-container--default .select2-selection--multiple {
-            border: 1px solid var(--line);
-            border-radius: .75rem;
-            min-height: 34px;
-            padding: 6px 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-        }
-        .select2-container--default .select2-selection--multiple .select2-selection__choice {
-            background: rgba(254, 226, 226, 0.9) !important; /* Light red */
-            color: #1F2937; /* Dark gray-black */
-            border: 0;
-            border-radius: 999px;
-            padding: 2px 10px;
-            font-weight: 600;
-        }
-        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
-            margin-right: 6px;
-            color: #1F2937; /* Dark gray-black */
-            font-weight: 700;
-        }
-        .select2-selection--multiple .select2-selection__clear {
-            display: none !important;
-        }
+        /* Select2 */
+        .select2-container--default .select2-selection--multiple{ border:1px solid var(--line); border-radius:.75rem; min-height:34px; padding:6px 8px; display:flex; align-items:center; gap:6px; }
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered{ display:flex; flex-wrap:wrap; gap:6px; }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice{ background:rgba(254,226,226,.9)!important; color:#1F2937; border:0; border-radius:999px; padding:2px 10px; font-weight:600; }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove{ margin-right:6px; color:#1F2937; font-weight:700; }
+        .select2-selection--multiple .select2-selection__clear{ display:none!important; }
 
-        input[type="radio"], input[type="checkbox"] {
-            accent-color: var(--primary); /* Red */
-        }
-
-        /* Select2 invalid border */
-        .select2-container--default .select2-selection--multiple.is-invalid-s2 {
-            border-color: #B91C1C !important; /* Darker red */
-            box-shadow: 0 0 0 .25rem rgba(185, 28, 28, 0.25); /* Darker red glow */
-        }
+        input[type="radio"],input[type="checkbox"]{ accent-color:var(--primary); }
+        .select2-container--default .select2-selection--multiple.is-invalid-s2{ border-color:#B91C1C!important; box-shadow:0 0 0 .25rem rgba(185,28,28,.25); }
     </style>
 
     <!-- JS libs -->
@@ -212,35 +109,11 @@
                         <div class="card-section">
                             <div class="card-header"><i class="fa-solid fa-sliders"></i><span>Phạm vi áp dụng & Kiểu giảm</span></div>
                             <div class="card-body">
-                                <!-- Phạm vi -->
-                                <div class="mb-3">
-                                    <label class="form-label"><i class="fas fa-truck me-2"></i>Phạm vi áp dụng:</label>
-                                    <div class="d-flex flex-wrap gap-4">
-                                        <label class="form-check-label">
-                                            <input type="radio" th:field="*{phamViApDung}" value="ORDER" onchange="toggleScopeFields()"> Giảm giá đơn hàng
-                                        </label>
-<!--                                        <label class="form-check-label">-->
-<!--                                            <input type="radio" th:field="*{phamViApDung}" value="SHIPPING" onchange="toggleScopeFields()"> Giảm phí vận chuyển-->
-<!--                                        </label>-->
-                                    </div>
-                                    <div class="text-danger small mt-1 d-none" id="phamViError"></div>
-                                </div>
-
-<!--                                &lt;!&ndash; Kiểu freeship (SHIPPING) &ndash;&gt;-->
-<!--                                <div class="mb-3" id="shipTypeGroup" style="display:none;">-->
-<!--                                    <label class="form-label"><i class="fas fa-truck-fast me-2"></i>Kiểu freeship:</label>-->
-<!--                                    <div class="d-flex flex-wrap gap-4">-->
-<!--                                        <label class="form-check-label">-->
-<!--                                            <input type="radio" th:field="*{loai}" value="FREESHIP_FULL" onchange="toggleDiscountFields()"> Miễn phí ship toàn phần-->
-<!--                                        </label>-->
-<!--                                        <label class="form-check-label">-->
-<!--                                            <input type="radio" th:field="*{loai}" value="FREESHIP_CAP" onchange="toggleDiscountFields()"> Miễn phí ship tối đa X VND-->
-<!--                                        </label>-->
-<!--                                    </div>-->
-<!--                                </div>-->
+                                <!-- ẨN phạm vi, mặc định ORDER -->
+                                <input type="hidden" name="phamViApDung" value="ORDER"/>
 
                                 <!-- Kiểu giảm (ORDER) -->
-                                <div class="mb-3" id="discountTypeGroup" style="display:none;">
+                                <div class="mb-3" id="discountTypeGroup">
                                     <label class="form-label"><i class="fas fa-percentage me-2"></i>Kiểu giảm:</label>
                                     <div class="d-flex flex-wrap gap-4">
                                         <label class="form-check-label" id="percentOption">
@@ -320,25 +193,6 @@
                         </div>
                     </div>
 
-                    <!-- 4) PHƯƠNG THỨC THANH TOÁN ÁP DỤNG -->
-                    <div class="col-12">
-                        <div class="card-section">
-                            <div class="card-header"><i class="fas fa-credit-card"></i><span>Phương thức thanh toán áp dụng</span></div>
-                            <div class="card-body">
-                                <select id="paymentMethodSelect" class="form-select" name="selectedPtttIds" multiple>
-                                    <option value="all">Tất cả</option>
-                                    <option th:each="pt : ${phuongThucList}" th:value="${pt.id}"
-                                            th:text="${pt.tenPhuongThuc}"
-                                            th:selected="${selectedPtttIds != null and selectedPtttIds.contains(pt.id)}"></option>
-                                </select>
-                                <!-- Lỗi PTTT bắt buộc -->
-                                <div id="ptttError" class="text-danger small mt-1 d-none">
-                                    vui lòng chọn ít nhất 1 pttt khi chưa chọn
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- 5) KHÁCH HÀNG (chỉ hiện khi phiếu cá nhân) -->
                     <div class="col-12">
                         <div id="emailOptions" class="card-section" style="display:none">
@@ -393,23 +247,6 @@
                 </div>
             </form>
         </div>
-
-        <!-- Confirmation Modal -->
-<!--        <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">-->
-<!--            <div class="modal-dialog modal-dialog-centered">-->
-<!--                <div class="modal-content">-->
-<!--                    <div class="modal-header">-->
-<!--                        <h5 class="modal-title" id="confirmModalLabel">Xác nhận lưu</h5>-->
-<!--                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>-->
-<!--                    </div>-->
-<!--                    <div class="modal-body">Bạn có chắc chắn muốn lưu phiếu giảm giá này không?</div>-->
-<!--                    <div class="modal-footer">-->
-<!--                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>-->
-<!--                        <button type="button" class="btn btn-primary" id="confirmSubmit">Xác nhận</button>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </div>
 </div>
 
@@ -452,25 +289,14 @@
     }
     function doBeforeSubmit(){
         try { sessionStorage.removeItem(STORAGE_KEY); } catch(e){}
-
-        // parse về số thô trước khi submit
         ['#giaTriGiam','#giaTriGiamToiDa','#giaTriGiamToiThieu','#gioiHanSuDung']
             .forEach(sel => $(sel).val(parseNumber($(sel).val())));
-
-        // nếu người dùng lỡ chọn "Tất cả" thì chuyển thành danh sách cụ thể
-        const selected = $('#paymentMethodSelect').val();
-        if (selected && selected.includes('all')){
-            const allOptions = $('#paymentMethodSelect option')
-                .map(function(){return $(this).val();}).get().filter(v=>'all'!==v);
-            $('#paymentMethodSelect').val(allOptions).trigger('change');
-        }
-
         $('#createVoucherForm').submit();
     }
 
     /* ===== MA/TEN helpers ===== */
     function normalizeCode(raw){
-        return (raw || '').trim().replace(/\s+/g,''); // bỏ hết khoảng trắng bên trong
+        return (raw || '').trim().replace(/\s+/g,'');
     }
     function validateMaField(){
         const $ma = $('#ma');
@@ -484,7 +310,6 @@
             $ma.addClass('is-invalid'); $('#maError').text(msg).show();
             return false;
         }
-        // cập nhật lại giá trị đã chuẩn hoá
         $ma.val(ma);
         $ma.removeClass('is-invalid'); $('#maError').text('').hide();
         return true;
@@ -493,51 +318,32 @@
         const $ten = $('#ten');
         const raw = $ten.val() ?? '';
         const trimmed = raw.trim();
-
         let msg = '';
-
-        if (!trimmed) {
-            msg = 'Tên phiếu không được để trống.';
-        } else if (/\s{2,}/.test(trimmed)) { // cấm >= 2 khoảng trắng liên tiếp ở giữa
-            msg = 'Giữa các từ chỉ được 1 khoảng trắng.';
-        } else if (!/^[\p{L}\d\-\/]+(?: [\p{L}\d\-\/]+)*$/u.test(trimmed)) {
-            // Cho phép: chữ (có dấu), số, dấu "-" và "/" ; các nhóm cách nhau đúng 1 space
-            msg = 'Tên chỉ gồm chữ (có dấu), số, dấu “-” và “/”; giữa các nhóm cách đúng 1 khoảng trắng.';
-        } else {
+        if (!trimmed) msg = 'Tên phiếu không được để trống.';
+        else if (/\s{2,}/.test(trimmed)) msg = 'Giữa các từ chỉ được 1 khoảng trắng.';
+        else if (!/^[\p{L}\d\-\/]+(?: [\p{L}\d\-\/]+)*$/u.test(trimmed)) msg = 'Tên chỉ gồm chữ (có dấu), số, dấu “-” và “/”; giữa các nhóm cách đúng 1 khoảng trắng.';
+        else {
             const nonSpaceLen = trimmed.replace(/\s+/g,'').length;
-            if (nonSpaceLen < 6)       msg = 'Tên phải có ít nhất 6 ký tự (không tính khoảng trắng).';
+            if (nonSpaceLen < 6) msg = 'Tên phải có ít nhất 6 ký tự (không tính khoảng trắng).';
             else if (trimmed.length > 100) msg = 'Tên tối đa 100 ký tự.';
         }
-
         if (msg){
-            $ten.addClass('is-invalid');
-            $('#tenError').text(msg).show();
+            $ten.addClass('is-invalid'); $('#tenError').text(msg).show();
             return false;
         }
-        // giữ nguyên khoảng trắng đầu/cuối theo yêu cầu
-        $ten.removeClass('is-invalid');
-        $('#tenError').text('').hide();
+        $ten.removeClass('is-invalid'); $('#tenError').text('').hide();
         return true;
     }
 
-    /* ===== Toggles (không auto-check) ===== */
+    /* ===== Toggles ===== */
+    // Luôn coi scope là ORDER, hiển thị "Kiểu giảm"
     function toggleScopeFields() {
-        const scope = $('input[name="phamViApDung"]:checked').val();
-        const $shipGroup = $('#shipTypeGroup');
-        const $discountGroup = $('#discountTypeGroup');
-
-        if (!scope){
-            $shipGroup.hide();
-            $discountGroup.hide();
-            $('#discountValueGroup').addClass('d-none');
-            $('#maxDiscountGroup').addClass('d-none');
-            return;
+        $('#shipTypeGroup').hide();          // nếu có
+        $('#discountTypeGroup').show();      // luôn hiện
+        // Nếu chưa chọn loại giảm, đặt mặc định CASH (có thể đổi sang PERCENT)
+        if (!$('input[name="loai"]:checked').length) {
+            $('input[name="loai"][value="CASH"]').prop('checked', true);
         }
-
-        const isShipping = scope === 'SHIPPING';
-        $shipGroup.toggle(isShipping);
-        $discountGroup.toggle(!isShipping);
-
         toggleDiscountFields();
     }
 
@@ -551,41 +357,22 @@
             return;
         }
 
-        const isPercent      = type === 'PERCENT';
-        const isFreeshipFull = type === 'FREESHIP_FULL';
-        const isFreeshipCap  = type === 'FREESHIP_CAP';
-
+        const isPercent = type === 'PERCENT';
         $('#discountUnit').text(isPercent ? '%' : 'VND');
 
-        // đổi input filter theo kiểu giảm
         const $giaTri = $('#giaTriGiam');
         if (isPercent){
-            $giaTri.attr('oninput', "this.value=this.value.replace(/[^0-9]/g,'')"); // CHỈ số nguyên
+            $giaTri.attr('oninput', "this.value=this.value.replace(/[^0-9]/g,'')");
             $giaTri.attr('placeholder','0');
-        } else {
-            $giaTri.attr('oninput', "this.value=this.value.replace(/[^0-9,]/g,'')"); // tiền: cho phép ,
-            $giaTri.attr('placeholder','0');
-        }
-
-        if (isFreeshipFull){
-            $('#discountValueGroup').addClass('d-none');
-            $('#giaTriGiam').val('0').prop('readonly', true);
-            $('#maxDiscountGroup').addClass('d-none');
-            $('#giaTriGiamToiDa').val('').prop('readonly', true);
-        } else if (isFreeshipCap){
-            $('#discountValueGroup').addClass('d-none');
-            $('#giaTriGiam').val('0').prop('readonly', true);
-            $('#maxDiscountGroup').removeClass('d-none');
-            $('#giaTriGiamToiDa').prop('readonly', false);
-        } else if (isPercent){
             $('#discountValueGroup').removeClass('d-none');
-            $('#giaTriGiam').prop('readonly', false);
             $('#maxDiscountGroup').removeClass('d-none');
-            $('#giaTriGiamToiDa').prop('readonly', false);
+            $('#giaTriGiam, #giaTriGiamToiDa').prop('readonly', false);
         } else { // CASH
+            $giaTri.attr('oninput', "this.value=this.value.replace(/[^0-9,]/g,'')");
+            $giaTri.attr('placeholder','0');
             $('#discountValueGroup').removeClass('d-none');
-            $('#giaTriGiam').prop('readonly', false);
             $('#maxDiscountGroup').addClass('d-none');
+            $('#giaTriGiam').prop('readonly', false);
             $('#giaTriGiamToiDa').val('').prop('readonly', true);
         }
     }
@@ -619,7 +406,7 @@
         // reset lỗi
         $('.invalid-feedback').text('').hide();
         $('.form-control').removeClass('is-invalid');
-        $('#phamViError,#loaiError,#kieuPhieuError,#ptttError').addClass('d-none').text('');
+        $('#loaiError,#kieuPhieuError,#ptttError').addClass('d-none').text('');
         $('#paymentMethodSelect').next('.select2').find('.select2-selection').removeClass('is-invalid-s2');
 
         // MA/TEN
@@ -647,13 +434,14 @@
             $('#ngayBatDau').addClass('is-invalid'); $('#ngayBatDauError').text('Ngày bắt đầu phải trước hoặc bằng ngày kết thúc.').show(); isValid=false;
         }
 
-        // Radio groups
-        const scope = $('input[name="phamViApDung"]:checked').val();
-        if (!scope){ $('#phamViError').text('Vui lòng chọn phạm vi áp dụng.').removeClass('d-none'); isValid=false; }
+        // Scope cố định ORDER
+        const scope = 'ORDER';
 
+        // Kiểu giảm
         const type = $('input[name="loai"]:checked').val();
-        if (scope && !type){ $('#loaiError').text('Vui lòng chọn kiểu/phương thức giảm giá.').removeClass('d-none'); isValid=false; }
+        if (!type){ $('#loaiError').text('Vui lòng chọn kiểu/phương thức giảm giá.').removeClass('d-none'); isValid=false; }
 
+        // Loại phiếu
         const kieuChosen = $('input[name="kieuPhieu"]:checked').length > 0;
         if (!kieuChosen){ $('#kieuPhieuError').text('Vui lòng chọn loại phiếu.').removeClass('d-none'); isValid=false; }
 
@@ -670,7 +458,6 @@
                 isValid = false;
             }
             if (type === 'PERCENT'){
-                // bắt buộc nguyên
                 if (!/^\d+$/.test(rawGiam)){
                     $('#giaTriGiam').addClass('is-invalid');
                     $('#giaTriGiamError').text('Phần trăm giảm phải là số nguyên.').show();
@@ -703,24 +490,6 @@
                     isValid = false;
                 }
             }
-        } else if (scope === 'SHIPPING' && type){
-            if (type === 'FREESHIP_CAP'){
-                if (minOrder <= 0){
-                    $('#giaTriGiamToiThieu').addClass('is-invalid');
-                    $('#giaTriGiamToiThieuError').text('Đơn tối thiểu phải > 0 cho FREESHIP_CAP.').show();
-                    isValid = false;
-                }
-                if (max <= 0){
-                    $('#giaTriGiamToiDa').addClass('is-invalid');
-                    $('#giaTriGiamToiDaError').text('Giảm phí ship tối đa phải > 0.').show();
-                    isValid = false;
-                }
-                if (minOrder > 0 && max >= minOrder){
-                    $('#giaTriGiamToiDa').addClass('is-invalid');
-                    $('#giaTriGiamToiDaError').text('Giảm phí ship tối đa phải nhỏ hơn đơn tối thiểu áp dụng.').show();
-                    isValid = false;
-                }
-            }
         }
 
         // Công khai/cá nhân
@@ -735,14 +504,6 @@
             isValid=false;
         }
 
-        // PTTT (không tính 'all')
-        const ptttChosen = ($('#paymentMethodSelect').val() || []).filter(v => v !== 'all');
-        if (ptttChosen.length === 0){
-            $('#ptttError').text('vui lòng chọn ít nhất 1 pttt khi chưa chọn').removeClass('d-none');
-            $('#paymentMethodSelect').next('.select2').find('.select2-selection').addClass('is-invalid-s2');
-            isValid = false;
-        }
-
         if (isValid){
             Swal.fire({
                 title: 'Xác nhận lưu',
@@ -751,8 +512,8 @@
                 showCancelButton: true,
                 confirmButtonText: 'Xác nhận',
                 cancelButtonText: 'Hủy',
-                confirmButtonColor: '#153054', // primary
-                cancelButtonColor: '#9FD5F7'   // secondary
+                confirmButtonColor: '#153054',
+                cancelButtonColor: '#9FD5F7'
             }).then((result) => {
                 if (result.isConfirmed) {
                     doBeforeSubmit();
@@ -760,20 +521,18 @@
             });
         }
         return isValid;
-
     }
 
-    /* ===== Draft Save/Restore (optional) ===== */
+    /* ===== Draft Save/Restore ===== */
     function collectFormState(){
         return {
             ma: $('#ma').val(), ten: $('#ten').val(),
             ngayBatDau: $('#ngayBatDau').val(), ngayKetThuc: $('#ngayKetThuc').val(),
-            phamViApDung: $('input[name="phamViApDung"]:checked').val(),
+            phamViApDung: 'ORDER',
             loai: $('input[name="loai"]:checked').val(),
             giaTriGiam: $('#giaTriGiam').val(), giaTriGiamToiDa: $('#giaTriGiamToiDa').val(), giaTriGiamToiThieu: $('#giaTriGiamToiThieu').val(),
             kieuPhieu: $('input[name="kieuPhieu"]:checked').val(),
             gioiHanSuDung: $('#gioiHanSuDung').val(),
-            selectedPtttIds: $('#paymentMethodSelect').val() || [],
             sendMail: $('#sendMail').is(':checked'),
             selectedCustomerIds: $('.customerCheckbox:checked').map(function(){return this.value;}).get()
         };
@@ -787,14 +546,12 @@
             if (s.ten) $('#ten').val(s.ten);
             if (s.ngayBatDau) $('#ngayBatDau').val(s.ngayBatDau);
             if (s.ngayKetThuc) $('#ngayKetThuc').val(s.ngayKetThuc);
-            if (s.phamViApDung) $('input[name="phamViApDung"][value="'+s.phamViApDung+'"]').prop('checked', true);
             if (s.loai) $('input[name="loai"][value="'+s.loai+'"]').prop('checked', true);
             if (s.giaTriGiam) $('#giaTriGiam').val(s.giaTriGiam);
             if (s.giaTriGiamToiDa) $('#giaTriGiamToiDa').val(s.giaTriGiamToiDa);
             if (s.giaTriGiamToiThieu) $('#giaTriGiamToiThieu').val(s.giaTriGiamToiThieu);
             if (s.kieuPhieu) $('input[name="kieuPhieu"][value="'+s.kieuPhieu+'"]').prop('checked', true);
             if (typeof s.sendMail === 'boolean') $('#sendMail').prop('checked', s.sendMail);
-            if (Array.isArray(s.selectedPtttIds)) $('#paymentMethodSelect').val(s.selectedPtttIds).trigger('change');
             if (Array.isArray(s.selectedCustomerIds)) s.selectedCustomerIds.forEach(id => $('.customerCheckbox[value="'+id+'"]').prop('checked', true));
         }catch(e){}
     }
@@ -816,7 +573,7 @@
         $('#ma').on('blur', validateMaField);
         $('#ten').on('blur', validateTenField);
 
-        // Select2 + xử lý "all"
+        // Select2 (nếu dùng)
         $('#paymentMethodSelect').select2({
             placeholder:'Chọn phương thức...',
             allowClear:true, closeOnSelect:false, width:'100%'
@@ -869,26 +626,10 @@
             saveFormState();
         });
 
-        // Khởi tạo UI ban đầu (không auto-check)
+        // Khởi tạo UI
         toggleScopeFields();
         toggleDiscountFields();
         toggleUsageCount();
-
-        // Submit xác nhận
-        // $('#confirmSubmit').on('click', function(){
-        //     try { sessionStorage.removeItem(STORAGE_KEY); } catch(e){}
-        //     // parse về dạng thô trước khi submit
-        //     ['#giaTriGiam','#giaTriGiamToiDa','#giaTriGiamToiThieu','#gioiHanSuDung']
-        //         .forEach(sel => $(sel).val(parseNumber($(sel).val())));
-        //     const selected = $('#paymentMethodSelect').val();
-        //     if (selected && selected.includes('all')){
-        //         const allOptions = $('#paymentMethodSelect option')
-        //             .map(function(){return $(this).val();}).get().filter(v=>'all'!==v);
-        //         $('#paymentMethodSelect').val(allOptions).trigger('change');
-        //     }
-        //     $('#createVoucherForm').submit();
-        // });
-
     });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
