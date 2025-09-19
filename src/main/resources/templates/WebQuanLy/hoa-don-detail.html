@@ -684,17 +684,17 @@
                         </div>
                         <span class="workflow-arrow">→</span>
                         <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Đã xác nhận' ? 'active' : (currentStatus == 'Đang vận chuyển' or currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành' or currentStatus == 'Đã đổi hàng') ? 'completed' : ''}">
+                             th:classappend="${currentStatus == 'Đã xác nhận' ? 'active' : (currentStatus == 'Đang vận chuyển' or currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành') ? 'completed' : ''}">
                             <i class="fas fa-check"></i> Đã xác nhận
                         </div>
                         <span class="workflow-arrow">→</span>
                         <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Đang vận chuyển' ? 'active' : (currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành' or currentStatus == 'Đã đổi hàng') ? 'completed' : ''}">
+                             th:classappend="${currentStatus == 'Đang vận chuyển' ? 'active' : (currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành') ? 'completed' : ''}">
                             <i class="fas fa-truck"></i> Vận chuyển
                         </div>
                         <span class="workflow-arrow">→</span>
                         <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Vận chuyển thành công' ? 'active' : (currentStatus == 'Hoàn thành' or currentStatus == 'Đã đổi hàng') ? 'completed' : ''}">
+                             th:classappend="${currentStatus == 'Vận chuyển thành công' ? 'active' : (currentStatus == 'Hoàn thành') ? 'completed' : ''}">
                             <i class="fas fa-check-circle"></i> Giao thành công
                         </div>
                         <span class="workflow-arrow">→</span>
@@ -706,11 +706,6 @@
                         <div class="workflow-step"
                              th:classappend="${currentStatus == 'Hủy đơn hàng' ? 'active' : ''}">
                             <i class="fas fa-times"></i> Hủy đơn hàng
-                        </div>
-                        <span class="workflow-arrow">/</span>
-                        <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Đã đổi hàng' ? 'active' : ''}">
-                            <i class="fas fa-exchange-alt"></i> Đã đổi hàng
                         </div>
                     </div>
 
@@ -722,22 +717,22 @@
                         </div>
                         <span class="workflow-arrow">→</span>
                         <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Đã xác nhận Online' ? 'active' : (currentStatus == 'Đang xử lý Online' or currentStatus == 'Đang vận chuyển' or currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành' or currentStatus == 'Đã đổi hàng') ? 'completed' : ''}">
+                             th:classappend="${currentStatus == 'Đã xác nhận Online' ? 'active' : (currentStatus == 'Đang xử lý Online' or currentStatus == 'Đang vận chuyển' or currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành') ? 'completed' : ''}">
                             <i class="fas fa-check"></i> Xác nhận Online
                         </div>
                         <span class="workflow-arrow">→</span>
                         <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Đang xử lý Online' ? 'active' : (currentStatus == 'Đang vận chuyển' or currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành' or currentStatus == 'Đã đổi hàng') ? 'completed' : ''}">
+                             th:classappend="${currentStatus == 'Đang xử lý Online' ? 'active' : (currentStatus == 'Đang vận chuyển' or currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành') ? 'completed' : ''}">
                             <i class="fas fa-cog"></i> Xử lý Online
                         </div>
                         <span class="workflow-arrow">→</span>
                         <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Đang vận chuyển' ? 'active' : (currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành' or currentStatus == 'Đã đổi hàng') ? 'completed' : ''}">
+                             th:classappend="${currentStatus == 'Đang vận chuyển' ? 'active' : (currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành') ? 'completed' : ''}">
                             <i class="fas fa-truck"></i> Vận chuyển
                         </div>
                         <span class="workflow-arrow">→</span>
                         <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Vận chuyển thành công' ? 'active' : (currentStatus == 'Hoàn thành' or currentStatus == 'Đã đổi hàng') ? 'completed' : ''}">
+                             th:classappend="${currentStatus == 'Vận chuyển thành công' ? 'active' : (currentStatus == 'Hoàn thành') ? 'completed' : ''}">
                             <i class="fas fa-check-circle"></i> Giao thành công
                         </div>
                         <span class="workflow-arrow">→</span>
@@ -749,11 +744,6 @@
                         <div class="workflow-step"
                              th:classappend="${currentStatus == 'Hủy đơn hàng' ? 'active' : ''}">
                             <i class="fas fa-times"></i> Hủy đơn hàng
-                        </div>
-                        <span class="workflow-arrow">/</span>
-                        <div class="workflow-step"
-                             th:classappend="${currentStatus == 'Đã đổi hàng' ? 'active' : ''}">
-                            <i class="fas fa-exchange-alt"></i> Đã đổi hàng
                         </div>
                     </div>
                 </div>
@@ -931,8 +921,6 @@
                               lichSu.trangThai == 'Đã xác nhận' ? 'status-confirmed-bg' :
                               lichSu.trangThai == 'Đang vận chuyển' ? 'status-shipping' :
                               lichSu.trangThai == 'Vận chuyển thành công' ? 'status-delivered' :
-                              lichSu.trangThai == 'Đã trả hàng' ? 'status-returned' :
-                              lichSu.trangThai == 'Đã trả hàng một phần' ? 'status-partial-returned' :
                               lichSu.trangThai == 'Đã xác nhận Online' ? 'status-online-confirmed' :
                               lichSu.trangThai == 'Đang xử lý Online' ? 'status-online-processing' :
                               lichSu.trangThai == 'Vận chuyển thành công' ? 'status-online-delivered' :
@@ -1008,14 +996,11 @@
                 trangThaiGiaoHang === "Đã xác nhận" ? "status-confirmed-bg" :
                     trangThaiGiaoHang === "Đang vận chuyển" ? "status-shipping" :
                         trangThaiGiaoHang === "Vận chuyển thành công" ? "status-delivered" :
-                            trangThaiGiaoHang === "Đã trả hàng" ? "status-returned" :
-                                trangThaiGiaoHang === "Đã trả hàng một phần" ? "status-partial-returned" :
                                     trangThaiGiaoHang === "Đã xác nhận Online" ? "status-online-confirmed" :
                                         trangThaiGiaoHang === "Đang xử lý Online" ? "status-online-processing" :
                                             trangThaiGiaoHang === "Vận chuyển thành công" ? "status-online-delivered" :
                                                 trangThaiGiaoHang === "Hủy đơn hàng" ? "status-canceled" :
                                                     trangThaiGiaoHang === "Hoàn thành" ? "status-completed-bg" :
-                                                        trangThaiGiaoHang === "Đã đổi hàng" ? "status-exchanged" :
                                                             "status-completed-bg"
         }`;
         statusElement.textContent = trangThaiGiaoHang.normalize("NFC");
@@ -1060,57 +1045,8 @@
         if (exchangeForm.style.display === "none" || exchangeForm.style.display === "") {
             exchangeForm.style.display = "block";
             exchangeButton.innerHTML = '<i class="fas fa-times"></i> Hủy';
-        } else {
-            exchangeForm.style.display = "none";
-            exchangeButton.innerHTML = '<i class="fas fa-exchange-alt"></i> Đổi hàng';
         }
     }
-
-    $("#exchangeHoaDonForm").submit(function(e) {
-        e.preventDefault();
-        Swal.fire({
-            title: 'Xác nhận đổi hàng?',
-            text: 'Bạn có chắc chắn muốn thực hiện đổi hàng cho đơn hàng này?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonText: '<i class="fas fa-exchange-alt mr-2"></i>Xác nhận',
-            cancelButtonText: '<i class="fas fa-arrow-left mr-2"></i>Hủy',
-            confirmButtonColor: '#ff6f61',
-            cancelButtonColor: '#6c757d',
-            customClass: {
-                popup: 'rounded-lg',
-                confirmButton: 'rounded-lg',
-                cancelButton: 'rounded-lg'
-            }
-        }).then((result) => {
-            if (result.isConfirmed) {
-                const formData = {
-                    lyDoDoiHang: $("#lyDoDoiHang").val(),
-                    chiTietDonHangIds: $("#chiTietDonHangIds").val(),
-                    newChiTietSanPhamIds: $("#newChiTietSanPhamIds").val()
-                };
-                $("#invoiceSpinner").show();
-                $.ajax({
-                    url: `/polyshoe/hoa-don/exchange/${hoaDonId}`,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(formData),
-                    success: function(response) {
-                        showToast(response.message, "success");
-                        window.location.reload();
-                    },
-                    error: function(error) {
-                        showToast("Lỗi khi đổi hàng: " + (error.responseJSON?.error || "Không xác định"), "error");
-                    },
-                    complete: function() {
-                        $("#invoiceSpinner").hide();
-                        toggleExchangeForm();
-                    }
-                });
-            }
-        });
-    });
-
 
     // Cập nhật hàm cancelOrder để sử dụng SweetAlert2 với trường nhập lý do
     function cancelOrder() {
