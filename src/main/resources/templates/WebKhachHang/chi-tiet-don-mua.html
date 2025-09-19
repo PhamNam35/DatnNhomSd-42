@@ -756,7 +756,7 @@
     </div>
 
     <!-- Enhanced Timeline -->
-    <div class="timeline-container" th:with="isCanceled=${currentStatus == 'Hủy đơn hàng'}">
+    <div class="timeline-container" th:with="isCanceled=${currentStatus == 'Hủy đơn hàng'}, isReturned=${currentStatus == 'Đã trả hàng'}">
       <div class="timeline-step" th:classappend="${isCanceled or isReturned or currentStatus == 'Chưa xác nhận' or currentStatus == 'Đã xác nhận Online' or currentStatus == 'Đang xử lý Online' or currentStatus == 'Đang vận chuyển' or currentStatus == 'Vận chuyển thành công' or currentStatus == 'Hoàn thành' ? 'completed' : ''}">
         <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
         <div class="step-label">Đã đặt hàng</div>
@@ -797,6 +797,18 @@
         <i class="fas fa-check-double"></i>
         Xác nhận đã nhận hàng
       </button>
+
+<!--      <button th:if="${currentStatus == 'Vận chuyển thành công'}"-->
+<!--              class="btn-exchange"-->
+<!--              th:attr="onclick=|requestExchange('${hoaDon.id}')|">-->
+<!--        <i class="fas fa-exchange-alt"></i> Yêu cầu đổi sản phẩm-->
+<!--      </button>-->
+<!--      <button th:if="${currentStatus == 'Vận chuyển thành công'}"-->
+<!--              class="btn-cancel"-->
+<!--              th:attr="onclick=|requestReturn('${hoaDon.id}')|">-->
+<!--        <i class="fas fa-undo"></i>-->
+<!--        Yêu cầu trả hàng-->
+<!--      </button>-->
       <button th:if="${currentStatus == 'Chưa xác nhận'}"
               class="btn-cancel"
               th:attr="onclick=|cancelOrder('${hoaDon.id}', '${hoaDon.donHang.maDonHang}')|">
@@ -932,6 +944,13 @@
         </span>
         <span class="payment-value price" id="tienGiam"
               th:attr="data-value=${hoaDon.donHang.tienGiam != null ? hoaDon.donHang.tienGiam : 0}"></span>
+      </div>
+
+      <div class="payment-info" th:if="${currentStatus == 'Đã trả hàng'}">
+        <span class="payment-label">
+          <i class="fas fa-undo mr-2"></i>Trạng thái trả hàng
+        </span>
+        <span class="payment-value text-green-600" th:text="${currentStatus}"></span>
       </div>
 
       <div class="payment-info total-row">
@@ -1186,6 +1205,12 @@
           <button class="btn-confirm" data-id="${hoaDonId}" onclick="confirmReceivedOrder(this)">
               <i class="fas fa-check-double"></i> Xác nhận đã nhận hàng
           </button>
+          <button class="btn-exchange" onclick="requestExchange('${hoaDonId}')">
+              <i class="fas fa-exchange-alt"></i> Yêu cầu đổi sản phẩm
+          </button>
+          <button class="btn-cancel" onclick="requestReturn('${hoaDonId}')">
+              <i class="fas fa-undo"></i> Yêu cầu trả hàng
+          </button>
         `;
       } else if (cancelableStatuses.includes(currentStatus)) {
         actionButtons.innerHTML = `
@@ -1200,6 +1225,47 @@
     setInterval(updateOrderStatusAndTimeline, 1000);
   });
 
+  // Cập nhật hàm requestExchange - bỏ tham số chiTietDonHangId
+  function requestExchange(hoaDonId) {
+    console.log("Redirecting to /dsdon-mua/tra-doi-san-pham/" + hoaDonId);
+    Swal.fire({
+      title: 'Yêu cầu đổi sản phẩm?',
+      text: 'Bạn có chắc chắn muốn gửi yêu cầu đổi sản phẩm cho đơn hàng này?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: '<i class="fas fa-exchange-alt mr-2"></i>Gửi yêu cầu',
+      cancelButtonText: '<i class="fas fa-times mr-2"></i>Hủy',
+      confirmButtonColor: '#059669',
+      cancelButtonColor: '#6b7280'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // Chuyển hướng đến trang đổi sản phẩm mà không cần chiTietId
+        window.location.href = `/dsdon-mua/tra-doi-san-pham/${hoaDonId}`;
+      }
+    });
+  }
+
+  function requestReturn(id) {
+    Swal.fire({
+      title: 'Yêu cầu trả hàng?',
+      text: 'Bạn có chắc chắn muốn gửi yêu cầu trả hàng cho đơn hàng này?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: '<i class="fas fa-undo mr-2"></i>Gửi yêu cầu',
+      cancelButtonText: '<i class="fas fa-times mr-2"></i>Hủy',
+      confirmButtonColor: '#B91C1C',
+      cancelButtonColor: '#6b7280',
+      customClass: {
+        popup: 'rounded-lg',
+        confirmButton: 'rounded-lg',
+        cancelButton: 'rounded-lg'
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `/dsdon-mua/tra-hang/${id}`;
+      }
+    });
+  }
 
   async function updateCartCount() {
     try {
@@ -1308,7 +1374,7 @@
             <i class="fas fa-exclamation-circle" style="color: red; margin-right: 5px;"></i>
             Lưu ý quan trọng
           </p>
-          <p>Vui lòng kiểm tra kỹ sản phẩm trước khi xác nhận.</p>
+          <p>Sau khi xác nhận sẽ không thể yêu cầu đổi hoặc trả hàng nữa. Vui lòng kiểm tra kỹ sản phẩm trước khi xác nhận.</p>
         `,
       icon: 'question',
       showCancelButton: true,
