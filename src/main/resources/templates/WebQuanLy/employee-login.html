@@ -155,19 +155,6 @@
            th:text="${param.error == 'accessDenied'} ? 'Bạn không có quyền truy cập.' : 'Tên đăng nhập hoặc mật khẩu không đúng.'">
         Tên đăng nhập hoặc mật khẩu không đúng.
       </div>
-      <div class="mb-4">
-        <label for="matKhau" class="form-label">Mật khẩu</label>
-        <input type="password" class="form-control" id="matKhau" name="matKhau" required title="Nhập mật khẩu của bạn"
-          placeholder="Nhập mật khẩu">
-      </div>
-      <button type="submit" class="btn btn-login">Đăng nhập</button>
-      <div class="mt-3">
-        <div th:if="${param.error}" class="alert alert-danger"
-          th:text="${param.error == 'accessDenied'} ? 'Bạn không có quyền truy cập.' : 'Tên đăng nhập hoặc mật khẩu không đúng.'">
-          Tên đăng nhập hoặc mật khẩu không đúng.
-        </div>
-        <div th:if="${param.logout}" class="alert alert-success">Bạn đã đăng xuất thành công.</div>
-      </div>
     </form>
   </div>
 </body>
