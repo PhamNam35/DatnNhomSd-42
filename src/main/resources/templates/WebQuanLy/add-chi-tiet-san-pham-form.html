@@ -986,7 +986,9 @@
             <div class="success-notification" id="successNotificationQuickAttr">
                 <i class="fas fa-check-circle me-2"></i>Thêm thuộc tính thành công!
             </div>
-
+            <div class="success-notification" id="errorNotificationDetail" style="background-color: #DC3545; display: none;">
+                <i class="fas fa-exclamation-circle me-2"></i><span id="errorMessageDetail"></span>
+            </div>
         </div>
     </div>
 </div>
@@ -1258,13 +1260,17 @@
                 const stockInput = $(this).find('.variation-stock');
                 const index = $(this).data('index');
 
-                if (!priceInput.val() || parseFloat(priceInput.val()) <= 0) {
-                    showError(`variations[${index}].price`, 'Giá phải là số dương.');
+                let priceValue = unformatNumber(priceInput.val());
+                if (!priceValue || isNaN(priceValue) || parseFloat(priceValue) < 1000) {
+                    showError('variations[' + index + '].price', 'Giá phải từ 1.000 VNĐ trở lên và không được để trống.');
+                    showErrorToast('Có lỗi ở biến thể: Giá phải từ 1.000 VNĐ trở lên và không được để trống.');
                     isValid = false;
                 }
 
-                if (!stockInput.val() || parseInt(stockInput.val()) < 0) {
-                    showError(`variations[${index}].stockQuantity`, 'Số lượng tồn kho không được âm.');
+                let stockValue = unformatNumber(stockInput.val());
+                if (stockValue === '' || isNaN(stockValue) || parseFloat(stockValue) < 0) {
+                    showError('variations[' + index + '].stockQuantity', 'Số lượng tồn kho phải là số không âm và không được để trống.');
+                    showErrorToast('Có lỗi ở biến thể: Số lượng tồn kho phải là số không âm và không được để trống.');
                     isValid = false;
                 }
             });
@@ -1285,6 +1291,9 @@
 
         $('#batchForm').on('submit', function(event) {
             event.preventDefault();
+            if (!validateForm()) {
+                return;  // Không submit nếu validate fail, toast đã show trong validate
+            }
             Swal.fire({
                 title: 'Xác nhận lưu',
                 text: 'Bạn có chắc muốn lưu chi tiết sản phẩm?',
@@ -1296,10 +1305,6 @@
                 cancelButtonText: 'Hủy'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    if (!validateForm()) {
-                        return;
-                    }
-
                     const formData = new FormData(this);
                     $.ajax({
                         url: $(this).attr('action'),
@@ -1325,7 +1330,7 @@
                                 const errorResponse = JSON.parse(xhr.responseText);
                                 errorMessage = errorResponse.message || xhr.responseText;
                             } catch (e) {}
-                            alert('Lỗi khi thêm chi tiết sản phẩm: ' + errorMessage);
+                            showErrorToast('Lỗi khi thêm chi tiết sản phẩm: ' + errorMessage);
                         }
                     });
                 }
@@ -1755,13 +1760,26 @@
 
     function formatNumber(value) {
         if (!value) return '';
-        return parseInt(value).toLocaleString('vi-VN').replace(/,/g, '.');  // Sử dụng locale VN, thay dấu phẩy bằng chấm
+        return parseInt(value).toLocaleString('vi-VN').replace(/,/g, '.');
     }
 
-    // Hàm unformat (xóa dấu chấm để lấy số thuần)
     function unformatNumber(value) {
         return value.replace(/\./g, '');
     }
+
+    function showErrorToast(message) {
+        $('#errorMessageDetail').text(message);
+        $('#errorNotificationDetail').css('display', 'block');
+        setTimeout(() => {
+            $('#errorNotificationDetail').css('display', 'none');
+        }, 5000);  // Tự ẩn sau 5 giây
+    }
+
+    $(document).on('keydown', '.format-number', function(e) {
+        if (e.key === '-' || e.keyCode === 189 || e.keyCode === 109) {  // Ngăn '-', numpad '-'
+            e.preventDefault();
+        }
+    });
 
     // Áp dụng format cho tất cả input có class="format-number"
     $(document).on('focus', '.format-number', function() {
@@ -1771,13 +1789,26 @@
 
     $(document).on('blur', '.format-number', function() {
         let value = $(this).val().trim();
+        value = unformatNumber(value);  // Unformat để kiểm tra số thuần
+
         if (value === '' || isNaN(value) || parseFloat(value) < 0) {
-            // Validate: Không âm, không chữ
-            $(this).val('');
-            alert('Vui lòng nhập số dương hợp lệ.');
+            showErrorToast('Vui lòng nhập số dương hợp lệ.');
+            $(this).val('');  // Xóa nếu không hợp lệ
             return;
         }
-        $(this).val(formatNumber(value));  // Format khi blur
+
+        const isPrice = $(this).hasClass('variation-price') || this.id === 'bulkPrice';
+        const minValue = isPrice ? 1000 : 0;
+
+        if (parseFloat(value) < minValue) {
+            let errorMsg = isPrice ? 'Giá phải từ 1.000 VNĐ trở lên.' : 'Số lượng tồn kho không được âm.';
+            showErrorToast(errorMsg);
+            $(this).val('');  // Xóa nếu dưới min
+            return;
+        }
+
+        // Format lại nếu hợp lệ
+        $(this).val(formatNumber(value));
     });
 
     // Khi submit form, unformat tất cả để gửi số thuần
@@ -1795,21 +1826,31 @@
         let bulkStock = $('#bulkStock').val();
 
         if (!bulkPrice && !bulkStock) {
-            alert('Vui lòng nhập ít nhất một giá trị để áp dụng.');
+            showErrorToast('Vui lòng nhập ít nhất một giá trị để áp dụng.');
             return;
         }
 
-        // Unformat trước khi áp dụng
+        // Unformat và validate
         bulkPrice = unformatNumber(bulkPrice);
         bulkStock = unformatNumber(bulkStock);
+
+        if (bulkPrice && (isNaN(bulkPrice) || parseFloat(bulkPrice) < 1000)) {
+            showErrorToast('Giá bán chung phải từ 1.000 VNĐ trở lên và là số hợp lệ.');
+            return;
+        }
+
+        if (bulkStock && (isNaN(bulkStock) || parseFloat(bulkStock) < 0)) {
+            showErrorToast('Số lượng tồn chung phải là số không âm và hợp lệ.');
+            return;
+        }
 
         $('.variation-checkbox:checked').each(function() {
             const variationItem = $(this).closest('.variation-item');
             if (bulkPrice) {
-                variationItem.find('.variation-price').val(formatNumber(bulkPrice));  // Áp dụng và format ngay
+                variationItem.find('.variation-price').val(formatNumber(bulkPrice));
             }
             if (bulkStock) {
-                variationItem.find('.variation-stock').val(formatNumber(bulkStock));  // Áp dụng và format ngay
+                variationItem.find('.variation-stock').val(formatNumber(bulkStock));
             }
         });
     }
