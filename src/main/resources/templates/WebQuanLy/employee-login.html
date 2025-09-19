@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
+
 <head>
   <meta charset="UTF-8">
   <title>Đăng nhập Nhân viên / Admin</title>
@@ -47,7 +48,10 @@
       font-weight: 700;
       margin-bottom: 30px;
       text-align: center;
-      color: var(--primary-color);
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
       position: relative;
     }
 
@@ -65,7 +69,7 @@
 
     .form-label {
       font-weight: 600;
-      color: var(--primary-color);
+      color: #333333;
       transition: color 0.3s ease;
     }
 
@@ -78,7 +82,7 @@
     }
 
     .form-control:focus {
-      border-color: var(--primary-color);
+      border-color: var(--secondary-color);
       background-color: #fff;
       box-shadow: 0 0 0 0.25rem rgba(var(--primary-rgb), 0.15);
     }
@@ -131,6 +135,7 @@
     }
   </style>
 </head>
+
 <body>
 <div class="login-box">
   <div class="form-title">Đăng nhập</div>
@@ -150,9 +155,20 @@
            th:text="${param.error == 'accessDenied'} ? 'Bạn không có quyền truy cập.' : 'Tên đăng nhập hoặc mật khẩu không đúng.'">
         Tên đăng nhập hoặc mật khẩu không đúng.
       </div>
-      <div th:if="${param.logout}" class="alert alert-success">Bạn đã đăng xuất thành công.</div>
-    </div>
-  </form>
-</div>
+      <div class="mb-4">
+        <label for="matKhau" class="form-label">Mật khẩu</label>
+        <input type="password" class="form-control" id="matKhau" name="matKhau" required title="Nhập mật khẩu của bạn"
+          placeholder="Nhập mật khẩu">
+      </div>
+      <button type="submit" class="btn btn-login">Đăng nhập</button>
+      <div class="mt-3">
+        <div th:if="${param.error}" class="alert alert-danger"
+          th:text="${param.error == 'accessDenied'} ? 'Bạn không có quyền truy cập.' : 'Tên đăng nhập hoặc mật khẩu không đúng.'">
+          Tên đăng nhập hoặc mật khẩu không đúng.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success">Bạn đã đăng xuất thành công.</div>
+      </div>
+    </form>
+  </div>
 </body>
 </html>
