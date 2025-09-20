@@ -161,7 +161,7 @@ public class SecurityConfig implements ApplicationContextAware {
                             if (nguoiDung != null) {
                                 String vaiTro = nguoiDung.getVaiTro();
                                 if ("EMPLOYEE".equalsIgnoreCase(vaiTro)) {
-                                    response.sendRedirect("/polyshoe/employee-dashboard");
+                                    response.sendRedirect("/polyshoe/ban-hang");
                                 } else if ("ADMIN".equalsIgnoreCase(vaiTro)) {
                                     // ĐÃ BỎ yêu cầu đăng ký/xác thực khuôn mặt, chuyển thẳng vào trang admin
                                     response.sendRedirect("/polyshoe/ban-hang");
