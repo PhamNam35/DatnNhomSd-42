@@ -61,7 +61,7 @@ public class CustomOAuth2SuccessHandler implements AuthenticationSuccessHandler 
                         response.sendRedirect("/polyshoe/verify-face");
                     }
                 } else if ("EMPLOYEE".equalsIgnoreCase(vaiTro)) {
-                    response.sendRedirect("/polyshoe/employee-dashboard");
+                    response.sendRedirect("/polyshoe/ban-hang");
                 } else {
                     response.sendRedirect("/");
                 }

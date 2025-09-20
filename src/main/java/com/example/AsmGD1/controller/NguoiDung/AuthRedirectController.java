@@ -28,7 +28,7 @@ public class AuthRedirectController {
             }
             return "redirect:/polyshoe/verify-face";
         } else if ("EMPLOYEE".equalsIgnoreCase(vaiTro)) {
-            return "redirect:/polyshoe/employee-dashboard";
+            return "redirect:/polyshoe/ban-hang";
         } else {
             return "redirect:/polyshoe/login?error=unauthorizedRole";
         }
