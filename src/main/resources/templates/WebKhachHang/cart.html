@@ -377,8 +377,7 @@
                     <th>Sản phẩm</th>
                     <th>Thông tin</th>
                     <th>Số lượng</th>
-                    <th>Giá gốc</th>
-                    <th>Giảm giá</th>
+                    <th>Giá</th>
                     <th>Thành tiền</th>
                     <th>Thao tác</th>
                 </tr>
@@ -434,10 +433,6 @@
                     <td>
                         <span class="price-highlight"
                               th:text="${#numbers.formatDecimal(item.chiTietSanPham.gia, 0, 'POINT', 0, 'COMMA')} + ' VNĐ'"></span>
-                    </td>
-                    <td>
-                        <span class="discount-price"
-                              th:text="${item.tienGiam != null ? #numbers.formatDecimal(item.tienGiam, 0, 'POINT', 0, 'COMMA') + ' VNĐ' : '0 VNĐ'}"></span>
                     </td>
                     <td>
                         <span class="final-price"
