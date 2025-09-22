@@ -907,11 +907,6 @@
                                             VND
                                             • HSD:
                                             <span th:text="${#temporals.format(v.ngayKetThuc,'d/M/yyyy')}"></span>
-                                            • PTTT:
-                                            <span th:text="${#maps.containsKey(voucherPtttMapById, v.id) ? voucherPtttMapById[v.id] :
-                              (#maps.containsKey(voucherPtttMapByMa, v.ma) ? voucherPtttMapByMa[v.ma] : 'Tất cả')}">
-                                                Tất cả
-                                            </span>
                                         </div>
                                     </div>
                                     <input class="form-check-input mt-1" type="radio" name="rb-order"
